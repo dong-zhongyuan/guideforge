@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+_arnie_tmp/
+arnie_file.txt
+data/_*
+*.log

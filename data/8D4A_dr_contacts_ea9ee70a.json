@@ -1,0 +1,374 @@
+{
+ "pdb_id": "8D4A",
+ "cutoff_A": 5.0,
+ "hbond_cutoff_A": 3.5,
+ "dr_len": 19,
+ "dr_seq": "AAUUUCUACUGUUGUAGAU",
+ "crna_chain": "B",
+ "crna_chain_seq": "AUUUCUACUAUUGUAGAU",
+ "transfer": {
+  "method": "aligned_transfer",
+  "expected_5p_overhang": 1,
+  "chain_offset": 0,
+  "mismatch_positions_1based": [
+   11
+  ],
+  "note": "接触按序列对齐从结构 DR 转移; 错配位点与 5' 悬垂位点的极性接触已剔除/置空"
+ },
+ "cif_sha256": "ef1a8f8675fcce6bd76469faa75f273cf004a496b2600847746fa444dcc30926",
+ "note": "Cas12a2 四元复合物(Bravo 2023); crRNA 链按 5' 端 DR 序列锚定; contacts 为 <=cutoff 内蛋白残基数(重原子), atom_contacts 为 <=3.5A 的极性原子对(供受体分类, 用于碱基替换互补评估)",
+ "contacts": {
+  "1": {
+   "n_contact_residues": 0,
+   "residues": []
+  },
+  "2": {
+   "n_contact_residues": 8,
+   "residues": [
+    "A:ARG785",
+    "A:ARG788",
+    "A:ARG928",
+    "A:GLN736",
+    "A:GLN783",
+    "A:LYS22",
+    "A:LYS26",
+    "A:LYS784"
+   ]
+  },
+  "3": {
+   "n_contact_residues": 6,
+   "residues": [
+    "A:ARG785",
+    "A:ARG788",
+    "A:GLN736",
+    "A:GLN783",
+    "A:LYS22",
+    "A:LYS784"
+   ]
+  },
+  "4": {
+   "n_contact_residues": 11,
+   "residues": [
+    "A:ARG16",
+    "A:ARG774",
+    "A:ASN735",
+    "A:ASN747",
+    "A:GLN736",
+    "A:GLN790",
+    "A:GLY18",
+    "A:ILE734",
+    "A:PHE17",
+    "A:PHE749",
+    "A:VAL792"
+   ]
+  },
+  "5": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:ARG16",
+    "A:ARG774",
+    "A:ARG785",
+    "A:ASN747",
+    "A:GLN790",
+    "A:TYR243",
+    "A:TYR786"
+   ]
+  },
+  "6": {
+   "n_contact_residues": 5,
+   "residues": [
+    "A:ARG785",
+    "A:ASN1034",
+    "A:GLN1037",
+    "A:GLY1038",
+    "A:TYR786"
+   ]
+  },
+  "7": {
+   "n_contact_residues": 6,
+   "residues": [
+    "A:ASN1034",
+    "A:ASN1042",
+    "A:GLN941",
+    "A:GLY1038",
+    "A:ILE1039",
+    "A:LEU1035"
+   ]
+  },
+  "8": {
+   "n_contact_residues": 6,
+   "residues": [
+    "A:ARG905",
+    "A:ASN939",
+    "A:GLN919",
+    "A:GLN941",
+    "A:LEU1035",
+    "A:LYS944"
+   ]
+  },
+  "9": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:ARG928",
+    "A:ASN939",
+    "A:LYS875",
+    "A:LYS925",
+    "A:LYS944",
+    "A:TRP888",
+    "A:VAL924"
+   ]
+  },
+  "10": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:ALA935",
+    "A:ARG928",
+    "A:LEU923",
+    "A:LYS925",
+    "A:PHE877",
+    "A:TRP888",
+    "A:VAL924"
+   ]
+  },
+  "11": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:ARG883",
+    "A:ARG928",
+    "A:ASP929",
+    "A:LYS925",
+    "A:PHE877",
+    "A:PRO931",
+    "A:THR930"
+   ]
+  },
+  "12": {
+   "n_contact_residues": 10,
+   "residues": [
+    "A:ARG879",
+    "A:ARG883",
+    "A:GLU885",
+    "A:HIS887",
+    "A:LYS26",
+    "A:PHE877",
+    "A:PRO931",
+    "A:SER884",
+    "A:SER886",
+    "A:TRP888"
+   ]
+  },
+  "13": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:CYS28",
+    "A:GLU25",
+    "A:LYS26",
+    "A:LYS27",
+    "A:LYS29",
+    "A:LYS741",
+    "A:SER884"
+   ]
+  },
+  "14": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:CYS28",
+    "A:GLN736",
+    "A:LYS26",
+    "A:LYS27",
+    "A:LYS741",
+    "A:SER740",
+    "A:THR739"
+   ]
+  },
+  "15": {
+   "n_contact_residues": 3,
+   "residues": [
+    "A:GLN736",
+    "A:LYS746",
+    "A:TRP888"
+   ]
+  },
+  "16": {
+   "n_contact_residues": 5,
+   "residues": [
+    "A:ARG905",
+    "A:GLU907",
+    "A:LYS746",
+    "A:THR908",
+    "A:VAL906"
+   ]
+  },
+  "17": {
+   "n_contact_residues": 9,
+   "residues": [
+    "A:ALA1041",
+    "A:ARG905",
+    "A:ASN1042",
+    "A:ASN747",
+    "A:GLU907",
+    "A:GLY1045",
+    "A:LYS914",
+    "A:THR908",
+    "A:VAL906"
+   ]
+  },
+  "18": {
+   "n_contact_residues": 7,
+   "residues": [
+    "A:ALA1041",
+    "A:ASN1048",
+    "A:ASN747",
+    "A:GLN1112",
+    "A:GLY1045",
+    "A:ILE1044",
+    "A:LYS1116"
+   ]
+  },
+  "19": {
+   "n_contact_residues": 6,
+   "residues": [
+    "A:ASN747",
+    "A:GLN748",
+    "A:LYS1115",
+    "A:LYS1116",
+    "A:LYS1119",
+    "A:PHE749"
+   ]
+  }
+ },
+ "atom_contacts": {
+  "1": [],
+  "2": [],
+  "3": [],
+  "4": [
+   {
+    "rna_atom": "O2",
+    "rna_class": "a",
+    "prot_atom": "NE",
+    "prot_class": "d",
+    "prot_res": "A:ARG16",
+    "dist": 3.35
+   },
+   {
+    "rna_atom": "O4",
+    "rna_class": "a",
+    "prot_atom": "ND2",
+    "prot_class": "d",
+    "prot_res": "A:ASN747",
+    "dist": 3.22
+   }
+  ],
+  "5": [],
+  "6": [],
+  "7": [],
+  "8": [
+   {
+    "rna_atom": "N3",
+    "rna_class": "a",
+    "prot_atom": "NH1",
+    "prot_class": "d",
+    "prot_res": "A:ARG905",
+    "dist": 3.3
+   }
+  ],
+  "9": [
+   {
+    "rna_atom": "N4",
+    "rna_class": "d",
+    "prot_atom": "NH2",
+    "prot_class": "d",
+    "prot_res": "A:ARG928",
+    "dist": 3.19
+   }
+  ],
+  "10": [
+   {
+    "rna_atom": "O4",
+    "rna_class": "a",
+    "prot_atom": "NH2",
+    "prot_class": "d",
+    "prot_res": "A:ARG928",
+    "dist": 2.38
+   },
+   {
+    "rna_atom": "O4",
+    "rna_class": "a",
+    "prot_atom": "NE",
+    "prot_class": "d",
+    "prot_res": "A:ARG928",
+    "dist": 3.24
+   }
+  ],
+  "11": [],
+  "12": [
+   {
+    "rna_atom": "O4",
+    "rna_class": "a",
+    "prot_atom": "NE1",
+    "prot_class": "d",
+    "prot_res": "A:TRP888",
+    "dist": 3.46
+   }
+  ],
+  "13": [
+   {
+    "rna_atom": "O2",
+    "rna_class": "a",
+    "prot_atom": "O",
+    "prot_class": "a",
+    "prot_res": "A:LYS27",
+    "dist": 3.09
+   },
+   {
+    "rna_atom": "N3",
+    "rna_class": "d",
+    "prot_atom": "O",
+    "prot_class": "a",
+    "prot_res": "A:GLU25",
+    "dist": 3.44
+   }
+  ],
+  "14": [],
+  "15": [],
+  "16": [
+   {
+    "rna_atom": "N3",
+    "rna_class": "a",
+    "prot_atom": "NH1",
+    "prot_class": "d",
+    "prot_res": "A:ARG905",
+    "dist": 3.5
+   }
+  ],
+  "17": [],
+  "18": [
+   {
+    "rna_atom": "N6",
+    "rna_class": "d",
+    "prot_atom": "ND2",
+    "prot_class": "d",
+    "prot_res": "A:ASN747",
+    "dist": 3.1
+   }
+  ],
+  "19": [
+   {
+    "rna_atom": "O4",
+    "rna_class": "a",
+    "prot_atom": "N",
+    "prot_class": "d",
+    "prot_res": "A:PHE749",
+    "dist": 3.26
+   },
+   {
+    "rna_atom": "O4",
+    "rna_class": "a",
+    "prot_atom": "N",
+    "prot_class": "d",
+    "prot_res": "A:GLN748",
+    "dist": 3.04
+   }
+  ]
+ }
+}

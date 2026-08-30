@@ -1,0 +1,30 @@
+{
+ "spacer_dna": "GTTCATGCCGCCCATGCAGGAACT",
+ "target_scanned": "AGTTCCTGCATGGGCGGCATGAAC",
+ "pfs_rule": "CAGAG",
+ "max_mismatch": 4,
+ "n_transcripts": 2,
+ "n_sites": 2,
+ "by_mismatch": {
+  "0mm+PFS": 1,
+  "0mm": 1
+ },
+ "sites": [
+  {
+   "transcript": "TP53_R248Q_mRNA_NM_000546.6_c.743G>A",
+   "pos": 859,
+   "mismatches": 0,
+   "window": "AGTTCCTGCATGGGCGGCATGAAC",
+   "pfs": "CAGAG",
+   "pfs_match": true
+  },
+  {
+   "transcript": "TP53_WT_mRNA_NM_000546.6",
+   "pos": 859,
+   "mismatches": 0,
+   "window": "AGTTCCTGCATGGGCGGCATGAAC",
+   "pfs": "CGGAG",
+   "pfs_match": false
+  }
+ ]
+}

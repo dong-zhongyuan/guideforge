@@ -1,0 +1,127 @@
+{
+  "registry_version": 1,
+  "entries": {
+    "cas12a2": {
+      "effector": "cas12a2",
+      "display_name": "Cas12a2 (SuCas12a2, Sulfuricurvum sp. PC08-66; 序列据 PDB 8D49/8D4A/8D4B, Bravo et al. 2023 Nature)",
+      "scaffold": "ATTTCTACTATTGTAGAT",
+      "scaffold_len": 18,
+      "scaffold_side": "5prime",
+      "placeholder_spacer": "TGGAGCAACACCTGAAGAAGGCT",
+      "full_construct_dna": "ATTTCTACTATTGTAGATTGGAGCAACACCTGAAGAAGGCT",
+      "pam": {
+        "rule": "GAAAG",
+        "side": "5prime",
+        "note": "Cas12a2 为 RNA 靶向激活, 无 PAM; GAAAG 为靶 RNA 上的 PFS (protospacer-flanking sequence), 位于靶序列 5' 侧"
+      },
+      "reference": {
+        "full_len": 41,
+        "dotbracket": "...(((((....)))))...........(((.....)))..",
+        "source": "RNet-SS × ViennaRNA pf 注册运行",
+        "gate": "confident",
+        "baseline": {
+          "vienna_mfe_kcal": -7.1,
+          "vienna_ens_diversity": 1.19,
+          "spacer_mean_unpaired": 0.848,
+          "vienna_rnet_structure_f1": 1.0,
+          "rnet_confidence_f1": 0.955
+        },
+        "bound_state_note": "PDB 8D4A 为结合态结构; 游离态 RNet-SS 与 ViennaRNA 复核一致"
+      },
+      "version": "v1",
+      "registered_at": "2026-08-31",
+      "inputs_sha256": "3fe9e61169e5fd44f6a05f245b2918205777371be73ea5c12d1c07f37682a60b",
+      "placeholder_note": "占位 spacer 为 PDB 8D4A 结构用序列(23nt), 非项目靶标; 项目固定 spacer 为 TP53-R248Q 靶向序列, 由实验侧提供后替换"
+    },
+    "cas12a": {
+      "effector": "cas12a",
+      "display_name": "Cas12a (As 通用 handle, 占位)",
+      "scaffold": "TAATTTCTACTAAGTGTAGAT",
+      "scaffold_len": 21,
+      "scaffold_side": "5prime",
+      "placeholder_spacer": "GACCCCCTCCACCCCGCCTC",
+      "full_construct_dna": "TAATTTCTACTAAGTGTAGATGACCCCCTCCACCCCGCCTC",
+      "pam": {
+        "rule": "TTTV",
+        "side": "5prime"
+      },
+      "reference": {
+        "full_len": 41,
+        "dotbracket": ".....(((((.....))))).....................",
+        "source": "RNet-SS × ViennaRNA pf 注册运行",
+        "gate": "confident",
+        "baseline": {
+          "vienna_mfe_kcal": -4.7,
+          "vienna_ens_diversity": 0.59,
+          "spacer_mean_unpaired": 0.993,
+          "vienna_rnet_structure_f1": 1.0,
+          "rnet_confidence_f1": 0.952
+        },
+        "bound_state_note": "handle 假结为 Cas12a 蛋白诱导, 游离态不出现"
+      },
+      "version": "v1",
+      "registered_at": "2026-08-31",
+      "inputs_sha256": "5f5165050b45ce2c3a205eae690e4f1793ecba93fd0050d7c64eb911c78f5e09"
+    },
+    "spcas9": {
+      "effector": "spcas9",
+      "display_name": "Streptococcus pyogenes Cas9 (来自 model_contract 训练契约)",
+      "scaffold": "GTTTTAGAGCTAGAAATAGCAAGTTAAAATAAGGCTAGTCCGTTATCAACTTGAAAAAGTGGCACCGAGTCGGTGCTTTTTTG",
+      "scaffold_len": 83,
+      "scaffold_side": "3prime",
+      "placeholder_spacer": "GACCCCCTCCACCCCGCCTC",
+      "full_construct_dna": "GACCCCCTCCACCCCGCCTCGTTTTAGAGCTAGAAATAGCAAGTTAAAATAAGGCTAGTCCGTTATCAACTTGAAAAAGTGGCACCGAGTCGGTGCTTTTTTG",
+      "pam": {
+        "rule": "NGG",
+        "side": "3prime"
+      },
+      "reference": {
+        "full_len": 103,
+        "dotbracket": "...............((((.(((((((.((((....))))...))))))).)))).............((((....))))(((((((...)))))))......",
+        "source": "RNet-SS × ViennaRNA pf 注册运行",
+        "gate": "confident",
+        "baseline": {
+          "vienna_mfe_kcal": -25.5,
+          "vienna_ens_diversity": 5.69,
+          "spacer_mean_unpaired": 0.777,
+          "vienna_rnet_structure_f1": 0.917,
+          "rnet_confidence_f1": 0.891
+        },
+        "bound_state_note": "spacer 3' 端与 SL1 基部可有少数配对, 属天然构象"
+      },
+      "version": "v1",
+      "registered_at": "2026-08-31",
+      "inputs_sha256": "63dd634220c6592ac399a88f3ac6c4a3a90ae61057e6873aa4d2e38b6d3c461f"
+    },
+    "cas12a2_zeng2026": {
+      "effector": "cas12a2_zeng2026",
+      "display_name": "Cas12a2 (Zeng 2026 Nature 细胞实验用 DR, 19nt; 与 PDB 8D4A 结构 DR 相差 5' 端 1nt + A10G 替换)",
+      "scaffold": "AATTTCTACTGTTGTAGAT",
+      "scaffold_len": 19,
+      "scaffold_side": "5prime",
+      "placeholder_spacer": "GTTCATGCCGCCCATGCAGGAACT",
+      "full_construct_dna": "AATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+      "pam": {
+        "rule": "A_RICH",
+        "side": "5prime"
+      },
+      "reference": {
+        "full_len": 43,
+        "dotbracket": "....(((((....))))).((((.(((.......))).)))).",
+        "source": "RNet-SS × ViennaRNA pf 注册运行",
+        "gate": "confident",
+        "baseline": {
+          "vienna_mfe_kcal": -10.6,
+          "vienna_ens_diversity": 0.48,
+          "spacer_mean_unpaired": 0.714,
+          "vienna_rnet_structure_f1": 1.0,
+          "rnet_confidence_f1": 0.988
+        },
+        "bound_state_note": "Zeng 2026 合成 gRNA 用 DR; PFS 松散, R248Q 靶点 PFS 由突变本身产生 (G>A)"
+      },
+      "version": "v1",
+      "registered_at": "2026-08-31",
+      "inputs_sha256": "e00dfe08d06fc3a0ff07bd3384440e8b61cdaf670e93b2c47dc0810e664d376c"
+    }
+  }
+}
