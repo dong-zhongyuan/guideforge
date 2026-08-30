@@ -1,0 +1,5 @@
+# 主环境（运行主管线 crrna_scaffold_design.py / crrna_specificity_scan.py / register_scaffold.py）
+# python >= 3.10, 纯 CPU 即可
+numpy
+biopython
+viennarna   # import RNA; 也可用 conda: conda install -c bioconda viennarna

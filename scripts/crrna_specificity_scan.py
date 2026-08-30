@@ -1,4 +1,4 @@
-"""crRNA 特异性扫描（Cas12a2, RNA 靶向；体系切换后 crRNA 链）
+"""crRNA 特异性扫描（Cas12a2, RNA 靶向）
 
 定位：Cas12a2 由靶 RNA 激活，"脱靶"= 转录组中与 spacer 部分错配、可能错误激活的
 其他 RNA。本模块在转录本序列（FASTA，sense 链）中扫描 spacer 互补区的近似位点，

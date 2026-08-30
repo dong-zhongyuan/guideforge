@@ -1,0 +1,27 @@
+# 引擎环境（逆折叠/SHAPE 筛选子进程: Struct2SeQ / gRNAde / RNet）
+# python 3.11, CPU 即可（有 GPU 更快但非必需）
+#
+# 安装备注（服务器实测）:
+#   1) torch 建议 CPU 版: pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   2) torch_scatter / torch_cluster 需匹配 torch 版本:
+#      pip install torch_scatter torch_cluster -f https://data.pyg.org/whl/torch-2.6.0+cpu.html
+#   3) 个别包只有源码分发且编译失败时, 先设 TMPDIR 到可写目录, 或加 --only-binary :all:
+#   4) cpdb-protein 若编译失败可跳过: toolbox/geometric-rna-design/src/data/data_utils.py
+#      已内置 biotite 兜底补丁
+torch
+einops
+pandas
+pyyaml
+tqdm
+scipy
+arnie==0.2.7
+matplotlib
+polars
+torch_geometric
+torch_scatter
+torch_cluster
+biotite
+biopython
+cpdb-protein
+python-dotenv
+wandb

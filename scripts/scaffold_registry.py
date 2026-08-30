@@ -1,13 +1,10 @@
-"""骨架注册表读取接口（2026-08-31 体系切换后引入）。
+"""骨架注册表读取接口。
 
-背景：平台不再绑定单一固定骨架。每个效应子一条注册记录（序列/长度/PAM/参考结构/
-置信基线/版本），见 docs/结构维度_平行设计框架_20260831.md §1.5。
+背景：平台不绑定单一固定骨架。每个效应子一条注册记录（序列/长度/PAM/参考结构/
+置信基线/版本）。
 注册记录由 scripts/register_scaffold.py 生成（RNet-SS × ViennaRNA 配分函数），
 本模块只负责读取，不做任何计算，可在生产链安全 import（无重依赖）。
-
-与 configs/model_contract.json 的关系：model_contract.json 的 scaffold 字段是
-SpCas9 锁定生产链的训练契约（83nt 校验见 contract.py），不动；注册表是
-多效应子时代的骨架来源，crRNA 新模块（crrna_*）一律从注册表取骨架。
+每个效应子一条注册记录，crRNA 模块（crrna_*）一律从注册表取骨架。
 """
 from __future__ import annotations
 

@@ -65,7 +65,7 @@
     },
     "spcas9": {
       "effector": "spcas9",
-      "display_name": "Streptococcus pyogenes Cas9 (来自 model_contract 训练契约)",
+      "display_name": "Streptococcus pyogenes Cas9 (对照效应子条目)",
       "scaffold": "GTTTTAGAGCTAGAAATAGCAAGTTAAAATAAGGCTAGTCCGTTATCAACTTGAAAAAGTGGCACCGAGTCGGTGCTTTTTTG",
       "scaffold_len": 83,
       "scaffold_side": "3prime",
