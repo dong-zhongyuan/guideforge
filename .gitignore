@@ -5,3 +5,17 @@ _arnie_tmp/
 arnie_file.txt
 data/_*
 *.log
+
+# 服务器端本地物(不入库: 归档原件/大权重/内部过程文档)
+*.zip
+GuideForge_webapp_20260821/
+data_pkg/
+_目录结构说明_先看这个.md
+docs/
+scripts/tmp/
+# 大文件走 Release data-v1 (清单见 BIG_FILES.md)
+toolbox/rnet-inference/RibonanzaNet-Weights/
+toolbox/Struct2SeQ/*.pt
+toolbox/geometric-rna-design/weights/
+toolbox/OpenKnotAIDesignData/Data/
+toolbox/OpenKnotAIDesignData/.gitattributes
