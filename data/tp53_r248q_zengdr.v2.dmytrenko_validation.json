@@ -1,0 +1,226 @@
+{
+ "date": "2026-08-31",
+ "source": "Dmytrenko et al. 2023 Nature (10.1038/s41586-022-05559-3)",
+ "A_dr_swap": {
+  "swap_effector": "cas12a",
+  "swap_dr_rna": "UAAUUUCUACUAAGUGUAGAU",
+  "swap_dr_only_struct": ".....(((((.....))))).",
+  "swap_dr_only_mfe": -4.699999809265137,
+  "full_mfe_kcal": -10.5,
+  "checks": {
+   "stem_pairs_kept": {
+    "wt_pairs": 10,
+    "swap_pairs": 10,
+    "ok": true
+   },
+   "spacer_unpaired": {
+    "wt": 0.427,
+    "swap": 0.427,
+    "ok": true
+   },
+   "sequence_discipline": {
+    "ok": true
+   }
+  },
+  "verdict": "PASS(未误杀)",
+  "note": "两 DR 长度不同(21 vs 19 nt), 与 WT 的 bp_distance 不可定义; 改用茎完整性(配对数 >= WT-2)+spacer 游离+序列纪律三项, 口径如实注明"
+ },
+ "B_conservation_corr": {
+  "rows": [
+   {
+    "pos": 1,
+    "cons_class": 0,
+    "tolerance_pass": 1.0,
+    "mean_score": -0.0041,
+    "mean_score_adj": -0.0041,
+    "n_alt": 3
+   },
+   {
+    "pos": 2,
+    "cons_class": 0,
+    "tolerance_pass": 0.667,
+    "mean_score": -0.7273,
+    "mean_score_adj": -0.7273,
+    "n_alt": 3
+   },
+   {
+    "pos": 3,
+    "cons_class": 0,
+    "tolerance_pass": 1.0,
+    "mean_score": -0.5682,
+    "mean_score_adj": -0.5682,
+    "n_alt": 3
+   },
+   {
+    "pos": 4,
+    "cons_class": 0,
+    "tolerance_pass": 0.333,
+    "mean_score": -1.6954,
+    "mean_score_adj": -1.6954,
+    "n_alt": 3
+   },
+   {
+    "pos": 5,
+    "cons_class": 1,
+    "tolerance_pass": 0.0,
+    "mean_score": -1.0816,
+    "mean_score_adj": -1.0816,
+    "n_alt": 3
+   },
+   {
+    "pos": 6,
+    "cons_class": 1,
+    "tolerance_pass": 0.0,
+    "mean_score": -2.158,
+    "mean_score_adj": -2.158,
+    "n_alt": 3
+   },
+   {
+    "pos": 7,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.5131,
+    "mean_score_adj": -1.5131,
+    "n_alt": 3
+   },
+   {
+    "pos": 8,
+    "cons_class": 1,
+    "tolerance_pass": 0.667,
+    "mean_score": -3.4646,
+    "mean_score_adj": -3.4646,
+    "n_alt": 3
+   },
+   {
+    "pos": 9,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.6693,
+    "mean_score_adj": -1.6693,
+    "n_alt": 3
+   },
+   {
+    "pos": 10,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.2231,
+    "mean_score_adj": -1.2231,
+    "n_alt": 3
+   },
+   {
+    "pos": 11,
+    "cons_class": 1,
+    "tolerance_pass": 0.667,
+    "mean_score": -0.6372,
+    "mean_score_adj": -0.6372,
+    "n_alt": 3
+   },
+   {
+    "pos": 12,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.4107,
+    "mean_score_adj": -1.4107,
+    "n_alt": 3
+   },
+   {
+    "pos": 13,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.3446,
+    "mean_score_adj": -1.3446,
+    "n_alt": 3
+   },
+   {
+    "pos": 14,
+    "cons_class": 1,
+    "tolerance_pass": 0.667,
+    "mean_score": -1.4254,
+    "mean_score_adj": -1.4254,
+    "n_alt": 3
+   },
+   {
+    "pos": 15,
+    "cons_class": 2,
+    "tolerance_pass": 0.667,
+    "mean_score": -2.2882,
+    "mean_score_adj": -2.2282,
+    "n_alt": 3
+   },
+   {
+    "pos": 16,
+    "cons_class": 2,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.3321,
+    "mean_score_adj": -1.2721,
+    "n_alt": 3
+   },
+   {
+    "pos": 17,
+    "cons_class": 2,
+    "tolerance_pass": 0.0,
+    "mean_score": -2.0278,
+    "mean_score_adj": -1.9678,
+    "n_alt": 3
+   },
+   {
+    "pos": 18,
+    "cons_class": 2,
+    "tolerance_pass": 0.333,
+    "mean_score": -1.7049,
+    "mean_score_adj": -1.6449,
+    "n_alt": 3
+   },
+   {
+    "pos": 19,
+    "cons_class": 2,
+    "tolerance_pass": 0.333,
+    "mean_score": -1.3753,
+    "mean_score_adj": -1.3153,
+    "n_alt": 3
+   }
+  ],
+  "loop_positions_1based": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "cons_partition": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 1,
+   "6": 1,
+   "7": 1,
+   "8": 1,
+   "9": 1,
+   "10": 1,
+   "11": 1,
+   "12": 1,
+   "13": 1,
+   "14": 1,
+   "15": 2,
+   "16": 2,
+   "17": 2,
+   "18": 2,
+   "19": 2
+  },
+  "spearman_cons_vs_tolerance": {
+   "rho": -0.012,
+   "perm_p": 0.9621
+  },
+  "spearman_cons_vs_meanscore": {
+   "rho": -0.381,
+   "perm_p": 0.1128
+  },
+  "spearman_cons_vs_scoreadj": {
+   "rho": -0.33,
+   "perm_p": 0.1666,
+   "note": "score_adj 剔除 w_cons3 惩罚项, 为非循环的相关口径(仅 ddG/bp_dist/contact/hbond/ens 分量)"
+  },
+  "note": "预期方向为负(保守度高→耐受低); rho<0 且 p<0.05 即与天然进化数据一致; n=19 位点, 置换检验功效有限, 未达显著时如实报告方向"
+ },
+ "disclaimer": "检验A为过滤器不误杀检验(非活性预测); 检验B为计算内部一致性验证; 均不替代湿实验"
+}

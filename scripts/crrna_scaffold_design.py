@@ -15,6 +15,10 @@
   A. 结构保持局部突变扫描: DR 全部单点突变 + 抽样双点突变，ViennaRNA 折叠过滤
   A2. Struct2SeQ 逆折叠提案(--use-struct2seq): 以 WT DR 茎环为靶结构、WT 序列 upweight,
       子进程调 rnet 环境跑 toolbox/Struct2SeQ, 经 RNet-SS Jaccard 筛选
+  A4. 茎区共变枚举(--use-covariation): 对 WT DR 折叠的每个茎配对做保持配对的双侧补偿
+      突变(标准配对 GC/CG/AU/UA/GU/UG 互换), 单对全枚举 + 双对组合抽样
+      (依据 Dmytrenko 2023 Fig.1c: 跨家族茎保守/loop 可变, 共变是同源 DR
+      保持茎环拓扑的天然机制)
   筛选增强: --rnet-screen 对 WT+TOP-N 候选预测 RNet SHAPE 图谱并算与 WT 结构的一致性
       (Science 2026 aeg6829 的"先模拟实验再筛选"口径, eterna score 分量)
   B. 模拟退火: 以同一打分为目标，突变提案偏向 loop/非蛋白接触位点（--sa-steps）
@@ -24,11 +28,16 @@
   - spacer 区平均未配对概率不低于 WT 值 - --spacer-unpaired-margin（默认 0.10，
     spacer 必须保持游离；因 spacer 固定，与 WT 相对比较即可排除 spacer 自身发卡的影响）
   - DR 变体不含 TTTT/GGGG（合成与转录纪律，与旧链一致）
+  - 加工位点保护(--no-protect-processing 可关): Cas12a2 pre-crRNA 加工切点在 DR 3' 端
+    紧下游(Dmytrenko 2023 ED Fig.3, 比 Cas12a 下游 1nt; 成熟边界由结构口径 18nt DR 锚定);
+    DR 3' 末端 3nt + 交界后首位的配对状态须与 WT 一致, 防止成熟 crRNA 长度漂移
 
 打分（透明启发式，仅用于候选排序，不是活性预测；权重 CLI 可调）:
   score = -w_bp*bp_dist - w_ddg*max(ddG,0) - w_contact*contact_sum
-          - w_ens*max(d_ens,0) - w_hbond*hbond_loss
+          - w_ens*max(d_ens,0) - w_hbond*hbond_loss - w_cons3*cons3_frac
   其中 hbond_loss 为 8D4A 极性接触的碱基替换互补损失（几何不变近似）;
+  cons3_frac 为落在 DR 3' 保守窗的突变位点比例(Dmytrenko 2023 Fig.1c: 跨家族 3' 端
+  高度保守、loop 可变, 故 3' 窗内突变给显式惩罚);
   另报告 ddG、spacer_unpaired、ens_diversity、hbond_preserved 供人工挑选。
 
 输出: <out>.variants.csv（全部打分行）/ <out>.top.json（TOP-K + WT 参考 + 参数血缘）/
@@ -299,6 +308,53 @@ def mut_desc(dr, seq):
     return 'WT' if not diff else '+'.join(diff), [int(d[1:-1]) for d in diff]
 
 
+def proc_window_ok(wt_ss, ss, dr_len, window):
+    """加工位点保护(Dmytrenko 2023 ED Fig.3): Cas12a2 加工切点在 DR 3' 端紧下游,
+    成熟边界由结构口径 18nt DR 锚定。要求 DR 3' 末端 window-1 个碱基 + 交界后首位
+    在变体全长 MFE 中的配对状态与 WT 一致, 防止成熟 crRNA 长度漂移。"""
+    idx = list(range(max(dr_len - (window - 1), 0), min(dr_len + 1, len(ss))))
+    return all((wt_ss[i] != '.') == (ss[i] != '.') for i in idx)
+
+
+STEM_PAIR_SETS = ('GC', 'CG', 'AU', 'UA', 'GU', 'UG')
+
+
+def strategy_a4(dr, args, rng):
+    """策略A4: 茎区共变枚举。对 WT DR 折叠的每个茎配对, 枚举保持配对的双侧补偿突变
+    (标准配对互换), 单对全枚举 + 双对组合抽样。茎配对来源 = DR 单独折叠的点括号。"""
+    ss = fold(dr)[0]
+    pairs, stack = [], []
+    for i, ch in enumerate(ss):
+        if ch == '(':
+            stack.append(i)
+        elif ch == ')':
+            pairs.append((stack.pop(), i))
+
+    def apply_subs(subs):
+        s = list(dr)
+        for (i, j), (bi, bj) in subs.items():
+            s[i], s[j] = bi, bj
+        return ''.join(s)
+
+    variants = []
+    for i, j in pairs:  # 单对共变: 全枚举
+        cur = dr[i] + dr[j]
+        for p in STEM_PAIR_SETS:
+            if p != cur:
+                variants.append(apply_subs({(i, j): (p[0], p[1])}))
+    combos = [(a, b) for x, a in enumerate(pairs) for b in pairs[x + 1:]]
+    rng.shuffle(combos)
+    for c in combos[:args.cov_double]:  # 双对共变: 抽样
+        subs = {}
+        for i, j in c:
+            cur = dr[i] + dr[j]
+            alt = [p for p in STEM_PAIR_SETS if p != cur]
+            ch = alt[rng.integers(len(alt))]
+            subs[(i, j)] = (ch[0], ch[1])
+        variants.append(apply_subs(subs))
+    return [v for v in variants if v != dr]
+
+
 def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     """折叠并打分一个 DR 变体。返回指标 dict（含 pass/score）。"""
     full = seq + spacer
@@ -312,10 +368,14 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     hloss, hfrac = hbond_loss(dr, seq, mut_pos, contact)
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
-          and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq))
+          and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
+          and (args.no_protect_processing
+               or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)))
+    cons3_n = sum(1 for p in mut_pos if p > len(dr) - args.cons3_window)
+    cons3_frac = cons3_n / max(args.cons3_window, 1)
     score = (-args.w_bp * bp_dist - args.w_ddg * max(ddg, 0.0)
              - args.w_contact * csum - args.w_ens * max(d_ens, 0.0)
-             - args.w_hbond * hloss)
+             - args.w_hbond * hloss - args.w_cons3 * cons3_frac)
     return {'desc': desc, 'mut_positions': mut_pos, 'n_mut': len(mut_pos),
             'dr_seq': to_dna(seq), 'construct_dna': to_dna(full),
             'mfe_struct': ss, 'mfe_kcal': round(mfe, 2), 'ddG': round(ddg, 2),
@@ -323,6 +383,9 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
             'ens_diversity': round(diversity, 2), 'd_ens': round(d_ens, 2),
             'contact_sum': round(csum, 3),
             'hbond_loss': round(hloss, 3), 'hbond_preserved': round(hfrac, 3),
+            'cons3_frac': round(cons3_frac, 3),
+            'proc_ok': bool(args.no_protect_processing
+                            or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)),
             'shape_cons': None,
             'passed': bool(ok), 'score': round(score, 4)}
 
@@ -522,6 +585,18 @@ def main():
     ap.add_argument('--w-ens', type=float, default=0.05)
     ap.add_argument('--w-hbond', type=float, default=0.5,
                     help='氢键互补损失权重(8D4A 极性接触, 几何不变碱基替换近似)')
+    ap.add_argument('--w-cons3', type=float, default=0.3,
+                    help="3'保守窗突变惩罚权重(Dmytrenko 2023 Fig.1c 跨家族 3' 端保守)")
+    ap.add_argument('--cons3-window', type=int, default=5,
+                    help="DR 3' 保守窗长度(nt)")
+    ap.add_argument('--proc-window', type=int, default=4,
+                    help='加工位点保护窗: DR 3\' 末端 window-1 nt + 交界后首位的配对状态须与 WT 一致')
+    ap.add_argument('--no-protect-processing', action='store_true',
+                    help='关闭加工位点保护过滤(Dmytrenko 2023 ED Fig.3 口径)')
+    ap.add_argument('--use-covariation', action='store_true',
+                    help='启用策略A4: 茎区共变枚举(保持配对的双侧补偿突变)')
+    ap.add_argument('--cov-double', type=int, default=150,
+                    help='策略A4 双对共变组合抽样数')
     ap.add_argument('--use-struct2seq', action='store_true',
                     help='启用策略A2: Struct2SeQ 逆折叠提案(子进程调 rnet 环境)')
     ap.add_argument('--s2s-python', default='/public/home/mengxl/dzy/envs/rnet/bin/python')
@@ -578,6 +653,9 @@ def main():
     if args.use_struct2seq:
         for seq in strategy_a2(dr, wt, args):
             _add(seq, 'S2S')
+    if args.use_covariation:
+        for seq in strategy_a4(dr, args, rng):
+            _add(seq, 'COV')
     if args.use_grnade:
         for seq in strategy_a3(dr, args):
             _add(seq, 'G3D')
@@ -597,6 +675,7 @@ def main():
               'spacer_unpaired': wt['spacer_mean_unpaired'],
               'ens_diversity': wt['ens_diversity'], 'd_ens': 0.0,
               'contact_sum': 0.0, 'hbond_loss': 0.0, 'hbond_preserved': 1.0,
+              'cons3_frac': 0.0, 'proc_ok': True,
               'shape_cons': None,
               'passed': True, 'score': 0.0, 'source': 'WT', 'rank': 0}
 
@@ -637,7 +716,9 @@ def main():
         'params': {k: getattr(args, k) for k in
                    ('strategy', 'n_double', 'sa_steps', 'seed', 'max_bp_dist',
                     'spacer_unpaired_margin', 'w_bp', 'w_ddg', 'w_contact', 'w_ens',
-                    'w_hbond', 'use_struct2seq', 's2s_up_bias', 'rnet_screen',
+                    'w_hbond', 'w_cons3', 'cons3_window', 'proc_window',
+                    'no_protect_processing', 'use_covariation', 'cov_double',
+                    'use_struct2seq', 's2s_up_bias', 'rnet_screen',
                     'rnet_screen_n', 'no_contacts', 'topk')},
         'n_variants': len(rows), 'n_passed': n_pass,
         'library_sha256': hashlib.sha256(
