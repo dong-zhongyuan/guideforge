@@ -1,4 +1,47 @@
 {
- "genes": {},
+ "genes": {
+  "TP53": {
+   "n_cell_lines": 1156,
+   "median": 21.06,
+   "p10_tpm": 2.89,
+   "p90_tpm": 48.37,
+   "targets": [
+    "R248Q",
+    "R273H"
+   ],
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+  },
+  "KRAS": {
+   "n_cell_lines": 1156,
+   "median": 4.42,
+   "p10_tpm": 2.46,
+   "p90_tpm": 9.41,
+   "targets": [
+    "G12C",
+    "G12D"
+   ],
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+  },
+  "APC": {
+   "n_cell_lines": 1156,
+   "median": 4.06,
+   "p10_tpm": 2.22,
+   "p90_tpm": 7.05,
+   "targets": [
+    "MCR-nonsense"
+   ],
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+  },
+  "MYC": {
+   "n_cell_lines": 1156,
+   "median": 44.9,
+   "p10_tpm": 9.05,
+   "p90_tpm": 154.07,
+   "targets": [
+    "g1"
+   ],
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+  }
+ },
  "note": "丰度分档供杀伤窗口计算; DepMap 全矩阵待校准期接入"
 }
