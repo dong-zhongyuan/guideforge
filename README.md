@@ -27,9 +27,12 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 |---|---|
 | 加工位点保护硬过滤 / DR 互换不误杀验证 | Dmytrenko et al. 2023, Nature 613:588-594 (ED Fig.2c Cas12a↔Cas12a2 DR 互换功能保持; ED Fig.3 加工切点在 Cas12a 下游 1nt)。位点敏感性×保守性相关验证**仅 score 口径方向一致(ρ=−0.33, p=0.17, n=19 功效低)**, tolerance 口径为零相关(ρ=−0.01)——引用时只可引 score 口径并说明样本量 |
 | 3'保守窗惩罚 | Dmytrenko et al. 2023, Fig.1c 跨家族 DR 3' 端保守/loop 可变(定性结论); **窗口大小 --cons3-window=5nt 为项目设定, 非文献出处**; 功能佐证: Zhang et al. 2025 (PMC11780881, DR 3' 端化学修饰可逆调控 Cas12a 活性——非序列突变, 佐证 3' 端敏感性) |
-| spacer 上下文分型的机制前提 | Bush et al. 2023, Cell Chem Biol 30:879-892 (WT 骨架与 spacer 共折叠消除 Stem 1; **SpCas9 体系证据, sgRNA 为 80nt 大骨架而 Cas12a2 DR 仅 19nt 单茎环, 迁移为待验假设**); 综述 De Saeger et al. 2025 (MDPI)。分型主张的直接证据为本仓库分型试验计算结果 |
+| spacer-DR 互扰 / spacer 游离度硬过滤 | **Creutzburg et al. 2020, NAR 48(6):3228-3243** (PMC7102956, 同家族直接证据): "base pairing of the direct repeat, other than with itself, was found to be detrimental"—DR 与 spacer 碱基配对损害 Cas12a 活性; Sp8 案例证实 spacer 侵占 DR 致假结破坏; 通过 spacer 尾部回折竞争性保护 DR 挽救活性(与本项目 spacer 游离度约束直接对应)。**Cas12a→Cas12a2 为同家族短迁移(DR 均含保守 5' 假结), 非跨体系假设** |
+| spacer 上下文分型的机制前提 | 同上(Creutzburg 2020, 同家族); 补充: Bush et al. 2023, Cell Chem Biol 30:879-892 (SpCas9 体系, sgRNA 80nt 大骨架, 跨体系佐证); Liao et al. 2018 (PMC6546362, FnCas12a DR 下游发卡抑制切割)。分型主张的直接证据为本仓库分型试验计算结果; Cas12a2 本体系暂无直接折叠互扰研究(待验) |
 | DR/骨架序列工程先例(Cas12a, 存在性证明) | Lin et al. 2018, Mol Ther; Han et al. 2025 (PMC12508434, DR 突变策略调编辑与检测) |
 | "按靶标分型选骨架" | **无先例(空白区)**: 本仓库分型试验提供了反对"单一通用骨架"的计算证据(型间最优位点图谱结构性不同); 功能收益待湿实验 |
+
+> 引用层级声明: 机制前提的证据链为 **Cas12a 同家族(Creutzburg 2020)→ Cas12a2(本体系, 暂无直接折叠研究)**, 而非跨体系的 SpCas9→Cas12a2; 硬过滤"结构保持/spacer 游离"两项由此获得同家族文献锚定而非纯启发式。
 
 ## 快速开始
 
@@ -94,6 +97,11 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
 - Cas12a2 结构: PDB 8D49/8D4A/8D4B (Bravo et al. 2023, Nature 613:582)
 - Cas12a2 功能/DR 互换/加工位点: Dmytrenko et al. 2023, Nature 613:588-594
 - 细胞实验 DR 与 R248Q spacer: Zeng et al. 2026, Nature (10.1038/s41586-026-10738-7) 补充材料
-- spacer-骨架共折叠互扰(SpCas9 体系机制前提): Bush et al. 2023, Cell Chem Biol 30:879-892 (PMC10529641)
+- spacer-DR 互扰(同家族直接证据): **Creutzburg et al. 2020, NAR 48(6):3228-3243** (PMC7102956)
+- spacer-骨架误折叠(SpCas9 体系, 跨体系佐证): Bush et al. 2023, Cell Chem Biol 30:879-892 (PMC10529641)
+- DR 下游结构敏感性: Liao et al. 2018 (PMC6546362)
 - Cas12a DR 序列工程先例: Lin et al. 2018, Mol Ther; Han et al. 2025 (PMC12508434); DR 3' 端敏感性(化学修饰): Zhang et al. 2025 (PMC11780881)
+- Cas12a DR 突变提活先例: Teng et al. 2019, Genome Biology (4n96 骨架, PMID 30717767)
+- crRNA 预折叠驱动 RNP 组装: Sudhakar et al. 2023 (PMC10200996; 因果方向: RNA 预折叠→诱导蛋白构象变化)
+- 结构工具链: Science 2026 (10.1126/science.aeg6829, Das lab, OpenKnot); gRNAde 权重: HuggingFace chaitjo/gRNAde
 - 结构工具链: Science 2026 (10.1126/science.aeg6829, Das lab, OpenKnot); gRNAde 权重: HuggingFace chaitjo/gRNAde
