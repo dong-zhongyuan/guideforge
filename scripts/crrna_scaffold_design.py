@@ -35,7 +35,7 @@
 打分（透明启发式，仅用于候选排序，不是活性预测；权重 CLI 可调）:
   score = -w_bp*bp_dist - w_ddg*max(ddG,0) - w_contact*contact_sum
           - w_ens*max(d_ens,0) + w_hbond*hbond_net - w_cons3*cons3_frac
-          + w_fold*dp_fold + w_seed*d_seed
+          + w_fold*dp_fold + w_seed*d_seed + w_stab*max(-ddG,0)
   其中 hbond_loss 为 8D4A 极性接触的碱基替换互补损失（几何不变近似）;
   hbond_net = hbond_gain - hbond_loss(有符号: 找回互补记正; gain 仅同名原子可算,
   新碱基独有极性原子无 WT 坐标, 系统性低估);
@@ -46,6 +46,11 @@
   依据 Bravo 2023: 3' 端 7 碱基有序溶剂暴露为靶 RNA 结合种子; Liao 2018: DR
   下游结构缠住 spacer 抑制切割——游离态口径: 预测降低溶液态自缠结/加速种子暴露,
   非结合态活性保证);
+  w_stab*max(-ddG,0) 为茎稳定化奖赏(共变强化轨道: 变体比 WT 更稳给正分;
+  依据 Sudhakar 2023(修正后因果: 预折叠 crRNA 诱导蛋白构象变化驱动组装)的
+  组装/均一性方向 + Teng 2019 4n96 存在性先例; 无"更稳->活性更高"直接实验证据,
+  表述限定在组装效率/折叠均一性, 不写提高活性; 权重与 w_cons3 对称, 解决
+  "纯罚分制下增强候选被保守窗+接触双重压制浮不出"的结构性问题);
   cons3_frac 为落在 DR 3' 保守窗的突变位点比例(Dmytrenko 2023 Fig.1c: 跨家族 3' 端
   高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
   文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
@@ -440,7 +445,8 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     score = (-args.w_bp * bp_dist - args.w_ddg * max(ddg, 0.0)
              - args.w_contact * csum - args.w_ens * max(d_ens, 0.0)
              + args.w_hbond * hnet - args.w_cons3 * cons3_frac
-             + args.w_fold * dp_fold + args.w_seed * d_seed)
+             + args.w_fold * dp_fold + args.w_seed * d_seed
+             + args.w_stab * max(-ddg, 0.0))
     return {'desc': desc, 'mut_positions': mut_pos, 'n_mut': len(mut_pos),
             'dr_seq': to_dna(seq), 'construct_dna': to_dna(full),
             'mfe_struct': ss, 'mfe_kcal': round(mfe, 2), 'ddG': round(ddg, 2),
@@ -662,6 +668,8 @@ def main():
                          "极端多点变体套利(砸烂 DR→spacer 解放), 须与硬过滤耦合使用")
     ap.add_argument('--seed-len', type=int, default=7,
                     help="种子区长度 nt(Bravo 2023: 3' 端 7 碱基有序溶剂暴露)")
+    ap.add_argument('--w-stab', type=float, default=0.3,
+                    help='茎稳定化奖赏权重(max(-ddG,0) 正分; 组装/均一性口径, 非活性直证; 置 0 回到纯罚分制)')
     ap.add_argument('--w-cons3', type=float, default=0.3,
                     help="3'保守窗突变惩罚权重(Dmytrenko 2023 Fig.1c 跨家族 3' 端保守)")
     ap.add_argument('--cons3-window', type=int, default=5,
@@ -806,7 +814,7 @@ def main():
         'params': {k: getattr(args, k) for k in
                    ('strategy', 'n_double', 'sa_steps', 'seed', 'max_bp_dist',
                     'spacer_unpaired_margin', 'w_bp', 'w_ddg', 'w_contact', 'w_ens',
-                    'w_hbond', 'w_fold', 'w_seed', 'seed_len', 'w_cons3', 'cons3_window', 'proc_window',
+                    'w_hbond', 'w_fold', 'w_seed', 'seed_len', 'w_stab', 'w_cons3', 'cons3_window', 'proc_window',
                     'no_protect_processing', 'use_covariation', 'cov_double',
                     'use_struct2seq', 's2s_up_bias', 'rnet_screen',
                     'rnet_screen_n', 'no_contacts', 'topk')},
