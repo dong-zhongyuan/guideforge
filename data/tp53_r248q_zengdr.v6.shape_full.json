@@ -1,0 +1,78 @@
+{
+ "wt_struct": "....(((((....))))).((((.(((.......))).)))).",
+ "entries": [
+  {
+   "id": "0_WT",
+   "shape_cons": 79.1
+  },
+  {
+   "id": "1_A1C",
+   "shape_cons": 79.1
+  },
+  {
+   "id": "2_A1U",
+   "shape_cons": 79.1
+  },
+  {
+   "id": "3_A1G",
+   "shape_cons": 79.1
+  },
+  {
+   "id": "4_A8G_U15C",
+   "shape_cons": 79.1
+  },
+  {
+   "id": "5_U7C_A16G",
+   "shape_cons": 74.4
+  },
+  {
+   "id": "6_A1U_U3A",
+   "shape_cons": 79.1
+  },
+  {
+   "id": "7_U3A",
+   "shape_cons": 81.4
+  },
+  {
+   "id": "8_A1C_U3A",
+   "shape_cons": 74.4
+  },
+  {
+   "id": "9_A1U_U3G",
+   "shape_cons": 69.8
+  },
+  {
+   "id": "10_U3G",
+   "shape_cons": 72.1
+  },
+  {
+   "id": "11_A1C_U3G",
+   "shape_cons": 67.4
+  },
+  {
+   "id": "12_A1U_U3C",
+   "shape_cons": 69.8
+  }
+ ],
+ "tiers": {
+  "pass": [
+   "0_WT",
+   "1_A1C",
+   "2_A1U",
+   "3_A1G",
+   "4_A8G_U15C",
+   "5_U7C_A16G",
+   "6_A1U_U3A",
+   "7_U3A",
+   "8_A1C_U3A",
+   "9_A1U_U3G",
+   "10_U3G",
+   "12_A1U_U3C"
+  ],
+  "concern": [
+   "11_A1C_U3G"
+  ]
+ },
+ "wt_shape_cons": 79.1,
+ "note": "v6 top(WT+passed top12) SHAPE; tier: >= WT-10 pass"
+}

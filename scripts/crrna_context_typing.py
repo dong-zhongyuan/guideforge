@@ -41,7 +41,7 @@ def spacer_features(dr, name, seq):
     """单条 spacer 的上下文特征向量(5 维)。"""
     full = dr + seq
     ss_full, _ = core.fold(full)
-    _, spacer_up = core.pf_stats(full, len(dr))
+    _, spacer_up, _seed = core.pf_stats(full, len(dr))
     _, self_mfe = core.fold(seq)
     n = len(full)
     stack, pairs = [], []

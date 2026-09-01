@@ -1,0 +1,141 @@
+{
+ "rows": [
+  {
+   "pos": 1,
+   "cons_class": 0,
+   "n_rows": 157,
+   "tolerance": 0.5668789808917197,
+   "mean_score": -2.4694203821656053
+  },
+  {
+   "pos": 2,
+   "cons_class": 0,
+   "n_rows": 54,
+   "tolerance": 0.5555555555555556,
+   "mean_score": -2.428970370370371
+  },
+  {
+   "pos": 3,
+   "cons_class": 0,
+   "n_rows": 116,
+   "tolerance": 0.6120689655172413,
+   "mean_score": -2.695112931034483
+  },
+  {
+   "pos": 4,
+   "cons_class": 0,
+   "n_rows": 42,
+   "tolerance": 0.16666666666666666,
+   "mean_score": -3.0848238095238094
+  },
+  {
+   "pos": 5,
+   "cons_class": 1,
+   "n_rows": 29,
+   "tolerance": 0.27586206896551724,
+   "mean_score": -2.976110344827586
+  },
+  {
+   "pos": 6,
+   "cons_class": 1,
+   "n_rows": 40,
+   "tolerance": 0.175,
+   "mean_score": -3.2159225
+  },
+  {
+   "pos": 7,
+   "cons_class": 1,
+   "n_rows": 24,
+   "tolerance": 0.4583333333333333,
+   "mean_score": -4.066566666666667
+  },
+  {
+   "pos": 8,
+   "cons_class": 1,
+   "n_rows": 45,
+   "tolerance": 0.37777777777777777,
+   "mean_score": -4.48126
+  },
+  {
+   "pos": 9,
+   "cons_class": 1,
+   "n_rows": 26,
+   "tolerance": 0.5769230769230769,
+   "mean_score": -3.1128115384615382
+  },
+  {
+   "pos": 10,
+   "cons_class": 0,
+   "n_rows": 42,
+   "tolerance": 0.6666666666666666,
+   "mean_score": -2.5662404761904765
+  },
+  {
+   "pos": 11,
+   "cons_class": 0,
+   "n_rows": 47,
+   "tolerance": 0.5319148936170213,
+   "mean_score": -1.929544680851064
+  },
+  {
+   "pos": 12,
+   "cons_class": 0,
+   "n_rows": 38,
+   "tolerance": 0.6052631578947368,
+   "mean_score": -2.7436131578947367
+  },
+  {
+   "pos": 13,
+   "cons_class": 0,
+   "n_rows": 37,
+   "tolerance": 0.5405405405405406,
+   "mean_score": -3.40704054054054
+  },
+  {
+   "pos": 14,
+   "cons_class": 1,
+   "n_rows": 43,
+   "tolerance": 0.4418604651162791,
+   "mean_score": -3.74360465116279
+  },
+  {
+   "pos": 15,
+   "cons_class": 2,
+   "n_rows": 35,
+   "tolerance": 0.3142857142857143,
+   "mean_score": -4.448854285714286
+  },
+  {
+   "pos": 16,
+   "cons_class": 2,
+   "n_rows": 45,
+   "tolerance": 0.4444444444444444,
+   "mean_score": -3.765082222222222
+  },
+  {
+   "pos": 17,
+   "cons_class": 2,
+   "n_rows": 35,
+   "tolerance": 0.14285714285714285,
+   "mean_score": -3.889602857142857
+  },
+  {
+   "pos": 18,
+   "cons_class": 2,
+   "n_rows": 46,
+   "tolerance": 0.30434782608695654,
+   "mean_score": -4.503073913043479
+  },
+  {
+   "pos": 19,
+   "cons_class": 2,
+   "n_rows": 70,
+   "tolerance": 0.11428571428571428,
+   "mean_score": -3.2901571428571423
+  }
+ ],
+ "spearman_cons_vs_tolerance": -0.6000000000000001,
+ "spearman_cons_vs_meanscore": -0.6824561403508772,
+ "perm_p": 0.002049897505124744,
+ "note": "检验B 扩展: 全突变聚合(含多点, 每位点样本量 40-80 条), 替代仅单点(n=3/位点)"
+}

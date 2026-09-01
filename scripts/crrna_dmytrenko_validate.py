@@ -45,7 +45,7 @@ def check_dr_swap(spacer_dna, effector_wt, effector_swap, margin=0.10):
     wt = core.wt_reference(dr_wt, spacer)
 
     ss_sw, mfe_sw = core.fold(dr_sw + spacer)
-    _, spacer_up_sw = core.pf_stats(dr_sw + spacer, len(dr_sw))
+    _, spacer_up_sw, _seed = core.pf_stats(dr_sw + spacer, len(dr_sw))
     ss_dr_sw, dr_mfe_sw = core.fold(dr_sw)
 
     pairs_wt = sum(1 for c in wt['dr_only_struct'] if c in '()')
