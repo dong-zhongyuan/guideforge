@@ -1,0 +1,119 @@
+{
+ "alignment": [
+  {
+   "name": "SuCas12a2_8D4A",
+   "full": "ATTTCTACTATTGTAGAT",
+   "core_start_in_full": 1,
+   "core": "TTTCTACTATTGTAGA",
+   "provenance": "注册表 cas12a2"
+  },
+  {
+   "name": "Cas12a2_zeng2026",
+   "full": "AATTTCTACTGTTGTAGAT",
+   "core_start_in_full": 2,
+   "core": "TTTCTACTGTTGTAGA",
+   "provenance": "注册表 cas12a2_zeng2026"
+  },
+  {
+   "name": "FnCas12a_Creutzburg2020",
+   "full": "AATTTCTACTGTTGTAGA",
+   "core_start_in_full": 2,
+   "core": "TTTCTACTGTTGTAGA",
+   "provenance": "creutzburg_2020_dataset"
+  },
+  {
+   "name": "LbCas12a_Teng2019",
+   "full": "AATTTCTACTATTGTAGAT",
+   "core_start_in_full": 2,
+   "core": "TTTCTACTATTGTAGA",
+   "provenance": "teng4n96 脚本(crRNA1)"
+  }
+ ],
+ "conservation": [
+  {
+   "pos_1based": 1,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 2,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 3,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 4,
+   "consensus": "C",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 5,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 6,
+   "consensus": "A",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 7,
+   "consensus": "C",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 8,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 9,
+   "consensus": "G",
+   "identity": 0.5
+  },
+  {
+   "pos_1based": 10,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 11,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 12,
+   "consensus": "G",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 13,
+   "consensus": "T",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 14,
+   "consensus": "A",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 15,
+   "consensus": "G",
+   "identity": 1.0
+  },
+  {
+   "pos_1based": 16,
+   "consensus": "A",
+   "identity": 1.0
+  }
+ ],
+ "n_sequences": 4,
+ "method": "TTTCTACT/GTAGAT 锚定对齐(mafft 不可用; DR 高度同源)",
+ "limitation": "n=4 小样本定量, 仅为 cons3 窗的仓库内定量佐证, 不替代 Dmytrenko 2023 Fig1c 跨家族结论",
+ "cons3_window_5nt_mean_identity": 1.0,
+ "rest_mean_identity": 0.955
+}
