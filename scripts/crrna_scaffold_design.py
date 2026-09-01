@@ -435,6 +435,8 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     p_fold = stem_intact_prob(full, stem_pairs_of(wt['dr_only_struct']))
     dp_fold = p_fold - wt['p_fold']
     d_seed = seed_up - wt['seed_unpaired']
+    dr_ss, dr_mfe = fold(seq)
+    ddg_dr = dr_mfe - wt['dr_only_mfe_kcal']  # DR 单独折叠 ΔΔG(茎稳定化语义更干净的口径)
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
           and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
@@ -442,14 +444,16 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
                or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)))
     cons3_n = sum(1 for p in mut_pos if p > len(dr) - args.cons3_window)
     cons3_frac = cons3_n / max(args.cons3_window, 1)
+    stab_dd = ddg_dr if args.stab_dr_only else ddg
     score = (-args.w_bp * bp_dist - args.w_ddg * max(ddg, 0.0)
              - args.w_contact * csum - args.w_ens * max(d_ens, 0.0)
              + args.w_hbond * hnet - args.w_cons3 * cons3_frac
              + args.w_fold * dp_fold + args.w_seed * d_seed
-             + args.w_stab * max(-ddg, 0.0))
+             + args.w_stab * max(-stab_dd, 0.0))
     return {'desc': desc, 'mut_positions': mut_pos, 'n_mut': len(mut_pos),
             'dr_seq': to_dna(seq), 'construct_dna': to_dna(full),
             'mfe_struct': ss, 'mfe_kcal': round(mfe, 2), 'ddG': round(ddg, 2),
+            'dr_only_mfe_kcal': round(dr_mfe, 2), 'ddG_dr': round(ddg_dr, 2),
             'bp_dist': bp_dist, 'spacer_unpaired': round(spacer_up, 3),
             'ens_diversity': round(diversity, 2), 'd_ens': round(d_ens, 2),
             'contact_sum': round(csum, 3),
@@ -460,8 +464,43 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
             'cons3_frac': round(cons3_frac, 3),
             'proc_ok': bool(args.no_protect_processing
                             or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)),
+            'pareto': None, 'advantage': None,
             'shape_cons': None,
             'passed': bool(ok), 'score': round(score, 4)}
+
+
+def pareto_flag(rows):
+    """Pareto 最优标记(通过硬过滤的变体)。目标: DR 稳定(-ddG_dr)↑, spacer 游离↑,
+    结构距离↓, 接触+氢键损失↓。总分排序会埋没"单维占优但有代价"的权衡型候选,
+    Pareto 前沿保证它们在产出中可见(每条都有不可替代的优势维度)。"""
+    passed = [r for r in rows if r['passed']]
+    if not passed:
+        return
+    obj = np.array([[-r['ddG_dr'], r['spacer_unpaired'],
+                     -r['bp_dist'], -(r['contact_sum'] + r['hbond_loss'])]
+                    for r in passed])
+    for k, r in enumerate(passed):
+        dominated = np.any(np.all(obj >= obj[k], axis=1)
+                           & np.any(obj > obj[k], axis=1))
+        r['pareto'] = bool(not dominated)
+
+
+def advantage_str(r, wt, seed_len=7):
+    """候选优势论述(自动注释): 只陈述有文献/机制依据的定向改进与保持项。"""
+    adv = []
+    if r['d_seed'] > 0.02:
+        adv.append(f"种子区(3'端{seed_len}nt)游离度 {wt['seed_unpaired']:.2f}→{r['seed_up']:.2f}")
+    if r['spacer_unpaired'] - wt['spacer_mean_unpaired'] > 0.02:
+        adv.append(f"spacer 游离度 {wt['spacer_mean_unpaired']:.2f}→{r['spacer_unpaired']:.2f}")
+    if r['ddG_dr'] < -0.1:
+        adv.append(f"DR 茎稳定化 {r['ddG_dr']:+.1f} kcal/mol")
+    if r['dp_fold'] > 0.01:
+        adv.append(f"茎完整概率 {r['dp_fold']:+.2f}")
+    if r['hbond_net'] > 0:
+        adv.append(f"氢键净找回 +{r['hbond_net']:.0f}")
+    if r['bp_dist'] == 0 and r['hbond_loss'] == 0.0:
+        adv.append("结构与蛋白极性接触保持")
+    return '; '.join(adv) if adv else '与 WT 无显著差异'
 
 
 def strategy_a(dr, args, rng):
@@ -694,6 +733,8 @@ def main():
                     help='启用策略A3: gRNAde 三维几何逆折叠提案(仅 PDB 结构口径 DR 可用)')
     ap.add_argument('--grnade-batches', type=int, default=4, help='gRNAde 采样批数(每批 64)')
     ap.add_argument('--no-contacts', action='store_true', help='关闭蛋白接触项(不推荐)')
+    ap.add_argument('--stab-dr-only', action='store_true',
+                    help='w_stab 改用 DR 单独折叠 ddG_dr(茎稳定化语义更干净; 默认否, 保持 v1.4 全长口径)')
     ap.add_argument('--out-prefix', default='crrna_scaffold_run')
     args = ap.parse_args()
 
@@ -750,13 +791,17 @@ def main():
         row = score_variant(dr, seq, wt, spacer, args, contact, stem_pos)
         row['source'] = '+'.join(sorted(source[seq]))
         rows.append(row)
+    pareto_flag(rows)
+    for row in rows:
+        row['advantage'] = advantage_str(row, wt, args.seed_len)
     rows.sort(key=lambda r: (not r['passed'], -r['score']))
     for rank, row in enumerate(rows, 1):
         row['rank'] = rank
 
     wt_row = {'desc': 'WT', 'mut_positions': [], 'n_mut': 0, 'dr_seq': to_dna(dr),
               'construct_dna': to_dna(dr + spacer), 'mfe_struct': wt['mfe_struct'],
-              'mfe_kcal': wt['mfe_kcal'], 'ddG': 0.0, 'bp_dist': 0,
+              'mfe_kcal': wt['mfe_kcal'], 'ddG': 0.0,
+              'dr_only_mfe_kcal': wt['dr_only_mfe_kcal'], 'ddG_dr': 0.0, 'bp_dist': 0,
               'spacer_unpaired': wt['spacer_mean_unpaired'],
               'ens_diversity': wt['ens_diversity'], 'd_ens': 0.0,
               'contact_sum': 0.0, 'hbond_loss': 0.0, 'hbond_preserved': 1.0,
@@ -764,11 +809,14 @@ def main():
               'p_fold': round(wt['p_fold'], 5), 'dp_fold': 0.0,
               'seed_up': wt['seed_unpaired'], 'd_seed': 0.0,
               'cons3_frac': 0.0, 'proc_ok': True,
+              'pareto': None, 'advantage': '参考株',
               'shape_cons': None,
               'passed': True, 'score': 0.0, 'source': 'WT', 'rank': 0}
 
     n_pass = sum(r['passed'] for r in rows)
-    print(f"\n=== 候选库 ===  生成 {len(rows)} 条唯一变体, 通过硬过滤 {n_pass} 条")
+    n_pareto = sum(1 for r in rows if r['pareto'])
+    print(f"\n=== 候选库 ===  生成 {len(rows)} 条唯一变体, 通过硬过滤 {n_pass} 条, "
+          f"Pareto 最优 {n_pareto} 条")
 
     # 正向项区分力闸门: 非零比例 <5% 即声明该指标在本库无区分力(防虚假精度)
     for name, key, thresh in (('dp_fold', 'dp_fold', 0.01), ('hbond_gain', 'hbond_gain', 0.5),
@@ -817,8 +865,8 @@ def main():
                     'w_hbond', 'w_fold', 'w_seed', 'seed_len', 'w_stab', 'w_cons3', 'cons3_window', 'proc_window',
                     'no_protect_processing', 'use_covariation', 'cov_double',
                     'use_struct2seq', 's2s_up_bias', 'rnet_screen',
-                    'rnet_screen_n', 'no_contacts', 'topk')},
-        'n_variants': len(rows), 'n_passed': n_pass,
+                    'rnet_screen_n', 'no_contacts', 'stab_dr_only', 'topk')},
+        'n_variants': len(rows), 'n_passed': n_pass, 'n_pareto': n_pareto,
         'library_sha256': hashlib.sha256(
             json.dumps([r['dr_seq'] for r in rows], sort_keys=True).encode()).hexdigest(),
         'top': top,

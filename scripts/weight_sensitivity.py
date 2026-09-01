@@ -21,21 +21,25 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-WEIGHTS = ['w_seed', 'w_free', 'w_stab', 'w_bp', 'w_ddg', 'w_contact', 'w_ens', 'w_hbond']
-DEFAULTS = dict(w_seed=1.0, w_free=0.5, w_stab=0.1, w_bp=0.3,
-                w_ddg=0.1, w_contact=1.0, w_ens=0.05, w_hbond=0.5)
+WEIGHTS = ['w_seed', 'w_fold', 'w_stab', 'w_bp', 'w_ddg',
+           'w_contact', 'w_ens', 'w_hbond', 'w_cons3']
+DEFAULTS = dict(w_seed=0.0, w_fold=0.2, w_stab=0.3, w_bp=0.3,
+                w_ddg=0.1, w_contact=1.0, w_ens=0.05, w_hbond=0.5, w_cons3=0.3)
+# w_seed 默认关闭(与 spacer_up 共线 0.835 超预注册线, 见主管线帮助); 灵敏度分析中
+# 按 [0, 0.4] 均匀采样检验其潜在影响, 其余权重在默认值 ±range 内拉丁超立方采样
 
 
-def rescore(r, w, wt_spacer_up):
-    """由 variants.csv 的存储指标重构 score_v2（与 crrna_directed_design.score_v2 同式）。"""
+def rescore(r, w):
+    """由 variants.csv 的存储指标重构主线 v1.4 score（与 score_variant 同式）。"""
     return (w['w_seed'] * float(r['d_seed'])
-            + w['w_free'] * (float(r['spacer_unpaired']) - wt_spacer_up)
-            + w['w_stab'] * max(-float(r['ddG_dr']), 0.0)
+            + w['w_fold'] * float(r['dp_fold'])
+            + w['w_stab'] * max(-float(r['ddG']), 0.0)
             - w['w_bp'] * float(r['bp_dist'])
             - w['w_ddg'] * max(float(r['ddG']), 0.0)
             - w['w_contact'] * float(r['contact_sum'])
             - w['w_ens'] * max(float(r['d_ens']), 0.0)
-            - w['w_hbond'] * float(r['hbond_loss']))
+            + w['w_hbond'] * float(r['hbond_net'])
+            - w['w_cons3'] * float(r['cons3_frac']))
 
 
 def lhs(n, dim, rng, lo=0.5, hi=1.5):
@@ -68,24 +72,25 @@ def main():
     args = ap.parse_args()
 
     rows = list(csv.DictReader(open(args.run_prefix + '.variants.csv', encoding='utf-8')))
-    wt, variants = rows[0], rows[1:]
-    wt_spacer_up = float(wt['spacer_unpaired'])
+    variants = rows[1:]
     passed = [r for r in variants if r['passed'] == 'True']
     print(f"通过硬过滤变体 {len(passed)} 条, 采样 {args.n_samples} 组权重 "
-          f"(±{int(args.range * 100)}% 拉丁超立方)")
+          f"(非零默认 ±{int(args.range * 100)}% 拉丁超立方; w_seed 默认0按[0,0.4]采样)")
 
     rng = np.random.default_rng(args.seed)
     base_w = np.array([DEFAULTS[k] for k in WEIGHTS])
     samples = lhs(args.n_samples, len(WEIGHTS), rng,
                   lo=1 - args.range, hi=1 + args.range) * base_w
+    seed_idx = WEIGHTS.index('w_seed')
+    samples[:, seed_idx] = rng.random(args.n_samples) * 0.4  # 默认0的权重: 加性采样
 
-    base_scores = np.array([rescore(r, DEFAULTS, wt_spacer_up) for r in passed])
+    base_scores = np.array([rescore(r, DEFAULTS) for r in passed])
     base_top = set(np.argsort(-base_scores)[:args.topk].tolist())
     in_count = np.zeros(len(passed))
     rhos = []
     for s in samples:
         w = dict(zip(WEIGHTS, s))
-        sc = np.array([rescore(r, w, wt_spacer_up) for r in passed])
+        sc = np.array([rescore(r, w) for r in passed])
         top = set(np.argsort(-sc)[:args.topk].tolist())
         for k in top:
             in_count[k] += 1

@@ -1,0 +1,118 @@
+{
+ "method": "拉丁超立方 256 组, 默认权重 ±50%",
+ "weights": {
+  "w_seed": 0.0,
+  "w_fold": 0.2,
+  "w_stab": 0.3,
+  "w_bp": 0.3,
+  "w_ddg": 0.1,
+  "w_contact": 1.0,
+  "w_ens": 0.05,
+  "w_hbond": 0.5,
+  "w_cons3": 0.3
+ },
+ "topk": 12,
+ "spearman_median": 0.982,
+ "spearman_min": 0.933,
+ "robust_frac_threshold": 0.8,
+ "robust_core": [
+  {
+   "desc": "A1C",
+   "dr_seq": "CATTTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.0001
+  },
+  {
+   "desc": "A1U",
+   "dr_seq": "TATTTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.0001
+  },
+  {
+   "desc": "A1G",
+   "dr_seq": "GATTTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.0118
+  },
+  {
+   "desc": "A1U+U3A",
+   "dr_seq": "TAATTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.548
+  },
+  {
+   "desc": "U3A",
+   "dr_seq": "AAATTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.5489
+  },
+  {
+   "desc": "A1C+U3A",
+   "dr_seq": "CAATTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.5502
+  },
+  {
+   "desc": "A1U+U3G",
+   "dr_seq": "TAGTTCTACTGTTGTAGAT",
+   "freq": 1.0,
+   "base_score": -0.553
+  },
+  {
+   "desc": "U3G",
+   "dr_seq": "AAGTTCTACTGTTGTAGAT",
+   "freq": 0.996,
+   "base_score": -0.5546
+  }
+ ],
+ "topk_stability": [
+  {
+   "desc": "A1U",
+   "freq": 1.0
+  },
+  {
+   "desc": "A1C",
+   "freq": 1.0
+  },
+  {
+   "desc": "A1G",
+   "freq": 1.0
+  },
+  {
+   "desc": "A8G+U15C",
+   "freq": 0.711
+  },
+  {
+   "desc": "U7C+A16G",
+   "freq": 0.652
+  },
+  {
+   "desc": "A1U+U3A",
+   "freq": 1.0
+  },
+  {
+   "desc": "U3A",
+   "freq": 1.0
+  },
+  {
+   "desc": "A1C+U3A",
+   "freq": 1.0
+  },
+  {
+   "desc": "A1U+U3G",
+   "freq": 1.0
+  },
+  {
+   "desc": "U3G",
+   "freq": 0.996
+  },
+  {
+   "desc": "A1C+U3G",
+   "freq": 0.695
+  },
+  {
+   "desc": "A1U+U3C",
+   "freq": 0.531
+  }
+ ]
+}
