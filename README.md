@@ -28,6 +28,10 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 - **v1.7 结构置换口径过滤**: `inv_max_run`(最长连续 DR-spacer 侵占螺旋) <= 同上下文 WT(t1 型 WT 自身 6 对连续侵占故禁用固定阈值) + `partner_switch` 标注(t1 诊断: A8G 类 DDR-alone 稳定化突变在型1 口径强化的恰是侵占螺旋) + `ddG_dr` 语义更名 "DR 单独折叠稳定化(DDR-alone 口径)" + top.json 增加 `model_domain` 声明(伪结外: 仅侵占筛查+同 spacer 相对排序)。
 - **补偿突变实验面板**(`scripts/crrna_compensatory_design.py` -> `data/ivt_compensatory_panel.*`): MYCg1 三臂 C_WT(inv_run=6)/A_break(0, GC 不变, 靶向配对保持)/B_break_compensate(6 恢复), 各配同源靶——A vs B 活性差 = 折叠竞争的因果检验, 寡核苷酸级成本。
 
+### DP09 假结能量模型竞争检验(Knotty, 2026-09-01)
+
+`scripts/crrna_pk_competition.py`(容器侧 `crrna_pk_runner.py` + Knotty 官方源码编译, CCJ+DP09): 14 条 Creutzburg 前体/成熟两口径 + GuideForge pdbdr WT/TOP3 的含假结 MFE。**判别检验 FAIL(三模型独立一致)**: DP09 能量面上 Sp8 折为"活性样"(干净 6 对茎[寄存器与 ViennaRNA 滑移 2 位——跨模型模板精确匹配无效的实测教训, 分类已改寄存器无关]+spacer 自发夹), 而高活性 guide(Sp2/Sp4/Sp7/Sp9/Sp12)反呈 DR-spacer 交叉+多重假结(方向与论文机制相反)。至此 ViennaRNA 约束配分 / bpp 阈值(ThreshKnot) / DP09 假结 MFE 三条独立路线均不能复现论文的 Sp8 失活态——**Creutzburg 侧 Sp8 out_of_model_domain 判定升级为三模型证据的最终口径**; 仅剩路径 = NUPACK 3.2.2 pfunc -pseudo 约束配分(需注册, 站点可达)。本体系(Cas12a2)不受影响: Knotty 对 GuideForge WT 预测与 ViennaRNA/8D4A 一致(无假结)。
+
 ### 结合态活性模板提取(8D4A, 2026-09-01)
 
 `scripts/crrna_active_template.py` -> `data/cas12a2_active_template.json`: 8D4A 链 B(成熟 crRNA, DR18+spacer23) 三维几何判据(N1-N3<4.0A + C1-C1<12.5A)提取——**结合态活性模板无假结**: DR 区仅 5 对标准茎(1基 4-17/5-16/6-15/7-14/8-13) + 3 个近距摆动接触, DR-spacer 交界零配对。含义: Cas12a2 成熟 crRNA 的活性态在 ViennaRNA 伪结外空间内完整可表示(茎即为活性模板), **假结模型缺口只存在于 Creutzburg/FnCas12a 前体回验侧**(其失活态涉及前体 5prime repeat 侧翼, 论文自述活性态含 canonical pseudoknot)。两体系的模型域边界因此不同, 引用时须分开陈述。

@@ -1,0 +1,739 @@
+{
+ "engine": "Knotty (CCJ + DP09), 容器 ~/dzy/tools/Knotty-master 官方源码编译",
+ "energy_scale": "DP09 单标尺; 仅 MFE 级, 无约束配分(与 pfunc -pseudo 的差距如实声明)",
+ "creutzburg_rows": [
+  {
+   "name": "Sp1",
+   "context": "pre",
+   "activity": 71,
+   "energy_dp09": -5.7,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "..........((((((....)))))).....((....))........"
+  },
+  {
+   "name": "Sp1",
+   "context": "mature",
+   "activity": 71,
+   "energy_dp09": -5.7,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "...((((((....)))))).....((....))........"
+  },
+  {
+   "name": "Sp2",
+   "context": "pre",
+   "activity": 73,
+   "energy_dp09": -3.85,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     9,
+     26
+    ],
+    [
+     10,
+     25
+    ],
+    [
+     16,
+     41
+    ],
+    [
+     17,
+     40
+    ],
+    [
+     18,
+     39
+    ],
+    [
+     19,
+     38
+    ]
+   ],
+   "n_dr_cross": 6,
+   "is_pk": true,
+   "db_pk": ".........[[[[[[[((((]]]]]]]...........))))...."
+  },
+  {
+   "name": "Sp2",
+   "context": "mature",
+   "activity": 73,
+   "energy_dp09": -3.85,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     2,
+     19
+    ],
+    [
+     3,
+     18
+    ],
+    [
+     9,
+     34
+    ],
+    [
+     10,
+     33
+    ],
+    [
+     11,
+     32
+    ],
+    [
+     12,
+     31
+    ]
+   ],
+   "n_dr_cross": 6,
+   "is_pk": true,
+   "db_pk": "..[[[[[[[((((]]]]]]]...........))))...."
+  },
+  {
+   "name": "Sp3",
+   "context": "pre",
+   "activity": 69,
+   "energy_dp09": -4.76,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     7,
+     28
+    ],
+    [
+     9,
+     26
+    ],
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 3,
+   "is_pk": false,
+   "db_pk": "....((((.(((((((....))))))).)))).............."
+  },
+  {
+   "name": "Sp3",
+   "context": "mature",
+   "activity": 69,
+   "energy_dp09": -3.85,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     2,
+     19
+    ],
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 2,
+   "is_pk": false,
+   "db_pk": "..(((((((....)))))))..................."
+  },
+  {
+   "name": "Sp4",
+   "context": "pre",
+   "activity": 72,
+   "energy_dp09": -6.44,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     9,
+     26
+    ],
+    [
+     10,
+     25
+    ],
+    [
+     16,
+     30
+    ],
+    [
+     17,
+     29
+    ],
+    [
+     18,
+     28
+    ]
+   ],
+   "n_dr_cross": 5,
+   "is_pk": true,
+   "db_pk": ".........((((((([[[.))))))).]]][[[((((.]]]))))"
+  },
+  {
+   "name": "Sp4",
+   "context": "mature",
+   "activity": 72,
+   "energy_dp09": -6.44,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     2,
+     19
+    ],
+    [
+     3,
+     18
+    ],
+    [
+     9,
+     23
+    ],
+    [
+     10,
+     22
+    ],
+    [
+     11,
+     21
+    ]
+   ],
+   "n_dr_cross": 5,
+   "is_pk": true,
+   "db_pk": "..((((((([[[.))))))).]]][[[((((.]]]))))"
+  },
+  {
+   "name": "Sp5",
+   "context": "pre",
+   "activity": 75,
+   "energy_dp09": -6.04,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": true,
+   "db_pk": "..........((((((....)))))).[[[[((((.]]]]..))))"
+  },
+  {
+   "name": "Sp5",
+   "context": "mature",
+   "activity": 75,
+   "energy_dp09": -6.04,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": true,
+   "db_pk": "...((((((....)))))).[[[[((((.]]]]..))))"
+  },
+  {
+   "name": "Sp6",
+   "context": "pre",
+   "activity": 78,
+   "energy_dp09": -4.23,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     9,
+     26
+    ],
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 2,
+   "is_pk": false,
+   "db_pk": ".........(((((((....)))))))..................."
+  },
+  {
+   "name": "Sp6",
+   "context": "mature",
+   "activity": 78,
+   "energy_dp09": -4.23,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     2,
+     19
+    ],
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 2,
+   "is_pk": false,
+   "db_pk": "..(((((((....)))))))..................."
+  },
+  {
+   "name": "Sp7",
+   "context": "pre",
+   "activity": 62,
+   "energy_dp09": -5.04,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ],
+    [
+     16,
+     38
+    ],
+    [
+     17,
+     37
+    ],
+    [
+     18,
+     36
+    ],
+    [
+     19,
+     35
+    ]
+   ],
+   "n_dr_cross": 5,
+   "is_pk": true,
+   "db_pk": "..........[[[[[[((((]]]]]].[[[.....))))..]]].."
+  },
+  {
+   "name": "Sp7",
+   "context": "mature",
+   "activity": 62,
+   "energy_dp09": -5.04,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ],
+    [
+     9,
+     31
+    ],
+    [
+     10,
+     30
+    ],
+    [
+     11,
+     29
+    ],
+    [
+     12,
+     28
+    ]
+   ],
+   "n_dr_cross": 5,
+   "is_pk": true,
+   "db_pk": "...[[[[[[((((]]]]]].[[[.....))))..]]].."
+  },
+  {
+   "name": "Sp8",
+   "context": "pre",
+   "activity": 0,
+   "energy_dp09": -4.13,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "..........((((((....)))))).((((...........))))"
+  },
+  {
+   "name": "Sp8",
+   "context": "mature",
+   "activity": 0,
+   "energy_dp09": -4.13,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "...((((((....)))))).((((...........))))"
+  },
+  {
+   "name": "Sp9",
+   "context": "pre",
+   "activity": 83,
+   "energy_dp09": -4.91,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     7,
+     28
+    ],
+    [
+     9,
+     26
+    ],
+    [
+     10,
+     25
+    ],
+    [
+     16,
+     35
+    ],
+    [
+     17,
+     34
+    ],
+    [
+     18,
+     33
+    ]
+   ],
+   "n_dr_cross": 6,
+   "is_pk": true,
+   "db_pk": ".....(((.((((((([[[.))))))).)))..]]].........."
+  },
+  {
+   "name": "Sp9",
+   "context": "mature",
+   "activity": 83,
+   "energy_dp09": -4.87,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     2,
+     19
+    ],
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 2,
+   "is_pk": false,
+   "db_pk": "..(((((((....)))))))......((......))..."
+  },
+  {
+   "name": "Sp10",
+   "context": "pre",
+   "activity": 69,
+   "energy_dp09": -3.94,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ],
+    [
+     16,
+     29
+    ],
+    [
+     17,
+     28
+    ],
+    [
+     18,
+     27
+    ]
+   ],
+   "n_dr_cross": 4,
+   "is_pk": true,
+   "db_pk": "..........(((((([[[.)))))).]]]................"
+  },
+  {
+   "name": "Sp10",
+   "context": "mature",
+   "activity": 69,
+   "energy_dp09": -3.94,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ],
+    [
+     9,
+     22
+    ],
+    [
+     10,
+     21
+    ],
+    [
+     11,
+     20
+    ]
+   ],
+   "n_dr_cross": 4,
+   "is_pk": true,
+   "db_pk": "...(((((([[[.)))))).]]]................"
+  },
+  {
+   "name": "Sp11",
+   "context": "pre",
+   "activity": 57,
+   "energy_dp09": -3.59,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "..........((((((....))))))..(((.......)))....."
+  },
+  {
+   "name": "Sp11",
+   "context": "mature",
+   "activity": 57,
+   "energy_dp09": -3.59,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "...((((((....))))))..(((.......)))....."
+  },
+  {
+   "name": "Sp12",
+   "context": "pre",
+   "activity": 79,
+   "energy_dp09": -4.7,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ],
+    [
+     16,
+     36
+    ],
+    [
+     17,
+     35
+    ],
+    [
+     18,
+     34
+    ],
+    [
+     19,
+     33
+    ]
+   ],
+   "n_dr_cross": 5,
+   "is_pk": true,
+   "db_pk": "..........[[[[[[((((]]]]]]..[[[..)))).]]]....."
+  },
+  {
+   "name": "Sp12",
+   "context": "mature",
+   "activity": 79,
+   "energy_dp09": -4.7,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ],
+    [
+     9,
+     29
+    ],
+    [
+     10,
+     28
+    ],
+    [
+     11,
+     27
+    ],
+    [
+     12,
+     26
+    ]
+   ],
+   "n_dr_cross": 5,
+   "is_pk": true,
+   "db_pk": "...[[[[[[((((]]]]]]..[[[..)))).]]]....."
+  },
+  {
+   "name": "Sp13",
+   "context": "pre",
+   "activity": 34,
+   "energy_dp09": -4.81,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "..........((((((....))))))..(((.......)))....."
+  },
+  {
+   "name": "Sp13",
+   "context": "mature",
+   "activity": 34,
+   "energy_dp09": -4.81,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "...((((((....))))))..(((.......)))....."
+  },
+  {
+   "name": "Sp14",
+   "context": "pre",
+   "activity": 29,
+   "energy_dp09": -4.81,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     10,
+     25
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "..........((((((....))))))..(((.......)))....."
+  },
+  {
+   "name": "Sp14",
+   "context": "mature",
+   "activity": 29,
+   "energy_dp09": -4.81,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [
+    [
+     3,
+     18
+    ]
+   ],
+   "n_dr_cross": 1,
+   "is_pk": false,
+   "db_pk": "...((((((....))))))..(((.......)))....."
+  }
+ ],
+ "guideforge_rows": [
+  {
+   "name": "gf_A7C_U14G",
+   "energy_dp09": -8.74,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [],
+   "n_dr_cross": 0,
+   "is_pk": false,
+   "db_pk": "...(((((....))))).((((.(((.......))).))))."
+  },
+  {
+   "name": "gf_A7G_U14C",
+   "energy_dp09": -8.84,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [],
+   "n_dr_cross": 0,
+   "is_pk": false,
+   "db_pk": "...(((((....))))).((((.(((.......))).))))."
+  },
+  {
+   "name": "gf_U6C_A15G",
+   "energy_dp09": -8.62,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [],
+   "n_dr_cross": 0,
+   "is_pk": false,
+   "db_pk": "...(((((....))))).((((.(((.......))).))))."
+  },
+  {
+   "name": "gf_WT",
+   "energy_dp09": -7.28,
+   "stem_helix_len": 5,
+   "stem_intact": true,
+   "dr_cross_pairs": [],
+   "n_dr_cross": 0,
+   "is_pk": false,
+   "db_pk": "...(((((....))))).((((.(((.......))).))))."
+  }
+ ],
+ "discrimination_pre": {
+  "sp8": {
+   "stem_intact": true,
+   "n_dr_cross": 1
+  },
+  "sp12": {
+   "stem_intact": true,
+   "n_dr_cross": 5
+  },
+  "verdict": "FAIL"
+ }
+}
