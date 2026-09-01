@@ -22,3 +22,4 @@ toolbox/OpenKnotAIDesignData/.gitattributes
 
 # 转录组参考数据(GENCODE 自行下载)
 data/transcriptome/
+data/md/*

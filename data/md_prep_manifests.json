@@ -1,0 +1,100 @@
+{
+ "wt": {
+  "mut": "WT",
+  "mutations": [],
+  "wt_dr_rna": "AUUUCUACUAUUGUAGAU",
+  "internal_gaps_not_built": [],
+  "missing_atoms_rebuilt": 1,
+  "n_atoms_total": 218985,
+  "n_residues": 67046,
+  "padding_nm": 1.0,
+  "forcefields": [
+   "amber14-all.xml",
+   "amber14/tip3p.xml"
+  ],
+  "prep_seconds": 43.8,
+  "cif_source": "data/8D4A.cif (SuCas12a2-crRNA-靶RNA 复合物, 结合态口径)"
+ },
+ "A7C_U14G": {
+  "mut": "A7C+U14G",
+  "mutations": [
+   {
+    "pos": 7,
+    "wt": "A",
+    "mut": "C"
+   },
+   {
+    "pos": 14,
+    "wt": "U",
+    "mut": "G"
+   }
+  ],
+  "wt_dr_rna": "AUUUCUACUAUUGUAGAU",
+  "internal_gaps_not_built": [],
+  "missing_atoms_rebuilt": 19,
+  "n_atoms_total": 219509,
+  "n_residues": 67220,
+  "padding_nm": 1.0,
+  "forcefields": [
+   "amber14-all.xml",
+   "amber14/tip3p.xml"
+  ],
+  "prep_seconds": 45.0,
+  "cif_source": "data/8D4A.cif (SuCas12a2-crRNA-靶RNA 复合物, 结合态口径)"
+ },
+ "A7G_U14C": {
+  "mut": "A7G+U14C",
+  "mutations": [
+   {
+    "pos": 7,
+    "wt": "A",
+    "mut": "G"
+   },
+   {
+    "pos": 14,
+    "wt": "U",
+    "mut": "C"
+   }
+  ],
+  "wt_dr_rna": "AUUUCUACUAUUGUAGAU",
+  "internal_gaps_not_built": [],
+  "missing_atoms_rebuilt": 19,
+  "n_atoms_total": 219479,
+  "n_residues": 67210,
+  "padding_nm": 1.0,
+  "forcefields": [
+   "amber14-all.xml",
+   "amber14/tip3p.xml"
+  ],
+  "prep_seconds": 43.2,
+  "cif_source": "data/8D4A.cif (SuCas12a2-crRNA-靶RNA 复合物, 结合态口径)"
+ },
+ "U6C_A15G": {
+  "mut": "U6C+A15G",
+  "mutations": [
+   {
+    "pos": 6,
+    "wt": "U",
+    "mut": "C"
+   },
+   {
+    "pos": 15,
+    "wt": "A",
+    "mut": "G"
+   }
+  ],
+  "wt_dr_rna": "AUUUCUACUAUUGUAGAU",
+  "internal_gaps_not_built": [],
+  "missing_atoms_rebuilt": 19,
+  "n_atoms_total": 217111,
+  "n_residues": 66418,
+  "padding_nm": 1.0,
+  "forcefields": [
+   "amber14-all.xml",
+   "amber14/tip3p.xml"
+  ],
+  "prep_seconds": 44.3,
+  "cif_source": "data/8D4A.cif (SuCas12a2-crRNA-靶RNA 复合物, 结合态口径)"
+ },
+ "runtime": "GROMACS 2026.3 (容器 ~/dzy/envs/gmx, nompi_cuda, sm_86); OpenMM 体系经 ParmEd 导出; EM-nb_gpu / NVT-NPT-MD nb+pme+bonded gpu; 10 ns 产出"
+}
