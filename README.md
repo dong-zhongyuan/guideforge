@@ -28,6 +28,10 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 - **v1.7 结构置换口径过滤**: `inv_max_run`(最长连续 DR-spacer 侵占螺旋) <= 同上下文 WT(t1 型 WT 自身 6 对连续侵占故禁用固定阈值) + `partner_switch` 标注(t1 诊断: A8G 类 DDR-alone 稳定化突变在型1 口径强化的恰是侵占螺旋) + `ddG_dr` 语义更名 "DR 单独折叠稳定化(DDR-alone 口径)" + top.json 增加 `model_domain` 声明(伪结外: 仅侵占筛查+同 spacer 相对排序)。
 - **补偿突变实验面板**(`scripts/crrna_compensatory_design.py` -> `data/ivt_compensatory_panel.*`): MYCg1 三臂 C_WT(inv_run=6)/A_break(0, GC 不变, 靶向配对保持)/B_break_compensate(6 恢复), 各配同源靶——A vs B 活性差 = 折叠竞争的因果检验, 寡核苷酸级成本。
 
+### NUPACK 3.2.2 含假结配分检验(第四模型, 2026-09-02)
+
+`scripts/crrna_nupack_pk_weight.py`(NUPACK 3.2.2 官方 pfunc/-pseudo, Dirks-Pierce 假结配分; 源码取自 sbi-rostock/nupack-serve vendor 树, 容器 -fcommon 编译; 手册确认 pairs/mfe 不支持 -pseudo)。指标 W_pk=(Z_pk-Z_nopk)/Z_pk(假结构象权重占比)。**Sp8 判别 FAIL(第四模型)**: W_pk 排 5/14, 且与活性 Spearman=-0.327(方向相反)。至此四个独立模型(ViennaRNA 约束配分/ThreshKnot bpp/Knotty DP09-MFE/NUPACK Dirks-Pierce 配分)全部不能复现论文 Sp8 失活态——**out_of_model_domain 为四模型一致的最终口径**; 该机制需蛋白环境或实验手段。平台口径注记: GuideForge WT/茎稳定化 TOP3 的 W_pk 仅 0.9%~1.0%(假结权重可忽略), 与 8D4A/Knotty "Cas12a2 成熟 crRNA 无假结"三方互证, 本体系不受该边界影响。
+
 ### DP09 假结能量模型竞争检验(Knotty, 2026-09-01)
 
 `scripts/crrna_pk_competition.py`(容器侧 `crrna_pk_runner.py` + Knotty 官方源码编译, CCJ+DP09): 14 条 Creutzburg 前体/成熟两口径 + GuideForge pdbdr WT/TOP3 的含假结 MFE。**判别检验 FAIL(三模型独立一致)**: DP09 能量面上 Sp8 折为"活性样"(干净 6 对茎[寄存器与 ViennaRNA 滑移 2 位——跨模型模板精确匹配无效的实测教训, 分类已改寄存器无关]+spacer 自发夹), 而高活性 guide(Sp2/Sp4/Sp7/Sp9/Sp12)反呈 DR-spacer 交叉+多重假结(方向与论文机制相反)。至此 ViennaRNA 约束配分 / bpp 阈值(ThreshKnot) / DP09 假结 MFE 三条独立路线均不能复现论文的 Sp8 失活态——**Creutzburg 侧 Sp8 out_of_model_domain 判定升级为三模型证据的最终口径**; 仅剩路径 = NUPACK 3.2.2 pfunc -pseudo 约束配分(需注册, 站点可达)。本体系(Cas12a2)不受影响: Knotty 对 GuideForge WT 预测与 ViennaRNA/8D4A 一致(无假结)。
