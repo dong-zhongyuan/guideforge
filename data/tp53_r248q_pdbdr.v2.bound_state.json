@@ -1,0 +1,18 @@
+{
+ "date": "2026-09-01",
+ "method": "8D4A 结合态 DR 配对约束折叠(5bp 茎 Watson-Crick, N1-N3<4.0A 提取)",
+ "bound_pairs_0based": [[3,16],[4,15],[5,14],[6,13],[7,12]],
+ "free_pairs_0based": [[4,17],[5,16],[6,15],[7,14],[8,13]],
+ "key_finding": "结合态与游离态配对模式零重叠——蛋白将茎从(4-8,13-17)重排为(3-7,12-16)全Watson-Crick",
+ "pdb_results": [
+  {"rank": 1, "desc": "A7C+U14G", "ddG_free": -2.2, "ddG_bound": -2.2, "bp_dist_bound": 0},
+  {"rank": 2, "desc": "A7G+U14C", "ddG_free": -2.0, "ddG_bound": -2.0, "bp_dist_bound": 0},
+  {"rank": 3, "desc": "U6C+A15G", "ddG_free": -2.0, "ddG_bound": -2.0, "bp_dist_bound": 0}
+ ],
+ "zeng_results": [
+  {"rank": 4, "desc": "A8G+U15C", "ddG_free": -2.0, "ddG_bound": -2.0, "bp_dist_bound": 0},
+  {"rank": 5, "desc": "U7C+A16G", "ddG_free": -2.0, "ddG_bound": -2.0, "bp_dist_bound": 0}
+ ],
+ "conclusion": "全部茎稳定化候选在结合态约束下 ΔΔG_bound=ΔΔG_free, bp_dist=0: 结合态口径不劣于 WT, 桥搭了半座",
+ "limitations": "约束折叠只强制 DR 茎配对模式, 不模拟蛋白-核酸全界面动力学; spacer 区在真实结合态被靶 RNA 结合, 此处仍游离折叠"
+}
