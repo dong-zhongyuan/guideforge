@@ -1,0 +1,34 @@
+{
+ "mode": "spacer-input(骨架分型选择)",
+ "effector": "cas12a2_zeng2026",
+ "designs": [
+  {
+   "spacer_dna": "GTTCATGCCGCCCATGCAGGAACT",
+   "mut_in": "input",
+   "proto_mm": null,
+   "pfs_mut": "",
+   "pfs_wt": "",
+   "tier": null,
+   "self_mfe": -5.8,
+   "scaffold_type": 2,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -5.8,
+    "spacer_up": 0.427,
+    "junction_pairs": 0.0,
+    "internal_pairs": 7.0
+   },
+   "distances": {
+    "0": 2.578,
+    "1": 4.344,
+    "2": 0.813
+   },
+   "dr_dna": "AAATTCTACTGTTGTAGAT",
+   "dr_desc": "U3A",
+   "construct_dna": "AAATTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+  }
+ ],
+ "disclaimer": "选择器为最近邻规则, 分型功能差异未实验验证"
+}

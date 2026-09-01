@@ -161,8 +161,10 @@ def select_scaffold_type(spacer_rna, dr, model):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument('--mut-fasta', required=True, help='突变转录本 FASTA')
-    ap.add_argument('--wt-fasta', required=True, help='WT 转录本 FASTA')
+    ap.add_argument('--mut-fasta', default=None, help='突变转录本 FASTA(与 --wt-fasta 一起用于 tilling 设计 A)')
+    ap.add_argument('--wt-fasta', default=None, help='WT 转录本 FASTA')
+    ap.add_argument('--spacer', default=None,
+                    help='直接输入 spacer(DNA/RNA, 17-25nt); 提供时跳过 tilling 设计, 只做骨架分型选择(项目本体口径)')
     ap.add_argument('--effector', default='cas12a2_zeng2026')
     ap.add_argument('--spacer-len', type=int, default=24)
     ap.add_argument('--topn', type=int, default=10)
@@ -172,15 +174,48 @@ def main():
     args = ap.parse_args()
 
     dr = core.to_rna(get_scaffold(args.effector))
+    model = load_type_models(args.clusters, args.spacers, dr)
+    print(f'[agent] 骨架分型: {len(model["centers"])} 型; 各型代表骨架 '
+          f'{ {t: v["representative_desc"] for t, v in model["type_dr"].items()} }')
+
+    if args.spacer:
+        # 简版(项目本体口径): spacer 由实验侧输入, 只做骨架分型选择
+        spacer_rna = core.to_rna(args.spacer)
+        if not 17 <= len(spacer_rna) <= 25 or set(spacer_rna) - set('ACGU'):
+            raise SystemExit('--spacer 必须为 17-25nt ACGT/U')
+        sel = select_scaffold_type(spacer_rna, dr, model)
+        dr_pick = model['type_dr'][sel['nearest_type']]
+        out_rows = [{'spacer_dna': core.to_dna(spacer_rna), 'mut_in': 'input',
+                     'proto_mm': None, 'pfs_mut': '', 'pfs_wt': '', 'tier': None,
+                     'self_mfe': round(core.fold(spacer_rna)[1], 2),
+                     'scaffold_type': sel['nearest_type'], 'confidence': sel['confidence'],
+                     'type_features': sel['features'], 'distances': sel['distances'],
+                     'dr_dna': dr_pick['representative_dr'],
+                     'dr_desc': dr_pick['representative_desc'],
+                     'construct_dna': core.to_dna(dr_pick['representative_dr'] + spacer_rna),
+                     'wt_dr_construct_dna': core.to_dna(dr_pick['wt_dr'] + spacer_rna)}]
+        print(f"[agent] 输入 spacer {core.to_dna(spacer_rna)} -> 型{sel['nearest_type']}"
+              f"({sel['confidence']}) 推荐骨架 {dr_pick['representative_desc']}")
+        os.makedirs(os.path.dirname(args.out_prefix), exist_ok=True)
+        with open(args.out_prefix + '.design.json', 'w', encoding='utf-8') as fh:
+            json.dump({'mode': 'spacer-input(骨架分型选择)', 'effector': args.effector,
+                       'designs': out_rows,
+                       'disclaimer': '选择器为最近邻规则, 分型功能差异未实验验证'},
+                      fh, ensure_ascii=False, indent=1)
+        with open(args.out_prefix + '.design.fasta', 'w', encoding='utf-8') as fh:
+            r = out_rows[0]
+            fh.write(f">agent_input|type{r['scaffold_type']}|{r['dr_desc']}|{args.effector}\n"
+                     f"{r['construct_dna']}\n>agent_input_WTdr|WT\n{r['wt_dr_construct_dna']}\n")
+        print(f"[agent] 输出 -> {args.out_prefix}.design.json / .design.fasta")
+        return
+
+    if not (args.mut_fasta and args.wt_fasta):
+        raise SystemExit('需要 --spacer 或 (--mut-fasta + --wt-fasta)')
     wt = read_fasta_single(args.wt_fasta)
     mut = read_fasta_single(args.mut_fasta)
     mpos, all_diffs = find_mutation(wt, mut)
     print(f'[agent] 突变定位: 1-based {mpos} ({wt[mpos-1]}>{mut[mpos-1]}), '
           f'转录本长度 WT={len(wt)} MUT={len(mut)}')
-
-    model = load_type_models(args.clusters, args.spacers, dr)
-    print(f'[agent] 骨架分型: {len(model["centers"])} 型; 各型代表骨架 '
-          f'{ {t: v["representative_desc"] for t, v in model["type_dr"].items()} }')
 
     cands = design_spacers(wt, mut, mpos, args.spacer_len, topn=args.topn)
     print(f'[agent] tilling 候选 {len(cands)} 条, 取前 {args.topn} 条配骨架')
