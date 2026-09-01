@@ -5,28 +5,28 @@
    "full": "ATTTCTACTATTGTAGAT",
    "core_start_in_full": 1,
    "core": "TTTCTACTATTGTAGA",
-   "provenance": "注册表 cas12a2"
+   "provenance": "注册表 cas12a2(8D4A 结构口径)"
   },
   {
    "name": "Cas12a2_zeng2026",
    "full": "AATTTCTACTGTTGTAGAT",
    "core_start_in_full": 2,
    "core": "TTTCTACTGTTGTAGA",
-   "provenance": "注册表 cas12a2_zeng2026"
+   "provenance": "注册表 cas12a2_zeng2026(Zeng 2026)"
   },
   {
    "name": "FnCas12a_Creutzburg2020",
    "full": "AATTTCTACTGTTGTAGA",
    "core_start_in_full": 2,
    "core": "TTTCTACTGTTGTAGA",
-   "provenance": "creutzburg_2020_dataset"
+   "provenance": "creutzburg_2020_dataset(反向引物推得)"
   },
   {
    "name": "LbCas12a_Teng2019",
    "full": "AATTTCTACTATTGTAGAT",
    "core_start_in_full": 2,
    "core": "TTTCTACTATTGTAGA",
-   "provenance": "teng4n96 脚本(crRNA1)"
+   "provenance": "teng4n96 脚本(crRNA1, Teng 2019)"
   }
  ],
  "conservation": [

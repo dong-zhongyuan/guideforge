@@ -1,0 +1,22 @@
+[
+ {
+  "name": "SuCas12a2_8D4A",
+  "dr_dna": "ATTTCTACTATTGTAGAT",
+  "provenance": "注册表 cas12a2(8D4A 结构口径)"
+ },
+ {
+  "name": "Cas12a2_zeng2026",
+  "dr_dna": "AATTTCTACTGTTGTAGAT",
+  "provenance": "注册表 cas12a2_zeng2026(Zeng 2026)"
+ },
+ {
+  "name": "FnCas12a_Creutzburg2020",
+  "dr_dna": "AATTTCTACTGTTGTAGA",
+  "provenance": "creutzburg_2020_dataset(反向引物推得)"
+ },
+ {
+  "name": "LbCas12a_Teng2019",
+  "dr_dna": "AATTTCTACTATTGTAGAT",
+  "provenance": "teng4n96 脚本(crRNA1, Teng 2019)"
+ }
+]

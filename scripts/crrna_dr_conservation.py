@@ -17,12 +17,8 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
 
-DRS = [
-    ("SuCas12a2_8D4A", "ATTTCTACTATTGTAGAT", "注册表 cas12a2"),
-    ("Cas12a2_zeng2026", "AATTTCTACTGTTGTAGAT", "注册表 cas12a2_zeng2026"),
-    ("FnCas12a_Creutzburg2020", "AATTTCTACTGTTGTAGA", "creutzburg_2020_dataset"),
-    ("LbCas12a_Teng2019", "AATTTCTACTATTGTAGAT", "teng4n96 脚本(crRNA1)"),
-]
+DRS = [(d["name"], d["dr_dna"], d["provenance"])
+        for d in json.load(open(os.path.join(ROOT, "data", "dr_homologs.json"), encoding="utf-8"))]
 ANCHOR_L = "TTTCTACT"
 ANCHOR_R = "GTAGA"
 
