@@ -21,6 +21,14 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
   * 加工位点保护与 3'保守窗惩罚的文献依据见下"Dmytrenko 2023"条
 ```
 
+### 打分输入端可靠性(系综采样检验)
+
+`scripts/crrna_ensemble_check.py`(输出: `data/ensemble_check.pdbdr.v2.json` / `ensemble_check.zengdr.v6.json`): 对 WT+TOP-12(两口径共 26 构建)做 Boltzmann 系综采样检验(ViennaRNA 2.7.2 pbacktrack 本构建不可用, 改用 subopt 精确枚举 5 kcal 窗口 + 权重采样, 窗口尾部质量均 <2.2%, 采样 100/构建, seed=42)——
+- **MFE 口径 ΔΔG 与精确系综自由能差 F_var−F_WT(pf 精确值)全部一致, 偏差 ≤0.03 kcal/mol**, "-2.2 kcal/mol 茎稳定化"等数字不是 MFE 单构象假象;
+- 稳定化候选(−2.2/−2.0/−1.4)的 ΔΔG bootstrap 95% CI 均不含 0(PDB 口径 [−2.33,−1.83] 等), 系综口径下主张成立;
+- DR 茎完整构象占比 0.81~0.93(WT 0.81~0.83), 无构象二态; 单构象能量涨落 sd≈1.1~1.5 kcal/mol 属系综固有涨落, 在自由能差中抵消。
+- 边界: 此检验证明的是 ViennaRNA 最近邻模型内的数值可靠性(指标计算端), 不涉及指标与活性的相关性(见"路径A"条, 后者已证明不构成跨体系活性预测器)。
+
 ## 文献依据（对应模块）
 
 | 模块 | 文献依据 |

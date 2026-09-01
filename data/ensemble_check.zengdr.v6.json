@@ -1,0 +1,371 @@
+{
+ "source_top_json": "data/tp53_r248q_zengdr.v6.top.json",
+ "n_samples": 100,
+ "seed": 42,
+ "rt_kcal": 0.61632,
+ "rules": {
+  "R1_shift_over_1kcal": "1.0",
+  "R2_noise_over_effect": "None",
+  "R3_sample_range_over_4kcal": "4.0",
+  "R4_stem_bimodal_20_80": "(0.2, 0.8)"
+ },
+ "dr_stem_pairs_0based": [
+  [
+   4,
+   17
+  ],
+  [
+   5,
+   16
+  ],
+  [
+   6,
+   15
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   8,
+   13
+  ]
+ ],
+ "wt": {
+  "name": "WT",
+  "ddG_mfe": 0.0,
+  "ddG_ens": 0.0,
+  "tail_mass": 0.0131,
+  "delta_centigrade": 500,
+  "stem_intact_frac": 0.83,
+  "p_stem_pf": 0.86603,
+  "spacer_paired_mean": 0.577,
+  "spacer_paired_std": 0.025,
+  "E_sample_std": 0.84
+ },
+ "candidates": [
+  {
+   "name": "A1C",
+   "rank": 1,
+   "score": -0.0001,
+   "ddG_mfe": 0.0,
+   "ddG_ens": 0.0,
+   "ddG_mfe_vs_ens_shift": -0.0,
+   "ddG_sample_mean": 0.12,
+   "ddG_sample_std": 1.33,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.4,
+   "ddG_boot95": [
+    -0.13,
+    0.37
+   ],
+   "tail_mass": 0.0122,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.86,
+   "p_stem_pf": 0.86558,
+   "spacer_paired_mean": 0.574,
+   "spacer_paired_std": 0.035,
+   "E_sample_std": 0.94,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A1U",
+   "rank": 2,
+   "score": -0.0001,
+   "ddG_mfe": 0.0,
+   "ddG_ens": 0.0,
+   "ddG_mfe_vs_ens_shift": -0.0,
+   "ddG_sample_mean": 0.09,
+   "ddG_sample_std": 1.26,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.0,
+   "ddG_boot95": [
+    -0.15,
+    0.35
+   ],
+   "tail_mass": 0.011,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.91,
+   "p_stem_pf": 0.86574,
+   "spacer_paired_mean": 0.573,
+   "spacer_paired_std": 0.04,
+   "E_sample_std": 0.97,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A1G",
+   "rank": 3,
+   "score": -0.012,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.01,
+   "ddG_mfe_vs_ens_shift": 0.01,
+   "ddG_sample_mean": 0.34,
+   "ddG_sample_std": 1.54,
+   "ddG_sample_min": -3.6,
+   "ddG_sample_max": 5.0,
+   "ddG_boot95": [
+    0.05,
+    0.67
+   ],
+   "tail_mass": 0.0161,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.84,
+   "p_stem_pf": 0.86681,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.036,
+   "E_sample_std": 1.27,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A8G+U15C",
+   "rank": 4,
+   "score": -0.4391,
+   "ddG_mfe": -2.0,
+   "ddG_ens": -2.03,
+   "ddG_mfe_vs_ens_shift": 0.03,
+   "ddG_sample_mean": -1.87,
+   "ddG_sample_std": 1.39,
+   "ddG_sample_min": -5.8,
+   "ddG_sample_max": 2.3,
+   "ddG_boot95": [
+    -2.14,
+    -1.6
+   ],
+   "tail_mass": 0.0206,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.83,
+   "p_stem_pf": 0.65476,
+   "spacer_paired_mean": 0.571,
+   "spacer_paired_std": 0.034,
+   "E_sample_std": 1.04,
+   "unstable_flags": [
+    "R3"
+   ]
+  },
+  {
+   "name": "U7C+A16G",
+   "rank": 5,
+   "score": -0.4633,
+   "ddG_mfe": -2.0,
+   "ddG_ens": -2.0,
+   "ddG_mfe_vs_ens_shift": 0.0,
+   "ddG_sample_mean": -1.9,
+   "ddG_sample_std": 1.29,
+   "ddG_sample_min": -5.8,
+   "ddG_sample_max": 1.5,
+   "ddG_boot95": [
+    -2.15,
+    -1.66
+   ],
+   "tail_mass": 0.0138,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.9,
+   "p_stem_pf": 0.86297,
+   "spacer_paired_mean": 0.573,
+   "spacer_paired_std": 0.03,
+   "E_sample_std": 0.97,
+   "unstable_flags": [
+    "R3"
+   ]
+  },
+  {
+   "name": "A1U+U3A",
+   "rank": 6,
+   "score": -0.5486,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.02,
+   "ddG_mfe_vs_ens_shift": 0.02,
+   "ddG_sample_mean": 0.28,
+   "ddG_sample_std": 1.48,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.6,
+   "ddG_boot95": [
+    0.0,
+    0.58
+   ],
+   "tail_mass": 0.0119,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.81,
+   "p_stem_pf": 0.85338,
+   "spacer_paired_mean": 0.578,
+   "spacer_paired_std": 0.027,
+   "E_sample_std": 1.12,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "U3A",
+   "rank": 7,
+   "score": -0.5495,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.02,
+   "ddG_mfe_vs_ens_shift": 0.02,
+   "ddG_sample_mean": 0.15,
+   "ddG_sample_std": 1.43,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.5,
+   "ddG_boot95": [
+    -0.12,
+    0.41
+   ],
+   "tail_mass": 0.0122,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.93,
+   "p_stem_pf": 0.85389,
+   "spacer_paired_mean": 0.577,
+   "spacer_paired_std": 0.037,
+   "E_sample_std": 1.07,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A1C+U3A",
+   "rank": 8,
+   "score": -0.5507,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.02,
+   "ddG_mfe_vs_ens_shift": 0.02,
+   "ddG_sample_mean": 0.24,
+   "ddG_sample_std": 1.47,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 5.0,
+   "ddG_boot95": [
+    -0.03,
+    0.53
+   ],
+   "tail_mass": 0.0129,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.89,
+   "p_stem_pf": 0.85026,
+   "spacer_paired_mean": 0.571,
+   "spacer_paired_std": 0.032,
+   "E_sample_std": 1.18,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A1U+U3G",
+   "rank": 9,
+   "score": -0.5537,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.01,
+   "ddG_mfe_vs_ens_shift": 0.01,
+   "ddG_sample_mean": 0.21,
+   "ddG_sample_std": 1.54,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 5.0,
+   "ddG_boot95": [
+    -0.08,
+    0.52
+   ],
+   "tail_mass": 0.0133,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.87,
+   "p_stem_pf": 0.84601,
+   "spacer_paired_mean": 0.569,
+   "spacer_paired_std": 0.042,
+   "E_sample_std": 1.21,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "U3G",
+   "rank": 10,
+   "score": -0.5553,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.01,
+   "ddG_mfe_vs_ens_shift": 0.01,
+   "ddG_sample_mean": -0.01,
+   "ddG_sample_std": 1.17,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.0,
+   "ddG_boot95": [
+    -0.23,
+    0.21
+   ],
+   "tail_mass": 0.014,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.86,
+   "p_stem_pf": 0.84539,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.025,
+   "E_sample_std": 0.82,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A1C+U3G",
+   "rank": 11,
+   "score": -0.5596,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.01,
+   "ddG_mfe_vs_ens_shift": 0.01,
+   "ddG_sample_mean": 0.05,
+   "ddG_sample_std": 1.24,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.5,
+   "ddG_boot95": [
+    -0.2,
+    0.29
+   ],
+   "tail_mass": 0.0147,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.85,
+   "p_stem_pf": 0.83429,
+   "spacer_paired_mean": 0.577,
+   "spacer_paired_std": 0.025,
+   "E_sample_std": 0.85,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "name": "A1U+U3C",
+   "rank": 12,
+   "score": -0.5672,
+   "ddG_mfe": 0.0,
+   "ddG_ens": -0.02,
+   "ddG_mfe_vs_ens_shift": 0.02,
+   "ddG_sample_mean": 0.23,
+   "ddG_sample_std": 1.33,
+   "ddG_sample_min": -3.8,
+   "ddG_sample_max": 4.5,
+   "ddG_boot95": [
+    -0.03,
+    0.49
+   ],
+   "tail_mass": 0.0147,
+   "delta_centigrade": 500,
+   "stem_intact_frac": 0.84,
+   "p_stem_pf": 0.86108,
+   "spacer_paired_mean": 0.573,
+   "spacer_paired_std": 0.038,
+   "E_sample_std": 1.02,
+   "unstable_flags": [
+    "R2",
+    "R3"
+   ]
+  }
+ ],
+ "note": "ViennaRNA 2.7.2 pbacktrack 本构建返回空元组; 改用 subopt 精确枚举 + Boltzmann 权重采样, 各序列窗口尾部质量已随行报告"
+}
