@@ -37,7 +37,8 @@
           - w_ens*max(d_ens,0) - w_hbond*hbond_loss - w_cons3*cons3_frac
   其中 hbond_loss 为 8D4A 极性接触的碱基替换互补损失（几何不变近似）;
   cons3_frac 为落在 DR 3' 保守窗的突变位点比例(Dmytrenko 2023 Fig.1c: 跨家族 3' 端
-  高度保守、loop 可变, 故 3' 窗内突变给显式惩罚);
+  高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
+  文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
   另报告 ddG、spacer_unpaired、ens_diversity、hbond_preserved 供人工挑选。
 
 输出: <out>.variants.csv（全部打分行）/ <out>.top.json（TOP-K + WT 参考 + 参数血缘）/

@@ -25,9 +25,10 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 | 模块 | 文献依据 |
 |---|---|
-| 加工位点保护硬过滤 / 3'保守窗惩罚 / DR 互换不误杀验证 | Dmytrenko et al. 2023, Nature 613:588-594 (加工切点在 Cas12a 下游 1nt; Fig.1c 跨家族 DR 3' 端保守/loop 可变; ED Fig.2c Cas12a↔Cas12a2 DR 互换功能保持) |
-| spacer 上下文分型假说 | Bush et al. 2023, Cell Chem Biol 30:879-892 (WT 骨架与 spacer 共折叠消除 Stem 1, spacer-骨架误折叠是 guide 失败主因; 8009 个骨架变体证明可塑性); 综述 De Saeger et al. 2025 (MDPI) |
-| DR/骨架工程化调活性(Cas12a 先例) | Lin et al. 2018, Mol Ther; Zhang et al. 2025 (DR 3' 修饰); Han et al. 2025 (DR 突变策略调编辑与检测) |
+| 加工位点保护硬过滤 / DR 互换不误杀验证 | Dmytrenko et al. 2023, Nature 613:588-594 (ED Fig.2c Cas12a↔Cas12a2 DR 互换功能保持; ED Fig.3 加工切点在 Cas12a 下游 1nt) |
+| 3'保守窗惩罚 | Dmytrenko et al. 2023, Fig.1c 跨家族 DR 3' 端保守/loop 可变(定性结论); **窗口大小 --cons3-window=5nt 为项目设定, 非文献出处**; 功能佐证: Zhang et al. 2025 (PMC11780881, DR 3' 端化学修饰可逆调控 Cas12a 活性——非序列突变, 佐证 3' 端敏感性) |
+| spacer 上下文分型的机制前提 | Bush et al. 2023, Cell Chem Biol 30:879-892 (WT 骨架与 spacer 共折叠消除 Stem 1; **SpCas9 体系证据, sgRNA 为 80nt 大骨架而 Cas12a2 DR 仅 19nt 单茎环, 迁移为待验假设**); 综述 De Saeger et al. 2025 (MDPI)。分型主张的直接证据为本仓库分型试验计算结果 |
+| DR/骨架序列工程先例(Cas12a, 存在性证明) | Lin et al. 2018, Mol Ther; Han et al. 2025 (PMC12508434, DR 突变策略调编辑与检测) |
 | "按靶标分型选骨架" | **无先例(空白区)**: 本仓库分型试验提供了反对"单一通用骨架"的计算证据(型间最优位点图谱结构性不同); 功能收益待湿实验 |
 
 ## 快速开始
@@ -82,6 +83,6 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
 - Cas12a2 结构: PDB 8D49/8D4A/8D4B (Bravo et al. 2023, Nature 613:582)
 - Cas12a2 功能/DR 互换/加工位点: Dmytrenko et al. 2023, Nature 613:588-594
 - 细胞实验 DR 与 R248Q spacer: Zeng et al. 2026, Nature (10.1038/s41586-026-10738-7) 补充材料
-- spacer-骨架误折叠(SpCas9 体系): Bush et al. 2023, Cell Chem Biol 30:879-892 (PMC10529641)
-- Cas12a DR 工程先例: Lin et al. 2018, Mol Ther; Zhang et al. 2025; Han et al. 2025 (PMC12508434)
+- spacer-骨架共折叠互扰(SpCas9 体系机制前提): Bush et al. 2023, Cell Chem Biol 30:879-892 (PMC10529641)
+- Cas12a DR 序列工程先例: Lin et al. 2018, Mol Ther; Han et al. 2025 (PMC12508434); DR 3' 端敏感性(化学修饰): Zhang et al. 2025 (PMC11780881)
 - 结构工具链: Science 2026 (10.1126/science.aeg6829, Das lab, OpenKnot); gRNAde 权重: HuggingFace chaitjo/gRNAde
