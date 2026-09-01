@@ -1,0 +1,424 @@
+{
+ "source": "Creutzburg 2020 NAR gkz1240 PMC7102956",
+ "n": 14,
+ "good_threshold_pct": 60,
+ "contexts": {
+  "mature18": {
+   "rows": [
+    {
+     "name": "Sp1",
+     "activity": 71,
+     "spacer_up": 0.6091,
+     "stem_prob": 0.960455,
+     "seed5_up": 0.8368
+    },
+    {
+     "name": "Sp2",
+     "activity": 73,
+     "spacer_up": 0.6788,
+     "stem_prob": 0.976058,
+     "seed5_up": 0.6965
+    },
+    {
+     "name": "Sp3",
+     "activity": 69,
+     "spacer_up": 0.8752,
+     "stem_prob": 0.951803,
+     "seed5_up": 0.9867
+    },
+    {
+     "name": "Sp4",
+     "activity": 72,
+     "spacer_up": 0.5269,
+     "stem_prob": 0.685198,
+     "seed5_up": 0.7367
+    },
+    {
+     "name": "Sp5",
+     "activity": 75,
+     "spacer_up": 0.4313,
+     "stem_prob": 0.964483,
+     "seed5_up": 0.4356
+    },
+    {
+     "name": "Sp6",
+     "activity": 78,
+     "spacer_up": 0.5484,
+     "stem_prob": 0.887342,
+     "seed5_up": 0.9824
+    },
+    {
+     "name": "Sp7",
+     "activity": 62,
+     "spacer_up": 0.6984,
+     "stem_prob": 0.940125,
+     "seed5_up": 0.5687
+    },
+    {
+     "name": "Sp8",
+     "activity": 0,
+     "spacer_up": 0.6912,
+     "stem_prob": 0.932756,
+     "seed5_up": 0.612
+    },
+    {
+     "name": "Sp9",
+     "activity": 83,
+     "spacer_up": 0.7419,
+     "stem_prob": 0.88212,
+     "seed5_up": 0.9956
+    },
+    {
+     "name": "Sp10",
+     "activity": 69,
+     "spacer_up": 0.9427,
+     "stem_prob": 0.942088,
+     "seed5_up": 0.9721
+    },
+    {
+     "name": "Sp11",
+     "activity": 57,
+     "spacer_up": 0.8855,
+     "stem_prob": 0.943104,
+     "seed5_up": 0.9366
+    },
+    {
+     "name": "Sp12",
+     "activity": 79,
+     "spacer_up": 0.8043,
+     "stem_prob": 0.923306,
+     "seed5_up": 0.9539
+    },
+    {
+     "name": "Sp13",
+     "activity": 34,
+     "spacer_up": 0.7423,
+     "stem_prob": 0.960477,
+     "seed5_up": 0.6969
+    },
+    {
+     "name": "Sp14",
+     "activity": 29,
+     "spacer_up": 0.734,
+     "stem_prob": 0.959731,
+     "seed5_up": 0.7429
+    }
+   ],
+   "stats": {
+    "spacer_up": {
+     "spearman": -0.284,
+     "perm_p": 0.3231,
+     "auc_good_bad": 0.325
+    },
+    "stem_prob": {
+     "spearman": -0.279,
+     "perm_p": 0.3328,
+     "auc_good_bad": 0.375
+    },
+    "seed5_up": {
+     "spearman": 0.38,
+     "perm_p": 0.1807,
+     "auc_good_bad": 0.65
+    }
+   }
+  },
+  "mature19": {
+   "rows": [
+    {
+     "name": "Sp1",
+     "activity": 71,
+     "spacer_up": 0.6159,
+     "stem_prob": 0.897568,
+     "seed5_up": 0.8371
+    },
+    {
+     "name": "Sp2",
+     "activity": 73,
+     "spacer_up": 0.7028,
+     "stem_prob": 0.821477,
+     "seed5_up": 0.6572
+    },
+    {
+     "name": "Sp3",
+     "activity": 69,
+     "spacer_up": 0.9248,
+     "stem_prob": 0.700311,
+     "seed5_up": 0.9847
+    },
+    {
+     "name": "Sp4",
+     "activity": 72,
+     "spacer_up": 0.5779,
+     "stem_prob": 0.001397,
+     "seed5_up": 0.9166
+    },
+    {
+     "name": "Sp5",
+     "activity": 75,
+     "spacer_up": 0.4623,
+     "stem_prob": 0.848588,
+     "seed5_up": 0.4376
+    },
+    {
+     "name": "Sp6",
+     "activity": 78,
+     "spacer_up": 0.6203,
+     "stem_prob": 0.459005,
+     "seed5_up": 0.9817
+    },
+    {
+     "name": "Sp7",
+     "activity": 62,
+     "spacer_up": 0.6929,
+     "stem_prob": 0.855091,
+     "seed5_up": 0.5661
+    },
+    {
+     "name": "Sp8",
+     "activity": 0,
+     "spacer_up": 0.7205,
+     "stem_prob": 0.725482,
+     "seed5_up": 0.6232
+    },
+    {
+     "name": "Sp9",
+     "activity": 83,
+     "spacer_up": 0.6153,
+     "stem_prob": 0.011655,
+     "seed5_up": 0.997
+    },
+    {
+     "name": "Sp10",
+     "activity": 69,
+     "spacer_up": 0.9616,
+     "stem_prob": 0.752956,
+     "seed5_up": 0.9682
+    },
+    {
+     "name": "Sp11",
+     "activity": 57,
+     "spacer_up": 0.8984,
+     "stem_prob": 0.646973,
+     "seed5_up": 0.931
+    },
+    {
+     "name": "Sp12",
+     "activity": 79,
+     "spacer_up": 0.7758,
+     "stem_prob": 0.209596,
+     "seed5_up": 0.9601
+    },
+    {
+     "name": "Sp13",
+     "activity": 34,
+     "spacer_up": 0.7572,
+     "stem_prob": 0.863328,
+     "seed5_up": 0.6693
+    },
+    {
+     "name": "Sp14",
+     "activity": 29,
+     "spacer_up": 0.7516,
+     "stem_prob": 0.861422,
+     "seed5_up": 0.7168
+    }
+   ],
+   "stats": {
+    "spacer_up": {
+     "spearman": -0.451,
+     "perm_p": 0.1084,
+     "auc_good_bad": 0.275
+    },
+    "stem_prob": {
+     "spearman": -0.512,
+     "perm_p": 0.0656,
+     "auc_good_bad": 0.325
+    },
+    "seed5_up": {
+     "spearman": 0.415,
+     "perm_p": 0.1413,
+     "auc_good_bad": 0.675
+    }
+   }
+  },
+  "pre24": {
+   "rows": [
+    {
+     "name": "Sp1",
+     "activity": 71,
+     "spacer_up": 0.6065,
+     "stem_prob": 0.963777,
+     "seed5_up": 0.8623
+    },
+    {
+     "name": "Sp2",
+     "activity": 73,
+     "spacer_up": 0.6826,
+     "stem_prob": 0.975703,
+     "seed5_up": 0.7146
+    },
+    {
+     "name": "Sp3",
+     "activity": 69,
+     "spacer_up": 0.7275,
+     "stem_prob": 0.989404,
+     "seed5_up": 0.9984
+    },
+    {
+     "name": "Sp4",
+     "activity": 72,
+     "spacer_up": 0.5269,
+     "stem_prob": 0.669176,
+     "seed5_up": 0.7391
+    },
+    {
+     "name": "Sp5",
+     "activity": 75,
+     "spacer_up": 0.4317,
+     "stem_prob": 0.963039,
+     "seed5_up": 0.4371
+    },
+    {
+     "name": "Sp6",
+     "activity": 78,
+     "spacer_up": 0.5488,
+     "stem_prob": 0.839647,
+     "seed5_up": 0.9823
+    },
+    {
+     "name": "Sp7",
+     "activity": 62,
+     "spacer_up": 0.7007,
+     "stem_prob": 0.939557,
+     "seed5_up": 0.5761
+    },
+    {
+     "name": "Sp8",
+     "activity": 0,
+     "spacer_up": 0.7004,
+     "stem_prob": 0.933536,
+     "seed5_up": 0.6754
+    },
+    {
+     "name": "Sp9",
+     "activity": 83,
+     "spacer_up": 0.6485,
+     "stem_prob": 0.960886,
+     "seed5_up": 0.999
+    },
+    {
+     "name": "Sp10",
+     "activity": 69,
+     "spacer_up": 0.9102,
+     "stem_prob": 0.950334,
+     "seed5_up": 0.9781
+    },
+    {
+     "name": "Sp11",
+     "activity": 57,
+     "spacer_up": 0.8696,
+     "stem_prob": 0.946573,
+     "seed5_up": 0.945
+    },
+    {
+     "name": "Sp12",
+     "activity": 79,
+     "spacer_up": 0.785,
+     "stem_prob": 0.929497,
+     "seed5_up": 0.9603
+    },
+    {
+     "name": "Sp13",
+     "activity": 34,
+     "spacer_up": 0.7424,
+     "stem_prob": 0.959066,
+     "seed5_up": 0.6975
+    },
+    {
+     "name": "Sp14",
+     "activity": 29,
+     "spacer_up": 0.734,
+     "stem_prob": 0.958357,
+     "seed5_up": 0.7436
+    }
+   ],
+   "stats": {
+    "spacer_up": {
+     "spearman": -0.464,
+     "perm_p": 0.0969,
+     "auc_good_bad": 0.225
+    },
+    "stem_prob": {
+     "spearman": 0.033,
+     "perm_p": 0.9151,
+     "auc_good_bad": 0.575
+    },
+    "seed5_up": {
+     "spearman": 0.411,
+     "perm_p": 0.1463,
+     "auc_good_bad": 0.675
+    }
+   }
+  }
+ },
+ "spacers": {
+  "Sp1": "ATCGATGGGAAACCTTACCCTC",
+  "Sp2": "AGACTTACCAATGAGCACGTG",
+  "Sp3": "AAATATTCCCCAGGTTCAGTG",
+  "Sp4": "AACACACTGCAATTCAGGTTG",
+  "Sp5": "ACCAGTCCATCATTGTAGTGG",
+  "Sp6": "AACGCCTACGAGATCATTGTG",
+  "Sp7": "ATGCTCCCGTAACACTAGCTG",
+  "Sp8": "ACCAGTCTAAATCGCTTACTG",
+  "Sp9": "AACTATATGCACCGGAGCTTG",
+  "Sp10": "ACACAATTACCGGTCCCAATG",
+  "Sp11": "ACCAGTCTAACCCGCTTACGT",
+  "Sp12": "ACCAGTCTAACACGCTTACGT",
+  "Sp13": "ACCAGCCAACCCCGCTTACGT",
+  "Sp14": "ACCAGCCAACCACGCTTACGT"
+ },
+ "activity_fig1d_approx": {
+  "Sp1": 71,
+  "Sp2": 73,
+  "Sp3": 69,
+  "Sp4": 72,
+  "Sp5": 75,
+  "Sp6": 78,
+  "Sp7": 62,
+  "Sp8": 0,
+  "Sp9": 83,
+  "Sp10": 69,
+  "Sp11": 57,
+  "Sp12": 79,
+  "Sp13": 34,
+  "Sp14": 29
+ },
+ "evidence_checks": {
+  "Sp8_Sp12_diff_positions_0based": [
+   10,
+   11,
+   19,
+   20
+  ],
+  "Sp12_Sp14_diff_positions_0based": [
+   5,
+   7,
+   9
+  ],
+  "note": "与正文原句逐一吻合; Sp12 活性按正文 75-80% 锚定"
+ },
+ "mechanism_mfe": {
+  "Sp8": {
+   "mfe": -4.9,
+   "spacer_paired_nt": 8,
+   "dr_paired_nt": 10,
+   "db": "....(((((....)))))...((((...........))))"
+  },
+  "Sp12": {
+   "mfe": -4.8,
+   "spacer_paired_nt": 0,
+   "dr_paired_nt": 10,
+   "db": "....(((((....)))))......................"
+  }
+ }
+}
