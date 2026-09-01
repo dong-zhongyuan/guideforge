@@ -1,0 +1,12 @@
+>C_WT|crRNA_DR+spacer|inv_run=6
+AATTTCTACTGTTGTAGATACCATGTCTCCTCCCAGCAGCTCG
+>C_WT|cognate_target|revcomp(spacer)
+CGAGCTGCTGGGAGGAGACATGGT
+>A_break|crRNA_DR+spacer|inv_run=0
+AATTTCTACTGTTGTAGATACCATGTGTCCTCCGAGGAGCTCG
+>A_break|cognate_target|revcomp(spacer)
+CGAGCTCCTCGGAGGACACATGGT
+>B_break_compensate|crRNA_DR+spacer|inv_run=6
+AATTTCTACTCTTCTACATACCATGTGTCCTCCGAGGAGCTCG
+>B_break_compensate|cognate_target|revcomp(spacer)
+CGAGCTCCTCGGAGGACACATGGT

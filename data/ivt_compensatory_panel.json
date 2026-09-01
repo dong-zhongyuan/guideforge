@@ -1,0 +1,66 @@
+{
+ "source": "cross_spacer.t1_MYCg1.top.json",
+ "design_notes": [
+  {
+   "dr_pos_1based": 11,
+   "dr_wt": "G",
+   "spacer_pos_1based": 18,
+   "spacer_wt": "C",
+   "spacer_mut": "G",
+   "dr_compensatory": "C"
+  },
+  {
+   "dr_pos_1based": 14,
+   "dr_wt": "G",
+   "spacer_pos_1based": 15,
+   "spacer_wt": "C",
+   "spacer_mut": "G",
+   "dr_compensatory": "C"
+  },
+  {
+   "dr_pos_1based": 17,
+   "dr_wt": "G",
+   "spacer_pos_1based": 8,
+   "spacer_wt": "C",
+   "spacer_mut": "G",
+   "dr_compensatory": "C"
+  }
+ ],
+ "prediction": "A(破坏侵占, 靶向配对保持)活性应高于 WT; B(恢复侵占配对)活性应回落;A vs B 差异 = 折叠竞争的因果证据; 每臂须用各自同源靶",
+ "pfs_note": "MYC 原靶 PFS 口径沿用原设计; 突变臂靶序列为 spacer 的互补链",
+ "arms": [
+  {
+   "arm": "C_WT",
+   "dr_dna": "AATTTCTACTGTTGTAGAT",
+   "spacer_dna": "ACCATGTCTCCTCCCAGCAGCTCG",
+   "construct_dna": "AATTTCTACTGTTGTAGATACCATGTCTCCTCCCAGCAGCTCG",
+   "target_rna_dna": "CGAGCTGCTGGGAGGAGACATGGT",
+   "cross_nt": 20,
+   "inv_max_run": 6,
+   "gc_dr": 5,
+   "gc_sp": 15
+  },
+  {
+   "arm": "A_break",
+   "dr_dna": "AATTTCTACTGTTGTAGAT",
+   "spacer_dna": "ACCATGTGTCCTCCGAGGAGCTCG",
+   "construct_dna": "AATTTCTACTGTTGTAGATACCATGTGTCCTCCGAGGAGCTCG",
+   "target_rna_dna": "CGAGCTCCTCGGAGGACACATGGT",
+   "cross_nt": 0,
+   "inv_max_run": 0,
+   "gc_dr": 5,
+   "gc_sp": 15
+  },
+  {
+   "arm": "B_break_compensate",
+   "dr_dna": "AATTTCTACTCTTCTACAT",
+   "spacer_dna": "ACCATGTGTCCTCCGAGGAGCTCG",
+   "construct_dna": "AATTTCTACTCTTCTACATACCATGTGTCCTCCGAGGAGCTCG",
+   "target_rna_dna": "CGAGCTCCTCGGAGGACACATGGT",
+   "cross_nt": 20,
+   "inv_max_run": 6,
+   "gc_dr": 5,
+   "gc_sp": 15
+  }
+ ]
+}

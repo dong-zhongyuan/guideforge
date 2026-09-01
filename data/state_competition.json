@@ -1,0 +1,147 @@
+{
+ "dataset": "/public/home/mengxl/dzy/guideforge/data/creutzburg_2020_dataset.json",
+ "active_template_pairs_0based": [
+  [
+   4,
+   17
+  ],
+  [
+   5,
+   16
+  ],
+  [
+   6,
+   15
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   8,
+   13
+  ]
+ ],
+ "model_domain": "ViennaRNA 约束配分; 5' 假结不可表示, P_active 为含完整茎的下界近似",
+ "rows": [
+  {
+   "name": "Sp1",
+   "activity": 71,
+   "P_active": 0.9903,
+   "inv_helix_len": 1,
+   "P_invasion": 5.8e-05,
+   "dG_comp": 6.01
+  },
+  {
+   "name": "Sp2",
+   "activity": 73,
+   "P_active": 0.9947,
+   "inv_helix_len": 1,
+   "P_invasion": 3.6e-05,
+   "dG_comp": 6.31
+  },
+  {
+   "name": "Sp3",
+   "activity": 69,
+   "P_active": 0.9967,
+   "inv_helix_len": 4,
+   "P_invasion": 2e-06,
+   "dG_comp": 8.16
+  },
+  {
+   "name": "Sp4",
+   "activity": 72,
+   "P_active": 0.924,
+   "inv_helix_len": 2,
+   "P_invasion": 1.8e-05,
+   "dG_comp": 6.68
+  },
+  {
+   "name": "Sp5",
+   "activity": 75,
+   "P_active": 0.997,
+   "inv_helix_len": 1,
+   "P_invasion": 8e-05,
+   "dG_comp": 5.81
+  },
+  {
+   "name": "Sp6",
+   "activity": 78,
+   "P_active": 0.9668,
+   "inv_helix_len": 2,
+   "P_invasion": 1.9e-05,
+   "dG_comp": 6.68
+  },
+  {
+   "name": "Sp7",
+   "activity": 62,
+   "P_active": 0.9815,
+   "inv_helix_len": 1,
+   "P_invasion": 6.6e-05,
+   "dG_comp": 5.92
+  },
+  {
+   "name": "Sp8",
+   "activity": 0,
+   "P_active": 0.9901,
+   "inv_helix_len": 1,
+   "P_invasion": 6.6e-05,
+   "dG_comp": 5.92
+  },
+  {
+   "name": "Sp9",
+   "activity": 83,
+   "P_active": 0.9929,
+   "inv_helix_len": 3,
+   "P_invasion": 9e-06,
+   "dG_comp": 7.17
+  },
+  {
+   "name": "Sp10",
+   "activity": 69,
+   "P_active": 0.9933,
+   "inv_helix_len": 1,
+   "P_invasion": 6e-05,
+   "dG_comp": 5.98
+  },
+  {
+   "name": "Sp11",
+   "activity": 57,
+   "P_active": 0.993,
+   "inv_helix_len": 1,
+   "P_invasion": 6.8e-05,
+   "dG_comp": 5.91
+  },
+  {
+   "name": "Sp12",
+   "activity": 79,
+   "P_active": 0.9893,
+   "inv_helix_len": 1,
+   "P_invasion": 6.7e-05,
+   "dG_comp": 5.92
+  },
+  {
+   "name": "Sp13",
+   "activity": 34,
+   "P_active": 0.9964,
+   "inv_helix_len": 1,
+   "P_invasion": 7.7e-05,
+   "dG_comp": 5.84
+  },
+  {
+   "name": "Sp14",
+   "activity": 29,
+   "P_active": 0.9962,
+   "inv_helix_len": 1,
+   "P_invasion": 7.7e-05,
+   "dG_comp": 5.83
+  }
+ ],
+ "discrimination": {
+  "sp8_dG_comp_rank_asc": 6,
+  "sp8_P_active_rank_asc": 5,
+  "verdict": "FAIL",
+  "fail_interpretation": "伪结外模型内 Sp8 不可判别: 定性 out_of_model_domain"
+ },
+ "preregistered_test": "Sp8 应处 dG_comp 最小或 P_active 最低极端; 否则模型无效"
+}

@@ -1,0 +1,310 @@
+{
+ "dataset": "/public/home/mengxl/dzy/guideforge/data/creutzburg_2020_dataset.json",
+ "n_shuffle": 200,
+ "shuffle_scope": "单碱基组成匹配(二核苷酸未保持, 诚实边界)",
+ "contexts": {
+  "pre25": {
+   "rows": [
+    {
+     "name": "Sp1",
+     "act": 71,
+     "cross_pp_flank": 0.3004,
+     "z_flank": 0.27,
+     "cross_pp_coreDR": 0.8268,
+     "z_coreDR": -0.455
+    },
+    {
+     "name": "Sp2",
+     "act": 73,
+     "cross_pp_flank": 0.1047,
+     "z_flank": -0.234,
+     "cross_pp_coreDR": 1.2785,
+     "z_coreDR": -0.437
+    },
+    {
+     "name": "Sp3",
+     "act": 69,
+     "cross_pp_flank": 2.4298,
+     "z_flank": 1.797,
+     "cross_pp_coreDR": 2.7555,
+     "z_coreDR": 0.096
+    },
+    {
+     "name": "Sp4",
+     "act": 72,
+     "cross_pp_flank": 0.0126,
+     "z_flank": -0.458,
+     "cross_pp_coreDR": 2.1192,
+     "z_coreDR": -0.192
+    },
+    {
+     "name": "Sp5",
+     "act": 75,
+     "cross_pp_flank": 0.0052,
+     "z_flank": -0.538,
+     "cross_pp_coreDR": 0.7111,
+     "z_coreDR": -0.605
+    },
+    {
+     "name": "Sp6",
+     "act": 78,
+     "cross_pp_flank": 0.0478,
+     "z_flank": -0.491,
+     "cross_pp_coreDR": 1.7858,
+     "z_coreDR": -0.264
+    },
+    {
+     "name": "Sp7",
+     "act": 62,
+     "cross_pp_flank": 0.0406,
+     "z_flank": -0.357,
+     "cross_pp_coreDR": 0.8158,
+     "z_coreDR": -0.451
+    },
+    {
+     "name": "Sp8",
+     "act": 0,
+     "cross_pp_flank": 0.7071,
+     "z_flank": 0.203,
+     "cross_pp_coreDR": 0.7945,
+     "z_coreDR": -0.489
+    },
+    {
+     "name": "Sp9",
+     "act": 83,
+     "cross_pp_flank": 1.5392,
+     "z_flank": 1.909,
+     "cross_pp_coreDR": 2.6392,
+     "z_coreDR": 0.303
+    },
+    {
+     "name": "Sp10",
+     "act": 69,
+     "cross_pp_flank": 0.3974,
+     "z_flank": 0.452,
+     "cross_pp_coreDR": 1.168,
+     "z_coreDR": -0.507
+    },
+    {
+     "name": "Sp11",
+     "act": 57,
+     "cross_pp_flank": 0.4329,
+     "z_flank": 0.395,
+     "cross_pp_coreDR": 0.7703,
+     "z_coreDR": -0.463
+    },
+    {
+     "name": "Sp12",
+     "act": 79,
+     "cross_pp_flank": 0.4475,
+     "z_flank": 0.254,
+     "cross_pp_coreDR": 0.7961,
+     "z_coreDR": -0.464
+    },
+    {
+     "name": "Sp13",
+     "act": 34,
+     "cross_pp_flank": 0.0062,
+     "z_flank": -0.296,
+     "cross_pp_coreDR": 0.6882,
+     "z_coreDR": -0.278
+    },
+    {
+     "name": "Sp14",
+     "act": 29,
+     "cross_pp_flank": 0.007,
+     "z_flank": -0.321,
+     "cross_pp_coreDR": 0.6928,
+     "z_coreDR": -0.421
+    }
+   ],
+   "features": {
+    "raw_flank": {
+     "spearman": 0.138,
+     "loo_min": -0.038,
+     "loo_max": 0.319,
+     "loo_stable": false,
+     "partial_given_GC": 0.047
+    },
+    "z_flank": {
+     "spearman": 0.002,
+     "loo_min": -0.247,
+     "loo_max": 0.132,
+     "loo_stable": false,
+     "partial_given_GC": 0.02
+    },
+    "raw_coreDR": {
+     "spearman": 0.547,
+     "loo_min": 0.434,
+     "loo_max": 0.692,
+     "loo_stable": true,
+     "partial_given_GC": 0.471
+    },
+    "z_coreDR": {
+     "spearman": 0.213,
+     "loo_min": 0.016,
+     "loo_max": 0.374,
+     "loo_stable": true,
+     "partial_given_GC": 0.18
+    }
+   }
+  },
+  "mature18": {
+   "rows": [
+    {
+     "name": "Sp1",
+     "act": 71,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.8021,
+     "z_coreDR": -0.448
+    },
+    {
+     "name": "Sp2",
+     "act": 73,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 1.1853,
+     "z_coreDR": -0.432
+    },
+    {
+     "name": "Sp3",
+     "act": 69,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 1.8035,
+     "z_coreDR": -0.185
+    },
+    {
+     "name": "Sp4",
+     "act": 72,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 2.0769,
+     "z_coreDR": -0.068
+    },
+    {
+     "name": "Sp5",
+     "act": 75,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.7094,
+     "z_coreDR": -0.5
+    },
+    {
+     "name": "Sp6",
+     "act": 78,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 1.6819,
+     "z_coreDR": -0.108
+    },
+    {
+     "name": "Sp7",
+     "act": 62,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.8112,
+     "z_coreDR": -0.357
+    },
+    {
+     "name": "Sp8",
+     "act": 0,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.7658,
+     "z_coreDR": -0.458
+    },
+    {
+     "name": "Sp9",
+     "act": 83,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 1.8445,
+     "z_coreDR": -0.08
+    },
+    {
+     "name": "Sp10",
+     "act": 69,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.8134,
+     "z_coreDR": -0.47
+    },
+    {
+     "name": "Sp11",
+     "act": 57,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.7502,
+     "z_coreDR": -0.48
+    },
+    {
+     "name": "Sp12",
+     "act": 79,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.7793,
+     "z_coreDR": -0.48
+    },
+    {
+     "name": "Sp13",
+     "act": 34,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.6879,
+     "z_coreDR": -0.373
+    },
+    {
+     "name": "Sp14",
+     "act": 29,
+     "cross_pp_flank": 0.0,
+     "z_flank": 0.0,
+     "cross_pp_coreDR": 0.6925,
+     "z_coreDR": -0.436
+    }
+   ],
+   "features": {
+    "raw_flank": {
+     "spearman": -0.349,
+     "loo_min": -0.544,
+     "loo_max": -0.181,
+     "loo_stable": true,
+     "partial_given_GC": -0.194
+    },
+    "z_flank": {
+     "spearman": -0.349,
+     "loo_min": -0.544,
+     "loo_max": -0.181,
+     "loo_stable": true,
+     "partial_given_GC": -0.194
+    },
+    "raw_coreDR": {
+     "spearman": 0.552,
+     "loo_min": 0.451,
+     "loo_max": 0.698,
+     "loo_stable": true,
+     "partial_given_GC": 0.478
+    },
+    "z_coreDR": {
+     "spearman": 0.169,
+     "loo_min": 0.038,
+     "loo_max": 0.385,
+     "loo_stable": true,
+     "partial_given_GC": 0.084
+    }
+   }
+  }
+ },
+ "verdict": {
+  "R1_raw_cross_pp_attribution_composition": "支持退出主评分",
+  "R1_detail": {
+   "spearman": 0.169,
+   "loo_min": 0.038,
+   "loo_max": 0.385,
+   "loo_stable": true,
+   "partial_given_GC": 0.084
+  },
+  "R2_stage_split": "方向一致, 拆分仍必要(flank 属加工模块)"
+ }
+}

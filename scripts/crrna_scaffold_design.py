@@ -55,6 +55,9 @@
   高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
   文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
   另报告 ddG、spacer_unpaired、ens_diversity、hbond_preserved 供人工挑选。
+  v1.7: 过滤升级为结构置换口径——最长连续侵占螺旋 inv_max_run<=WT(WT 参照校准,
+  t1 型上下文 WT 自身可有长侵占螺旋故禁用固定阈值) + 突变位点配对对象切换标注
+  partner_switch(DDR-alone 稳定化是上下文条件描述); 输出加 model_domain 声明。
   v1.6: 新增 DR-spacer 交叉配对硬过滤 cross_nt<=WT(Creutzburg Sp8 复算盲区的响应:
   stem_intact_prob 无法区分 DR 自配与 DR-spacer 错配; 交叉配对为显式有害信号)。
 
@@ -170,7 +173,9 @@ def wt_reference(dr, spacer, seed_len=7):
     dr_ss, dr_mfe = fold(dr)
     p_fold = stem_intact_prob(full, stem_pairs_of(dr_ss))
     cross_nt, cross_pp = cross_pairs(full, len(dr))
-    return {'cross_nt': cross_nt, 'cross_pp': round(cross_pp, 3),'full_len': len(full), 'mfe_struct': ss, 'mfe_kcal': round(mfe, 2),
+    inv_run = inv_max_run(full, len(dr))
+    return {'cross_nt': cross_nt, 'cross_pp': round(cross_pp, 3),
+            'inv_max_run': inv_run,'full_len': len(full), 'mfe_struct': ss, 'mfe_kcal': round(mfe, 2),
             'ens_diversity': round(diversity, 2), 'spacer_mean_unpaired': round(spacer_up, 3),
             'seed_unpaired': round(seed_up, 3),
             'dr_only_struct': dr_ss, 'dr_only_mfe_kcal': round(dr_mfe, 2),
@@ -389,6 +394,54 @@ def cross_pairs(full_seq, dr_len):
     return mfe_cross, float(cross_pp)
 
 
+def inv_max_run(full_seq, dr_len):
+    """最长连续 DR-spacer 侵占螺旋(碱基对数)。v1.7: 比 cross_nt 总数更有解释力的
+    结构置换指标(t1_MYCg1 WT 自身即有 10 对连续侵占螺旋, 故过滤阈值必须按
+    同上下文 WT 参照, 不可用固定经验数字)。"""
+    ss, _ = fold(full_seq)
+    stack, cross = [], []
+    for i, ch in enumerate(ss):
+        if ch == "(":
+            stack.append(i)
+        elif ch == ")":
+            j = stack.pop()
+            if (i < dr_len) != (j < dr_len):
+                cross.append((i, j))
+    cross.sort()
+    best = cur = 0
+    prev = None
+    for i, j in cross:
+        if prev is not None and i == prev[0] + 1 and j == prev[1] - 1:
+            cur += 1
+        else:
+            cur = 1
+        best = max(best, cur)
+        prev = (i, j)
+    return best
+
+
+def partner_classes(full_seq, dr_len, positions):
+    """给定 DR 位点(1基), 返回其在全长 MFE 中的配对对象类别: DR/spacer/unpaired。
+    v1.7: t1_MYCg1 诊断显示 A8G 类"茎稳定化"突变在不同 spacer 上下文下配对对象
+    会从 DR 自茎切换到 spacer 侵占螺旋(DDR-alone 口径无法预见), 逐上下文必查。"""
+    ss, _ = fold(full_seq)
+    stack, partner = [], {}
+    for i, ch in enumerate(ss):
+        if ch == "(":
+            stack.append(i)
+        elif ch == ")":
+            j = stack.pop()
+            partner[i], partner[j] = j, i
+    out = {}
+    for p1 in positions:
+        i = p1 - 1
+        if i not in partner:
+            out[p1] = "unpaired"
+        else:
+            out[p1] = "DR" if partner[i] < dr_len else "spacer"
+    return out
+
+
 def contact_sum(mut_positions, contact):
     """变体的接触代价: 突变位点的蛋白接触计数归一化求和。"""
     if contact is None:
@@ -467,10 +520,15 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     dr_ss, dr_mfe = fold(seq)
     ddg_dr = dr_mfe - wt['dr_only_mfe_kcal']  # DR 单独折叠 ΔΔG(茎稳定化语义更干净的口径)
     cross_nt, cross_pp_v = cross_pairs(full, len(dr))
+    inv_run_v = inv_max_run(full, len(dr))
+    mut_pc = partner_classes(full, len(dr), mut_pos)
+    wt_pc = partner_classes(wt['mfe_struct'], len(dr), mut_pos)
+    partner_switch = any(mut_pc[q] != wt_pc[q] for q in mut_pc)
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
           and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
-          and (args.allow_cross_pairing or cross_nt <= wt['cross_nt'])
+          and (args.allow_cross_pairing or
+               (cross_nt <= wt['cross_nt'] and inv_run_v <= wt['inv_max_run']))
           and (args.no_protect_processing
                or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)))
     cons3_n = sum(1 for p in mut_pos if p > len(dr) - args.cons3_window)
@@ -494,6 +552,9 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
             'seed_up': round(seed_up, 3), 'd_seed': round(d_seed, 3),
             'cons3_frac': round(cons3_frac, 3),
             'cross_nt': cross_nt, 'cross_pp': round(cross_pp_v, 3),
+            'inv_max_run': inv_run_v,
+            'mut_partner_class': mut_pc,
+            'partner_switch': bool(partner_switch),
             'proc_ok': bool(args.no_protect_processing
                             or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)),
             'pareto': None, 'advantage': None,
@@ -525,7 +586,7 @@ def advantage_str(r, wt, seed_len=7):
     if r['spacer_unpaired'] - wt['spacer_mean_unpaired'] > 0.02:
         adv.append(f"spacer 游离度 {wt['spacer_mean_unpaired']:.2f}→{r['spacer_unpaired']:.2f}")
     if r['ddG_dr'] < -0.1:
-        adv.append(f"DR 茎稳定化 {r['ddG_dr']:+.1f} kcal/mol")
+        adv.append(f"DR 单独折叠稳定化(DDR-alone 口径) {r['ddG_dr']:+.1f} kcal/mol")
     if r['dp_fold'] > 0.01:
         adv.append(f"茎完整概率 {r['dp_fold']:+.2f}")
     if r['hbond_net'] > 0:
@@ -842,7 +903,8 @@ def main():
               'hbond_gain': 0, 'hbond_net': 0.0,
               'p_fold': round(wt['p_fold'], 5), 'dp_fold': 0.0,
               'seed_up': wt['seed_unpaired'], 'd_seed': 0.0,
-              'cons3_frac': 0.0, 'proc_ok': True, 'cross_nt': wt['cross_nt'], 'cross_pp': wt['cross_pp'],
+              'cons3_frac': 0.0, 'proc_ok': True, 'cross_nt': wt['cross_nt'], 'cross_pp': wt['cross_pp'], 'inv_max_run': wt['inv_max_run'],
+              'mut_partner_class': {}, 'partner_switch': False,
               'pareto': None, 'advantage': '参考株',
               'shape_cons': None,
               'passed': True, 'score': 0.0, 'source': 'WT', 'rank': 0}
@@ -861,6 +923,10 @@ def main():
         print(f"[闸门] {name} 非零(|>{thresh}|)比例 {frac:.1%}{flag}")
     n_cross = sum(1 for r in rows if r['cross_nt'] > wt['cross_nt'])
     print(f"[过滤] DR-spacer 交叉配对 nt>WT({wt['cross_nt']}): 拦截 {n_cross} 条(Creutzburg 守则)")
+    n_run = sum(1 for r in rows if r['inv_max_run'] > wt['inv_max_run'])
+    n_ps = sum(1 for r in rows if r['partner_switch'])
+    print(f"[过滤] 连续侵占螺旋>WT({wt['inv_max_run']}对): 拦截 {n_run} 条; "
+          f"突变位点配对对象切换: {n_ps} 条(标注 partner_switch, 供逐上下文复核)")
 
     if args.rnet_screen:
         screen_rows = [wt_row] + [r for r in rows if r['passed']][:args.rnet_screen_n]
@@ -890,6 +956,7 @@ def main():
     top = [wt_row] + [r for r in rows if r['passed']][:args.topk]
     out_json = args.out_prefix + '.top.json'
     payload = {
+        'model_domain': 'ViennaRNA 伪结外模型: 仅侵占风险筛查+同 spacer 相对排序, 不预测活性态(活性假结不可表示, 见 README 路径A校准); ddG_dr 为 DDR-alone 口径, 同突变在不同 spacer 上下文配对对象可能切换(见 partner_switch)',
         'disclaimer': '候选库压缩结果, 非活性预测; 活性/特异性以体外生化与细胞实验为准; '
                       'dp_fold 与 hbond_net 为正向代理项(bpp 独立性近似/几何不变近似), '
                       '未经 Cas12a2 实验标定, 排序含义为先验更优而非已证提活',

@@ -21,6 +21,13 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
   * 加工位点保护与 3'保守窗惩罚的文献依据见下"Dmytrenko 2023"条
 ```
 
+### 状态竞争模型与交叉特征去混杂(2026-09-01 联审方案落地)
+
+- **活性态-侵占态竞争模型**(`scripts/crrna_state_competition.py`, ViennaRNA 单能量标尺约束配分, hc_add_bp/up): 预注册判别检验 **FAIL**——14 条中 Sp8 的 dG_comp 仅排 6/14; 互斥定义(强制侵占螺旋+禁死茎臂)下所有可枚举侵占态均比茎态贵 5.8+ kcal(含 Sp8), 论文失活折叠在伪结外能量面上不可达。**结论: Sp8 正式定性 `out_of_model_domain`**, 活性态竞争假说的检验需统一假结能量模型(中期, RNAstructure/统一 pk 模型)。
+- **交叉特征阶段拆分+组成校正**(`scripts/crrna_cross_decompose.py`, 单碱基组成匹配 N=200 + LOO + GC 偏相关): raw cross_coreDR rho=+0.55(LOO 稳定) 在组成匹配后降至 +0.17~+0.21、GC 偏相关后 +0.08~+0.18; flank 信号 z 后归零(纯成分代理, 且配对对象是被加工丢弃的 U-rich 残留 repeat)。**判据 R1: raw cross_pp 退出主评分获数据支持**; 阶段拆分保留(flank 只进加工模块口径)。
+- **v1.7 结构置换口径过滤**: `inv_max_run`(最长连续 DR-spacer 侵占螺旋) <= 同上下文 WT(t1 型 WT 自身 6 对连续侵占故禁用固定阈值) + `partner_switch` 标注(t1 诊断: A8G 类 DDR-alone 稳定化突变在型1 口径强化的恰是侵占螺旋) + `ddG_dr` 语义更名 "DR 单独折叠稳定化(DDR-alone 口径)" + top.json 增加 `model_domain` 声明(伪结外: 仅侵占筛查+同 spacer 相对排序)。
+- **补偿突变实验面板**(`scripts/crrna_compensatory_design.py` -> `data/ivt_compensatory_panel.*`): MYCg1 三臂 C_WT(inv_run=6)/A_break(0, GC 不变, 靶向配对保持)/B_break_compensate(6 恢复), 各配同源靶——A vs B 活性差 = 折叠竞争的因果检验, 寡核苷酸级成本。
+
 ### 打分输入端可靠性(系综采样检验)
 
 `scripts/crrna_ensemble_check.py`(输出: `data/ensemble_check.pdbdr.v2.json` / `ensemble_check.zengdr.v6.json`): 对 WT+TOP-12(两口径共 26 构建)做 Boltzmann 系综采样检验(ViennaRNA 2.7.2 pbacktrack 本构建不可用, 改用 subopt 精确枚举 5 kcal 窗口 + 权重采样, 窗口尾部质量均 <2.2%, 采样 100/构建, seed=42)——

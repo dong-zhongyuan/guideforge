@@ -89,8 +89,10 @@ def main():
         affected = {}
         for a in audits.values():
             tag = a["source"].replace(".top.json", "")
+            wt_run = a.get("wt_inv_max_run", 0)
             for row in a.get("rows", []):
-                if row["cross_nt"] > a["wt_cross_nt"]:
+                if row["cross_nt"] > a["wt_cross_nt"] or \
+                        row.get("inv_max_run", 0) > wt_run:
                     affected.setdefault(row["desc"], []).append(tag)
         for r in out_rows:
             tag_hits = affected.get(r["desc"])

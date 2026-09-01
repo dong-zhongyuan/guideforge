@@ -25,6 +25,7 @@ def audit(top_json):
     dr_len = len(d["top"][0]["dr_seq"])
     wt_full = core.to_rna(wt_construct)
     wt_cross_nt, wt_cross_pp = core.cross_pairs(wt_full, dr_len)
+    wt_cross_run = core.inv_max_run(wt_full, dr_len)
 
     rejected, kept, rows = [], [], []
     csv_path = top_json.replace(".top.json", ".variants.csv")
@@ -34,12 +35,15 @@ def audit(top_json):
                 continue
             full = core.to_rna(r["construct_dna"])
             cnt, pp = core.cross_pairs(full, dr_len)
-            rows.append({"desc": r["desc"], "cross_nt": cnt, "cross_pp": round(pp, 3)})
-            (rejected if cnt > wt_cross_nt else kept).append(r["desc"])
+            run = core.inv_max_run(full, dr_len)
+            rows.append({"desc": r["desc"], "cross_nt": cnt, "cross_pp": round(pp, 3),
+                         "inv_max_run": run})
+            (rejected if cnt > wt_cross_nt or run > wt_cross_run else kept).append(r["desc"])
 
     top12 = [e["desc"] for e in d["top"] if e.get("desc") not in (None, "WT")][:12]
     top_hit = [n for n in top12 if n in set(rejected)]
     return {"source": os.path.basename(top_json), "wt_cross_nt": wt_cross_nt,
+            "wt_inv_max_run": wt_cross_run,
             "wt_cross_pp": round(wt_cross_pp, 3), "n_passed": len(rows),
             "n_rejected_by_v16": len(rejected), "rejected": rejected[:20],
             "top12_affected": top_hit, "rows": rows}
