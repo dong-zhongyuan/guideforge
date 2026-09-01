@@ -27,12 +27,19 @@ from MDAnalysis.analysis.rms import RMSD
 
 CONTACT_DIST_A = 4.5
 START_NS = 2.0
-RNA_DONOR_H = "H61 H62 H41 H42 H21 H22 HO2'"
+RNA_DONOR_H = "H61 H62 H41 H42 H21 H22 " + chr(34) + "HO2" + chr(39) + chr(34)
 
 
 def trjconv_whole(run_dir, gmx="gmx"):
     """官方 GROMACS: 分子完整性化(幂等, 生成 md_whole.xtc)。"""
     out = os.path.join(run_dir, "md_whole.xtc")
+    emw = os.path.join(run_dir, "em_whole.gro")
+    if not os.path.isfile(emw):
+        subprocess.run([gmx, "trjconv", "-f", os.path.join(run_dir, "em.gro"),
+                        "-s", os.path.join(run_dir, "md.tpr"),
+                        "-o", emw, "-pbc", "whole"],
+                       input="0\n", text=True, check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     if not os.path.isfile(out):
         subprocess.run([gmx, "trjconv", "-f", os.path.join(run_dir, "md.xtc"),
                         "-s", os.path.join(run_dir, "md.tpr"),
@@ -65,19 +72,21 @@ def main():
     criteria = inp["criteria"]
 
     xtc = trjconv_whole(d, args.gmx)
+    # 参考构型: sys.gro 拓扑(全局残基编号) + em.gro 坐标(gro 重排编号, 原子序一致)
     u = mda.Universe(os.path.join(d, "sys.gro"), xtc)
-    ref = mda.Universe(os.path.join(d, "em.gro"))
+    ref = mda.Universe(os.path.join(d, "sys.gro"), os.path.join(d, "em_whole.gro"))
 
     first_resid = args.dr_first_resid or find_crna_first_resid(u)
     print("crRNA 首残基 resid=%d, DR %dnt" % (first_resid, inp["dr_len"]))
 
-    stem_sel = " or ".join("(resid %d name C1')" % (first_resid + i)
+    C1P = "C1" + chr(39)  # C1 撇号原子名, 避免引号嵌套问题
+    stem_sel = " or ".join('(resid %d and name %s)' % (first_resid + i, C1P)
                            for pair in stem_pairs for i in pair)
     cj = json.load(open(args.contact_json, encoding="utf-8"))
     sites = sorted(int(k) for k, v in cj["contacts"].items()
                    if v.get("n_contact_residues", 0) > 0)
-    contact_sel = " or ".join("(resid %d and not name H*)"
-                              % (first_resid + s - 1) for s in sites)
+    contact_sel = " or ".join("(resid %d and not name H*)" % (first_resid + s - 1)
+                              for s in sites)
     contact_atoms = u.select_atoms(contact_sel)
     prot_heavy = u.select_atoms("protein and not name H*")
 
@@ -92,7 +101,9 @@ def main():
     # M2: 逐 100 ps 接触存活
     step = max(1, int(round(100.0 / u.trajectory.dt)))
     surv = []
+    last_t_ns = START_NS
     for ts in u.trajectory[start_frame::step]:
+        last_t_ns = ts.time / 1000.0
         dmat = mda.lib.distances.distance_array(contact_atoms.positions,
                                                 prot_heavy.positions)
         surv.append(float((dmat.min(axis=1) < CONTACT_DIST_A).mean()))
@@ -100,10 +111,12 @@ def main():
     # M3: 官方氢键分析(DR 供体氢 vs 蛋白受体 N/O)
     hb = HydrogenBondAnalysis(
         u,
+        donors_sel="resid %d-%d and (name N6 N4 N2 N1)" % (
+            first_resid, first_resid + inp["dr_len"] - 1),
         hydrogens_sel="resid %d-%d and name %s" % (
             first_resid, first_resid + inp["dr_len"] - 1, RNA_DONOR_H),
         acceptors_sel="protein and name O* N*",
-        d_h_cutoff=1.2, d_a_cutoff=3.5, angle_cutoff=130.0)
+        d_h_cutoff=1.2, d_a_cutoff=3.5, d_h_a_angle_cutoff=130.0)
     hb.run(start=start_frame)
     counts = np.zeros(len(u.trajectory))
     for row in hb.results["hbonds"]:
@@ -112,7 +125,7 @@ def main():
 
     out = {"run_dir": d, "analysis_input": args.analysis_input,
            "n_frames_scored": int(len(rmsd_vals)),
-           "window_ns": [START_NS, round(float(u.trajectory.time / 1000.0), 2)],
+           "window_ns": [START_NS, round(float(last_t_ns), 2)],
            "M1_stem_c1p_rmsd_A_median": round(float(np.median(rmsd_vals)), 3),
            "M1_stem_c1p_rmsd_A_p90": round(float(np.percentile(rmsd_vals, 90)), 3),
            "M2_contact_survival_frac": round(float(np.mean(surv)), 3),
