@@ -34,8 +34,14 @@
 
 打分（透明启发式，仅用于候选排序，不是活性预测；权重 CLI 可调）:
   score = -w_bp*bp_dist - w_ddg*max(ddG,0) - w_contact*contact_sum
-          - w_ens*max(d_ens,0) - w_hbond*hbond_loss - w_cons3*cons3_frac
+          - w_ens*max(d_ens,0) + w_hbond*hbond_net - w_cons3*cons3_frac
+          + w_fold*dp_fold
   其中 hbond_loss 为 8D4A 极性接触的碱基替换互补损失（几何不变近似）;
+  hbond_net = hbond_gain - hbond_loss(有符号: 找回互补记正; gain 仅同名原子可算,
+  新碱基独有极性原子无 WT 坐标, 系统性低估);
+  dp_fold = P(茎完整)_variant - P(茎完整)_WT, P 用全长 bpp 矩阵茎配对概率乘积
+  (独立性近似, 忽略配对间耦合; 机制依据 Bush 2023: 骨架正确折叠率→有效分子比例;
+  代理指标, 未实验标定);
   cons3_frac 为落在 DR 3' 保守窗的突变位点比例(Dmytrenko 2023 Fig.1c: 跨家族 3' 端
   高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
   文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
@@ -141,14 +147,16 @@ def pf_stats(seq, dr_len):
 
 
 def wt_reference(dr, spacer):
-    """WT 全长参考: MFE 结构/能量、系综多样性、spacer 游离度、DR 单独折叠。"""
+    """WT 全长参考: MFE 结构/能量、系综多样性、spacer 游离度、DR 单独折叠、茎完整概率。"""
     full = dr + spacer
     ss, mfe = fold(full)
     diversity, spacer_up = pf_stats(full, len(dr))
     dr_ss, dr_mfe = fold(dr)
+    p_fold = stem_intact_prob(full, stem_pairs_of(dr_ss))
     return {'full_len': len(full), 'mfe_struct': ss, 'mfe_kcal': round(mfe, 2),
             'ens_diversity': round(diversity, 2), 'spacer_mean_unpaired': round(spacer_up, 3),
-            'dr_only_struct': dr_ss, 'dr_only_mfe_kcal': round(dr_mfe, 2)}
+            'dr_only_struct': dr_ss, 'dr_only_mfe_kcal': round(dr_mfe, 2),
+            'p_fold': p_fold}
 
 
 def stem_positions(dr_struct, dr_len):
@@ -297,6 +305,46 @@ def hbond_loss(dr, seq, mut_positions, contact):
     return loss, (sum(fracs) / len(fracs) if fracs else 1.0)
 
 
+def hbond_gain(dr, seq, mut_positions, contact):
+    """找回互补(正向项): 突变位点 WT 接触原子对中, WT 碱基不互补而变体碱基互补的对数。
+    仅同名原子几何不变近似——变体碱基独有的极性原子无 WT 坐标, 系统性低估(保守方向)。"""
+    if contact is None or not mut_positions:
+        return 0
+    gain = 0
+    for p in mut_positions:
+        wt_base, var_base = dr[p - 1], seq[p - 1]
+        for ac in contact['atom_contacts'].get(p, []):
+            wt_class = RNA_BASE_POLAR.get(wt_base, {}).get(ac['rna_atom'])
+            var_class = RNA_BASE_POLAR.get(var_base, {}).get(ac['rna_atom'])
+            if wt_class is None and var_class \
+                    and classes_complementary(ac['prot_class'], var_class):
+                gain += 1
+    return gain
+
+
+def stem_pairs_of(dr_ss):
+    """DR 折叠点括号 → 茎配对列表 [(i,j)](0-based, DR 内坐标)。"""
+    stack, pairs = [], []
+    for i, ch in enumerate(dr_ss):
+        if ch == '(':
+            stack.append(i)
+        elif ch == ')':
+            pairs.append((stack.pop(), i))
+    return pairs
+
+
+def stem_intact_prob(full_seq, dr_pairs):
+    """P(茎完整): 全长配分函数 bpp 矩阵上, WT DR 各茎配对概率的乘积(独立性近似,
+    忽略配对间耦合——作变体间相对比较有效)。dr_pairs 为 DR 内坐标, 偏移至全长。"""
+    fc = RNA.fold_compound(full_seq)
+    fc.pf()
+    bpp = fc.bpp()
+    p = 1.0
+    for i, j in dr_pairs:
+        p *= bpp[i + 1][j + 1]
+    return p
+
+
 def contact_sum(mut_positions, contact):
     """变体的接触代价: 突变位点的蛋白接触计数归一化求和。"""
     if contact is None:
@@ -367,6 +415,10 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     desc, mut_pos = mut_desc(dr, seq)
     csum = contact_sum(mut_pos, contact)
     hloss, hfrac = hbond_loss(dr, seq, mut_pos, contact)
+    hgain = hbond_gain(dr, seq, mut_pos, contact)
+    hnet = hgain - hloss
+    p_fold = stem_intact_prob(full, stem_pairs_of(wt['dr_only_struct']))
+    dp_fold = p_fold - wt['p_fold']
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
           and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
@@ -376,7 +428,8 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     cons3_frac = cons3_n / max(args.cons3_window, 1)
     score = (-args.w_bp * bp_dist - args.w_ddg * max(ddg, 0.0)
              - args.w_contact * csum - args.w_ens * max(d_ens, 0.0)
-             - args.w_hbond * hloss - args.w_cons3 * cons3_frac)
+             + args.w_hbond * hnet - args.w_cons3 * cons3_frac
+             + args.w_fold * dp_fold)
     return {'desc': desc, 'mut_positions': mut_pos, 'n_mut': len(mut_pos),
             'dr_seq': to_dna(seq), 'construct_dna': to_dna(full),
             'mfe_struct': ss, 'mfe_kcal': round(mfe, 2), 'ddG': round(ddg, 2),
@@ -384,6 +437,8 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
             'ens_diversity': round(diversity, 2), 'd_ens': round(d_ens, 2),
             'contact_sum': round(csum, 3),
             'hbond_loss': round(hloss, 3), 'hbond_preserved': round(hfrac, 3),
+            'hbond_gain': hgain, 'hbond_net': round(hnet, 3),
+            'p_fold': round(p_fold, 5), 'dp_fold': round(dp_fold, 5),
             'cons3_frac': round(cons3_frac, 3),
             'proc_ok': bool(args.no_protect_processing
                             or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)),
@@ -585,7 +640,9 @@ def main():
     ap.add_argument('--w-contact', type=float, default=1.0)
     ap.add_argument('--w-ens', type=float, default=0.05)
     ap.add_argument('--w-hbond', type=float, default=0.5,
-                    help='氢键互补损失权重(8D4A 极性接触, 几何不变碱基替换近似)')
+                    help='氢键净变化权重(有符号: 找回互补记正, 丢失记负; 8D4A 极性接触, 几何不变近似)')
+    ap.add_argument('--w-fold', type=float, default=0.2,
+                    help='茎完整概率变化 dp_fold 权重(正向项; bpp 独立性近似; 置 0 关闭)')
     ap.add_argument('--w-cons3', type=float, default=0.3,
                     help="3'保守窗突变惩罚权重(Dmytrenko 2023 Fig.1c 跨家族 3' 端保守)")
     ap.add_argument('--cons3-window', type=int, default=5,
@@ -676,12 +733,21 @@ def main():
               'spacer_unpaired': wt['spacer_mean_unpaired'],
               'ens_diversity': wt['ens_diversity'], 'd_ens': 0.0,
               'contact_sum': 0.0, 'hbond_loss': 0.0, 'hbond_preserved': 1.0,
+              'hbond_gain': 0, 'hbond_net': 0.0,
+              'p_fold': round(wt['p_fold'], 5), 'dp_fold': 0.0,
               'cons3_frac': 0.0, 'proc_ok': True,
               'shape_cons': None,
               'passed': True, 'score': 0.0, 'source': 'WT', 'rank': 0}
 
     n_pass = sum(r['passed'] for r in rows)
     print(f"\n=== 候选库 ===  生成 {len(rows)} 条唯一变体, 通过硬过滤 {n_pass} 条")
+
+    # 正向项区分力闸门: 非零比例 <5% 即声明该指标在本库无区分力(防虚假精度)
+    for name, key, thresh in (('dp_fold', 'dp_fold', 0.01), ('hbond_gain', 'hbond_gain', 0.5)):
+        nz = sum(1 for r in rows if abs(r.get(key) or 0) > thresh)
+        frac = nz / len(rows) if rows else 0
+        flag = ' [警告: 无区分力, 建议置零权重]' if frac < 0.05 else ''
+        print(f"[闸门] {name} 非零(|>{thresh}|)比例 {frac:.1%}{flag}")
 
     if args.rnet_screen:
         screen_rows = [wt_row] + [r for r in rows if r['passed']][:args.rnet_screen_n]
@@ -711,13 +777,15 @@ def main():
     top = [wt_row] + [r for r in rows if r['passed']][:args.topk]
     out_json = args.out_prefix + '.top.json'
     payload = {
-        'disclaimer': '候选库压缩结果, 非活性预测; 活性/特异性以体外生化与细胞实验为准',
+        'disclaimer': '候选库压缩结果, 非活性预测; 活性/特异性以体外生化与细胞实验为准; '
+                      'dp_fold 与 hbond_net 为正向代理项(bpp 独立性近似/几何不变近似), '
+                      '未经 Cas12a2 实验标定, 排序含义为先验更优而非已证提活',
         'effector': args.effector, 'registry_entry_version': entry.get('version'),
         'spacer_fixed_dna': to_dna(spacer), 'wt': wt,
         'params': {k: getattr(args, k) for k in
                    ('strategy', 'n_double', 'sa_steps', 'seed', 'max_bp_dist',
                     'spacer_unpaired_margin', 'w_bp', 'w_ddg', 'w_contact', 'w_ens',
-                    'w_hbond', 'w_cons3', 'cons3_window', 'proc_window',
+                    'w_hbond', 'w_fold', 'w_cons3', 'cons3_window', 'proc_window',
                     'no_protect_processing', 'use_covariation', 'cov_double',
                     'use_struct2seq', 's2s_up_bias', 'rnet_screen',
                     'rnet_screen_n', 'no_contacts', 'topk')},

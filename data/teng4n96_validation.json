@@ -1,0 +1,32 @@
+{
+ "date": "2026-08-31",
+ "provenance": {
+  "paper": "Teng et al. 2019, Genome Biology, doi:10.1186/s13059-019-1620-8",
+  "source": "Additional file 5 backbone: pUC19-U6-crRNA1 与 pUC19-U6-crRNA4n96 同一位点提取",
+  "wt_dr_dna": "AATTTCTACTATTGTAGAT",
+  "v4n96_dr_dna": "AATTTCTACTATGGTAGAT",
+  "difference": "position 13 T->G (loop region; 正文口径 loop UAUG)",
+  "note": "Teng crRNA1 与注册表 cas12a2 PDB 口径 DR(18nt) 仅差 5' 端 1nt, 故不用注册表 cas12a 占位条目作基准"
+ },
+ "wt_full_mfe_kcal": -10.6,
+ "variant_full_mfe_kcal": -9.5,
+ "metrics": {
+  "bp_dist": 0,
+  "ddG": 1.1,
+  "spacer_unpaired_wt": 0.427,
+  "spacer_unpaired_variant": 0.428,
+  "contact_sum": 0.636,
+  "hbond_loss": 1.0,
+  "cons3_hits": 0,
+  "contact_mode": "对齐转移"
+ },
+ "relative_score_at_pipeline_weights": -1.2464,
+ "hard_filters_pass": true,
+ "reference_distribution": {
+  "file": "tp53_r248q_zengdr.v2.variants.csv",
+  "n_passed": 256,
+  "percentile_of_variant": 86.7
+ },
+ "verdict": "PASS(不误伤): 分数百分位 >= 25%",
+ "disclaimer": "Cas12a/哺乳体系证据; 检验对象是打分体系与文献正向证据的一致性, 非 Cas12a2 提活证明"
+}
