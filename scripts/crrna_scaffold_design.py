@@ -35,13 +35,17 @@
 打分（透明启发式，仅用于候选排序，不是活性预测；权重 CLI 可调）:
   score = -w_bp*bp_dist - w_ddg*max(ddG,0) - w_contact*contact_sum
           - w_ens*max(d_ens,0) + w_hbond*hbond_net - w_cons3*cons3_frac
-          + w_fold*dp_fold
+          + w_fold*dp_fold + w_seed*d_seed
   其中 hbond_loss 为 8D4A 极性接触的碱基替换互补损失（几何不变近似）;
   hbond_net = hbond_gain - hbond_loss(有符号: 找回互补记正; gain 仅同名原子可算,
   新碱基独有极性原子无 WT 坐标, 系统性低估);
   dp_fold = P(茎完整)_variant - P(茎完整)_WT, P 用全长 bpp 矩阵茎配对概率乘积
   (独立性近似, 忽略配对间耦合; 机制依据 Bush 2023: 骨架正确折叠率→有效分子比例;
   代理指标, 未实验标定);
+  d_seed = 种子区游离度变化(spacer 3' 端 seed_len=7nt 平均未配对概率之差;
+  依据 Bravo 2023: 3' 端 7 碱基有序溶剂暴露为靶 RNA 结合种子; Liao 2018: DR
+  下游结构缠住 spacer 抑制切割——游离态口径: 预测降低溶液态自缠结/加速种子暴露,
+  非结合态活性保证);
   cons3_frac 为落在 DR 3' 保守窗的突变位点比例(Dmytrenko 2023 Fig.1c: 跨家族 3' 端
   高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
   文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
@@ -133,8 +137,11 @@ def fold(seq):
     return _fold_cache[seq]
 
 
-def pf_stats(seq, dr_len):
-    """配分函数统计: (ensemble_diversity, spacer_mean_unpaired)。spacer 在 DR 之后。"""
+def pf_stats(seq, dr_len, seed_len=7):
+    """配分函数统计: (ensemble_diversity, spacer_mean_unpaired, seed_unpaired)。
+    seed_unpaired = spacer 3' 端 seed_len nt 平均未配对概率
+    (依据 Bravo 2023: Cas12a2 crRNA spacer 3' 端 7 碱基有序且溶剂暴露,
+    为靶 RNA 结合的种子区——种子区被自缠结压住即损失可及性)。"""
     fc = RNA.fold_compound(seq)
     fc.pf()
     diversity = fc.mean_bp_distance()
@@ -143,18 +150,21 @@ def pf_stats(seq, dr_len):
     paired = P.sum(axis=0) + P.sum(axis=1)
     unpaired = 1.0 - paired[1:]
     spacer_up = float(unpaired[dr_len:].mean()) if len(seq) > dr_len else 1.0
-    return float(diversity), spacer_up
+    seed_up = float(unpaired[max(dr_len, n - seed_len):].mean()) if len(seq) > dr_len else 1.0
+    return float(diversity), spacer_up, seed_up
 
 
-def wt_reference(dr, spacer):
-    """WT 全长参考: MFE 结构/能量、系综多样性、spacer 游离度、DR 单独折叠、茎完整概率。"""
+def wt_reference(dr, spacer, seed_len=7):
+    """WT 全长参考: MFE 结构/能量、系综多样性、spacer 游离度、种子区游离度、
+    DR 单独折叠、茎完整概率。"""
     full = dr + spacer
     ss, mfe = fold(full)
-    diversity, spacer_up = pf_stats(full, len(dr))
+    diversity, spacer_up, seed_up = pf_stats(full, len(dr), seed_len)
     dr_ss, dr_mfe = fold(dr)
     p_fold = stem_intact_prob(full, stem_pairs_of(dr_ss))
     return {'full_len': len(full), 'mfe_struct': ss, 'mfe_kcal': round(mfe, 2),
             'ens_diversity': round(diversity, 2), 'spacer_mean_unpaired': round(spacer_up, 3),
+            'seed_unpaired': round(seed_up, 3),
             'dr_only_struct': dr_ss, 'dr_only_mfe_kcal': round(dr_mfe, 2),
             'p_fold': p_fold}
 
@@ -409,7 +419,7 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     full = seq + spacer
     ss, mfe = fold(full)
     bp_dist = RNA.bp_distance(wt['mfe_struct'], ss)
-    diversity, spacer_up = pf_stats(full, len(dr))
+    diversity, spacer_up, seed_up = pf_stats(full, len(dr), args.seed_len)
     ddg = mfe - wt['mfe_kcal']
     d_ens = diversity - wt['ens_diversity']
     desc, mut_pos = mut_desc(dr, seq)
@@ -419,6 +429,7 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     hnet = hgain - hloss
     p_fold = stem_intact_prob(full, stem_pairs_of(wt['dr_only_struct']))
     dp_fold = p_fold - wt['p_fold']
+    d_seed = seed_up - wt['seed_unpaired']
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
           and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
@@ -429,7 +440,7 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     score = (-args.w_bp * bp_dist - args.w_ddg * max(ddg, 0.0)
              - args.w_contact * csum - args.w_ens * max(d_ens, 0.0)
              + args.w_hbond * hnet - args.w_cons3 * cons3_frac
-             + args.w_fold * dp_fold)
+             + args.w_fold * dp_fold + args.w_seed * d_seed)
     return {'desc': desc, 'mut_positions': mut_pos, 'n_mut': len(mut_pos),
             'dr_seq': to_dna(seq), 'construct_dna': to_dna(full),
             'mfe_struct': ss, 'mfe_kcal': round(mfe, 2), 'ddG': round(ddg, 2),
@@ -439,6 +450,7 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
             'hbond_loss': round(hloss, 3), 'hbond_preserved': round(hfrac, 3),
             'hbond_gain': hgain, 'hbond_net': round(hnet, 3),
             'p_fold': round(p_fold, 5), 'dp_fold': round(dp_fold, 5),
+            'seed_up': round(seed_up, 3), 'd_seed': round(d_seed, 3),
             'cons3_frac': round(cons3_frac, 3),
             'proc_ok': bool(args.no_protect_processing
                             or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)),
@@ -643,6 +655,13 @@ def main():
                     help='氢键净变化权重(有符号: 找回互补记正, 丢失记负; 8D4A 极性接触, 几何不变近似)')
     ap.add_argument('--w-fold', type=float, default=0.2,
                     help='茎完整概率变化 dp_fold 权重(正向项; bpp 独立性近似; 置 0 关闭)')
+    ap.add_argument('--w-seed', type=float, default=0.0,
+                    help="种子区游离度变化 d_seed 权重(正向项, spacer 3' 端)。默认 0: 与 "
+                         "Δspacer_up Spearman 共线 0.835 超过 0.8 预注册合并线, 机制列保留、"
+                         "权重默认关闭(湿实验标定后决定独立价值); 且 d_seed 单独加权会被"
+                         "极端多点变体套利(砸烂 DR→spacer 解放), 须与硬过滤耦合使用")
+    ap.add_argument('--seed-len', type=int, default=7,
+                    help="种子区长度 nt(Bravo 2023: 3' 端 7 碱基有序溶剂暴露)")
     ap.add_argument('--w-cons3', type=float, default=0.3,
                     help="3'保守窗突变惩罚权重(Dmytrenko 2023 Fig.1c 跨家族 3' 端保守)")
     ap.add_argument('--cons3-window', type=int, default=5,
@@ -679,7 +698,7 @@ def main():
         ap.error(f"效应子 {args.effector} 骨架方位 {entry.get('scaffold_side')} 非 5prime, 暂不支持")
     rng = np.random.default_rng(args.seed)
 
-    wt = wt_reference(dr, spacer)
+    wt = wt_reference(dr, spacer, args.seed_len)
     print('=== WT 参考 ===')
     print(f"效应子: {entry['display_name']}")
     print(f"DR 骨架({len(dr)}nt): {to_dna(dr)}  spacer({len(spacer)}nt, 固定): {to_dna(spacer)}")
@@ -735,6 +754,7 @@ def main():
               'contact_sum': 0.0, 'hbond_loss': 0.0, 'hbond_preserved': 1.0,
               'hbond_gain': 0, 'hbond_net': 0.0,
               'p_fold': round(wt['p_fold'], 5), 'dp_fold': 0.0,
+              'seed_up': wt['seed_unpaired'], 'd_seed': 0.0,
               'cons3_frac': 0.0, 'proc_ok': True,
               'shape_cons': None,
               'passed': True, 'score': 0.0, 'source': 'WT', 'rank': 0}
@@ -743,7 +763,8 @@ def main():
     print(f"\n=== 候选库 ===  生成 {len(rows)} 条唯一变体, 通过硬过滤 {n_pass} 条")
 
     # 正向项区分力闸门: 非零比例 <5% 即声明该指标在本库无区分力(防虚假精度)
-    for name, key, thresh in (('dp_fold', 'dp_fold', 0.01), ('hbond_gain', 'hbond_gain', 0.5)):
+    for name, key, thresh in (('dp_fold', 'dp_fold', 0.01), ('hbond_gain', 'hbond_gain', 0.5),
+                              ('d_seed', 'd_seed', 0.01)):
         nz = sum(1 for r in rows if abs(r.get(key) or 0) > thresh)
         frac = nz / len(rows) if rows else 0
         flag = ' [警告: 无区分力, 建议置零权重]' if frac < 0.05 else ''
@@ -785,7 +806,7 @@ def main():
         'params': {k: getattr(args, k) for k in
                    ('strategy', 'n_double', 'sa_steps', 'seed', 'max_bp_dist',
                     'spacer_unpaired_margin', 'w_bp', 'w_ddg', 'w_contact', 'w_ens',
-                    'w_hbond', 'w_fold', 'w_cons3', 'cons3_window', 'proc_window',
+                    'w_hbond', 'w_fold', 'w_seed', 'seed_len', 'w_cons3', 'cons3_window', 'proc_window',
                     'no_protect_processing', 'use_covariation', 'cov_double',
                     'use_struct2seq', 's2s_up_bias', 'rnet_screen',
                     'rnet_screen_n', 'no_contacts', 'topk')},

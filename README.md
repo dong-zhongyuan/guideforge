@@ -73,10 +73,18 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
   (zengdr.v2 = 加工保护+3'窗+共变口径; context_typing/ = 分型试验; agent/ = 智能体演示)
 - `toolbox/` — 结构工具链: rnet-inference (RNet/RibonanzaNet) · Struct2SeQ · geometric-rna-design (gRNAde) · OpenKnotAIDesignData(竞赛基准数据)
 
-## 诚实声明
+## 诚实声明与边界限定
 
 候选库是"候选压缩"结果, 不是活性预测; 打分为透明启发式, 未经实验标定。
-最终活性/特异性以体外生化与细胞实验为准。
+最终活性/特异性以体外生化与细胞实验为准。两条必须主动声明的口径边界:
+
+- **假结**: Cas12a2 crRNA 5' 端假结为蛋白诱导的结合态结构(Dmytrenko 2023; Methods in Enzymology 2025),
+  游离态预测中不出现——本管线双路结构预测(ViennaRNA × RNet-SS)均为游离态口径,
+  ViennaRNA 本身不折叠假结; 注册表条目的 bound_state_note 已如实标注。
+- **游离态 ≠ 结合态**: 全部结构指标(含种子区游离 d_seed)为溶液态预测,
+  结合态下蛋白会重排 spacer(Bravo 2023 四元复合物结构即证据); 正向项的含义
+  是"预测降低溶液态自缠结、加速种子区暴露", RNet SHAPE 一致性为桥接证据,
+  不是结合态活性保证。
 
 ## 来源
 
