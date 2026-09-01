@@ -96,7 +96,7 @@ def main():
                 "p10_tpm": round(vals[int(0.1 * len(vals))], 2),
                 "p90_tpm": round(vals[int(0.9 * len(vals))], 2),
                 "targets": GENE2TARGETS.get(gene, []),
-                "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"}
+                "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct); 口径注记: 2018q3 RPKM 旧版, DepMap 新版 TPM 被验证墙挡, 换源时需重标定丰度分档"}
             print("[%s] CCLE 本地解析: n=%d median=%s" % (
                 gene, len(vals), abundance[gene]["median_tpm"]))
             continue

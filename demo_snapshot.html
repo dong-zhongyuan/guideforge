@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>GuideForge 离线演示快照</title><style>
+body{font-family:sans-serif;max-width:1000px;margin:2em auto;padding:0 1em;color:#20303c}
+h1{font-size:1.3em}h2{font-size:1.05em;border-left:4px solid #0e6ba8;padding-left:.5em;margin-top:1.6em}
+table{border-collapse:collapse;width:100%;font-size:.9em}
+td,th{border:1px solid #d8e2ea;padding:.4em .6em;text-align:left;vertical-align:top}
+th{background:#eef4f9}code{background:#f0f4f8;padding:0 .3em}
+.small{color:#62788a;font-size:.85em}
+</style></head><body>
+<h1>GuideForge — Cas12a2 crRNA 骨架分型设计与 AI 智能体(离线快照)</h1>
+<div class="small">生成时间 2026-09-02 | 输出均为结构口径排序/分型建议, 不含活性预测
+(游离态指标经三模型反向验证不构成活性预测器, 见仓库 README 校准声明)。</div>
+<h2>① 五靶标 panel 端到端设计(tilling + 骨架分型, 智能体预计算)</h2>
+<table><tr><th>靶标</th><th>spacer(A)</th><th>骨架型/置信</th><th>tier</th><th>完整 crRNA 构建</th></tr><tr><th>TP53-R248Q</th><td><code>TCATGCCGCCCATGCAGGAACTGT</code></td><td>U3C(high)</td><td>2</td><td><code>AACTTCTACTGTTGTAGATTCATGCCGCCCATGCAGGAACTGT</code></td></tr><tr><th>KRAS-G12C</th><td><code>AGCTCCAACTACCACAAGTTTATA</code></td><td>U3C(medium)</td><td>2</td><td><code>AACTTCTACTGTTGTAGATAGCTCCAACTACCACAAGTTTATA</code></td></tr><tr><th>KRAS-G12D</th><td><code>CAGCTCCAACTACCACAAGTTTAT</code></td><td>U3C(medium)</td><td>2</td><td><code>AACTTCTACTGTTGTAGATCAGCTCCAACTACCACAAGTTTAT</code></td></tr><tr><th>TP53-R273H</th><td><code>CACCTCAAAGCTGTTCCGTCCCAG</code></td><td>U3C(high)</td><td>2</td><td><code>AACTTCTACTGTTGTAGATCACCTCAAAGCTGTTCCGTCCCAG</code></td></tr><tr><th>APC-Q1312x</th><td><code>CTTCCTGTGTCGTCTGATTACATC</code></td><td>U3C(medium)</td><td>2</td><td><code>AACTTCTACTGTTGTAGATCTTCCTGTGTCGTCTGATTACATC</code></td></tr></table>
+<h2>② 四取向跨型候选骨架族(V3 §4.2, 供体外矩阵)</h2>
+<table><tr><th>取向</th><th>变体</th><th>指标</th><th>构建</th></tr><tr><th>WT 参照</th><td colspan=3><code>AATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>low_threshold</th><td>A8C+U15G</td><td>DDR-alone ΔΔG -2.2</td><td><code>AATTTCTCCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>low_threshold</th><td>A1G+U3A+A8G+U15C</td><td>DDR-alone ΔΔG -2.0</td><td><code>GAATTCTGCTGTTGCAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>high_stringency</th><td>A1C</td><td>DDR-alone ΔΔG -0.0</td><td><code>CATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>high_stringency</th><td>A1U</td><td>DDR-alone ΔΔG -0.0</td><td><code>TATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>robust</th><td>U5G+A18C</td><td>DDR-alone ΔΔG -1.9</td><td><code>AATTGCTACTGTTGTAGCTGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>robust</th><td>A1U+A2C</td><td>DDR-alone ΔΔG -0.0</td><td><code>TCTTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>balanced</th><td>A1C</td><td>DDR-alone ΔΔG -0.0</td><td><code>CATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr><tr><th>balanced</th><td>A1U</td><td>DDR-alone ΔΔG -0.0</td><td><code>TATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT</code></td></tr></table>
+<h2>③ MYCg1 补偿突变三臂(折叠竞争因果检验, 预注册预测已固化)</h2>
+<table><tr><th>臂</th><th>构建</th><th>结构核查</th><th>同源靶</th></tr><tr><th>C_WT</th><td><code>AATTTCTACTGTTGTAGAT…ACCATGTC</code></td><td>侵占螺旋 6 对</td><td><code>CGAGCTGCTGGGAGGAGACATGGT</code></td></tr><tr><th>A_break</th><td><code>AATTTCTACTGTTGTAGAT…ACCATGTG</code></td><td>侵占螺旋 0 对</td><td><code>CGAGCTCCTCGGAGGACACATGGT</code></td></tr><tr><th>B_break_compensate</th><td><code>AATTTCTACTCTTCTACAT…ACCATGTG</code></td><td>侵占螺旋 6 对</td><td><code>CGAGCTCCTCGGAGGACACATGGT</code></td></tr></table><div class='small'>A(破坏侵占, 靶向配对保持)活性应高于 WT; B(恢复侵占配对)活性应回落;A vs B 差异 = 折叠竞争的因果证据; 每臂须用各自同源靶</div>
+<h2>④ 预注册时间戳</h2>
+<div>git tag <code>preregistration-20260901</code>(GitHub/Gitee 双远端): 合成清单+候选族 sha256、
+打分权重出处、预测(A_break&gt;C_WT, B 臂回落; 活性主张一律不写)。</div>
+<div class="small">在线演示: 服务器 <code>python scripts/crrna_agent_webapp.py</code> + 本机
+<code>ssh -L 8899:localhost:8899 srv</code> -> http://localhost:8899 (spacer 实算分型)。</div>
+</body></html>

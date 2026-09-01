@@ -9,7 +9,7 @@
     "R248Q",
     "R273H"
    ],
-   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct); 口径注记: 2018q3 RPKM 旧版, DepMap 新版 TPM 被验证墙挡, 换源时需重标定丰度分档"
   },
   "KRAS": {
    "n_cell_lines": 1156,
@@ -20,7 +20,7 @@
     "G12C",
     "G12D"
    ],
-   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct); 口径注记: 2018q3 RPKM 旧版, DepMap 新版 TPM 被验证墙挡, 换源时需重标定丰度分档"
   },
   "APC": {
    "n_cell_lines": 1156,
@@ -30,7 +30,7 @@
    "targets": [
     "MCR-nonsense"
    ],
-   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct); 口径注记: 2018q3 RPKM 旧版, DepMap 新版 TPM 被验证墙挡, 换源时需重标定丰度分档"
   },
   "MYC": {
    "n_cell_lines": 1156,
@@ -40,7 +40,7 @@
    "targets": [
     "g1"
    ],
-   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"
+   "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct); 口径注记: 2018q3 RPKM 旧版, DepMap 新版 TPM 被验证墙挡, 换源时需重标定丰度分档"
   }
  },
  "note": "丰度分档供杀伤窗口计算; DepMap 全矩阵待校准期接入"
