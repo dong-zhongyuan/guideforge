@@ -42,7 +42,7 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 ### Chai-1 共折叠首跑(蛋白预测层能力探针, 2026-09-02)
 
-`scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR18+R248Q)+靶RNA(28nt) 三元共折叠, 单序列模式(无 MSA/无 ESM), 5 模型 ~25 分钟。结果: aggregate 0.23-0.24, ipTM 0.22-0.24, **蛋白-crRNA 链间 ipTM 0.02(界面未恢复——单序列模式对 1200aa RNA 引导核酸酶的已知短板, 非故障)**; crRNA-靶RNA 链对 ipTM 0.34-0.35 且 5 模型一致(向导-靶双链部分恢复, 最有意义的链对)。ESM 嵌入版两次尝试均因容器到 hf-mirror 断网失败(Errno 101), 升级路径记录在案: ESM/MSA 版恢复后 ipTM 方可用作选型特征; 当前 V3 蛋白预测层的界面差量口径仍以 8D4A 静态接触表 + 10ns MD(M1/M2/M3 判据)为准。
+`scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR18+R248Q)+靶RNA(28nt) 三元共折叠, 单序列模式(无 MSA/无 ESM), 5 模型 ~25 分钟。结果: aggregate 0.23-0.24, ipTM 0.22-0.24, **蛋白-crRNA 链间 ipTM 0.02(界面未恢复——单序列模式对 1200aa RNA 引导核酸酶的已知短板, 非故障)**; crRNA-靶RNA 链对 ipTM 0.34-0.35 且 5 模型一致(向导-靶双链部分恢复, 最有意义的链对)。ESM 版补跑成功(2026-09-02: 权重 5.68GB 经宿主 16 路分段下载 chaiassets.com -> /dawn -> 容器 CHAI_DOWNLOADS_DIR 软链本地化, conformers 资产同法): pTM 0.24->0.34(蛋白内部折叠置信显著提升), 蛋白-crRNA 链间 ipTM 0.02->0.02-0.08(最佳模型 +4 倍但仍 <0.1, **界面仍未恢复**), crRNA-靶RNA 0.35->0.31。结论: 无 MSA 下 Chai-1 对本体系(1207aa RNA 引导核酸酶)的蛋白-RNA 界面 ipTM 不可用作选型特征; 界面差量口径仍以 8D4A 接触表 + 10ns MD 判据为准; 升级路径=MSA(需 chai MSA server, 当前不可达)或模板注入(8D4A 作 template, 待试)。
 
 ### 打分输入端可靠性(系综采样检验)
 
