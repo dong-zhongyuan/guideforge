@@ -7,5 +7,202 @@
   "crrna_rel": null,
   "status": "UN-CALIBRATED: 仅参数包络输出, 不构成活性预测"
  },
- "envelope": []
+ "envelope": [
+  {
+   "gene": "TP53",
+   "ec50_tpm": 0.5,
+   "act_p90": 1.0,
+   "act_p10": 0.971,
+   "window": 0.029
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 0.5,
+   "act_p90": 0.997,
+   "act_p10": 0.96,
+   "window": 0.037
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 0.5,
+   "act_p90": 0.995,
+   "act_p10": 0.952,
+   "window": 0.043
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 0.5,
+   "act_p90": 1.0,
+   "act_p10": 0.997,
+   "window": 0.003
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 1.0,
+   "act_p90": 1.0,
+   "act_p10": 0.893,
+   "window": 0.107
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 1.0,
+   "act_p90": 0.989,
+   "act_p10": 0.858,
+   "window": 0.131
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 1.0,
+   "act_p90": 0.98,
+   "act_p10": 0.831,
+   "window": 0.149
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 1.0,
+   "act_p90": 1.0,
+   "act_p10": 0.988,
+   "window": 0.012
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 2.0,
+   "act_p90": 0.998,
+   "act_p10": 0.676,
+   "window": 0.322
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 2.0,
+   "act_p90": 0.957,
+   "act_p10": 0.602,
+   "window": 0.355
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 2.0,
+   "act_p90": 0.926,
+   "act_p10": 0.552,
+   "window": 0.374
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 2.0,
+   "act_p90": 1.0,
+   "act_p10": 0.953,
+   "window": 0.046
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.989,
+   "act_p10": 0.25,
+   "window": 0.739
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.78,
+   "act_p10": 0.195,
+   "window": 0.585
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.665,
+   "act_p10": 0.165,
+   "window": 0.501
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.999,
+   "act_p10": 0.766,
+   "window": 0.233
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.959,
+   "act_p10": 0.077,
+   "window": 0.882
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.47,
+   "act_p10": 0.057,
+   "window": 0.413
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.332,
+   "act_p10": 0.047,
+   "window": 0.285
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.996,
+   "act_p10": 0.45,
+   "window": 0.546
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.854,
+   "act_p10": 0.02,
+   "window": 0.834
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.181,
+   "act_p10": 0.015,
+   "window": 0.166
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.111,
+   "act_p10": 0.012,
+   "window": 0.098
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.983,
+   "act_p10": 0.17,
+   "window": 0.813
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.483,
+   "act_p10": 0.003,
+   "window": 0.48
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.034,
+   "act_p10": 0.002,
+   "window": 0.032
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.019,
+   "act_p10": 0.002,
+   "window": 0.018
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.905,
+   "act_p10": 0.032,
+   "window": 0.873
+  }
+ ]
 }

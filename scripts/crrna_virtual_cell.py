@@ -98,7 +98,7 @@ def main():
                 "targets": GENE2TARGETS.get(gene, []),
                 "source": "CCLE 18q3 RPKM(本地 data/CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct)"}
             print("[%s] CCLE 本地解析: n=%d median=%s" % (
-                gene, len(vals), abundance[gene]["median"]))
+                gene, len(vals), abundance[gene]["median_tpm"]))
             continue
         cache = os.path.join(DATA, "hpa_rna_celline_%s.tsv" % gene)
         try:

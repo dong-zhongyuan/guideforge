@@ -2,7 +2,7 @@
  "genes": {
   "TP53": {
    "n_cell_lines": 1156,
-   "median": 21.06,
+   "median_tpm": 21.06,
    "p10_tpm": 2.89,
    "p90_tpm": 48.37,
    "targets": [
@@ -13,7 +13,7 @@
   },
   "KRAS": {
    "n_cell_lines": 1156,
-   "median": 4.42,
+   "median_tpm": 4.42,
    "p10_tpm": 2.46,
    "p90_tpm": 9.41,
    "targets": [
@@ -24,7 +24,7 @@
   },
   "APC": {
    "n_cell_lines": 1156,
-   "median": 4.06,
+   "median_tpm": 4.06,
    "p10_tpm": 2.22,
    "p90_tpm": 7.05,
    "targets": [
@@ -34,7 +34,7 @@
   },
   "MYC": {
    "n_cell_lines": 1156,
-   "median": 44.9,
+   "median_tpm": 44.9,
    "p10_tpm": 9.05,
    "p90_tpm": 154.07,
    "targets": [
