@@ -1,0 +1,334 @@
+{
+ "effector": "cas12a2_zeng2026",
+ "dr_dna": "AATTTCTACTGTTGTAGAT",
+ "n_spacers": 86,
+ "features": [
+  "GC",
+  "self_mfe",
+  "spacer_up",
+  "junction_pairs",
+  "internal_pairs"
+ ],
+ "k_scan": [
+  {
+   "k": 2,
+   "silhouette": 0.373,
+   "inertia": 261.34,
+   "sizes": [
+    32,
+    54
+   ]
+  },
+  {
+   "k": 3,
+   "silhouette": 0.379,
+   "inertia": 182.83,
+   "sizes": [
+    36,
+    9,
+    41
+   ]
+  },
+  {
+   "k": 4,
+   "silhouette": 0.356,
+   "inertia": 137.82,
+   "sizes": [
+    44,
+    9,
+    18,
+    15
+   ]
+  },
+  {
+   "k": 5,
+   "silhouette": 0.331,
+   "inertia": 115.21,
+   "sizes": [
+    9,
+    15,
+    17,
+    21,
+    24
+   ]
+  },
+  {
+   "k": 6,
+   "silhouette": 0.34,
+   "inertia": 100.65,
+   "sizes": [
+    24,
+    12,
+    9,
+    10,
+    17,
+    14
+   ]
+  }
+ ],
+ "chosen_k": 3,
+ "types": {
+  "0": {
+   "n": 36,
+   "feature_means": {
+    "GC": 0.595,
+    "self_mfe": -2.133,
+    "spacer_up": 0.676,
+    "junction_pairs": 0.139,
+    "internal_pairs": 3.333
+   },
+   "members": [
+    "zsGreen gRNA",
+    "ACTB gRNA2",
+    "ACTB gRNA3",
+    "ACTB gRNA6",
+    "GAPDH gRNA",
+    "M246I gRNA2",
+    "M246I gRNA4",
+    "R248Q gRNA1",
+    "R248Q gRNA2",
+    "R248Q gRNA5",
+    "R248Q gRNA8",
+    "R248Q gRNA9",
+    "R248Q gRNA10",
+    "R248Q gRNA22",
+    "R248Q gRNA23",
+    "R248Q gRNA25",
+    "R248Q gRNA26",
+    "R248Q gRNA27",
+    "R248Q gRNA28",
+    "R280K gRNA1",
+    "R280K gRNA3",
+    "R280K gRNA4",
+    "R280K gRNA5",
+    "R280K gRNA7",
+    "R280K gRNA8",
+    "R280K gRNA17",
+    "R280K gRNA18",
+    "R280K gRNA19",
+    "R280K gRNA20",
+    "R280K gRNA21",
+    "R280K gRNA22",
+    "R280K gRNA23",
+    "R280K gRNA24",
+    "R280K gRNA26",
+    "R280K gRNA27",
+    "R280K gRNA28"
+   ],
+   "representatives": [
+    {
+     "name": "R248Q gRNA9",
+     "spacer": "CCTCTGGTTCATGCCGCCCATGCA",
+     "dist_to_centroid": 1.239
+    },
+    {
+     "name": "R248Q gRNA8",
+     "spacer": "CTCTGGTTCATGCCGCCCATGCAG",
+     "dist_to_centroid": 0.884
+    },
+    {
+     "name": "R280K gRNA20",
+     "spacer": "TCTGTGCGCCGGTCTTTCCCAGGA",
+     "dist_to_centroid": 5.18
+    }
+   ]
+  },
+  "1": {
+   "n": 9,
+   "feature_means": {
+    "GC": 0.611,
+    "self_mfe": -1.156,
+    "spacer_up": 0.568,
+    "junction_pairs": 8.778,
+    "internal_pairs": 1.444
+   },
+   "members": [
+    "CCNE1 gRNA3",
+    "CCNE1 gRNA5",
+    "CCNE1 gRNA6",
+    "EGFRdel gRNA",
+    "MYC gRNA1",
+    "MYC gRNA3",
+    "R280K gRNA2",
+    "R280K gRNA6",
+    "R280K gRNA25"
+   ],
+   "representatives": [
+    {
+     "name": "MYC gRNA1",
+     "spacer": "ACCATGTCTCCTCCCAGCAGCTCG",
+     "dist_to_centroid": 0.712
+    },
+    {
+     "name": "CCNE1 gRNA3",
+     "spacer": "TCAGGTGTGGGGATCAGGGAGCAG",
+     "dist_to_centroid": 2.592
+    },
+    {
+     "name": "MYC gRNA3",
+     "spacer": "CAACTCCGGGATCTGGTCACGCAG",
+     "dist_to_centroid": 1.474
+    }
+   ]
+  },
+  "2": {
+   "n": 41,
+   "feature_means": {
+    "GC": 0.634,
+    "self_mfe": -6.154,
+    "spacer_up": 0.432,
+    "junction_pairs": 0.244,
+    "internal_pairs": 7.049
+   },
+   "members": [
+    "GFP gRNA",
+    "ACTB gRNA1",
+    "ACTB gRNA4",
+    "ACTB gRNA5",
+    "ACTB gRNA7",
+    "CCNE1 gRNA1",
+    "CCNE1 gRNA2",
+    "CCNE1 gRNA4",
+    "E285K gRNA",
+    "HRAS gRNA",
+    "M246I gRNA1",
+    "M246I gRNA3",
+    "M246I gRNA5",
+    "M246I gRNA6",
+    "MYC gRNA2",
+    "MYC gRNA4",
+    "MYC gRNA5",
+    "R248Q gRNA3",
+    "R248Q gRNA4",
+    "R248Q gRNA6",
+    "R248Q gRNA7",
+    "R248Q gRNA11",
+    "R248Q gRNA12",
+    "R248Q gRNA13",
+    "R248Q gRNA14",
+    "R248Q gRNA15",
+    "R248Q gRNA16",
+    "R248Q gRNA17",
+    "R248Q gRNA18",
+    "R248Q gRNA19",
+    "R248Q gRNA20",
+    "R248Q gRNA21",
+    "R248Q gRNA24",
+    "R280K gRNA9",
+    "R280K gRNA10",
+    "R280K gRNA11",
+    "R280K gRNA12",
+    "R280K gRNA13",
+    "R280K gRNA14",
+    "R280K gRNA15",
+    "R280K gRNA16"
+   ],
+   "representatives": [
+    {
+     "name": "ACTB gRNA4",
+     "spacer": "GTGGATGCCACAGGACTCCATGCC",
+     "dist_to_centroid": 1.536
+    },
+    {
+     "name": "R280K gRNA12",
+     "spacer": "CCGGTCTTTCCCAGGACAGGCACA",
+     "dist_to_centroid": 1.037
+    },
+    {
+     "name": "R248Q gRNA15",
+     "spacer": "GATGGGCCTCTGGTTCATGCCGCC",
+     "dist_to_centroid": 0.205
+    }
+   ]
+  }
+ },
+ "note": "go/no-go: 各型代表重跑管线后比对 TOP DR 重合度; 高重合=上下文效应弱(阴性)",
+ "top_overlaps": {
+  "t0:R248Q gRNA9 vs t0:R248Q gRNA8": "6/10 J=0.60",
+  "t0:R248Q gRNA9 vs t0:R280K gRNA20": "6/10 J=0.60",
+  "t0:R248Q gRNA9 vs t1:MYC gRNA1": "3/13 J=0.23",
+  "t0:R248Q gRNA9 vs t1:CCNE1 gRNA3": "2/14 J=0.14",
+  "t0:R248Q gRNA9 vs t1:MYC gRNA3": "3/13 J=0.23",
+  "t0:R248Q gRNA9 vs t2:ACTB gRNA4": "8/8 J=1.00",
+  "t0:R248Q gRNA9 vs t2:R280K gRNA12": "7/9 J=0.78",
+  "t0:R248Q gRNA9 vs t2:R248Q gRNA15": "7/9 J=0.78",
+  "t0:R248Q gRNA8 vs t0:R280K gRNA20": "6/10 J=0.60",
+  "t0:R248Q gRNA8 vs t1:MYC gRNA1": "2/14 J=0.14",
+  "t0:R248Q gRNA8 vs t1:CCNE1 gRNA3": "2/14 J=0.14",
+  "t0:R248Q gRNA8 vs t1:MYC gRNA3": "2/14 J=0.14",
+  "t0:R248Q gRNA8 vs t2:ACTB gRNA4": "6/10 J=0.60",
+  "t0:R248Q gRNA8 vs t2:R280K gRNA12": "6/10 J=0.60",
+  "t0:R248Q gRNA8 vs t2:R248Q gRNA15": "5/11 J=0.45",
+  "t0:R280K gRNA20 vs t1:MYC gRNA1": "2/14 J=0.14",
+  "t0:R280K gRNA20 vs t1:CCNE1 gRNA3": "3/13 J=0.23",
+  "t0:R280K gRNA20 vs t1:MYC gRNA3": "2/14 J=0.14",
+  "t0:R280K gRNA20 vs t2:ACTB gRNA4": "6/10 J=0.60",
+  "t0:R280K gRNA20 vs t2:R280K gRNA12": "6/10 J=0.60",
+  "t0:R280K gRNA20 vs t2:R248Q gRNA15": "5/11 J=0.45",
+  "t1:MYC gRNA1 vs t1:CCNE1 gRNA3": "4/12 J=0.33",
+  "t1:MYC gRNA1 vs t1:MYC gRNA3": "6/10 J=0.60",
+  "t1:MYC gRNA1 vs t2:ACTB gRNA4": "3/13 J=0.23",
+  "t1:MYC gRNA1 vs t2:R280K gRNA12": "3/13 J=0.23",
+  "t1:MYC gRNA1 vs t2:R248Q gRNA15": "2/14 J=0.14",
+  "t1:CCNE1 gRNA3 vs t1:MYC gRNA3": "4/12 J=0.33",
+  "t1:CCNE1 gRNA3 vs t2:ACTB gRNA4": "2/14 J=0.14",
+  "t1:CCNE1 gRNA3 vs t2:R280K gRNA12": "2/14 J=0.14",
+  "t1:CCNE1 gRNA3 vs t2:R248Q gRNA15": "1/15 J=0.07",
+  "t1:MYC gRNA3 vs t2:ACTB gRNA4": "3/13 J=0.23",
+  "t1:MYC gRNA3 vs t2:R280K gRNA12": "3/13 J=0.23",
+  "t1:MYC gRNA3 vs t2:R248Q gRNA15": "2/14 J=0.14",
+  "t2:ACTB gRNA4 vs t2:R280K gRNA12": "7/9 J=0.78",
+  "t2:ACTB gRNA4 vs t2:R248Q gRNA15": "7/9 J=0.78",
+  "t2:R280K gRNA12 vs t2:R248Q gRNA15": "6/10 J=0.60"
+ },
+ "top_per_type_union": {
+  "t0": [
+   "A16G",
+   "A1C",
+   "A1C+U3A",
+   "A1C+U3C",
+   "A1G",
+   "A1U",
+   "A1U+U3C",
+   "A8G",
+   "G11A",
+   "U3A",
+   "U3C",
+   "U3G"
+  ],
+  "t1": [
+   "A16G",
+   "A1C",
+   "A1C+A16G",
+   "A1C+C6A",
+   "A1C+C6G",
+   "A1C+U15C",
+   "A1G",
+   "A1G+U15C",
+   "A1U",
+   "A1U+U15C",
+   "C6A",
+   "C6G",
+   "U15A",
+   "U15C"
+  ],
+  "t2": [
+   "A1C",
+   "A1C+U3A",
+   "A1G",
+   "A1G+U3G",
+   "A1U",
+   "A1U+A8G",
+   "A8G",
+   "U3A",
+   "U3C",
+   "U3G"
+  ]
+ },
+ "top_common_to_all_types": [
+  "A1C",
+  "A1G",
+  "A1U"
+ ],
+ "go_no_go": "阳性(型间 TOP 差异显著): 各型并集不同且公共集小"
+}
