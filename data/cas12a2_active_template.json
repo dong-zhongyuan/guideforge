@@ -1,0 +1,94 @@
+{
+ "source": "data/8D4A.cif 链B(crRNA) 三维几何提取",
+ "criteria": "N1(嘌呤)-N3(嘧啶) <4.0A + C1'-C1' <12.5A (简化 LW 判据)",
+ "dr_len": 18,
+ "stem_pairs_1based": [
+  [
+   5,
+   18
+  ],
+  [
+   6,
+   17
+  ],
+  [
+   7,
+   16
+  ],
+  [
+   8,
+   15
+  ],
+  [
+   9,
+   14
+  ]
+ ],
+ "pairs": [
+  {
+   "i_1based": 4,
+   "j_1based": 17,
+   "bases": "U-A",
+   "region": "DR",
+   "class": "pseudoknot-crossing",
+   "C1p_dist_A": 10.5
+  },
+  {
+   "i_1based": 5,
+   "j_1based": 16,
+   "bases": "C-G",
+   "region": "DR",
+   "class": "pseudoknot-crossing",
+   "C1p_dist_A": 10.9
+  },
+  {
+   "i_1based": 5,
+   "j_1based": 17,
+   "bases": "C-A",
+   "region": "DR",
+   "class": "nested",
+   "C1p_dist_A": 7.9
+  },
+  {
+   "i_1based": 6,
+   "j_1based": 15,
+   "bases": "U-A",
+   "region": "DR",
+   "class": "pseudoknot-crossing",
+   "C1p_dist_A": 10.6
+  },
+  {
+   "i_1based": 6,
+   "j_1based": 16,
+   "bases": "U-G",
+   "region": "DR",
+   "class": "nested",
+   "C1p_dist_A": 8.7
+  },
+  {
+   "i_1based": 7,
+   "j_1based": 14,
+   "bases": "A-U",
+   "region": "DR",
+   "class": "pseudoknot-crossing",
+   "C1p_dist_A": 10.6
+  },
+  {
+   "i_1based": 8,
+   "j_1based": 13,
+   "bases": "C-G",
+   "region": "DR",
+   "class": "pseudoknot-crossing",
+   "C1p_dist_A": 10.7
+  },
+  {
+   "i_1based": 9,
+   "j_1based": 13,
+   "bases": "U-G",
+   "region": "DR",
+   "class": "nested",
+   "C1p_dist_A": 7.5
+  }
+ ],
+ "note": "class=pseudoknot-crossing 指与 5bp 茎交叉的配对(假结元素候选); 供假结竞争模型作活性态模板"
+}
