@@ -1,0 +1,59 @@
+{
+ "mode": "冷启动(计算代理-在-代理, 非活性证据)",
+ "proposals": [
+  {
+   "desc": "A1U+U4C+C5U+U6C+A7U+A10U+U11A+U14A+A15G+G16A+A17G",
+   "ei": 0.0,
+   "src": "tp53_r248q_pdbdr.v2",
+   "ddG_dr": "-1.4",
+   "bp_dist": "0",
+   "spacer_unpaired": "0.426",
+   "contact_sum": "6.636",
+   "cons3_frac": "0.8",
+   "seed_up": "0.304"
+  },
+  {
+   "desc": "A1U+U3C+U4A+C5A+A7C+U11C+U14G+G16U+A17U+U18C",
+   "ei": 0.0,
+   "src": "tp53_r248q_pdbdr.v2",
+   "ddG_dr": "0.5",
+   "bp_dist": "0",
+   "spacer_unpaired": "0.426",
+   "contact_sum": "6.545",
+   "cons3_frac": "0.8",
+   "seed_up": "0.306"
+  },
+  {
+   "desc": "U2A+U4C+A7C+C8A+U9C+U11A+U12C+G13U+U14G+A17G",
+   "ei": 0.0,
+   "src": "tp53_r248q_pdbdr.v2",
+   "ddG_dr": "-0.4",
+   "bp_dist": "0",
+   "spacer_unpaired": "0.426",
+   "contact_sum": "6.091",
+   "cons3_frac": "0.4",
+   "seed_up": "0.306"
+  },
+  {
+   "desc": "A1C+U4C+U6C+A7G+U9G+A10G+U11A+U12C+U14C+A15G+A17G",
+   "ei": 0.0,
+   "src": "tp53_r248q_pdbdr.v2",
+   "ddG_dr": "-4.2",
+   "bp_dist": "0",
+   "spacer_unpaired": "0.475",
+   "contact_sum": "6.636",
+   "cons3_frac": "0.6",
+   "seed_up": "0.376"
+  }
+ ],
+ "n_observations": 0,
+ "n_library": 479,
+ "features": [
+  "ddG_dr",
+  "bp_dist",
+  "spacer_unpaired",
+  "contact_sum",
+  "cons3_frac",
+  "seed_up"
+ ]
+}

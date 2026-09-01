@@ -1,0 +1,7 @@
+{
+ "ec50_tpm": null,
+ "vmax": null,
+ "n_hill": 2.0,
+ "crrna_rel": null,
+ "status": "UN-CALIBRATED: 仅参数包络输出, 不构成活性预测"
+}
