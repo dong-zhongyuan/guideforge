@@ -55,6 +55,8 @@
   高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
   文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
   另报告 ddG、spacer_unpaired、ens_diversity、hbond_preserved 供人工挑选。
+  v1.6: 新增 DR-spacer 交叉配对硬过滤 cross_nt<=WT(Creutzburg Sp8 复算盲区的响应:
+  stem_intact_prob 无法区分 DR 自配与 DR-spacer 错配; 交叉配对为显式有害信号)。
 
 输出: <out>.variants.csv（全部打分行）/ <out>.top.json（TOP-K + WT 参考 + 参数血缘）/
       <out>.top.fasta（完整 construct，DNA 字母表，可直接送合成）。
@@ -167,7 +169,8 @@ def wt_reference(dr, spacer, seed_len=7):
     diversity, spacer_up, seed_up = pf_stats(full, len(dr), seed_len)
     dr_ss, dr_mfe = fold(dr)
     p_fold = stem_intact_prob(full, stem_pairs_of(dr_ss))
-    return {'full_len': len(full), 'mfe_struct': ss, 'mfe_kcal': round(mfe, 2),
+    cross_nt, cross_pp = cross_pairs(full, len(dr))
+    return {'cross_nt': cross_nt, 'cross_pp': round(cross_pp, 3),'full_len': len(full), 'mfe_struct': ss, 'mfe_kcal': round(mfe, 2),
             'ens_diversity': round(diversity, 2), 'spacer_mean_unpaired': round(spacer_up, 3),
             'seed_unpaired': round(seed_up, 3),
             'dr_only_struct': dr_ss, 'dr_only_mfe_kcal': round(dr_mfe, 2),
@@ -360,6 +363,32 @@ def stem_intact_prob(full_seq, dr_pairs):
     return p
 
 
+def cross_pairs(full_seq, dr_len):
+    """DR-spacer 交叉配对(Creutzburg 2020 设计守则的显式实现, v1.6)。
+    返回 (mfe_cross_nt, cross_pp):
+      mfe_cross_nt = MFE 结构中跨 DR/spacer 边界配对涉及的核苷酸数;
+      cross_pp     = 配分函数 bpp 矩阵上 DR 区 x spacer 区配对概率总和(连续量)。
+    依据 Creutzburg 2020 "base pairing of the direct repeat, other than with
+    itself, was found to be detrimental"——Sp8 失活即 spacer 侵占 DR 形成错配折叠。
+    stem_intact_prob 将 DR 自配(正确)与 DR-spacer 错配(有害)混为同一信号(Sp8
+    复算盲区), 本特征单独度量后者, 进硬过滤(变体不得比 WT 更多交叉配对)。"""
+    ss, _ = fold(full_seq)
+    stack, mfe_cross = [], 0
+    for i, ch in enumerate(ss):
+        if ch == "(":
+            stack.append(i)
+        elif ch == ")":
+            j = stack.pop()
+            if (i < dr_len) != (j < dr_len):
+                mfe_cross += 2
+    fc = RNA.fold_compound(full_seq)
+    fc.pf()
+    bpp = fc.bpp()
+    n = len(full_seq)
+    cross_pp = sum(bpp[i + 1][j + 1] for i in range(dr_len) for j in range(dr_len, n))
+    return mfe_cross, float(cross_pp)
+
+
 def contact_sum(mut_positions, contact):
     """变体的接触代价: 突变位点的蛋白接触计数归一化求和。"""
     if contact is None:
@@ -437,9 +466,11 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     d_seed = seed_up - wt['seed_unpaired']
     dr_ss, dr_mfe = fold(seq)
     ddg_dr = dr_mfe - wt['dr_only_mfe_kcal']  # DR 单独折叠 ΔΔG(茎稳定化语义更干净的口径)
+    cross_nt, cross_pp_v = cross_pairs(full, len(dr))
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
           and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
+          and (args.allow_cross_pairing or cross_nt <= wt['cross_nt'])
           and (args.no_protect_processing
                or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)))
     cons3_n = sum(1 for p in mut_pos if p > len(dr) - args.cons3_window)
@@ -462,6 +493,7 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
             'p_fold': round(p_fold, 5), 'dp_fold': round(dp_fold, 5),
             'seed_up': round(seed_up, 3), 'd_seed': round(d_seed, 3),
             'cons3_frac': round(cons3_frac, 3),
+            'cross_nt': cross_nt, 'cross_pp': round(cross_pp_v, 3),
             'proc_ok': bool(args.no_protect_processing
                             or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)),
             'pareto': None, 'advantage': None,
@@ -715,6 +747,8 @@ def main():
                     help="DR 3' 保守窗长度(nt)")
     ap.add_argument('--proc-window', type=int, default=4,
                     help='加工位点保护窗: DR 3\' 末端 window-1 nt + 交界后首位的配对状态须与 WT 一致')
+    ap.add_argument('--allow-cross-pairing', action='store_true',
+                    help='跳过 DR-spacer 交叉配对硬过滤(旧行为; 默认启用, v1.6)')
     ap.add_argument('--no-protect-processing', action='store_true',
                     help='关闭加工位点保护过滤(Dmytrenko 2023 ED Fig.3 口径)')
     ap.add_argument('--use-covariation', action='store_true',
@@ -808,7 +842,7 @@ def main():
               'hbond_gain': 0, 'hbond_net': 0.0,
               'p_fold': round(wt['p_fold'], 5), 'dp_fold': 0.0,
               'seed_up': wt['seed_unpaired'], 'd_seed': 0.0,
-              'cons3_frac': 0.0, 'proc_ok': True,
+              'cons3_frac': 0.0, 'proc_ok': True, 'cross_nt': wt['cross_nt'], 'cross_pp': wt['cross_pp'],
               'pareto': None, 'advantage': '参考株',
               'shape_cons': None,
               'passed': True, 'score': 0.0, 'source': 'WT', 'rank': 0}
@@ -825,6 +859,8 @@ def main():
         frac = nz / len(rows) if rows else 0
         flag = ' [警告: 无区分力, 建议置零权重]' if frac < 0.05 else ''
         print(f"[闸门] {name} 非零(|>{thresh}|)比例 {frac:.1%}{flag}")
+    n_cross = sum(1 for r in rows if r['cross_nt'] > wt['cross_nt'])
+    print(f"[过滤] DR-spacer 交叉配对 nt>WT({wt['cross_nt']}): 拦截 {n_cross} 条(Creutzburg 守则)")
 
     if args.rnet_screen:
         screen_rows = [wt_row] + [r for r in rows if r['passed']][:args.rnet_screen_n]

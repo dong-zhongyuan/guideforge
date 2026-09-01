@@ -1,0 +1,23 @@
+{
+ "preregistered": "2026-09-01, 先于轨迹产出固定指标与判据; 阴性结果同样报告",
+ "runs": [
+  "wt",
+  "A7C_U14G",
+  "A7G_U14C",
+  "U6C_A15G"
+ ],
+ "M1_stem_rmsd": "DR 茎 5 对(1基4-8/13-17) 10 个 C1p, 蛋白 CA Kabsch 拟合后对 em.gro 的 RMSD, 2-10ns 中位数; 候选<=WT+0.5A 判不劣于",
+ "M2_contact_survival": "8D4A 接触表 DR 位点重原子 vs 蛋白重原子最小距离<4.5A 逐帧(100ps)存活率; 候选>=WT-10pp 判不劣于",
+ "M3_hbond_secondary": "DR 极性原子-蛋白极性原子 <3.5A 计数(距离口径), 次要不判据",
+ "interpretive_only": [
+  "蛋白 CA RMSD",
+  "回旋半径",
+  "md.log 温度压强能量"
+ ],
+ "main_criteria": [
+  "M1",
+  "M2"
+ ],
+ "md_status_at_prereg": "四体系 GROMACS 运行中(EM/NVT/NPT 阶段), 产出轨迹未生成",
+ "engine": "GROMACS 2026.3 amber14(OpenMM 参数化经 ParmEd 导出), 10 ns, 2fs, 300K, 1bar"
+}

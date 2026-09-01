@@ -514,5 +514,6 @@
    "ddG_dr": 3.9,
    "construct_dna_main_target": "AATTTCTACTGTGTTAGATGTTCATGCCGCCCATGCAGGAACT"
   }
- ]
+ ],
+ "v16_cross_caveat_20260901": "v1.6 交叉配对硬过滤上线后的回溯影响(cross_audit.json): 通用候选中 A8G+U15C/A8G/A8G+U12C/U15G 等 在 t1_MYCg1(型1) 口径 cross_nt>WT(=20) 不再通过硬过滤; 主靶标与 t0 口径不受影响。跨型通用性主张相应降级: 通用候选=在型0/主靶标口径通过且型1 口径结构保持存疑, 优先级供合成排序参考。"
 }

@@ -151,26 +151,39 @@ def main():
                                                    len(prefix) - len(dr_for_pairs) + j)
                                                   for i, j in pairs])
             seed5 = seed5_unpaired(full, len(prefix))
+            cross_nt, cross_pp = core.cross_pairs(full, len(prefix))
             rows.append({"name": nm, "activity": ACTIVITY[nm],
                          "spacer_up": round(sp_up, 4),
                          "stem_prob": round(stem_p, 6),
-                         "seed5_up": round(seed5, 4)})
+                         "seed5_up": round(seed5, 4),
+                         "cross_nt": cross_nt, "cross_pp": round(cross_pp, 4)})
         print("\n== 上下文 %s (DR茎配对 %s) ==" % (ctx_name, pairs))
-        print("%-5s %4s  %7s %8s %7s" % ("name", "act", "sp_up", "stem_P", "seed5"))
+        print("%-5s %4s  %7s %8s %7s %6s %8s" % (
+            "name", "act", "sp_up", "stem_P", "seed5", "x_nt", "x_pp"))
         for r in rows:
-            print("%-5s %4d  %7.4f %8.5f %7.4f" % (
-                r["name"], r["activity"], r["spacer_up"], r["stem_prob"], r["seed5_up"]))
+            print("%-5s %4d  %7.4f %8.5f %7.4f %6d %8.4f" % (
+                r["name"], r["activity"], r["spacer_up"], r["stem_prob"],
+                r["seed5_up"], r["cross_nt"], r["cross_pp"]))
+        sp8_cross_rank = sorted(rows, key=lambda r: -r["cross_pp"]).index(
+            next(r for r in rows if r["name"] == "Sp8")) + 1
+        print("Sp8 cross_pp 排名(14 条中, 越靠前=交叉越多): %d | cross_nt=%d" % (
+            sp8_cross_rank, next(r for r in rows if r["name"] == "Sp8")["cross_nt"]))
 
         stats = {}
-        for feat in ("spacer_up", "stem_prob", "seed5_up"):
-            vals = np.array([r[feat] for r in rows])
+        for feat in ("spacer_up", "stem_prob", "seed5_up", "cross_nt", "cross_pp"):
+            vals = np.array([r[feat] for r in rows], dtype=float)
             rho = spearman(vals, acts)
             p = perm_p(vals, acts, rho)
-            a = auc(vals[good].tolist(), vals[~good].tolist())
-            stats[feat] = {"spearman": round(rho, 3), "perm_p": round(p, 4), "auc_good_bad": round(a, 3)}
-            print("%-10s rho=%+.3f  perm_p=%.4f  AUC(good n=%d vs bad n=%d)=%.3f" % (
-                feat, rho, p, good.sum(), (~good).sum(), a))
-        report["contexts"][ctx_name] = {"rows": rows, "stats": stats}
+            # cross 特征方向为负(交叉越多活性越低), AUC 按 higher_better=方向一致计算
+            hb = feat in ("spacer_up", "stem_prob", "seed5_up")
+            a = auc(vals[good].tolist(), vals[~good].tolist(), higher_better=hb) if hb else \
+                auc(vals[~good].tolist(), vals[good].tolist(), higher_better=True)
+            stats[feat] = {"spearman": round(rho, 3), "perm_p": round(p, 4),
+                           "auc_good_bad": round(a, 3), "expected_direction": "pos" if hb else "neg"}
+            print("%-10s rho=%+.3f  perm_p=%.4f  AUC(方向口径)=%.3f%s" % (
+                feat, rho, p, a, "" if hb else "  [交叉特征: 期望负向]"))
+        report["contexts"][ctx_name] = {"rows": rows, "stats": stats,
+                                        "sp8_cross_pp_rank_desc": sp8_cross_rank}
 
     # 机制复现: Sp8 的 MFE 折叠中 spacer 与 DR 区的配对数(正文: 前 11nt 互作)
     print("\n== 机制复现 (mature19, Sp8 vs Sp12) ==")
