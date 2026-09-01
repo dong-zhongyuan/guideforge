@@ -1,0 +1,20 @@
+{
+ "spacer_dna": "GTTCATGCCGCCCATGCAGGAACT",
+ "target_scanned": "AGTTCCTGCATGGGCGGCATGAAC",
+ "pfs_rule": "GAAAG",
+ "pfs_tiers": "pfs_mm 0=高危 1=中危 >=2=低危(Cas12a2 PFS 松散, Zeng 2026)",
+ "seed_len_window5p": 7,
+ "max_mismatch": 4,
+ "n_transcripts": 442746,
+ "n_sites": 49,
+ "by_mismatch": {
+  "0": 36,
+  "4": 13
+ },
+ "by_risk": {
+  "low": 49
+ },
+ "high_risk_sites": [],
+ "medium_risk_sites": [],
+ "disclaimer": "纯序列近似; 激活与否取决于表达量/结构可及性/实验条件, 最终特异性以湿实验为准"
+}

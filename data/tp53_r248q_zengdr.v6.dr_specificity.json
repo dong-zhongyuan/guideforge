@@ -1,0 +1,218 @@
+{
+ "question": "DR 改造是否改变脱靶风险(误杀正常细胞)",
+ "layer1_site_universe": {
+  "principle": "识别位点集合由 spacer+PFS 决定, 与 DR 无关; 对所有 DR 变体相同",
+  "transcriptome_scan": "tp53_r248q_transcriptome_scan",
+  "duplex_landscape": [
+   {
+    "gene": "TP53",
+    "mismatches": 0,
+    "seed_mm": 0,
+    "pfs": "CGGAG",
+    "pfs_mm": 3,
+    "risk": "low",
+    "duplex_mfe_kcal": -49.1,
+    "note": "WT 等位位点(PFS 3mm)"
+   },
+   {
+    "gene": "NID1",
+    "mismatches": 4,
+    "seed_mm": 1,
+    "pfs": "CGGAG",
+    "pfs_mm": 3,
+    "risk": "low",
+    "duplex_mfe_kcal": -27.2,
+    "note": ""
+   }
+  ],
+  "conclusion": "全转录组无高/中危位点; 唯一 0 错配位点即 TP53 WT 等位(PFS 3mm 不匹配), 鉴别由突变产生的 PFS 完成"
+ },
+ "layer2_processing": "加工位点保护硬过滤(proc_ok)防止成熟 crRNA 长度漂移→ 识别窗口不变; 逐候选见 candidates",
+ "layer3_activation_threshold": {
+  "proxy": "spacer 可及性增量 + 蛋白接触几何保持",
+  "residual_risk": "构象激活阈值的改变无法由序列/二级结构代理, 湿实验必须含 WT TP53 转录本(无 PFS)对照"
+ },
+ "candidates": [
+  {
+   "desc": "A1C",
+   "dr_seq": "CATTTCTACTGTTGTAGAT",
+   "rank": 1,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.001,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.001(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1U",
+   "dr_seq": "TATTTCTACTGTTGTAGAT",
+   "rank": 2,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.002,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.002(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1G",
+   "dr_seq": "GATTTCTACTGTTGTAGAT",
+   "rank": 3,
+   "proc_ok": true,
+   "d_spacer_unpaired": 0.002,
+   "d_seed": 0.004,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ+0.002/Δseed +0.004(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A8G+U15C",
+   "dr_seq": "AATTTCTGCTGTTGCAGAT",
+   "rank": 4,
+   "proc_ok": true,
+   "d_spacer_unpaired": 0.004,
+   "d_seed": 0.002,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ+0.004/Δseed +0.002(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "U7C+A16G",
+   "dr_seq": "AATTTCCACTGTTGTGGAT",
+   "rank": 5,
+   "proc_ok": true,
+   "d_spacer_unpaired": 0.0,
+   "d_seed": 0.0,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ+0.000/Δseed +0.000(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1U+U3A",
+   "dr_seq": "TAATTCTACTGTTGTAGAT",
+   "rank": 6,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.003,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.003(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "U3A",
+   "dr_seq": "AAATTCTACTGTTGTAGAT",
+   "rank": 7,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.002,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.002(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1C+U3A",
+   "dr_seq": "CAATTCTACTGTTGTAGAT",
+   "rank": 8,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.002,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.002(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1U+U3G",
+   "dr_seq": "TAGTTCTACTGTTGTAGAT",
+   "rank": 9,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.004,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.004(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "U3G",
+   "dr_seq": "AAGTTCTACTGTTGTAGAT",
+   "rank": 10,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.003,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.003(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1C+U3G",
+   "dr_seq": "CAGTTCTACTGTTGTAGAT",
+   "rank": 11,
+   "proc_ok": true,
+   "d_spacer_unpaired": -0.001,
+   "d_seed": -0.003,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ-0.001/Δseed -0.003(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  },
+  {
+   "desc": "A1U+U3C",
+   "dr_seq": "TACTTCTACTGTTGTAGAT",
+   "rank": 12,
+   "proc_ok": true,
+   "d_spacer_unpaired": 0.004,
+   "d_seed": 0.01,
+   "hbond_preserved": 1.0,
+   "checks": [
+    "加工位点保护通过",
+    "spacer 可及性 Δ+0.004/Δseed +0.010(与 WT 一致)",
+    "极性接触保持"
+   ],
+   "specificity_verdict": "预测脱靶图谱与 WT 一致(识别位点集合由 spacer 决定, 与 DR 无关; spacer 可及性未显著增加)"
+  }
+ ],
+ "disclaimer": "纯计算代理评估, 非特异性实验证据; 最终以体外生化与细胞实验为准"
+}

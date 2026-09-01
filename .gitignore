@@ -19,3 +19,6 @@ toolbox/Struct2SeQ/*.pt
 toolbox/geometric-rna-design/weights/
 toolbox/OpenKnotAIDesignData/Data/
 toolbox/OpenKnotAIDesignData/.gitattributes
+
+# 转录组参考数据(GENCODE 自行下载)
+data/transcriptome/
