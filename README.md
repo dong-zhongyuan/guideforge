@@ -62,6 +62,9 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
 
 模型权重与 OpenKnot 基准数据不进 git 历史，存放在本仓库 **Release `data-v1`** 的资产中，
 清单（路径/大小/sha256）见 `BIG_FILES.md`；下载后按相同相对路径放回即可。
+双源说明：Gitee Release `data-v1` 已附 7 件（ RibonanzaNet×4 / gRNAde / OpenKnot M2·M2R）；
+其余 3 件超 Gitee 单附件 100MB 上限（Struct2SeQ.pt / Struct2SeQ_SHAPE.pt / OpenKnotBench CSV），
+请从 [GitHub Release data-v1](https://github.com/dong-zhongyuan/guideforge/releases/tag/data-v1) 下载（全量 10 件都在）。
 
 ## 目录
 
