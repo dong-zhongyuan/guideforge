@@ -1,0 +1,235 @@
+{
+ "mutation": {
+  "pos": 885,
+  "wt_base": "G",
+  "mut_base": "A",
+  "all_diffs_1based": [
+   885
+  ]
+ },
+ "effector": "cas12a2_zeng2026",
+ "n_candidates": 29,
+ "designs": [
+  {
+   "spacer_dna": "TCATGCCGCCCATGCAGGAACTGT",
+   "mut_in": "PFS+4",
+   "proto_mm": 0,
+   "pfs_mut": "ACCAG",
+   "pfs_wt": "ACCGG",
+   "tier": 2,
+   "self_mfe": -1.8,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -1.8,
+    "spacer_up": 0.598,
+    "junction_pairs": 1.0,
+    "internal_pairs": 5.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATTCATGCCGCCCATGCAGGAACTGT",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTCATGCCGCCCATGCAGGAACTGT"
+  },
+  {
+   "spacer_dna": "CATGCCGCCCATGCAGGAACTGTT",
+   "mut_in": "PFS+5",
+   "proto_mm": 0,
+   "pfs_mut": "AACCA",
+   "pfs_wt": "AACCG",
+   "tier": 2,
+   "self_mfe": -1.8,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -1.8,
+    "spacer_up": 0.663,
+    "junction_pairs": 0.0,
+    "internal_pairs": 4.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATCATGCCGCCCATGCAGGAACTGTT",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATCATGCCGCCCATGCAGGAACTGTT"
+  },
+  {
+   "spacer_dna": "TTCATGCCGCCCATGCAGGAACTG",
+   "mut_in": "PFS+3",
+   "proto_mm": 0,
+   "pfs_mut": "CCAGA",
+   "pfs_wt": "CCGGA",
+   "tier": 2,
+   "self_mfe": -2.4,
+   "scaffold_type": 0,
+   "confidence": "medium",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -2.4,
+    "spacer_up": 0.55,
+    "junction_pairs": 0.0,
+    "internal_pairs": 6.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATTTCATGCCGCCCATGCAGGAACTG",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTTCATGCCGCCCATGCAGGAACTG"
+  },
+  {
+   "spacer_dna": "GGTTCATGCCGCCCATGCAGGAAC",
+   "mut_in": "PFS+1",
+   "proto_mm": 0,
+   "pfs_mut": "AGAGG",
+   "pfs_wt": "GGAGG",
+   "tier": 2,
+   "self_mfe": -4.6,
+   "scaffold_type": 2,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.625,
+    "self_mfe": -4.6,
+    "spacer_up": 0.475,
+    "junction_pairs": 0.0,
+    "internal_pairs": 7.0
+   },
+   "dr_dna": "AAATTCTACTGTTGTAGAT",
+   "dr_desc": "U3A",
+   "construct_dna": "AAATTCTACTGTTGTAGATGGTTCATGCCGCCCATGCAGGAAC",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATGGTTCATGCCGCCCATGCAGGAAC"
+  },
+  {
+   "spacer_dna": "GTTCATGCCGCCCATGCAGGAACT",
+   "mut_in": "PFS+2",
+   "proto_mm": 0,
+   "pfs_mut": "CAGAG",
+   "pfs_wt": "CGGAG",
+   "tier": 2,
+   "self_mfe": -5.8,
+   "scaffold_type": 2,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -5.8,
+    "spacer_up": 0.427,
+    "junction_pairs": 0.0,
+    "internal_pairs": 7.0
+   },
+   "dr_dna": "AAATTCTACTGTTGTAGAT",
+   "dr_desc": "U3A",
+   "construct_dna": "AAATTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+  },
+  {
+   "spacer_dna": "CTCTGGTTCATGCCGCCCATGCAG",
+   "mut_in": "protospacer@21",
+   "proto_mm": 1,
+   "pfs_mut": "GCCCA",
+   "pfs_wt": "GCCCA",
+   "tier": 1,
+   "self_mfe": -2.7,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.625,
+    "self_mfe": -2.7,
+    "spacer_up": 0.656,
+    "junction_pairs": 0.0,
+    "internal_pairs": 4.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATCTCTGGTTCATGCCGCCCATGCAG",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATCTCTGGTTCATGCCGCCCATGCAG"
+  },
+  {
+   "spacer_dna": "CCTCTGGTTCATGCCGCCCATGCA",
+   "mut_in": "protospacer@20",
+   "proto_mm": 1,
+   "pfs_mut": "CCCAU",
+   "pfs_wt": "CCCAU",
+   "tier": 1,
+   "self_mfe": -2.7,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.625,
+    "self_mfe": -2.7,
+    "spacer_up": 0.669,
+    "junction_pairs": 0.0,
+    "internal_pairs": 4.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATCCTCTGGTTCATGCCGCCCATGCA",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATCCTCTGGTTCATGCCGCCCATGCA"
+  },
+  {
+   "spacer_dna": "GCCTCTGGTTCATGCCGCCCATGC",
+   "mut_in": "protospacer@19",
+   "proto_mm": 1,
+   "pfs_mut": "CCAUC",
+   "pfs_wt": "CCAUC",
+   "tier": 1,
+   "self_mfe": -2.7,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.667,
+    "self_mfe": -2.7,
+    "spacer_up": 0.65,
+    "junction_pairs": 0.0,
+    "internal_pairs": 4.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATGCCTCTGGTTCATGCCGCCCATGC",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATGCCTCTGGTTCATGCCGCCCATGC"
+  },
+  {
+   "spacer_dna": "TCTGGTTCATGCCGCCCATGCAGG",
+   "mut_in": "protospacer@22",
+   "proto_mm": 1,
+   "pfs_mut": "GGCCC",
+   "pfs_wt": "GGCCC",
+   "tier": 1,
+   "self_mfe": -2.8,
+   "scaffold_type": 2,
+   "confidence": "boundary",
+   "type_features": {
+    "GC": 0.625,
+    "self_mfe": -2.8,
+    "spacer_up": 0.561,
+    "junction_pairs": 0.0,
+    "internal_pairs": 7.0
+   },
+   "dr_dna": "AAATTCTACTGTTGTAGAT",
+   "dr_desc": "U3A",
+   "construct_dna": "AAATTCTACTGTTGTAGATTCTGGTTCATGCCGCCCATGCAGG",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTCTGGTTCATGCCGCCCATGCAGG"
+  },
+  {
+   "spacer_dna": "TGGTTCATGCCGCCCATGCAGGAA",
+   "mut_in": "protospacer@24",
+   "proto_mm": 1,
+   "pfs_mut": "GAGGC",
+   "pfs_wt": "GAGGC",
+   "tier": 1,
+   "self_mfe": -3.2,
+   "scaffold_type": 0,
+   "confidence": "medium",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -3.2,
+    "spacer_up": 0.568,
+    "junction_pairs": 0.0,
+    "internal_pairs": 6.0
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATTGGTTCATGCCGCCCATGCAGGAA",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTGGTTCATGCCGCCCATGCAGGAA"
+  }
+ ],
+ "disclaimer": "排序为透明启发式(PFS 鉴别>单错配>结构代理), 非活性预测; 骨架分型功能差异未实验验证; 选择器为最近邻规则"
+}
