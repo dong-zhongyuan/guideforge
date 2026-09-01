@@ -5,14 +5,33 @@
  "finding": {
   "description": "Creutzburg 用 ViennaRNA 计算了 pre-crRNA 的三个折叠特征, 并报告了它们与 FnCas12a 实验切割效率的 Pearson 相关",
   "measures": [
-   {"name": "stem-forming potential", "definition": "DR 茎 5 对碱基配对概率乘积(ViennaRNA bpp)", "pearson_rho": 0.31, "p_value": "<0.01", "guideforge_analog": "dp_fold(stem_intact_prob, 同为 bpp 茎配对概率乘积)"},
-   {"name": "loop-accessibility", "definition": "DR loop 区平均未配对概率(ViennaRNA)", "pearson_rho": 0.29, "p_value": "<0.01", "guideforge_analog": "spacer_unpaired(全长平均未配对概率)"},
-   {"name": "spacer opening energy", "definition": "spacer 前 19nt 打开能量(RNAplfold)", "pearson_rho": -0.38, "p_value": "<0.01", "guideforge_analog": "spacer_unpaired + d_seed(负向对应)"}
+   {
+    "name": "stem-forming potential",
+    "definition": "DR 茎 5 对碱基配对概率乘积(ViennaRNA bpp)",
+    "pearson_rho": 0.31,
+    "p_value": "<0.01",
+    "guideforge_analog": "dp_fold(stem_intact_prob, 同为 bpp 茎配对概率乘积)"
+   },
+   {
+    "name": "loop-accessibility",
+    "definition": "DR loop 区平均未配对概率(ViennaRNA)",
+    "pearson_rho": 0.29,
+    "p_value": "<0.01",
+    "guideforge_analog": "spacer_unpaired(全长平均未配对概率)"
+   },
+   {
+    "name": "spacer opening energy",
+    "definition": "spacer 前 19nt 打开能量(RNAplfold)",
+    "pearson_rho": -0.38,
+    "p_value": "<0.01",
+    "guideforge_analog": "spacer_unpaired + d_seed(负向对应)"
+   }
   ],
   "n_spacers": "~25 (图 1D/2A/2C/4B/6C 五组构建)",
   "conclusion": "GuideForge 的核心计算特征(dp_fold / spacer_unpaired)与 Creutzburg 在 Cas12a 上验证的三个特征数学同构; 它们与 FnCas12a 实验活性显著相关(p<0.01, rho 0.29-0.38); 且 Creutzburg 的 Sp8 案例证实 spacer-DR 错配损害活性——与 GuideForge 硬过滤中 spacer 游离度约束的机制一致"
  },
  "layer_status": "第 2 层补齐: 同族(Cas12a)实验证据, 打分特征类型有实验相关",
  "honest_note": "我们未逐条重跑 Creutzburg 的 spacer(原始活性数据在图中非表格); 验证基于 Creutzburg 已发表的相关系数与特征定义的数学同构性",
- "reference": "Creutzburg SCA et al. Good guide, bad guide: spacer sequence-dependent cleavage efficiency of Cas12a. NAR 2020;48(6):3228-3243"
+ "reference": "Creutzburg SCA et al. Good guide, bad guide: spacer sequence-dependent cleavage efficiency of Cas12a. NAR 2020;48(6):3228-3243",
+ "cross_ref_20260901": "本条目记录的是 Creutzburg 2020 论文自报的特征-活性相关(pre-crRNA 口径, n约25, 含手工定义假结配对); 本仓库后续自行复算(Fig 1D 14 spacer, 成熟 crRNA 口径, 无假结)未能复现正相关, 见 creutzburg_reverse_validation.json 与 scripts/crrna_creutzburg_reverse.py——两口径差异即 游离态指标 的适用边界。"
 }
