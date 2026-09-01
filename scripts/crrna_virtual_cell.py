@@ -92,7 +92,7 @@ def main():
             vals = sorted(local[gene].values())
             abundance[gene] = {
                 "n_cell_lines": len(vals),
-                "median": round(vals[len(vals) // 2], 2),
+                "median_tpm": round(vals[len(vals) // 2], 2),
                 "p10_tpm": round(vals[int(0.1 * len(vals))], 2),
                 "p90_tpm": round(vals[int(0.9 * len(vals))], 2),
                 "targets": GENE2TARGETS.get(gene, []),
