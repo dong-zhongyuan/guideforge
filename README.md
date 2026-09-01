@@ -40,6 +40,10 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 `scripts/crrna_active_template.py` -> `data/cas12a2_active_template.json`: 8D4A 链 B(成熟 crRNA, DR18+spacer23) 三维几何判据(N1-N3<4.0A + C1-C1<12.5A)提取——**结合态活性模板无假结**: DR 区仅 5 对标准茎(1基 4-17/5-16/6-15/7-14/8-13) + 3 个近距摆动接触, DR-spacer 交界零配对。含义: Cas12a2 成熟 crRNA 的活性态在 ViennaRNA 伪结外空间内完整可表示(茎即为活性模板), **假结模型缺口只存在于 Creutzburg/FnCas12a 前体回验侧**(其失活态涉及前体 5prime repeat 侧翼, 论文自述活性态含 canonical pseudoknot)。两体系的模型域边界因此不同, 引用时须分开陈述。
 
+### Chai-1 共折叠首跑(蛋白预测层能力探针, 2026-09-02)
+
+`scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR18+R248Q)+靶RNA(28nt) 三元共折叠, 单序列模式(无 MSA/无 ESM), 5 模型 ~25 分钟。结果: aggregate 0.23-0.24, ipTM 0.22-0.24, **蛋白-crRNA 链间 ipTM 0.02(界面未恢复——单序列模式对 1200aa RNA 引导核酸酶的已知短板, 非故障)**; crRNA-靶RNA 链对 ipTM 0.34-0.35 且 5 模型一致(向导-靶双链部分恢复, 最有意义的链对)。ESM 嵌入版两次尝试均因容器到 hf-mirror 断网失败(Errno 101), 升级路径记录在案: ESM/MSA 版恢复后 ipTM 方可用作选型特征; 当前 V3 蛋白预测层的界面差量口径仍以 8D4A 静态接触表 + 10ns MD(M1/M2/M3 判据)为准。
+
 ### 打分输入端可靠性(系综采样检验)
 
 `scripts/crrna_ensemble_check.py`(输出: `data/ensemble_check.pdbdr.v2.json` / `ensemble_check.zengdr.v6.json`): 对 WT+TOP-12(两口径共 26 构建)做 Boltzmann 系综采样检验(ViennaRNA 2.7.2 pbacktrack 本构建不可用, 改用 subopt 精确枚举 5 kcal 窗口 + 权重采样, 窗口尾部质量均 <2.2%, 采样 100/构建, seed=42)——
