@@ -96,5 +96,6 @@
   "prep_seconds": 44.3,
   "cif_source": "data/8D4A.cif (SuCas12a2-crRNA-靶RNA 复合物, 结合态口径)"
  },
- "runtime": "GROMACS 2026.3 (容器 ~/dzy/envs/gmx, nompi_cuda, sm_86); OpenMM 体系经 ParmEd 导出; EM-nb_gpu / NVT-NPT-MD nb+pme+bonded gpu; 10 ns 产出"
+ "runtime": "GROMACS 2026.3 (容器 ~/dzy/envs/gmx, nompi_cuda, sm_86); OpenMM(amber14 全套)参数化经 ParmEd 导出; EM(仅 nb GPU)/NVT/NPT/MD(nb+pme+bonded GPU); 产出 10 ns",
+ "generated_by": "scripts/crrna_md_manifest.py (勿手改)"
 }

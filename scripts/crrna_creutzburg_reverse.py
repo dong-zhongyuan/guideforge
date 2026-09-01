@@ -34,32 +34,11 @@ sys.path.insert(0, HERE)
 import RNA  # noqa: E402
 import crrna_scaffold_design as core  # noqa: E402
 
-SPACERS_DNA_21 = {
-    "Sp1":  "ATCGATGGGAAACCTTACCCTC",
-    "Sp2":  "AGACTTACCAATGAGCACGTG",
-    "Sp3":  "AAATATTCCCCAGGTTCAGTG",
-    "Sp4":  "AACACACTGCAATTCAGGTTG",
-    "Sp5":  "ACCAGTCCATCATTGTAGTGG",
-    "Sp6":  "AACGCCTACGAGATCATTGTG",
-    "Sp7":  "ATGCTCCCGTAACACTAGCTG",
-    "Sp8":  "ACCAGTCTAAATCGCTTACTG",
-    "Sp9":  "AACTATATGCACCGGAGCTTG",
-    "Sp10": "ACACAATTACCGGTCCCAATG",
-    "Sp11": "ACCAGTCTAACCCGCTTACGT",
-    "Sp12": "ACCAGTCTAACACGCTTACGT",
-    "Sp13": "ACCAGCCAACCCCGCTTACGT",
-    "Sp14": "ACCAGCCAACCACGCTTACGT",
-}
+DATASET = os.path.join(ROOT, "data", "creutzburg_2020_dataset.json")
 
-ACTIVITY = {  # Fig 1D 荧光损失 % 近似值, Sp12 锚定正文 75-80
-    "Sp1": 71, "Sp2": 73, "Sp3": 69, "Sp4": 72, "Sp5": 75, "Sp6": 78,
-    "Sp7": 62, "Sp8": 0, "Sp9": 83, "Sp10": 69, "Sp11": 57, "Sp12": 79,
-    "Sp13": 34, "Sp14": 29,
-}
-
-DR18_RNA = core.to_rna("AATTTCTACTGTTGTAGA")     # 引物直接证据(18nt)
-DR19_RNA = core.to_rna("AATTTCTACTGTTGTAGAT")    # 家族同源补 3端T
-PRE5_RNA = core.to_rna("TTTAAAT")                # 前体 crRNA 中成熟 DR 5侧残留 repeat
+SPACERS_DNA_21 = None   # 由数据集文件加载
+ACTIVITY = None
+DR18_RNA = DR19_RNA = PRE5_RNA = None
 GOOD_TH = 60  # 好 guide 阈值: 正文 "60-85%" 区间下沿
 
 
@@ -113,8 +92,17 @@ def auc(good_vals, bad_vals, higher_better=True):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--dataset", default=DATASET)
     ap.add_argument("--out", default=os.path.join(ROOT, "data", "creutzburg_reverse_validation.json"))
     args = ap.parse_args()
+
+    global SPACERS_DNA_21, ACTIVITY, DR18_RNA, DR19_RNA, PRE5_RNA
+    ds = json.load(open(args.dataset, encoding="utf-8"))
+    SPACERS_DNA_21 = ds["spacers_21nt_dna"]
+    ACTIVITY = ds["activity_fig1d_pct_approx"]
+    DR18_RNA = core.to_rna(ds["dr18_dna"])
+    DR19_RNA = core.to_rna(ds["dr19_dna"])
+    PRE5_RNA = core.to_rna(ds["pre5_flank_dna"])
 
     names = sorted(SPACERS_DNA_21, key=lambda s: int(s[2:]))
     acts = np.array([ACTIVITY[n] for n in names], dtype=float)
@@ -126,7 +114,8 @@ def main():
         "pre24": (PRE5_RNA + DR18_RNA, DR18_RNA),  # 前体: 残留 repeat + 成熟 DR + spacer
     }
 
-    report = {"source": "Creutzburg 2020 NAR gkz1240 PMC7102956", "n": len(names),
+    report = {"source": "Creutzburg 2020 NAR gkz1240 PMC7102956",
+              "dataset": args.dataset, "n": len(names),
               "good_threshold_pct": GOOD_TH, "contexts": {}, "spacers": SPACERS_DNA_21,
               "activity_fig1d_approx": ACTIVITY,
               "evidence_checks": {

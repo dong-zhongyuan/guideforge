@@ -1,0 +1,40 @@
+{
+ "source": "Creutzburg et al. 2020, NAR 48(6):3228-3243, PMC7102956 (FnCas12a)",
+ "provenance": {
+  "spacers_21nt": "补充材料 Table 1 引物 BG9822-BG9835, 取 GGTTT 后 21nt(DNA)",
+  "activity_fig1d_pct": "正文 Fig 1D 荧光损失 %(视觉读图, ±3); Sp12 按正文原句 'fluorescence loss is 75-80%' 锚定; 正文确认 Sp1-Sp10 除 Sp8=0 外在 60-85% 区间",
+  "dr18": "反向引物公共尾 TCTACAACAGTAGAAATTATTTAAAG 的 revcomp(CTTTAAATAATTTCTACTGTTGTAGA) 3' 18nt, 直接证据",
+  "dr19_3pT": "19nt 版 3' 端 T 按 Cas12a 家族成熟 DR 同源推断(引物只见 18nt)",
+  "pre5_flank": "前体 5' 残留 repeat TTTAAAT(同 revcomp 前导)",
+  "evidence_checks": {
+   "Sp8_vs_Sp12_diff_0based": [10, 11, 19, 20],
+   "Sp12_vs_Sp14_diff_0based": [5, 7, 9],
+   "position19_K_GorU": "Sp8=T(U) Sp12=G, 与正文 'K (G or U)' 一致",
+   "seed_1_5_same": "Sp8/Sp12 种子区(0基 1-5)相同, 与正文一致"
+  }
+ },
+ "dr18_dna": "AATTTCTACTGTTGTAGA",
+ "dr19_dna": "AATTTCTACTGTTGTAGAT",
+ "pre5_flank_dna": "TTTAAAT",
+ "spacers_21nt_dna": {
+  "Sp1": "ATCGATGGGAAACCTTACCCTC",
+  "Sp2": "AGACTTACCAATGAGCACGTG",
+  "Sp3": "AAATATTCCCCAGGTTCAGTG",
+  "Sp4": "AACACACTGCAATTCAGGTTG",
+  "Sp5": "ACCAGTCCATCATTGTAGTGG",
+  "Sp6": "AACGCCTACGAGATCATTGTG",
+  "Sp7": "ATGCTCCCGTAACACTAGCTG",
+  "Sp8": "ACCAGTCTAAATCGCTTACTG",
+  "Sp9": "AACTATATGCACCGGAGCTTG",
+  "Sp10": "ACACAATTACCGGTCCCAATG",
+  "Sp11": "ACCAGTCTAACCCGCTTACGT",
+  "Sp12": "ACCAGTCTAACACGCTTACGT",
+  "Sp13": "ACCAGCCAACCCCGCTTACGT",
+  "Sp14": "ACCAGCCAACCACGCTTACGT"
+ },
+ "activity_fig1d_pct_approx": {
+  "Sp1": 71, "Sp2": 73, "Sp3": 69, "Sp4": 72, "Sp5": 75, "Sp6": 78,
+  "Sp7": 62, "Sp8": 0, "Sp9": 83, "Sp10": 69, "Sp11": 57, "Sp12": 79,
+  "Sp13": 34, "Sp14": 29
+ }
+}

@@ -42,6 +42,8 @@ def main():
         os.path.join(ROOT, "data", "cross_spacer.t0_R248Qg9.top.json"),
         os.path.join(ROOT, "data", "cross_spacer.t1_MYCg1.top.json")])
     ap.add_argument("--max-worst-rank", type=int, default=40)
+    ap.add_argument("--cross-audit", default=os.path.join(ROOT, "data", "cross_audit.json"),
+                    help="v1.6 交叉配对回溯审计(存在则自动注记各上下文拦截情况; 传空字符串跳过)")
     ap.add_argument("--out-prefix", default=None)
     args = ap.parse_args()
 
@@ -78,6 +80,29 @@ def main():
     out_rows.sort(key=lambda r: (r["worst_rank"], -r["mean_score"]))
 
     shown = [r for r in out_rows if r["worst_rank"] <= args.max_worst_rank]
+
+    # v1.6 交叉配对审计自动注记(数据来自 cross_audit.json, 非人工写入)
+    cross_note = None
+    if args.cross_audit and os.path.isfile(args.cross_audit):
+        audits = {a["source"].replace(".top.json", ""): a for a in
+                  json.load(open(args.cross_audit, encoding="utf-8"))}
+        affected = {}
+        for a in audits.values():
+            tag = a["source"].replace(".top.json", "")
+            for row in a.get("rows", []):
+                if row["cross_nt"] > a["wt_cross_nt"]:
+                    affected.setdefault(row["desc"], []).append(tag)
+        for r in out_rows:
+            tag_hits = affected.get(r["desc"])
+            if tag_hits:
+                r["v16_cross_filtered_in"] = sorted(set(tag_hits))
+        if affected:
+            n_uni = sum(1 for r in out_rows if r.get("v16_cross_filtered_in"))
+            cross_note = (
+                "v1.6 交叉配对硬过滤回溯审计(cross_audit.json): %d 条通用候选在部分上下文 "
+                "cross_nt>WT 不再通过 v1.6(含 TOP-12: %s); 这些候选的跨型通用性主张降级为"
+                "\"主靶标/型0 口径通过, 型1 口径结构保持存疑\", 优先级仅供合成排序" % (
+                    n_uni, ", ".join(sorted(set(k for k in affected))[:6])))
     print("\n优先级清单(最差名次 <= %d, 共 %d 条):" % (args.max_worst_rank, len(shown)))
     print("%-16s %6s %10s %8s  %s" % ("DR_variant", "worst", "mean_score", "ddG_dr", "ranks"))
     for r in shown[:20]:
@@ -91,6 +116,7 @@ def main():
                   for c in ctxs],
                "n_universal": len(out_rows),
                "rules": "worst_rank asc, mean_score desc; synthesis = main-target constructs",
+               "v16_cross_caveat": cross_note,
                "priority": out_rows},
               open(prefix + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     with open(prefix + ".fasta", "w", encoding="utf-8") as f:

@@ -3,7 +3,7 @@
  "layer": "2 同族实验层(Creutzburg 2020 反向验证)",
  "source": "Creutzburg et al. 2020, NAR 48(6):3228-3243, PMC7102956, FnCas12a+AsCas12a",
  "finding": {
-  "description": "Creutzburg 用 ViennaRNA 计算了 pre-crRNA 的三个折叠特征, 并报告了它们与 FnCas12a 实验切割效率的 Pearson 相关",
+  "description": "并列口径(引用时两句必须同时出现, 不得只引前半)。(1) 论文自报: 该文计算并报告三个折叠特征与 FnCas12a 活性显著相关(pre-crRNA 口径, n约25, 茎含手工定义假结配对)——支持[特征类型]有同族实验依据; (2) 本项目复算(脚本 scripts/crrna_creutzburg_reverse.py, 数据集 data/creutzburg_2020_dataset.json): 同文 Fig 1D 子集 n=14, 活性为读图近似值, 功效不足, 特征均未达显著且方向混合。复算不构成对论文结论的否定, 也不构成独立验证。",
   "measures": [
    {
     "name": "stem-forming potential",
@@ -27,11 +27,43 @@
     "guideforge_analog": "spacer_unpaired + d_seed(负向对应)"
    }
   ],
-  "n_spacers": "~25 (图 1D/2A/2C/4B/6C 五组构建)",
-  "conclusion": "并列口径(引用时两句必须同时出现, 不得只引前半): (1) 论文自报: Creutzburg 2020 在 Cas12a 上计算并报告三个折叠特征与 FnCas12a 活性显著相关 (pre-crRNA 口径, n约25, p<0.01, rho 0.29-0.38, 茎含手工定义假结配对)——支持[特征类型]有同族实验依据; (2) 本项目复算: 同文 Fig 1D 子集(n=14, 活性为读图近似值)功效不足, 三特征均未达显著 (seed5_up rho+0.38~0.42 p0.14-0.18 方向正确; spacer_up 方向反转; stem_prob 各口径不一致), 且 Sp8(唯一 0% 活性)未被现有特征抓住(spacer_up 被全长平均稀释至中游, stem_prob 反而偏高——它把 DR 自身正确配对与 DR-spacer 错配混为同一信号)。复算不构成对论文结论的否定, 也不构成独立验证。"
+  "n_spacers_paper": "~25 (图 1D/2A/2C/4B/6C 五组构建, 论文口径)",
+  "recomputation_n14": {
+   "mature19": {
+    "spacer_up": {
+     "spearman": -0.451,
+     "perm_p": 0.1084,
+     "auc_good_bad": 0.275,
+     "expected_direction": "pos"
+    },
+    "stem_prob": {
+     "spearman": -0.512,
+     "perm_p": 0.0656,
+     "auc_good_bad": 0.325,
+     "expected_direction": "pos"
+    },
+    "seed5_up": {
+     "spearman": 0.415,
+     "perm_p": 0.1413,
+     "auc_good_bad": 0.675,
+     "expected_direction": "pos"
+    },
+    "cross_nt": {
+     "spearman": -0.174,
+     "perm_p": 0.7145,
+     "auc_good_bad": 0.0,
+     "expected_direction": "neg"
+    },
+    "cross_pp": {
+     "spearman": 0.613,
+     "perm_p": 0.0235,
+     "auc_good_bad": 0.125,
+     "expected_direction": "neg"
+    }
+   },
+   "note": "seed5_up 方向正确不显著; spacer_up 方向反转; stem_prob 各口径不一致; Sp8(唯一 0% 活性)未被任何现有特征抓住(失活态为论文手工定义假结, ViennaRNA 不可算)——盲区开放"
+  }
  },
- "layer_status": "第 2 层补齐: 同族(Cas12a)实验证据, 打分特征类型有实验相关",
- "honest_note": "我们未逐条重跑 Creutzburg 的 spacer(原始活性数据在图中非表格); 验证基于 Creutzburg 已发表的相关系数与特征定义的数学同构性",
- "reference": "Creutzburg SCA et al. Good guide, bad guide: spacer sequence-dependent cleavage efficiency of Cas12a. NAR 2020;48(6):3228-3243",
- "cross_ref_20260901": "本条目记录的是 Creutzburg 2020 论文自报的特征-活性相关(pre-crRNA 口径, n约25, 含手工定义假结配对); 本仓库后续自行复算(Fig 1D 14 spacer, 成熟 crRNA 口径, 无假结)未能复现正相关, 见 creutzburg_reverse_validation.json 与 scripts/crrna_creutzburg_reverse.py——两口径差异即 游离态指标 的适用边界。"
+ "conclusion": "并列结论: (1) 特征[类型]有同族实验支持(论文自报 n约25 显著, p<0.01, rho 0.29-0.38); (2) 本项目子集复算(n=14, 活性图读)功效不足未达显著(方向混合), 且暴露 Sp8 盲区。两者并列引用; 该层支持的是特征类型与活性相关, 不支持具体排序预测。",
+ "machine_generated_by": "scripts/crrna_layer2_evidence.py (勿手改本文件)"
 }

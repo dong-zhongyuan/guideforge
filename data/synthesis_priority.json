@@ -19,6 +19,7 @@
  ],
  "n_universal": 38,
  "rules": "worst_rank asc, mean_score desc; synthesis = main-target constructs",
+ "v16_cross_caveat": "v1.6 交叉配对硬过滤回溯审计(cross_audit.json): 12 条通用候选在部分上下文 cross_nt>WT 不再通过 v1.6(含 TOP-12: A1C+A2G, A1C+C6G, A1C+U3A+U5A+C6G+U7C+A8G+U15G+A16C+U19C, A1G+A2C+U3G, A1G+C6A+A8G+U12C+U15G+A16C+U19C, A1G+C6A+A8G+U15G+A16C+U19C); 这些候选的跨型通用性主张降级为\"主靶标/型0 口径通过, 型1 口径结构保持存疑\", 优先级仅供合成排序",
  "priority": [
   {
    "desc": "WT",
@@ -83,7 +84,10 @@
    "mean_score": -0.3407,
    "min_score": -0.4391,
    "ddG_dr": -2.0,
-   "construct_dna_main_target": "AATTTCTGCTGTTGCAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCTGCTGTTGCAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "U3A",
@@ -135,7 +139,10 @@
    "mean_score": -0.5105,
    "min_score": -0.6993,
    "ddG_dr": -2.2,
-   "construct_dna_main_target": "AATTTCTCCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCTCCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "A8G",
@@ -148,7 +155,10 @@
    "mean_score": -0.4128,
    "min_score": -0.7182,
    "ddG_dr": -0.0,
-   "construct_dna_main_target": "AATTTCTGCTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCTGCTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "U3G",
@@ -213,7 +223,10 @@
    "mean_score": -0.9189,
    "min_score": -1.1417,
    "ddG_dr": -0.0,
-   "construct_dna_main_target": "AAATTCTGCTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AAATTCTGCTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "A1C+A2G",
@@ -226,7 +239,10 @@
    "mean_score": -0.8965,
    "min_score": -1.018,
    "ddG_dr": -0.0,
-   "construct_dna_main_target": "CGTTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "CGTTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t0_R248Qg9"
+   ]
   },
   {
    "desc": "A2G",
@@ -239,7 +255,10 @@
    "mean_score": -0.9738,
    "min_score": -1.1717,
    "ddG_dr": -0.0,
-   "construct_dna_main_target": "AGTTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AGTTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t0_R248Qg9"
+   ]
   },
   {
    "desc": "U4C",
@@ -317,7 +336,10 @@
    "mean_score": -1.1445,
    "min_score": -1.459,
    "ddG_dr": -0.0,
-   "construct_dna_main_target": "ACTTTCTGCTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "ACTTTCTGCTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "U15A",
@@ -382,7 +404,10 @@
    "mean_score": -1.1729,
    "min_score": -2.2396,
    "ddG_dr": -1.4,
-   "construct_dna_main_target": "AATTTCGACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCGACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "U3C+U19C",
@@ -408,7 +433,10 @@
    "mean_score": -1.932,
    "min_score": -2.5263,
    "ddG_dr": 0.7,
-   "construct_dna_main_target": "AATTTCGACTGTTGTTGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCGACTGTTGTTGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "U13A",
@@ -434,7 +462,10 @@
    "mean_score": -1.6728,
    "min_score": -2.0733,
    "ddG_dr": 0.7,
-   "construct_dna_main_target": "AATTTCTTCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCTTCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "U7A+A16C",
@@ -486,7 +517,10 @@
    "mean_score": -1.7159,
    "min_score": -2.6043,
    "ddG_dr": -0.0,
-   "construct_dna_main_target": "AATTTCTGCTGCTGTAGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AATTTCTGCTGCTGTAGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t1_MYCg1"
+   ]
   },
   {
    "desc": "A2G+A16C",
@@ -499,7 +533,10 @@
    "mean_score": -2.442,
    "min_score": -2.9197,
    "ddG_dr": 4.6,
-   "construct_dna_main_target": "AGTTTCTACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT"
+   "construct_dna_main_target": "AGTTTCTACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT",
+   "v16_cross_filtered_in": [
+    "cross_spacer.t0_R248Qg9"
+   ]
   },
   {
    "desc": "U13G+G14U",
@@ -514,6 +551,5 @@
    "ddG_dr": 3.9,
    "construct_dna_main_target": "AATTTCTACTGTGTTAGATGTTCATGCCGCCCATGCAGGAACT"
   }
- ],
- "v16_cross_caveat_20260901": "v1.6 交叉配对硬过滤上线后的回溯影响(cross_audit.json): 通用候选中 A8G+U15C/A8G/A8G+U12C/U15G 等 在 t1_MYCg1(型1) 口径 cross_nt>WT(=20) 不再通过硬过滤; 主靶标与 t0 口径不受影响。跨型通用性主张相应降级: 通用候选=在型0/主靶标口径通过且型1 口径结构保持存疑, 优先级供合成排序参考。"
+ ]
 }

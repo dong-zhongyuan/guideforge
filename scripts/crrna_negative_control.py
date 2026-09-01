@@ -33,10 +33,8 @@ sys.path.insert(0, HERE)
 
 import crrna_scaffold_design as core  # noqa: E402
 
-DEFAULTS = dict(max_bp_dist=4.0, spacer_unpaired_margin=0.10, proc_window=4,
-                seed_len=7, cons3_window=5, w_bp=0.3, w_ddg=0.1, w_contact=1.0,
-                w_ens=0.05, w_hbond=0.5, w_stab=0.3, w_cons3=0.3, w_fold=0.2,
-                w_seed=0.0, stab_dr_only=False, no_protect_processing=False)
+# 打分参数一律取自所对照主线运行的 top.json params(单一事实源), 不在本脚本重复默认值;
+# 缺键即报错终止。
 
 
 def revcomp(s):
@@ -84,14 +82,23 @@ def main():
     wt_dr_dna = wt_entry["dr_seq"]
     dr_rna, spacer_rna = core.to_rna(wt_dr_dna), core.to_rna(spacer_dna)
 
-    # 与主线运行一致的参数
-    ns = dict(DEFAULTS)
-    for k, v in d.get("params", {}).items():
-        if k in ns:
-            ns[k] = v
+    # 与主线运行完全一致的参数: 全部取自 top.json params, 缺键报错
+    needed = ("max_bp_dist", "spacer_unpaired_margin", "proc_window", "seed_len",
+              "cons3_window", "w_bp", "w_ddg", "w_contact", "w_ens", "w_hbond",
+              "w_stab", "w_cons3", "w_fold", "w_seed", "stab_dr_only",
+              "no_protect_processing")
+    params = d.get("params", {})
+    missing = [k for k in needed if k not in params]
+    if missing:
+        raise SystemExit("top.json params 缺键 %s(该运行早于对应参数引入), "
+                         "请改用含全部键的运行输出" % missing)
+    ns = {k: params[k] for k in needed}
+    # 早于 v1.6 的运行无交叉配对过滤, 等价 allow_cross_pairing=True
+    ns["allow_cross_pairing"] = params.get("allow_cross_pairing", True)
     score_args = argparse.Namespace(**ns)
+    seed_len = ns["seed_len"]
 
-    wt = core.wt_reference(dr_rna, spacer_rna, ns["seed_len"])
+    wt = core.wt_reference(dr_rna, spacer_rna, seed_len)
     contact = core.load_contacts(dr_rna)
     stem_pos = core.stem_positions(wt["dr_only_struct"], len(dr_rna))
 
