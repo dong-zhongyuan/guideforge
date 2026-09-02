@@ -178,6 +178,21 @@ def panel():
     if top_spacer:
         extra = {"scaffold_ranking_lit": lit_rank_scaffolds(
             core.to_rna(top_spacer))}
+    # 模块四: 细胞层预测(实测标定虚拟细胞, Scholz 2026 剂量曲线口径)
+    vc_path = os.path.join(DATA, "virtual_cell_prior.json")
+    if os.path.isfile(vc_path):
+        vc = json.load(open(vc_path, encoding="utf-8"))
+        gene = "TP53" if key.startswith("TP53") else "KRAS"
+        tag = "tp53" if gene == "TP53" else "kras"
+        lines = [{"cell_line": r["cell_line"], "rpkm": r["rpkm"].get(gene),
+                  "pred_survival_mid_pct": r.get("surv_%s_mid" % tag)}
+                 for r in vc.get("named_cell_lines", [])]
+        extra["virtual_cell"] = {
+            "calibration": vc.get("calibration"),
+            "status": vc.get("status"),
+            "named_lines": lines,
+            "note": "预测存活率基于 Scholz 2026 实测剂量曲线(RNP 体系移植边界"
+                    "见 status); 细胞系选系前须复核 DepMap 突变状态"}
     return jsonify({"target": key, "design": d, **extra})
 
 

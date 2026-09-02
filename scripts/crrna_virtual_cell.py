@@ -146,10 +146,72 @@ def prior_lit_mode(ec50_grid):
         "scenario_ec50_fpkm": {"lo": ec50_lo, "mid": ec50, "hi": ec50_hi},
         "crrna_rel_scenarios": [0.3, 1.0, 3.0],
         "named_cell_lines": lines_tbl}
+
+    # === 全 CCLE 系杀伤扫描(策划案 §4.3 完整输出: 杀伤窗口/系推荐/误激活检验) ===
+    import gzip
+    op = gzip.open if gct.endswith(".gz") else open
+    genes_rows = {}
+    with op(gct, "rt", encoding="utf-8", errors="ignore") as f:
+        header = None
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if header is None:
+                if parts[0] == "Name":
+                    header = parts
+                continue
+            sym = parts[1] if len(parts) > 1 else ""
+            if sym in ("TP53", "KRAS"):
+                genes_rows[sym] = parts
+    scan = {}
+    mis = {}
+    for sym, parts in genes_rows.items():
+        mut_rpkm = []
+        for i in range(2, len(parts)):
+            try:
+                v = float(parts[i]) * 0.5   # 杂合突变等位基因 50% 场景
+            except ValueError:
+                continue
+            mut_rpkm.append((header[i].split(" (")[0], v))
+        surv = [survival(r, ec50) for _, r in mut_rpkm]
+        n = len(surv)
+        hi_lines = sorted(mut_rpkm, key=lambda x: -x[1])[:15]
+        scan[sym] = {
+            "n_lines": n,
+            "pct_surv_lt30": round(100.0 * sum(1 for s in surv if s < 30) / n, 1),
+            "pct_surv_lt50": round(100.0 * sum(1 for s in surv if s < 50) / n, 1),
+            "pct_surv_ge95": round(100.0 * sum(1 for s in surv if s >= 95) / n, 1),
+            "top15_high_expression_lines": [
+                {"line": cl, "mut_rpkm": round(r, 2),
+                 "pred_survival_mid": round(survival(r, ec50), 1)}
+                for cl, r in hi_lines],
+            "note": "突变等位基因按总 RPKM x 50%(杂合场景); 细胞系突变状态须以 "
+                    "DepMap mutation calls 复核后再选系; 18q3 表达口径"}
+        vals = sorted(r for _, r in mut_rpkm)
+        p10, p90 = vals[int(0.1 * n)], vals[int(0.9 * n)]
+        mis[sym] = {
+            "p10_mut_rpkm": round(p10, 2),
+            "surv_p10_worstcase_hi": round(survival(p10, ec50_hi), 1),
+            "p90_mut_rpkm": round(p90, 2),
+            "surv_p90_bestcase_lo": round(survival(p90, ec50_lo), 1)}
+    out["ccle_linescan"] = scan
+    out["misactivation_check"] = {
+        "question": "正常/低丰度组织同源转录本是否误激活(最保守=CI上界)",
+        "by_gene": mis,
+        "reading": "p10 低丰度系在最保守场景下存活应 >=95%, 否则该靶标选择性不足"}
+    print("\n=== 全 CCLE 系杀伤扫描(实测标定, mid 场景, 杂合 50% 等位场景) ===")
+    for sym, s in scan.items():
+        print("  %-5s n=%d  <30%%存活: %s%%  <50%%: %s%%  >=95%%(不激活): %s%%" % (
+            sym, s["n_lines"], s["pct_surv_lt30"], s["pct_surv_lt50"],
+            s["pct_surv_ge95"]))
+    for sym, m in mis.items():
+        print("  [误激活] %-5s p10=%.2f RPKM -> 最保守存活 %s%%" % (
+            sym, m["p10_mut_rpkm"], m["surv_p10_worstcase_hi"]))
+    print("  TP53 高表达系 TOP5(需复核突变状态): %s" % (
+        [x["line"] for x in scan.get("TP53", {}).get(
+            "top15_high_expression_lines", [])[:5]]))
     p = os.path.join(DATA, "virtual_cell_prior.json")
     json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("文献实测标定场景 -> %s" % p)
-    print("  EC50=%.1f FPKM (CI %.1f-%.1f), h=%.2f" % (ec50, ec50_lo, ec50_hi, h))
+    print("完整输出 -> %s" % p)
     for r in lines_tbl:
         print("  %-16s TP53_RPKM=%-8s 预测存活(mid)=%5s%%  KRAS_RPKM=%-8s 存活=%5s%%" % (
             r["cell_line"], r["rpkm"].get("TP53"), r["surv_tp53_mid"],

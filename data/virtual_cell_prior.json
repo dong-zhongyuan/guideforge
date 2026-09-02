@@ -99,5 +99,193 @@
    "surv_tp53_hi": 61.2,
    "surv_kras_hi": 87.6
   }
- ]
+ ],
+ "ccle_linescan": {
+  "KRAS": {
+   "n_lines": 1156,
+   "pct_surv_lt30": 1.0,
+   "pct_surv_lt50": 1.6,
+   "pct_surv_ge95": 53.9,
+   "top15_high_expression_lines": [
+    {
+     "line": "HUG1N_STOMACH",
+     "mut_rpkm": 267.48,
+     "pred_survival_mid": 16.0
+    },
+    {
+     "line": "SNU1196_BILIARY_TRACT",
+     "mut_rpkm": 97.24,
+     "pred_survival_mid": 17.5
+    },
+    {
+     "line": "SNU245_BILIARY_TRACT",
+     "mut_rpkm": 88.99,
+     "pred_survival_mid": 17.8
+    },
+    {
+     "line": "143B_BONE",
+     "mut_rpkm": 73.38,
+     "pred_survival_mid": 18.6
+    },
+    {
+     "line": "A4FUK_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 62.81,
+     "pred_survival_mid": 19.5
+    },
+    {
+     "line": "SNU685_ENDOMETRIUM",
+     "mut_rpkm": 45.96,
+     "pred_survival_mid": 22.1
+    },
+    {
+     "line": "BEN_LUNG",
+     "mut_rpkm": 44.72,
+     "pred_survival_mid": 22.4
+    },
+    {
+     "line": "KE39_STOMACH",
+     "mut_rpkm": 42.02,
+     "pred_survival_mid": 23.1
+    },
+    {
+     "line": "MKN1_STOMACH",
+     "mut_rpkm": 33.27,
+     "pred_survival_mid": 26.4
+    },
+    {
+     "line": "KURAMOCHI_OVARY",
+     "mut_rpkm": 31.26,
+     "pred_survival_mid": 27.5
+    },
+    {
+     "line": "CORL23_LUNG",
+     "mut_rpkm": 29.62,
+     "pred_survival_mid": 28.5
+    },
+    {
+     "line": "TOV112D_OVARY",
+     "mut_rpkm": 26.73,
+     "pred_survival_mid": 30.6
+    },
+    {
+     "line": "PSN1_PANCREAS",
+     "mut_rpkm": 22.92,
+     "pred_survival_mid": 34.3
+    },
+    {
+     "line": "NCIH1385_LUNG",
+     "mut_rpkm": 22.33,
+     "pred_survival_mid": 35.0
+    },
+    {
+     "line": "DMS53_LUNG",
+     "mut_rpkm": 19.29,
+     "pred_survival_mid": 39.1
+    }
+   ],
+   "note": "突变等位基因按总 RPKM x 50%(杂合场景); 细胞系突变状态须以 DepMap mutation calls 复核后再选系; 18q3 表达口径"
+  },
+  "TP53": {
+   "n_lines": 1156,
+   "pct_surv_lt30": 6.5,
+   "pct_surv_lt50": 36.0,
+   "pct_surv_ge95": 15.0,
+   "top15_high_expression_lines": [
+    {
+     "line": "OCILY19_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 62.03,
+     "pred_survival_mid": 19.6
+    },
+    {
+     "line": "SUDHL8_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 55.01,
+     "pred_survival_mid": 20.4
+    },
+    {
+     "line": "KOPN8_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 52.9,
+     "pred_survival_mid": 20.8
+    },
+    {
+     "line": "CI1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 49.02,
+     "pred_survival_mid": 21.5
+    },
+    {
+     "line": "DAOY_CENTRAL_NERVOUS_SYSTEM",
+     "mut_rpkm": 45.3,
+     "pred_survival_mid": 22.3
+    },
+    {
+     "line": "SNU1196_BILIARY_TRACT",
+     "mut_rpkm": 44.16,
+     "pred_survival_mid": 22.5
+    },
+    {
+     "line": "NCIH841_LUNG",
+     "mut_rpkm": 41.84,
+     "pred_survival_mid": 23.2
+    },
+    {
+     "line": "BL70_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 41.58,
+     "pred_survival_mid": 23.2
+    },
+    {
+     "line": "NUDUL1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 41.39,
+     "pred_survival_mid": 23.3
+    },
+    {
+     "line": "KYSE450_OESOPHAGUS",
+     "mut_rpkm": 40.15,
+     "pred_survival_mid": 23.7
+    },
+    {
+     "line": "NALM19_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 39.96,
+     "pred_survival_mid": 23.7
+    },
+    {
+     "line": "SKNEP1_BONE",
+     "mut_rpkm": 39.19,
+     "pred_survival_mid": 24.0
+    },
+    {
+     "line": "SF268_CENTRAL_NERVOUS_SYSTEM",
+     "mut_rpkm": 38.82,
+     "pred_survival_mid": 24.1
+    },
+    {
+     "line": "EB1_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 37.92,
+     "pred_survival_mid": 24.4
+    },
+    {
+     "line": "GRANTA519_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",
+     "mut_rpkm": 37.47,
+     "pred_survival_mid": 24.6
+    }
+   ],
+   "note": "突变等位基因按总 RPKM x 50%(杂合场景); 细胞系突变状态须以 DepMap mutation calls 复核后再选系; 18q3 表达口径"
+  }
+ },
+ "misactivation_check": {
+  "question": "正常/低丰度组织同源转录本是否误激活(最保守=CI上界)",
+  "by_gene": {
+   "KRAS": {
+    "p10_mut_rpkm": 1.23,
+    "surv_p10_worstcase_hi": 99.0,
+    "p90_mut_rpkm": 4.71,
+    "surv_p90_bestcase_lo": 61.4
+   },
+   "TP53": {
+    "p10_mut_rpkm": 1.45,
+    "surv_p10_worstcase_hi": 98.7,
+    "p90_mut_rpkm": 24.18,
+    "surv_p90_bestcase_lo": 20.8
+   }
+  },
+  "reading": "p10 低丰度系在最保守场景下存活应 >=95%, 否则该靶标选择性不足"
+ }
 }
