@@ -9,10 +9,14 @@
   附加(Sanger 耐受集体检): 54 条真实 Sanger 变体特征经模型预测,
     与 204 候选分布对比 —— 检查模型是否把真实耐受变体排到离谱位置。
 
-诚实边界: n=7 干净监督对(Fig1g 尺度); Han 2025 的 145 个编号变体
-  (F/S/L/FL)与序列的映射未随论文发表(2026-09-02 查证 MOESM1-7 全部
-  补充材料 + 主文), 96 变体序列级训练集不可得; LbCas12a CRISPRi ≠
-  Cas12a2 杀伤, 迁移假设已在 README 声明; 决策树 = 答辩可解释。
+诚实边界: 干净监督对 = 工具箱 7 条 + 主文 Fig.1f 视觉转录 9 条
+  (S3/S5/S7/S10/S14/S16/S20/S21/FL4, 2026-09-03 入库, 置信度分级见
+  han2025_dataset.json fig1f_pairs; high=双读一致+Sanger 交叉校验,
+  medium=单完整读+交叉校验)。145 个编号的完整映射仍未随论文发表
+  (数值源数据已穷尽查证; 完整映射待作者回复, 见 docs/ 邮件草稿);
+  LbCas12a CRISPRi ≠ Cas12a2 杀伤, 迁移假设已在 README 声明;
+  决策树 = 答辩可解释。fig1f 留出验证(训练 7 条工具箱, 检验 9 条
+  fig1f)作为转录配对的独立一致性体检随输出报告。
 运行: python scripts/crrna_train_selector.py
 输出: data/selector_model.json + data/selector_ranked_candidates.csv
 """
@@ -37,15 +41,22 @@ FEATURES = ["ddG_dr", "bp_dist", "cross_nt", "p_fold", "spacer_up"]
 def load_han():
     d = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
                        encoding="utf-8"))
-    rows = d["toolbox_features"]
-    X, y, tags = [], [], []
-    for r in rows:
+    X, y, tags, confs = [], [], [], []
+    for r in d["toolbox_features"]:
         if "fig1g" not in r:
             continue
         X.append([float(r[f]) for f in FEATURES])
         y.append(float(r["fig1g"]))
         tags.append(r["tag"])
-    return np.array(X), np.array(y), tags, d
+        confs.append("toolbox")
+    for r in d.get("fig1f_pairs") or []:
+        if r.get("fig1g") is None:
+            continue
+        X.append([float(r[f]) for f in FEATURES])
+        y.append(float(r["fig1g"]))
+        tags.append(r["tag"])
+        confs.append("fig1f:" + r["confidence"])
+    return np.array(X), np.array(y), tags, d, confs
 
 
 ENDPOINTS = {"fig1g": "fig1g", "cis_end": "cis_end", "trans_end": "trans_end",
@@ -69,17 +80,20 @@ def load_pooled():
                        encoding="utf-8"))
     X, y, meta = [], [], []
     for ep, key in ENDPOINTS.items():
-        vals = [r for r in d["toolbox_features"] if key in r]
+        vals = [(r, "han2025") for r in d["toolbox_features"] if key in r]
+        if ep == "fig1g":  # Fig.1f 视觉转录 9 条并入 fig1g 终点组(2026-09-03)
+            vals += [(r, "han2025_fig1f") for r in d.get("fig1f_pairs") or []
+                     if r.get(key) is not None]
         if len(vals) < 5:
             continue
-        ys = np.array([float(r[key]) for r in vals])
+        ys = np.array([float(r[key]) for r, _ in vals])
         z = (ys - ys.mean()) / max(ys.std(ddof=0), 1e-9)
         if not ENDPOINT_HIGHER_BETTER[ep]:
             z = -z
-        for r, zi in zip(vals, z):
+        for (r, src), zi in zip(vals, z):
             X.append([float(r[f]) for f in FEATURES])
             y.append(float(zi))
-            meta.append({"dataset": "han2025", "tag": r["tag"],
+            meta.append({"dataset": src, "tag": r["tag"],
                          "endpoint": ep})
     # Teng 2019 4n96 序数对(自身数据集内 z=±1; 特征以 canonical spacer 上下文计算)
     try:
@@ -141,9 +155,11 @@ def load_han_endpoints():
     out = {}
     for ep, key in ENDPOINTS.items():
         X, y, tags = [], [], []
-        for r in d["toolbox_features"]:
-            if key not in r:
-                continue
+        src = [(r, "toolbox") for r in d["toolbox_features"] if key in r]
+        if ep == "fig1g":
+            src += [(r, "fig1f") for r in d.get("fig1f_pairs") or []
+                    if r.get(key) is not None]
+        for r, _tag in src:
             X.append([float(r[f]) for f in FEATURES])
             y.append(float(r[key]))
             tags.append(r["tag"])
@@ -234,13 +250,13 @@ def main():
     args = ap.parse_args()
 
     # === 第一段: 文献预训练(Fig1g 尺度) ===
-    X, y, tags, han = load_han()
-    print("=== 训练集(Fig1g 归一化 GFP, 低=抑制强) ===")
-    print("%-6s" % "var", " ".join("%10s" % f for f in FEATURES),
+    X, y, tags, han, confs = load_han()
+    print("=== 训练集(Fig1g 归一化 GFP, 低=抑制强; 工具箱 7 + Fig1f 转录 9) ===")
+    print("%-6s %-16s" % ("var", "source"), " ".join("%10s" % f for f in FEATURES),
           "  Fig1g")
     for i, t in enumerate(tags):
-        print("%-6s" % t, " ".join("%10.3f" % v for v in X[i]),
-              "  %6.4f" % y[i])
+        print("%-6s %-16s" % (t, confs[i]),
+              " ".join("%10.3f" % v for v in X[i]), "  %6.4f" % y[i])
 
     # 决策树(小样本: max_leaf=4, min_samples_leaf=1)
     dt = DecisionTreeRegressor(max_leaf_nodes=4, min_samples_leaf=1,
@@ -255,6 +271,30 @@ def main():
     rho_train = np.corrcoef(np.argsort(np.argsort(pred_train)),
                             np.argsort(np.argsort(y)))[0, 1]
     print("训练集 Spearman rho = %.3f" % rho_train)
+
+    # fig1f 留出验证: 只用 7 条工具箱训练, 检验 9 条 Fig1f 转录配对
+    fig1f_holdout = None
+    idx_tb = [i for i, c in enumerate(confs) if c == "toolbox"]
+    idx_f1f = [i for i, c in enumerate(confs) if c.startswith("fig1f")]
+    if len(idx_tb) >= 5 and len(idx_f1f) >= 5:
+        dt_tb = DecisionTreeRegressor(max_leaf_nodes=4, min_samples_leaf=1,
+                                      random_state=42)
+        dt_tb.fit(X[idx_tb], y[idx_tb])
+        pr = dt_tb.predict(X[idx_f1f])
+        rk = np.argsort(np.argsort(pr))
+        ry = np.argsort(np.argsort(y[idx_f1f]))
+        rho_ho = float(np.corrcoef(rk, ry)[0, 1])
+        mae_ho = float(np.mean(np.abs(pr - y[idx_f1f])))
+        fig1f_holdout = {
+            "design": "train toolbox n=%d, test fig1f n=%d" % (
+                len(idx_tb), len(idx_f1f)),
+            "spearman": round(rho_ho, 3), "mae": round(mae_ho, 4),
+            "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; "
+                    "Spearman>0 且 MAE<工具箱 y 范围的 1/3 视为转录配对可用"}
+        print("\n=== fig1f 留出验证(训练%d工具箱 -> 检验%d转录对) ===" % (
+            len(idx_tb), len(idx_f1f)))
+        print("Spearman = %+.3f, MAE = %.4f (y 范围 %.3f-%.3f)" % (
+            rho_ho, mae_ho, y.min(), y.max()))
 
     # 特征重要性
     print("\n=== 特征重要性 ===")
@@ -325,7 +365,7 @@ def main():
     pooled = DecisionTreeRegressor(max_leaf_nodes=6, min_samples_leaf=2,
                                    random_state=42)
     pooled.fit(Xp, yp)
-    print("\n=== 同源池化模型(n=%d 观测 = Han 5 终点 x 7 + Teng 序数对) ===" % len(yp))
+    print("\n=== 同源池化模型(n=%d 观测 = Han 5 终点 x7 + Fig1f 转录 x9(fig1g 组) + Teng 序数对) ===" % len(yp))
     print(export_text(pooled, feature_names=FEATURES, decimals=3))
     # 留一终点交叉验证(方向一致性)
     loeo = {}
@@ -362,7 +402,9 @@ def main():
     # 输出
     out = {"model": "DecisionTreeRegressor(max_leaf=4)",
            "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a "
-                            "toolbox, Fig1g-scale activity (n=%d)" % len(y),
+                            "toolbox n=7 + Fig.1f 视觉转录 n=9 "
+                            "(置信度分级见 han2025_dataset.json fig1f_pairs)",
+           "fig1f_holdout_check": fig1f_holdout,
            "features": FEATURES,
            "feature_importance": {f: float(imp) for f, imp in
                                   zip(FEATURES, dt.feature_importances_)},
@@ -373,7 +415,8 @@ def main():
            "sanger_tolerance_check": tol_stats,
            "multi_endpoint": {"endpoints": sorted(models),
                               "note": "cis/trans 终点比 = 同源(LbCas12a)切割先验, "
-                                      "trans 与 Cas12a2 旁切杀伤最近缘; 均 n=7"},
+                                      "trans 与 Cas12a2 旁切杀伤最近缘; "
+                                      "fig1g n=16(含 Fig1f 转录 9), cis/trans n=7"},
            "family_ranking_8": fam_rows,
            "top10_lit_model": [{"desc": n, "lit_pred": round(p, 4),
                                 "ddG_dr": float(d), "score": float(s)}
@@ -387,7 +430,14 @@ def main():
         "status": "同源先验全量训练(等 IVT 实测替换); 池化目标 = 逐终点 z "
                   "标准化并统一'越大越优'(fig1g/rbs 取负, cis/trans 原向)",
         "n_observations": len(yp),
-        "composition": {"han2025_5endpoints_x7": 35, "teng2019_ordinal": 2},
+        "composition": {"han2025_5endpoints_x7": 35,
+                        "han2025_fig1f_fig1g": sum(
+                            1 for m in pmeta if m["dataset"] == "han2025_fig1f"),
+                        "teng2019_ordinal": sum(
+                            1 for m in pmeta if m["dataset"] == "teng2019")},
+        "fig1f_note": "fig1g 终点组并入 Fig.1f 视觉转录 9 条(meta.dataset="
+                      "han2025_fig1f 可追溯; 置信度 high 2/medium 7, 序列均经 "
+                      "Sanger 独立源交叉校验)",
         "pooled_tree_rules": export_text(pooled, feature_names=FEATURES),
         "pooled_feature_importance": {f: float(imp) for f, imp in
                                       zip(FEATURES, pooled.feature_importances_)},

@@ -1,24 +1,26 @@
 {
  "status": "同源先验全量训练(等 IVT 实测替换); 池化目标 = 逐终点 z 标准化并统一'越大越优'(fig1g/rbs 取负, cis/trans 原向)",
- "n_observations": 37,
+ "n_observations": 46,
  "composition": {
   "han2025_5endpoints_x7": 35,
+  "han2025_fig1f_fig1g": 9,
   "teng2019_ordinal": 2
  },
- "pooled_tree_rules": "|--- p_fold <= 0.87\n|   |--- spacer_up <= 0.39\n|   |   |--- value: [0.63]\n|   |--- spacer_up >  0.39\n|   |   |--- value: [0.00]\n|--- p_fold >  0.87\n|   |--- p_fold <= 0.97\n|   |   |--- spacer_up <= 0.33\n|   |   |   |--- value: [-0.62]\n|   |   |--- spacer_up >  0.33\n|   |   |   |--- value: [-0.93]\n|   |--- p_fold >  0.97\n|   |   |--- p_fold <= 0.99\n|   |   |   |--- value: [-0.15]\n|   |   |--- p_fold >  0.99\n|   |   |   |--- value: [0.58]\n",
+ "fig1f_note": "fig1g 终点组并入 Fig.1f 视觉转录 9 条(meta.dataset=han2025_fig1f 可追溯; 置信度 high 2/medium 7, 序列均经 Sanger 独立源交叉校验)",
+ "pooled_tree_rules": "|--- ddG_dr <= -1.15\n|   |--- value: [-1.38]\n|--- ddG_dr >  -1.15\n|   |--- p_fold <= 0.99\n|   |   |--- p_fold <= 0.87\n|   |   |   |--- p_fold <= 0.87\n|   |   |   |   |--- value: [0.12]\n|   |   |   |--- p_fold >  0.87\n|   |   |   |   |--- value: [0.83]\n|   |   |--- p_fold >  0.87\n|   |   |   |--- ddG_dr <= 0.25\n|   |   |   |   |--- value: [-0.08]\n|   |   |   |--- ddG_dr >  0.25\n|   |   |   |   |--- value: [-0.83]\n|   |--- p_fold >  0.99\n|   |   |--- value: [0.72]\n",
  "pooled_feature_importance": {
-  "ddG_dr": 0.0,
+  "ddG_dr": 0.45639670917534997,
   "bp_dist": 0.0,
   "cross_nt": 0.0,
-  "p_fold": 0.9263154416765014,
-  "spacer_up": 0.07368455832349856
+  "p_fold": 0.5436032908246501,
+  "spacer_up": 0.0
  },
  "loeo_spearman": {
-  "cis_end": -0.679,
-  "fig1g": 0.286,
-  "rbs0": 0.393,
-  "rbs33": 0.643,
-  "trans_end": 0.679
+  "cis_end": -0.857,
+  "fig1g": 0.035,
+  "rbs0": 0.679,
+  "rbs33": 0.964,
+  "trans_end": 0.25
  },
  "rejected_endpoints": {
   "spr_kd": "传感图相位预处理无法对论文定性序(canonical 最强)校验, 拟合不收敛",
@@ -34,12 +36,12 @@
     "p_fold": 0.86603,
     "spacer_up": 0.427
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -51,12 +53,12 @@
     "p_fold": 0.27749,
     "spacer_up": 0.431
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6301,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 7.65,
    "pred_rbs0": 36.0,
    "pred_rbs33": 55.7,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": -1.381,
    "tolerance_neighborhood": 0.037
   },
   {
@@ -68,12 +70,12 @@
     "p_fold": 0.8191,
     "spacer_up": 0.457
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6301,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 7.65,
    "pred_rbs0": 36.0,
    "pred_rbs33": 55.7,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": -1.381,
    "tolerance_neighborhood": 0.119
   },
   {
@@ -85,12 +87,12 @@
     "p_fold": 0.86558,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -102,12 +104,12 @@
     "p_fold": 0.86574,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -119,12 +121,12 @@
     "p_fold": 0.99221,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.5825,
+   "pred_fig1g": 0.928,
    "pred_cis_end": 17.586,
    "pred_trans_end": 12.109,
    "pred_rbs0": 36.0,
    "pred_rbs33": 55.7,
-   "pred_pooled_z": 0.582,
+   "pred_pooled_z": -1.381,
    "tolerance_neighborhood": 0.037
   },
   {
@@ -136,12 +138,12 @@
     "p_fold": 0.86541,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -153,12 +155,12 @@
     "p_fold": 0.0,
     "spacer_up": 0.448
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 13.983,
    "pred_trans_end": 7.65,
    "pred_rbs0": 37.5,
    "pred_rbs33": 67.8,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.163
   }
  ]

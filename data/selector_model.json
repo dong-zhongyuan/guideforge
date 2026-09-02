@@ -1,6 +1,12 @@
 {
  "model": "DecisionTreeRegressor(max_leaf=4)",
- "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a toolbox, Fig1g-scale activity (n=7)",
+ "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a toolbox n=7 + Fig.1f 视觉转录 n=9 (置信度分级见 han2025_dataset.json fig1f_pairs)",
+ "fig1f_holdout_check": {
+  "design": "train toolbox n=7, test fig1f n=9",
+  "spearman": 0.25,
+  "mae": 0.2167,
+  "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; Spearman>0 且 MAE<工具箱 y 范围的 1/3 视为转录配对可用"
+ },
  "features": [
   "ddG_dr",
   "bp_dist",
@@ -9,25 +15,25 @@
   "spacer_up"
  ],
  "feature_importance": {
-  "ddG_dr": 0.11532098144983548,
+  "ddG_dr": 0.47989127025945977,
   "bp_dist": 0.0,
-  "cross_nt": 0.33031745526543504,
-  "p_fold": 0.5543615632847295,
+  "cross_nt": 0.0,
+  "p_fold": 0.5201087297405402,
   "spacer_up": 0.0
  },
- "tree_rules": "|--- p_fold <= 0.87\n|   |--- value: [0.46]\n|--- p_fold >  0.87\n|   |--- cross_nt <= 4.00\n|   |   |--- ddG_dr <= 0.25\n|   |   |   |--- value: [0.58]\n|   |   |--- ddG_dr >  0.25\n|   |   |   |--- value: [0.53]\n|   |--- cross_nt >  4.00\n|   |   |--- value: [0.50]\n",
- "train_spearman": 0.964,
+ "tree_rules": "|--- ddG_dr <= -1.15\n|   |--- p_fold <= 0.86\n|   |   |--- value: [0.63]\n|   |--- p_fold >  0.86\n|   |   |--- value: [0.93]\n|--- ddG_dr >  -1.15\n|   |--- p_fold <= 0.98\n|   |   |--- value: [0.61]\n|   |--- p_fold >  0.98\n|   |   |--- value: [0.50]\n",
+ "train_spearman": 0.729,
  "applied_to": "tp53_r248q_zengdr.v6 (204 passed)",
- "vs_pipeline_score_spearman": -0.895,
+ "vs_pipeline_score_spearman": -0.872,
  "sanger_tolerance_check": {
   "n": 30,
-  "pred_median": 0.4603,
-  "pred_min": 0.4603,
-  "pred_max": 0.5825,
-  "avg_percentile_in_candidates": 0.193,
+  "pred_median": 0.6094,
+  "pred_min": 0.4991,
+  "pred_max": 0.928,
+  "avg_percentile_in_candidates": 0.065,
   "by_group": {
-   "flank": 0.4603,
-   "loop": 0.4603
+   "flank": 0.6094,
+   "loop": 0.6094
   }
  },
  "multi_endpoint": {
@@ -38,7 +44,7 @@
    "rbs33",
    "trans_end"
   ],
-  "note": "cis/trans 终点比 = 同源(LbCas12a)切割先验, trans 与 Cas12a2 旁切杀伤最近缘; 均 n=7"
+  "note": "cis/trans 终点比 = 同源(LbCas12a)切割先验, trans 与 Cas12a2 旁切杀伤最近缘; fig1g n=16(含 Fig1f 转录 9), cis/trans n=7"
  },
  "family_ranking_8": [
   {
@@ -50,12 +56,12 @@
     "p_fold": 0.86603,
     "spacer_up": 0.427
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -67,12 +73,12 @@
     "p_fold": 0.27749,
     "spacer_up": 0.431
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6301,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 7.65,
    "pred_rbs0": 36.0,
    "pred_rbs33": 55.7,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": -1.381,
    "tolerance_neighborhood": 0.037
   },
   {
@@ -84,12 +90,12 @@
     "p_fold": 0.8191,
     "spacer_up": 0.457
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6301,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 7.65,
    "pred_rbs0": 36.0,
    "pred_rbs33": 55.7,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": -1.381,
    "tolerance_neighborhood": 0.119
   },
   {
@@ -101,12 +107,12 @@
     "p_fold": 0.86558,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -118,12 +124,12 @@
     "p_fold": 0.86574,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -135,12 +141,12 @@
     "p_fold": 0.99221,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.5825,
+   "pred_fig1g": 0.928,
    "pred_cis_end": 17.586,
    "pred_trans_end": 12.109,
    "pred_rbs0": 36.0,
    "pred_rbs33": 55.7,
-   "pred_pooled_z": 0.582,
+   "pred_pooled_z": -1.381,
    "tolerance_neighborhood": 0.037
   },
   {
@@ -152,12 +158,12 @@
     "p_fold": 0.86541,
     "spacer_up": 0.426
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 6.8845,
    "pred_trans_end": 39.248,
    "pred_rbs0": 37.5,
    "pred_rbs33": 50.9,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.385
   },
   {
@@ -169,75 +175,75 @@
     "p_fold": 0.0,
     "spacer_up": 0.448
    },
-   "pred_fig1g": 0.4603,
+   "pred_fig1g": 0.6094,
    "pred_cis_end": 13.983,
    "pred_trans_end": 7.65,
    "pred_rbs0": 37.5,
    "pred_rbs33": 67.8,
-   "pred_pooled_z": 0.0,
+   "pred_pooled_z": 0.121,
    "tolerance_neighborhood": 0.163
   }
  ],
  "top10_lit_model": [
   {
    "desc": "WT",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": 0.0
   },
   {
    "desc": "A1C",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.0001
   },
   {
    "desc": "A1U",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.0001
   },
   {
    "desc": "A1G",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.012
   },
   {
-   "desc": "A8G+U15C",
-   "lit_pred": 0.4603,
-   "ddG_dr": -2.0,
-   "score": -0.4391
-  },
-  {
-   "desc": "U7C+A16G",
-   "lit_pred": 0.4603,
-   "ddG_dr": -2.0,
-   "score": -0.4633
-  },
-  {
    "desc": "A1U+U3A",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.5486
   },
   {
    "desc": "U3A",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.5495
   },
   {
    "desc": "A1C+U3A",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.5507
   },
   {
    "desc": "A1U+U3G",
-   "lit_pred": 0.4603,
+   "lit_pred": 0.6094,
    "ddG_dr": 0.0,
    "score": -0.5537
+  },
+  {
+   "desc": "U3G",
+   "lit_pred": 0.6094,
+   "ddG_dr": 0.0,
+   "score": -0.5553
+  },
+  {
+   "desc": "A1C+U3G",
+   "lit_pred": 0.6094,
+   "ddG_dr": 0.0,
+   "score": -0.5596
   }
  ]
 }
