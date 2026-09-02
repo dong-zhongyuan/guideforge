@@ -1,0 +1,106 @@
+{
+ "ec50_fpkm": 11.31,
+ "hill": 1.78,
+ "surv_min_pct": 15.7,
+ "surv_span_pct": 84.0,
+ "r2": 0.867,
+ "spearman_log10f_surv": -0.737,
+ "n_points": 15,
+ "ec50_ci95": [
+  5.2,
+  17.4
+ ],
+ "points": [
+  {
+   "target": "EGFR",
+   "fpkm": 7.0,
+   "log10_fpkm": 0.845098,
+   "survival_pct": 66.0
+  },
+  {
+   "target": "KRAS",
+   "fpkm": 11.5,
+   "log10_fpkm": 1.060698,
+   "survival_pct": 40.6
+  },
+  {
+   "target": "TP53",
+   "fpkm": 35.0,
+   "log10_fpkm": 1.544068,
+   "survival_pct": 24.3
+  },
+  {
+   "target": "MALAT1",
+   "fpkm": 146.0,
+   "log10_fpkm": 2.164353,
+   "survival_pct": 19.3
+  },
+  {
+   "target": "GFP",
+   "fpkm": 1217.0,
+   "log10_fpkm": 3.085291,
+   "survival_pct": 13.7
+  },
+  {
+   "target": "GAPDH",
+   "fpkm": 6114.99,
+   "log10_fpkm": 3.786396,
+   "survival_pct": 8.3
+  },
+  {
+   "target": "CD8A",
+   "fpkm": 1.0,
+   "log10_fpkm": 0.0,
+   "survival_pct": 103.1
+  },
+  {
+   "target": "EGFR",
+   "fpkm": 25.0,
+   "log10_fpkm": 1.39794,
+   "survival_pct": 30.0
+  },
+  {
+   "target": "TP53",
+   "fpkm": 95.0,
+   "log10_fpkm": 1.977724,
+   "survival_pct": 11.3
+  },
+  {
+   "target": "KRAS",
+   "fpkm": 109.4,
+   "log10_fpkm": 2.039017,
+   "survival_pct": 41.1
+  },
+  {
+   "target": "GAPDH",
+   "fpkm": 3727.0,
+   "log10_fpkm": 3.571359,
+   "survival_pct": 26.0
+  },
+  {
+   "target": "TP53",
+   "fpkm": 95.0,
+   "log10_fpkm": 1.977724,
+   "survival_pct": 8.6
+  },
+  {
+   "target": "EGFR",
+   "fpkm": 108.0,
+   "log10_fpkm": 2.033424,
+   "survival_pct": 6.2
+  },
+  {
+   "target": "EGFR",
+   "fpkm": 1.0,
+   "log10_fpkm": 0.0,
+   "survival_pct": 95.8
+  },
+  {
+   "target": "TP53",
+   "fpkm": 11.0,
+   "log10_fpkm": 1.041393,
+   "survival_pct": 84.8
+  }
+ ],
+ "source": "Scholz et al. 2026 Nature s41586-026-10466-y Fig 1h 源数据(MOESM5), 4 细胞系 x 7 靶转录本, RNP 电转体系"
+}

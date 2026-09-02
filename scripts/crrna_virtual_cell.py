@@ -78,14 +78,23 @@ def load_local_ccle(genes):
 
 
 def prior_lit_mode(ec50_grid):
-    """文献先验场景版(策划案 §4.3 的"实验前预测"先做先验口径)。
+    """文献实测标定版(2026-09-03 升级: 从数量级场景改为 Scholz 2026 实测剂量曲线)。
 
-    依据(数量级口径, 非精确值):
-      Dmytrenko 2023 Science / 2026 两篇 Nature 的 Cas12a2 体外/细胞实验:
-      体外旁切激活的靶 RNA 浓度在低 nM 量级; 细胞内有效浓度不可由体外
-      直接换算, 故取 EC50(TPM) 网格做场景分析, 每档给出杀伤窗口与
-      主验证细胞系激活率。输出明确标注"文献先验场景, 非标定预测"。
+    标定源: Scholz et al. 2026 Nature (s41586-026-10466-y) Fig 1h 源数据
+    (data/scholz2026_fig1h_calibration.json): 4 细胞系 x 7 靶转录本的
+    (FPKM, 存活率) 15 点, Hill 拟合 EC50=11.3 FPKM (95%CI 5.2-17.4),
+    有效 Hill h=1.78, R2=0.867——胞内杀伤半数阈值的实测锚点。
+    分子层注记: Kunwar 2026 (bioRxiv v2) SEC 纯化后结合无双曲线协同性
+    (binary-靶 RNA Kd=18±4 nM), 细胞层 h=1.78 为有效剂量斜率非分子协同。
+    移植边界: 标定体系为 RNP 电转; 本项目质粒/U6 表达体系的有效 RNP 剂量
+    不同, crrna_rel 保留场景因子 {0.3, 1, 3}。
     """
+    cal = json.load(open(os.path.join(
+        DATA, "scholz2026_fig1h_calibration.json"), encoding="utf-8"))
+    ec50, h = cal["ec50_fpkm"], cal["hill"]
+    ec50_lo, ec50_hi = cal["ec50_ci95"]
+    scenarios = [ec50_lo, ec50, ec50_hi]
+
     abundance = json.load(open(os.path.join(DATA, "virtual_cell_abundance.json"),
                                encoding="utf-8"))["genes"]
     gct = os.path.join(DATA, "CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct")
@@ -113,47 +122,38 @@ def prior_lit_mode(ec50_grid):
                         except ValueError:
                             pass
 
-    def hill(rna, ec50, n=2.0):
-        return rna ** n / (ec50 ** n + rna ** n)
+    def survival(rpkm, e50):
+        # Scholz 拟合: 存活% = 平台 + 跨度/(1+(F/EC50)^h); F≈RPKM(同类长度归一)
+        return cal["surv_min_pct"] + cal["surv_span_pct"] / (
+            1.0 + (max(rpkm, 1e-9) / e50) ** h)
 
-    grid = [float(x) for x in ec50_grid.split(",")]
-    scen = []
-    for ec50 in grid:
-        for g, a in abundance.items():
-            hi = hill(a["p90_tpm"], ec50)
-            lo = hill(a["p10_tpm"], ec50)
-            scen.append({"gene": g, "ec50_tpm": ec50,
-                         "act_p90": round(hi, 3), "act_p10": round(lo, 3),
-                         "window": round(hi - lo, 3)})
     lines_tbl = []
     for cl, genes in sorted(named.items()):
         row = {"cell_line": cl, "rpkm": genes}
-        for ec50 in grid:
-            row["act_tp53_ec50_%g" % ec50] = round(
-                hill(genes.get("TP53", 0.0), ec50), 3)
-            row["act_kras_ec50_%g" % ec50] = round(
-                hill(genes.get("KRAS", 0.0), ec50), 3)
+        for lab, e50 in zip(("lo", "mid", "hi"), scenarios):
+            row["surv_tp53_%s" % lab] = round(survival(
+                genes.get("TP53", 0.0) * 0.5, e50), 1)  # 突变本按杂合 50%
+            row["surv_kras_%s" % lab] = round(survival(
+                genes.get("KRAS", 0.0) * 0.5, e50), 1)
         lines_tbl.append(row)
-    out = {"status": "文献先验场景(数量级口径), 非标定预测; IVT 实测回填 "
-                     "virtual_cell_params.json 后由 --twin-check 出校验",
-           "assumptions": {
-               "ec50_tpm_grid": grid,
-               "basis": "Cas12a2 体外旁切激活靶 RNA 为低 nM 量级"
-                        "(Dmytrenko 2023 Science; 2026 Nature 细胞杀伤工作); "
-                        "胞内有效浓度不可由体外直接换算, 故场景化",
-               "n_hill": 2.0,
-               "mutant_allele_fraction": 0.5,
-               "note": "突变本转录本按基因总 RNA 的 50% 计(杂合突变表达比场景)"},
-           "scenarios": scen,
-           "named_cell_lines": lines_tbl}
+    out = {
+        "status": "文献实测标定(Scholz 2026 Fig 1h, n=15 剂量点, R2=0.867); "
+                  "移植边界=RNP电转体系, 质粒体系 crrna_rel 场景因子未定; "
+                  "IVT/细胞实测回填 virtual_cell_params.json 后 --twin-check 校验",
+        "calibration": {k: cal[k] for k in (
+            "ec50_fpkm", "hill", "surv_min_pct", "surv_span_pct", "r2",
+            "ec50_ci95", "n_points", "source")},
+        "scenario_ec50_fpkm": {"lo": ec50_lo, "mid": ec50, "hi": ec50_hi},
+        "crrna_rel_scenarios": [0.3, 1.0, 3.0],
+        "named_cell_lines": lines_tbl}
     p = os.path.join(DATA, "virtual_cell_prior.json")
     json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("文献先验场景 -> %s" % p)
-    print("  EC50 网格: %s; 命名细胞系 %d 条" % (grid, len(lines_tbl)))
+    print("文献实测标定场景 -> %s" % p)
+    print("  EC50=%.1f FPKM (CI %.1f-%.1f), h=%.2f" % (ec50, ec50_lo, ec50_hi, h))
     for r in lines_tbl:
-        print("  %-14s TP53=%-7s KRAS=%-7s  act(TP53@10)=%s" % (
-            r["cell_line"], r["rpkm"].get("TP53"), r["rpkm"].get("KRAS"),
-            r.get("act_tp53_ec50_10")))
+        print("  %-16s TP53_RPKM=%-8s 预测存活(mid)=%5s%%  KRAS_RPKM=%-8s 存活=%5s%%" % (
+            r["cell_line"], r["rpkm"].get("TP53"), r["surv_tp53_mid"],
+            r["rpkm"].get("KRAS"), r["surv_kras_mid"]))
 
 
 def main():
