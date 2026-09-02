@@ -40,9 +40,36 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 `scripts/crrna_active_template.py` -> `data/cas12a2_active_template.json`: 8D4A 链 B(成熟 crRNA, DR18+spacer23) 三维几何判据(N1-N3<4.0A + C1-C1<12.5A)提取——**结合态活性模板无假结**: DR 区仅 5 对标准茎(1基 4-17/5-16/6-15/7-14/8-13) + 3 个近距摆动接触, DR-spacer 交界零配对。含义: Cas12a2 成熟 crRNA 的活性态在 ViennaRNA 伪结外空间内完整可表示(茎即为活性模板), **假结模型缺口只存在于 Creutzburg/FnCas12a 前体回验侧**(其失活态涉及前体 5prime repeat 侧翼, 论文自述活性态含 canonical pseudoknot)。两体系的模型域边界因此不同, 引用时须分开陈述。
 
-### Chai-1 共折叠首跑(蛋白预测层能力探针, 2026-09-02)
+### Chai-1 共折叠: 模板注入打通蛋白-RNA 界面(蛋白预测层正式口径, 2026-09-02)
 
-`scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR18+R248Q)+靶RNA(28nt) 三元共折叠, 单序列模式(无 MSA/无 ESM), 5 模型 ~25 分钟。结果: aggregate 0.23-0.24, ipTM 0.22-0.24, **蛋白-crRNA 链间 ipTM 0.02(界面未恢复——单序列模式对 1200aa RNA 引导核酸酶的已知短板, 非故障)**; crRNA-靶RNA 链对 ipTM 0.34-0.35 且 5 模型一致(向导-靶双链部分恢复, 最有意义的链对)。ESM 版补跑成功(2026-09-02: 权重 5.68GB 经宿主 16 路分段下载 chaiassets.com -> /dawn -> 容器 CHAI_DOWNLOADS_DIR 软链本地化, conformers 资产同法): pTM 0.24->0.34(蛋白内部折叠置信显著提升), 蛋白-crRNA 链间 ipTM 0.02->0.02-0.08(最佳模型 +4 倍但仍 <0.1, **界面仍未恢复**), crRNA-靶RNA 0.35->0.31。结论: 无 MSA 下 Chai-1 对本体系(1207aa RNA 引导核酸酶)的蛋白-RNA 界面 ipTM 不可用作选型特征; 界面差量口径仍以 8D4A 接触表 + 10ns MD 判据为准; 升级路径=MSA(需 chai MSA server, 当前不可达)或模板注入(8D4A 作 template, 待试)。
+`scripts/crrna_chai_input.py` + `scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR+固定 spacer)+靶RNA 三元共折叠。能力递进三步:
+
+1. **单序列/ESM 基线(历史首跑)**: 无模板下 aggregate 0.23-0.24、蛋白-crRNA 链间 ipTM 0.02-0.08——1200aa RNA 引导核酸酶的已知短板, 界面不可用。
+2. **8D4A 自模板注入(提交 e69fc74, 界面特征正式可用)**: 蛋白链自模板 m8(8D4A 链A, 100% 同一)注入后 **aggregate/ipTM 0.25→0.874, 蛋白-crRNA 链间 ipTM 0.02→0.49**——蛋白-RNA 界面恢复到可作选型特征的置信水平; 模板注入是界面恢复的承载步骤(无模板即回退到基线)。
+3. **7 骨架 × 5 模型界面差量表(提交 963745d, `data/chai_cofold_matrix_*.json` / `chai_matrix_iptm.json`)**: WT/6 变体的 aggregate 与 prot-crRNA ipTM 模型间一致(sd≤0.007/0.09), 变体间排序稳定; **口径张力如实声明: crRNA-靶RNA 链对分数低(0.02-0.43)且部分变体模型间方差大, RNA-RNA 双链预测的模型稳定性存疑**——界面差量以 prot-crNA 链对为主口径, crRNA-靶对仅作参考; 与 MD 判据(M1-M3 预注册)的结论各自独立陈述。
+4. **四靶 × 8 骨架 32 组合矩阵(运行中, `chai_matrix_4t/`)**: 靶 RNA 统一为 protospacer 窗口 24nt + PFS 5nt(8D4A 排布同构), 供选型分类器的"骨架×靶标界面特征差量"输入(策划案 V3 §4.1/§5.1); 出齐后入库 `data/chai_matrix_4t.json`。
+
+### Han 2025 数据集与选型分类器(同源外部数据, 2026-09-02)
+
+`scripts/crrna_han2025_features.py` + `scripts/crrna_train_selector.py`(数据: `data/han2025_dataset.json`, `data/han2025_sanger_sequences.json`)。
+
+**数据链(全部程序化提取, 无硬编码)**:
+- Fig1g 活性全表 **145 值**(F×25/S×23/L×48/FL×48 + Canonical; 修正了旧版漏 48 条 FL 的解析 bug);
+- 工具箱 9 条序列(CN/F1/F2/L1-L4/FL1/FL2, MOESM3)与 Fig1g 同尺度锚点 7 条;
+- **54 条 Sanger 耐受集**(MOESM1 Sup Fig.2/3, 600dpi 视觉转录 ×2-3 次独立读数共识 + 模板守恒校验 + 与 MOESM3/主文锚点交叉验证, 逐条置信度分级; S8 的 20 条与论文自报数完全吻合);
+- cis/trans 切割终点比(Sup Fig.5/6 源数据, 三重复均值)。
+- **查证边界(2026-09-02)**: 论文的 145 个编号变体与序列的映射**未随任何补充材料发表**(库为随机合成, Methods 明示; 图内标签为孔位 ID), "96 变体序列级监督训练"公开渠道不可得, 干净监督对上限=7。
+
+**选型分类器(先验排序口径)**: 决策树(Fig1g 尺度, n=7), 特征重要性 p_fold 0.55 / cross_nt 0.33; **训练集 Spearman 0.964 属样本内读数(n=7 过拟合区间), 对保守变体无区分力(6/8 候选落同一叶节点)——定位为文献先验排序, 非活性预测**。多终点版: cis/trans 切割终点各训一树, 8 员族逐终点排序入库(`data/selector_family_ranking.json`); **trans 旁切终点上同源骨架间差 30 倍(WT 39.2 vs L1 1.2)**, 为"DR 可调旁切活性"提供了同家族文献证据; 不同终点给出不同排序, 正是"骨架分型"的同源佐证。Sanger 耐受集体检: 真实耐受变体预测中位 0.460(锚点范围内), 204 候选分布中平均 19.3% 分位(模型不排斥真实功能变体)。
+
+### V3 计算侧(第 8 员骨架 / 四靶扫描 / 统计件 / 智能体, 2026-09-02)
+
+- **8 员跨型候选族**(`scripts/crrna_orientation_library.py`): 四取向代表 6 + WT + compensatory 代表 B_break_compensate(zengDR+G11C/G14C/G17C, 补偿臂因果设计), **IVT 模板 32 行(8 骨架 × 4 靶标: R248Q/G12C/G12D/R273H, `data/ivt_round1_template.csv`)**——正合策划案 V3 §5.1 的 8×4=32 组合矩阵口径。
+- **四靶转录组脱靶扫描**(GENCODE v47, 385,659 转录本, 统一口径含 TP53 重扫; `data/*_scan_v47.*`): 四条 spacer 的 0 错配位点全部落在本基因异构体(预期靶点); KRAS 两 spacer 在 **KRASP1 假基因各 1 个 1 错配位点**(错配位置与风险评级见扫描表); 无高危脱靶。参考库 gencode.v47.transcripts.fa 不入 git(`data/raw/`, 源 URL 见 summary)。
+- **贝叶斯优化同源先验版**(`scripts/crrna_bayesopt.py --prior-han`): Han 工具箱 7 条作 GP 观测(选择器特征空间), 对 204 候选提 EI 建议; 明确标注"LbCas12a CRISPRi 抑制终点, 非 Cas12a2 杀伤, 待 IVT `--ingest` 替换"。
+- **虚拟细胞文献先验场景版**(`scripts/crrna_virtual_cell.py --prior-lit`): 依据 Cas12a2 体外激活浓度量级(Dmytrenko 2023 / 2026 Nature)场景化 EC50(TPM) 网格, 输出杀伤窗口表与主验证细胞系激活率(HCT116/SW480 等), 状态标注"文献先验场景, 非标定预测"。
+- **矩阵统计件(数据一到即出)**: `scripts/crrna_ivt_template.py --anova`(骨架×靶标两因素方差分析含交互项——"分型假说是否成立"的统计判定, 合成数据自测通过)与 `--twin-check`(数字孪生预测 vs 细胞实测 Spearman/RMSE; 参数未标定时如实报 UN-CALIBRATED)。
+- **智能体模块三接入选型器**(`scripts/crrna_agent_webapp.py`): `/api/design` 与 `/api/panel` 输出 8 员族文献先验活性排序(与 `crrna_train_selector.py` 同一模型同一定义, 随机种子固定可复现)。
 
 ### 打分输入端可靠性(系综采样检验)
 
@@ -68,19 +95,44 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 ## 快速开始
 
+**环境前置(重要)**: 主管线需要 **Python ≥3.8 + ViennaRNA ≥2.6**(开发验证环境: `/public/home/mengxl/dzy/envs/guideforge`, py3.10.20 + ViennaRNA 2.7.2)。宿主机裸 `python` 是 2.7, 直接跑会报编码错误——请用上述环境解释器或任何满足前置的 py3 环境。路径类默认值(如 rnet 引擎)全部可用 CLI 参数覆盖; 仓库内少数数据 JSON 的绝对路径为溯源记录, 换机重跑时按需替换。
+
 ```bash
-# 注册表契约测试
-PYTHONPATH=src python -m unittest discover -s tests
+PY=/public/home/mengxl/dzy/envs/guideforge/bin/python   # 或你自己的 py3+viennarna 环境
+
+# 注册表契约测试 + 主管线黄金集回归(秒级)
+PYTHONPATH=src $PY -m unittest discover -s tests
 
 # 最小运行(纯 ViennaRNA, CPU)
-python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
+$PY scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
     --spacer GTTCATGCCGCCCATGCAGGAACT --topk 12 --out-prefix data/run1
 
 # 完整四引擎 + SHAPE 筛选
-python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
+$PY scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
     --spacer GTTCATGCCGCCCATGCAGGAACT --topk 12 \
     --use-struct2seq --use-grnade --rnet-screen \
     --s2s-python /path/to/engine-env/bin/python --out-prefix data/run2
+```
+
+## 一键复算清单(数值结果第三方复核入口)
+
+```bash
+PY=/public/home/mengxl/dzy/envs/guideforge/bin/python
+
+$PY scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
+    --spacer GTTCATGCCGCCCATGCAGGAACT --topk 12 --out-prefix data/repro_v6   # 候选库重生成
+$PY scripts/crrna_ensemble_check.py           # ΔΔG 系综可靠性(≤0.03 kcal/mol 主张)
+$PY scripts/crrna_creutzburg_reverse.py       # 路径A 阴性校准(方向反转主张)
+$PY scripts/crrna_cross_decompose.py          # 交叉特征组成去混杂(rho +0.55→+0.17)
+$PY scripts/crrna_state_competition.py        # Sp8 状态竞争 FAIL 判定
+$PY scripts/crrna_pk_competition.py           # Knotty DP09 FAIL 判定(容器)
+$PY scripts/crrna_nupack_pk_weight.py         # NUPACK 第四模型 FAIL 判定
+$PY scripts/crrna_negative_control.py         # 19×上下文负对照
+$PY scripts/crrna_han2025_features.py         # Han2025 数据链(Fig1g 145/Sanger 54/cis-trans)
+$PY scripts/crrna_train_selector.py           # 选型器训练+204 候选应用+耐受集体检
+$PY scripts/crrna_bayesopt.py --cold-start    # 冷启动 EI; --prior-han 同源先验版
+$PY scripts/crrna_virtual_cell.py --prior-lit # 文献先验场景表
+$PY scripts/crrna_ivt_template.py --anova data/ivt_round1.csv   # 矩阵交互项判定(数据到位后)
 ```
 
 ## 安装
@@ -97,9 +149,11 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
 
 模型权重与 OpenKnot 基准数据不进 git 历史，存放在本仓库 **Release `data-v1`** 的资产中，
 清单（路径/大小/sha256）见 `BIG_FILES.md`；下载后按相同相对路径放回即可。
-双源说明：Gitee Release `data-v1` 已附 7 件（ RibonanzaNet×4 / gRNAde / OpenKnot M2·M2R）；
+双源说明：Gitee Release `data-v1` 已附 7 件单附件（RibonanzaNet×4 / gRNAde / OpenKnot M2·M2R）；
 其余 3 件超 Gitee 单附件 100MB 上限（Struct2SeQ.pt / Struct2SeQ_SHAPE.pt / OpenKnotBench CSV），
-请从 [GitHub Release data-v1](https://github.com/dong-zhongyuan/guideforge/releases/tag/data-v1) 下载（全量 10 件都在）。
+已按 95MB 分片（.part00/.part01）同附于 [Gitee Release data-v1](https://gitee.com/eastern-zhongyuan/guideforge/releases/data-v1)——
+下载全部分片后执行 `cat 文件名.part* > 文件名` 拼回，sha256 校验值见 `BIG_FILES.md`（拼回一致性已验证）；
+也可从 [GitHub Release data-v1](https://github.com/dong-zhongyuan/guideforge/releases/tag/data-v1) 直接下载全量单件。
 
 ## 目录
 
@@ -135,5 +189,4 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
 - Cas12a DR 序列工程先例: Lin et al. 2018, Mol Ther; Han et al. 2025 (PMC12508434); DR 3' 端敏感性(化学修饰): Zhang et al. 2025 (PMC11780881)
 - Cas12a DR 突变提活先例: Teng et al. 2019, Genome Biology (4n96 骨架, PMID 30717767)
 - crRNA 预折叠驱动 RNP 组装: Sudhakar et al. 2023 (PMC10200996; 因果方向: RNA 预折叠→诱导蛋白构象变化)
-- 结构工具链: Science 2026 (10.1126/science.aeg6829, Das lab, OpenKnot); gRNAde 权重: HuggingFace chaitjo/gRNAde
 - 结构工具链: Science 2026 (10.1126/science.aeg6829, Das lab, OpenKnot); gRNAde 权重: HuggingFace chaitjo/gRNAde

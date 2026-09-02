@@ -14,3 +14,17 @@
 | `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-Drop.pt` | 45417124 | 8e423126b5686a48… |
 | `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-SS.pt` | 45420400 | 626060952368affb… |
 | `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet.pt` | 45406126 | c2aa45c14367863e… |
+
+## 国内兜底(2026-09-02): 3 个超大文件已分片上传 Gitee Release
+
+Gitee 单附件上限 100MB, 下列 3 件按 95MB 分片(part00/part01)附于 Gitee Release data-v1,
+下载全部分片后拼回并按上表 sha256 校验:
+
+| 文件 | 分片 | 拼回命令 |
+|---|---|---|
+| OpenKnotBench_data.v4.5.1.csv | part00(95MB)+part01(38MB) | `cat OpenKnotBench_data.v4.5.1.csv.part* > OpenKnotBench_data.v4.5.1.csv` |
+| Struct2SeQ.pt | part00(95MB)+part01(19MB) | `cat Struct2SeQ.pt.part* > Struct2SeQ.pt` |
+| Struct2SeQ_SHAPE.pt | part00(95MB)+part01(19MB) | `cat Struct2SeQ_SHAPE.pt.part* > Struct2SeQ_SHAPE.pt` |
+
+拼回后 sha256 已验证与原件一致(22fa72df…/e30294b2…/63f6bfd1…)。
+至此 10 件资产 GitHub(全量单件) 与 Gitee(7 单件 + 3 分片) 双源齐备。

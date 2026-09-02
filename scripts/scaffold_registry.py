@@ -1,80 +1,20 @@
-"""骨架注册表读取接口。
+# -*- coding: utf-8 -*-
+"""src/scaffold_registry.py 的 re-export shim(2026-09-02, 审计 P2 去重)。
 
-背景：平台不绑定单一固定骨架。每个效应子一条注册记录（序列/长度/PAM/参考结构/
-置信基线/版本）。
-注册记录由 scripts/register_scaffold.py 生成（RNet-SS × ViennaRNA 配分函数），
-本模块只负责读取，不做任何计算，可在生产链安全 import（无重依赖）。
-每个效应子一条注册记录，crRNA 模块（crrna_*）一律从注册表取骨架。
+真实实现只在 src/scaffold_registry.py(单一事实源); 本文件保留是因为
+scripts/ 下多个脚本与 tests 以 'import scaffold_registry'(同目录)方式引用,
+且独立运行(python scripts/xxx.py)时不设 PYTHONPATH=src。任何修改请改
+src/scaffold_registry.py, 不要改本文件。
 """
-from __future__ import annotations
-
-import json
+import importlib.util
 import os
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DEFAULT_REGISTRY_PATH = os.path.join(ROOT, 'configs', 'scaffold_registry.json')
-
-_REQUIRED_FIELDS = (
-    'effector', 'scaffold', 'scaffold_len', 'scaffold_side',
-    'pam', 'reference', 'version', 'registered_at',
-)
-
-
-def load_registry(path=None):
-    """读取注册表 JSON，返回 dict。文件不存在时报错并提示先跑注册脚本。"""
-    path = os.path.abspath(path or DEFAULT_REGISTRY_PATH)
-    if not os.path.exists(path):
-        raise FileNotFoundError(
-            f'骨架注册表不存在: {path}；请先运行 scripts/register_scaffold.py 注册条目')
-    with open(path, encoding='utf-8') as f:
-        reg = json.load(f)
-    if 'entries' not in reg or not isinstance(reg['entries'], dict):
-        raise ValueError(f'注册表格式错误（缺 entries）: {path}')
-    return reg
-
-
-def list_effectors(path=None):
-    """返回已注册效应子名列表。"""
-    return sorted(load_registry(path)['entries'].keys())
-
-
-def get_entry(effector, path=None):
-    """取单个效应子的完整注册记录，并做最小字段校验。"""
-    reg = load_registry(path)
-    try:
-        entry = reg['entries'][effector]
-    except KeyError:
-        raise KeyError(
-            f"效应子 '{effector}' 未注册；已注册: {sorted(reg['entries'])}") from None
-    missing = [k for k in _REQUIRED_FIELDS if k not in entry]
-    if missing:
-        raise ValueError(f"注册条目 '{effector}' 缺字段: {missing}")
-    return entry
-
-
-def get_scaffold(effector, path=None):
-    """返回骨架序列（DNA 字母表 T，项目约定；需 RNA 字母时调用方自行 T→U）。"""
-    return get_entry(effector, path)['scaffold']
-
-
-def get_reference_dotbracket(effector, path=None):
-    """返回该效应子的游离态参考折叠（点括号，长度=占位spacer+骨架）。"""
-    return get_entry(effector, path)['reference']['dotbracket']
-
-
-def get_gate(effector, path=None):
-    """返回注册时的置信门控基线（confident / low_conf / unfolded）。"""
-    return get_entry(effector, path)['reference']['gate']
-
-
-def get_pam(effector, path=None):
-    """返回 PAM 规则 dict，含 rule 与 side 两个键。"""
-    return get_entry(effector, path)['pam']
-
-
-if __name__ == '__main__':
-    for name in list_effectors():
-        e = get_entry(name)
-        print(f"{name}: scaffold {e['scaffold_len']}nt ({e['scaffold_side']}), "
-              f"PAM {e['pam']['rule']} ({e['pam']['side']}), "
-              f"gate={e['reference']['gate']}, version={e['version']}")
+_SRC = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                    'src', 'scaffold_registry.py')
+_spec = importlib.util.spec_from_file_location('_src_scaffold_registry', _SRC)
+_mod = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_mod)
+for _k in dir(_mod):
+    if not _k.startswith('_'):
+        globals()[_k] = getattr(_mod, _k)
+del _spec, _mod, _k
