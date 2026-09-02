@@ -1354,5 +1354,11 @@
   }
  ],
  "sanger_source": "Han et al. 2025 Nat Commun s41467-025-64010-z, MOESM1 Supplementary Figs. 2-3 (pages S7-S8); 600dpi pdftoppm render + tiled visual transcription (2-3 independent reads per region) + template validation (flank: pos7-21=CUACUAAGUGUAGAU; stem: UAAUU+NNNNN+UAAGU+NNNNN+U; loop: UAAUUUCUAC+NNNNNN+UAGAU; multip: CAAUGU/GAAUGU+CUAC+NNNNNN+UAGAU) + cross-check against MOESM3 toolbox sequences and main-text anchor statements (C39=FL1, A46=FL2)",
- "source": "Han et al. 2025 Nat Commun s41467-025-64010-z (LbCas12a CRISPRi)"
+ "source": "Han et al. 2025 Nat Commun s41467-025-64010-z (LbCas12a CRISPRi)",
+ "rejected_endpoints": {
+  "spr_kd": "尝试过(2026-09-03): 稳态法高亲和组不饱和不收敛; 动力学法 kobs 随浓度不单调, 相位预处理无法对论文定性序校验 -> 拒绝入库",
+  "supfig8_10_raw_fluor": "尝试过(2026-09-03): 0mM 诱导面板间仍 3 倍差(应为无抑制), 10mM 终点方向与 Fig1g 相反, 增长混杂未归一 -> 拒绝入库",
+  "fig1b_8mutant_curves": "8 条时间曲线与孔位/序列映射不可考 -> 不使用",
+  "note": "拒绝原因 = 防止把不可校验的垃圾终点喂给同源先验模型; Fig1g 145 值本身即为这些实验的正确归一化版本"
+ }
 }

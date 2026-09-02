@@ -64,24 +64,16 @@ def expected_improvement(gp, X, xi=0.01):
 
 
 def prior_han_mode(batch):
-    """同源先验模式: Han 2025 工具箱(选择器特征空间)作 GP 观测, EI 提案。
+    """同源先验模式(2026-09-03 升级为池化观测): Han 5 终点×7 + Teng 序数对。
 
-    观测 y = -fig1g(抑制强度, 越大越好); 候选库 = 本仓库 204 通过变体。
-    诚实边界: LbCas12a CRISPRi 抑制终点, 非 Cas12a2 旁切杀伤。
+    观测 y = 池化 z(统一"越大越优"); 候选库 = 本仓库 204 通过变体。
+    诚实边界: LbCas12a/Fn 体系终点, 非 Cas12a2 杀伤; IVT 到位后 --ingest 替换。
     """
     import crrna_train_selector as sel
-    han = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
-                         encoding="utf-8"))
-    X_h, y_h, tags = [], [], []
-    for r in han["toolbox_features"]:
-        if "fig1g" not in r:
-            continue
-        X_h.append([float(r[f]) for f in sel.FEATURES])
-        y_h.append(-float(r["fig1g"]))  # 翻转: 大 = 抑制强 = 好
-        tags.append(r["tag"])
+    X_h, y_h, meta = sel.load_pooled()
     cands = sel.load_our_candidates()
     X_c = np.array([[float(r[f]) for f in sel.FEATURES] for r in cands])
-    gp = fit_gp(np.array(X_h), np.array(y_h))
+    gp = fit_gp(X_h, y_h)
     ei = expected_improvement(gp, X_c)
     order = np.argsort(-ei)
     prop = []
@@ -92,13 +84,17 @@ def prior_han_mode(batch):
                      **{k: cands[i][k] for k in sel.FEATURES}})
         if len(prop) >= batch:
             break
-    print("[同源先验(LbCas12a CRISPRi, n=%d 观测)] 提案 %d 条(EI 降序):" % (
-        len(y_h), len(prop)))
+    eps = {}
+    for m in meta:
+        eps[m["endpoint"]] = eps.get(m["endpoint"], 0) + 1
+    print("[同源先验池化(n=%d 观测: %s)] 提案 %d 条(EI 降序):" % (
+        len(y_h), eps, len(prop)))
     for p in prop:
         print("  %-18s EI=%.4f  ddG_dr=%s" % (p["desc"], p["ei"], p["ddG_dr"]))
-    json.dump({"mode": "同源先验(Han 2025 LbCas12a CRISPRi 抑制终点, n=7; "
+    json.dump({"mode": "同源先验池化(Han 5 终点 x7 + Teng 序数对; "
                        "非 Cas12a2 杀伤, 等待 IVT --ingest 替换)",
                "proposals": prop, "n_observations": len(y_h),
+               "endpoint_counts": eps,
                "n_library": len(cands), "features": sel.FEATURES},
               open(os.path.join(DATA, "bayesopt_proposals_priorhan.json"), "w",
                    encoding="utf-8"), ensure_ascii=False, indent=1)

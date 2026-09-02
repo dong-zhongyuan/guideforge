@@ -1,39 +1,39 @@
 {
- "mode": "同源先验(Han 2025 LbCas12a CRISPRi 抑制终点, n=7; 非 Cas12a2 杀伤, 等待 IVT --ingest 替换)",
+ "mode": "同源先验池化(Han 5 终点 x7 + Teng 序数对; 非 Cas12a2 杀伤, 等待 IVT --ingest 替换)",
  "proposals": [
   {
-   "desc": "WT",
-   "ei": 0.0189,
-   "score": 0.0,
-   "ddG_dr": 0.0,
+   "desc": "G11C+U13G",
+   "ei": 0.3867,
+   "score": -1.9013,
+   "ddG_dr": 1.1,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.86603,
+   "p_fold": 0.82551,
    "spacer_up": 0.427
   },
   {
-   "desc": "A1C",
-   "ei": 0.0189,
-   "score": -0.0001,
-   "ddG_dr": 0.0,
+   "desc": "A1G+U13A",
+   "ei": 0.3867,
+   "score": -1.2725,
+   "ddG_dr": 1.1,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.86558,
-   "spacer_up": 0.426
+   "p_fold": 0.83276,
+   "spacer_up": 0.429
   },
   {
-   "desc": "A1U",
-   "ei": 0.0189,
-   "score": -0.0001,
-   "ddG_dr": 0.0,
+   "desc": "U13A",
+   "ei": 0.3867,
+   "score": -1.26,
+   "ddG_dr": 1.1,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.86574,
-   "spacer_up": 0.426
+   "p_fold": 0.8334,
+   "spacer_up": 0.427
   },
   {
    "desc": "A1G",
-   "ei": 0.0189,
+   "ei": 0.3867,
    "score": -0.012,
    "ddG_dr": 0.0,
    "bp_dist": 0,
@@ -42,27 +42,35 @@
    "spacer_up": 0.429
   },
   {
-   "desc": "A8G+U15C",
-   "ei": 0.0189,
-   "score": -0.4391,
-   "ddG_dr": -2.0,
+   "desc": "A1U+U3C",
+   "ei": 0.3867,
+   "score": -0.5672,
+   "ddG_dr": 0.0,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.65476,
+   "p_fold": 0.86108,
    "spacer_up": 0.431
   },
   {
-   "desc": "U7C+A16G",
-   "ei": 0.0189,
-   "score": -0.4633,
-   "ddG_dr": -2.0,
+   "desc": "A1C+U3C",
+   "ei": 0.3867,
+   "score": -0.5685,
+   "ddG_dr": 0.0,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.86297,
-   "spacer_up": 0.427
+   "p_fold": 0.86834,
+   "spacer_up": 0.432
   }
  ],
- "n_observations": 7,
+ "n_observations": 37,
+ "endpoint_counts": {
+  "fig1g": 7,
+  "cis_end": 7,
+  "trans_end": 7,
+  "rbs0": 7,
+  "rbs33": 7,
+  "ordinal_4n96": 2
+ },
  "n_library": 204,
  "features": [
   "ddG_dr",

@@ -48,7 +48,90 @@ def load_han():
     return np.array(X), np.array(y), tags, d
 
 
-ENDPOINTS = {"fig1g": "fig1g", "cis_end": "cis_end", "trans_end": "trans_end"}
+ENDPOINTS = {"fig1g": "fig1g", "cis_end": "cis_end", "trans_end": "trans_end",
+             "rbs0": "rbs0", "rbs33": "rbs33"}
+# 方向统一: True = 数值越大越优(fig1g/rbs 为抑制读数取负号), 供池化模型共用语义
+ENDPOINT_HIGHER_BETTER = {"fig1g": False, "cis_end": True, "trans_end": True,
+                          "rbs0": False, "rbs33": False}
+
+
+def load_pooled():
+    """同源池化训练集(等湿实验数据的同源先验版, 2026-09-03):
+
+    全部可用同源活性观测, 逐终点 z 标准化并统一"越大越优"方向:
+      - Han 2025 工具箱 5 终点 x 7 条(fig1g 抑制 / cis / trans 切割 / RBS0/RBS33 两档表达)
+      - Teng 2019 4n96 序数对(WT=-1, 4n96=+1; 跨物种 Fn/Cas12a 口径, 序数级)
+    已尝试并放弃的终点(SPR KD / SupFig8-10 原始荧光): 传感器预处理不可校验 /
+    增长混杂方向与 Fig1g 相反——拒绝理由记录于 han2025_dataset.json。
+    返回 (X, y, meta), meta 每行 = {dataset, tag, endpoint}。
+    """
+    d = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
+                       encoding="utf-8"))
+    X, y, meta = [], [], []
+    for ep, key in ENDPOINTS.items():
+        vals = [r for r in d["toolbox_features"] if key in r]
+        if len(vals) < 5:
+            continue
+        ys = np.array([float(r[key]) for r in vals])
+        z = (ys - ys.mean()) / max(ys.std(ddof=0), 1e-9)
+        if not ENDPOINT_HIGHER_BETTER[ep]:
+            z = -z
+        for r, zi in zip(vals, z):
+            X.append([float(r[f]) for f in FEATURES])
+            y.append(float(zi))
+            meta.append({"dataset": "han2025", "tag": r["tag"],
+                         "endpoint": ep})
+    # Teng 2019 4n96 序数对(自身数据集内 z=±1; 特征以 canonical spacer 上下文计算)
+    try:
+        import crrna_scaffold_design as core
+        import RNA
+        tj = json.load(open(os.path.join(DATA, "teng4n96_validation.json"),
+                            encoding="utf-8"))
+        wt_top = json.load(open(os.path.join(
+            DATA, "tp53_r248q_zengdr.v6.top.json"), encoding="utf-8"))
+        spacer = core.to_rna(wt_top["spacer_fixed_dna"])
+        # Teng 为 18nt PDB 口径 DR; 以其自身 WT 为基准算特征
+        drs = {"Teng_WT": core.to_rna(tj["provenance"]["wt_dr_dna"]),
+               "Teng_4n96": core.to_rna(tj["provenance"]["v4n96_dr_dna"])}
+        base = drs["Teng_WT"]
+        base_ss, _ = core.fold(base + spacer)
+        _, base_mfe = core.fold(base)
+        base_stem = core.stem_pairs_of(core.fold(base)[0])
+        for tag, dr in drs.items():
+            full = dr + spacer
+            ss, _ = core.fold(full)
+            _, dr_mfe = core.fold(dr)
+            cross_nt, _ = core.cross_pairs(full, len(dr))
+            pf = core.stem_intact_prob(full, base_stem) if base_stem else 1.0
+            _, sp_up, _ = core.pf_stats(full, len(dr), 7)
+            X.append([round(dr_mfe - base_mfe, 2),
+                      RNA.bp_distance(base_ss, ss), cross_nt,
+                      round(pf, 5), round(sp_up, 3)])
+            y.append(-1.0 if tag == "Teng_WT" else 1.0)
+            meta.append({"dataset": "teng2019", "tag": tag,
+                         "endpoint": "ordinal_4n96"})
+    except Exception as e:
+        print("Teng 序数对跳过: %s" % e)
+    return np.array(X), np.array(y), meta
+
+
+def tolerance_neighborhood(row_feats):
+    """54 条真实 Sanger 耐受变体的特征分布邻域度(半监督门控)。
+
+    对候选的每个特征取其在耐受集分布中的百分位 p, 邻域度
+    = 1 - mean(|p-50|)/50; 1 = 每维都落在真实耐受变体分布中心。
+    """
+    d = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
+                       encoding="utf-8"))
+    tol = d.get("sanger_tolerance") or []
+    if len(tol) < 10:
+        return None
+    devs = []
+    for f, v in zip(FEATURES, row_feats):
+        col = np.array([float(r[f]) for r in tol])
+        p = float((col < v).mean() * 100.0)
+        devs.append(abs(p - 50.0) / 50.0)
+    return round(1.0 - float(np.mean(devs)), 3)
 
 
 def load_han_endpoints():
@@ -237,6 +320,37 @@ def main():
         print("  %-9s n=%d  训练范围 %.4f-%.4f" % (ep, len(y_e),
                                                   y_e.min(), y_e.max()))
     fam_rows = rank_family(models)
+    # 池化模型 + 耐受集邻域度(同源数据全量训练, 等湿实验回流前的先验版)
+    Xp, yp, pmeta = load_pooled()
+    pooled = DecisionTreeRegressor(max_leaf_nodes=6, min_samples_leaf=2,
+                                   random_state=42)
+    pooled.fit(Xp, yp)
+    print("\n=== 同源池化模型(n=%d 观测 = Han 5 终点 x 7 + Teng 序数对) ===" % len(yp))
+    print(export_text(pooled, feature_names=FEATURES, decimals=3))
+    # 留一终点交叉验证(方向一致性)
+    loeo = {}
+    for ep in sorted({m["endpoint"] for m in pmeta}):
+        idx_tr = [i for i, m in enumerate(pmeta) if m["endpoint"] != ep]
+        idx_te = [i for i, m in enumerate(pmeta) if m["endpoint"] == ep]
+        if len(idx_te) < 5:
+            continue
+        m2 = DecisionTreeRegressor(max_leaf_nodes=6, min_samples_leaf=2,
+                                   random_state=42)
+        m2.fit(Xp[idx_tr], yp[idx_tr])
+        pr = m2.predict(Xp[idx_te])
+        rk = np.argsort(np.argsort(pr))
+        ry = np.argsort(np.argsort(yp[idx_te]))
+        loeo[ep] = round(float(np.corrcoef(rk, ry)[0, 1]), 3)
+        print("  LOEO %-9s (n=%d): Spearman=%+.3f" % (ep, len(idx_te), loeo[ep]))
+    for r in fam_rows:
+        fv = [r["features"][f] for f in FEATURES]
+        r["pred_pooled_z"] = round(float(pooled.predict([fv])[0]), 3)
+        r["tolerance_neighborhood"] = tolerance_neighborhood(fv)
+    print("\n=== 8 员族: 池化模型 z 预测 + 真实耐受集邻域度 ===")
+    print("%-22s %10s %12s" % ("scaffold", "pooled_z", "tol_neighbor"))
+    for r in sorted(fam_rows, key=lambda x: -x["pred_pooled_z"]):
+        print("%-22s %10.3f %12s" % (r["scaffold"], r["pred_pooled_z"],
+                                     r["tolerance_neighborhood"]))
     print("\n=== 8 员跨型候选族逐终点预测(fig1g/cis 低=抑制强; trans 高=切割强) ===")
     print("%-22s %10s %10s %10s" % ("scaffold", "fig1g", "cis_end", "trans_end"))
     for r in fam_rows:
@@ -269,6 +383,22 @@ def main():
     json.dump({"family": fam_rows, "models": sorted(models)},
               open(os.path.join(DATA, "selector_family_ranking.json"), "w",
                    encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump({
+        "status": "同源先验全量训练(等 IVT 实测替换); 池化目标 = 逐终点 z "
+                  "标准化并统一'越大越优'(fig1g/rbs 取负, cis/trans 原向)",
+        "n_observations": len(yp),
+        "composition": {"han2025_5endpoints_x7": 35, "teng2019_ordinal": 2},
+        "pooled_tree_rules": export_text(pooled, feature_names=FEATURES),
+        "pooled_feature_importance": {f: float(imp) for f, imp in
+                                      zip(FEATURES, pooled.feature_importances_)},
+        "loeo_spearman": loeo,
+        "rejected_endpoints": {
+            "spr_kd": "传感图相位预处理无法对论文定性序(canonical 最强)校验, 拟合不收敛",
+            "supfig8_10_raw_fluor": "0mM 诱导下面板间仍 3 倍差、10mM 方向与 "
+                                    "Fig1g 相反——增长混杂未归一, 拒绝入库"},
+        "family_ranking_pooled": fam_rows},
+        open(os.path.join(DATA, "homolog_training.json"), "w",
+             encoding="utf-8"), ensure_ascii=False, indent=1)
 
     with open(os.path.join(DATA, "selector_ranked_candidates.csv"), "w",
               newline="", encoding="utf-8") as f:

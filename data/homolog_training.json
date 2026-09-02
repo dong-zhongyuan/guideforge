@@ -1,5 +1,30 @@
 {
- "family": [
+ "status": "同源先验全量训练(等 IVT 实测替换); 池化目标 = 逐终点 z 标准化并统一'越大越优'(fig1g/rbs 取负, cis/trans 原向)",
+ "n_observations": 37,
+ "composition": {
+  "han2025_5endpoints_x7": 35,
+  "teng2019_ordinal": 2
+ },
+ "pooled_tree_rules": "|--- p_fold <= 0.87\n|   |--- spacer_up <= 0.39\n|   |   |--- value: [0.63]\n|   |--- spacer_up >  0.39\n|   |   |--- value: [0.00]\n|--- p_fold >  0.87\n|   |--- p_fold <= 0.97\n|   |   |--- spacer_up <= 0.33\n|   |   |   |--- value: [-0.62]\n|   |   |--- spacer_up >  0.33\n|   |   |   |--- value: [-0.93]\n|   |--- p_fold >  0.97\n|   |   |--- p_fold <= 0.99\n|   |   |   |--- value: [-0.15]\n|   |   |--- p_fold >  0.99\n|   |   |   |--- value: [0.58]\n",
+ "pooled_feature_importance": {
+  "ddG_dr": 0.0,
+  "bp_dist": 0.0,
+  "cross_nt": 0.0,
+  "p_fold": 0.9263154416765014,
+  "spacer_up": 0.07368455832349856
+ },
+ "loeo_spearman": {
+  "cis_end": -0.679,
+  "fig1g": 0.286,
+  "rbs0": 0.393,
+  "rbs33": 0.643,
+  "trans_end": 0.679
+ },
+ "rejected_endpoints": {
+  "spr_kd": "传感图相位预处理无法对论文定性序(canonical 最强)校验, 拟合不收敛",
+  "supfig8_10_raw_fluor": "0mM 诱导下面板间仍 3 倍差、10mM 方向与 Fig1g 相反——增长混杂未归一, 拒绝入库"
+ },
+ "family_ranking_pooled": [
   {
    "scaffold": "WT",
    "features": {
@@ -136,12 +161,5 @@
    "pred_pooled_z": 0.0,
    "tolerance_neighborhood": 0.163
   }
- ],
- "models": [
-  "cis_end",
-  "fig1g",
-  "rbs0",
-  "rbs33",
-  "trans_end"
  ]
 }
