@@ -12,10 +12,16 @@
   2. 对每条跑本管线特征(DDR-alone 折叠/ΔΔG/bp_dist/cross_pairs/stem_intact_prob/系综);
   3. Fig1g 145 条活性全表 + 工具箱 7 条 Fig1g 同尺度锚点值;
   4. 54 条 Sanger 耐受集特征计算(耐受先验, 无逐条活性标签);
-  5. 与 Fig.3b 活性做 Spearman 相关(参考)。
+  5. 与 Fig.3b 活性做 Spearman 相关(参考);
+  6. (2026-09-03) 主文 Fig.1f 序列表视觉转录: 从编号-序列桥中恢复
+     9 条新监督对(见 FIG1F_TRANSCRIPTION 溯源), 干净监督对 7 -> 16。
 诚实边界: LbCas12a CRISPRi(GFP 抑制)体系, 非 Cas12a2 RNA 触发杀伤;
-  Fig1g 的 145 个编号(F/S/L/FL)与序列的映射未随论文发表,
-  干净监督对 = 工具箱 7 条(Fig1g 同尺度); 96 变体序列不可得(2026-09-02 查证)。
+  Fig1g 的 145 个编号(F/S/L/FL)与序列的映射未随论文数值源数据发表
+  (2026-09-02 查证 MOESM1-7; 2026-09-03 复查 MOESM7 全部 25 个工作表 +
+  MOESM3/MOESM4 全文, 数值侧确无映射)。主文 Fig.1f 以图像形式给出部分
+  编号-序列对照(典型突变体表), 经视觉转录+双重独立读取+Sanger 交叉校验
+  恢复 9 条新监督对(置信度分级见 fig1f_pairs); 其余 129 个编号仍不可得,
+  完整映射需向作者索取。
 运行: python scripts/crrna_han2025_features.py
 """
 import argparse
@@ -43,6 +49,36 @@ TOOLBOX_ACTIVITY = {
     "FL2": {"rbs0": 79.3, "rbs33": 87.1},
     "L1": {"rbs0": 82.8, "rbs33": 98.6},
     "L2": {"rbs0": 38.5, "rbs33": 67.8},
+}
+
+# 主文 Fig.1f 序列表视觉转录(2026-09-03)。
+# 溯源: nature.com 文章页 Fig1 全图 PNG(2017x2201) -> panel f 右侧编号表
+#   区域裁切(scripts/tmp/fig1f/, gitignore) -> 分块 2x-3x 放大 -> 视觉模型
+#   两次独立逐字母转录 + 与 han2025_sanger_sequences.json(MOESM1 Sup Fig.2/3
+#   独立转录源)的 loop 六联体(11-16 位)交叉校验。
+# 置信度: high = 两次完整独立读取一致 + loop 六联体与 Sanger 独立源吻合;
+#   medium = 单次完整读取 + loop 六联体与 Sanger 独立源吻合。
+# 边界: 其余编号(含 FL3/FL5, 不在 Fig1g 活性表内)未收录; 视觉转录存在
+#   单字母误差风险(如 S16 七连 C), 训练使用时建议按置信度加权或敏感性剔除。
+FIG1F_TRANSCRIPTION = {
+    "S3":  {"dr_rna": "UAAUUUCUACUCAUAGUAGAU", "confidence": "high",
+            "cross_check": "loop UCAUAG = Sanger B19"},
+    "S5":  {"dr_rna": "UAAUUUCUACUGUUUGUAGAU", "confidence": "high",
+            "cross_check": "loop UGUUUG = Sanger A36/B19b"},
+    "S7":  {"dr_rna": "UAAUUUCUACCCUAAGUAGAU", "confidence": "medium",
+            "cross_check": "loop CCUAAG = Sanger B24(二读截边, 单完整读)"},
+    "S10": {"dr_rna": "UAAUUUCUACCCGAGGUAGAU", "confidence": "medium",
+            "cross_check": "loop CCGAGG = Sanger C48/C37"},
+    "S14": {"dr_rna": "UAAUUUCUACGGGCGGUAGAU", "confidence": "medium",
+            "cross_check": "loop GGGCGG = Sanger B58/D47"},
+    "S16": {"dr_rna": "UAAUUUCUACCCCCCGUAGAU", "confidence": "medium",
+            "cross_check": "loop CCCCCG = Sanger F33(完全一致, 同聚段易误读已复核)"},
+    "S20": {"dr_rna": "UAAUUUCUACCAAUGGUAGAU", "confidence": "medium",
+            "cross_check": "loop CAAUGG = Sanger B29"},
+    "S21": {"dr_rna": "UAAUUUCUACUGGAUGUAGAU", "confidence": "medium",
+            "cross_check": "loop UGGAUG = Sanger A40"},
+    "FL4": {"dr_rna": "CAAUGUCUACCUUCUGUAGAU", "confidence": "medium",
+            "cross_check": "flank CAAUGU+loop CUUCUG = Sanger B38"},
 }
 
 
@@ -194,6 +230,23 @@ def main():
     print("\nFig1g 全表 %d 条; 工具箱同尺度锚点 %d 条: %s" % (
         len(fig1g), len(anchors_fig1g), anchors_fig1g))
 
+    # === Fig.1f 视觉转录配对(2026-09-03): 编号->序列->Fig1g 活性 ===
+    fig1f_pairs = []
+    for tag, e in sorted(FIG1F_TRANSCRIPTION.items()):
+        dr = e["dr_rna"]
+        assert len(dr) == 21 and set(dr) <= set("AUCG"), tag
+        feats = compute_features(dr, spacer, wt_dr_mfe)
+        v_ss, _ = core.fold(dr + spacer)
+        feats["bp_dist"] = RNA_bp_distance(wt_full_ss, v_ss)
+        fig1f_pairs.append({
+            "tag": tag, "dr_rna": dr, "confidence": e["confidence"],
+            "cross_check": e["cross_check"],
+            "n_mut": sum(1 for a, b in zip(wt_dr, dr) if a != b),
+            "fig1g": fig1g.get(tag), **feats})
+    new_tags = [p["tag"] for p in fig1f_pairs if p["fig1g"] is not None]
+    print("Fig1f 转录配对 %d 条, 其中带 Fig1g 活性 %d 条: %s" % (
+        len(fig1f_pairs), len(new_tags), new_tags))
+
     # === 同源多终点: cis(Sup Fig.5b) / trans(Sup Fig.6b) 切割终点比 ===
     cis = extract_cleavage("Sup Fig. 5")
     trans = extract_cleavage("Sup Fig. 6")
@@ -224,21 +277,38 @@ def main():
                 **feats})
         print("Sanger 耐受集 %d 条特征计算完成" % len(sanger_rows))
 
-    json.dump({"toolbox_sequences": {t: s for t, s in seqs.items()},
-               "toolbox_features": rows,
-               "toolbox_activity": TOOLBOX_ACTIVITY,
-               "toolbox_activity_fig1g": anchors_fig1g,
-               "toolbox_cleavage": {"cis_end": cis, "trans_end": trans},
-               "fig1g_activity": fig1g,
-               "sanger_tolerance": sanger_rows,
-               "sanger_source": (sanger["source"] + "; " + sanger["extraction"]
-                                 if sanger_rows else None),
-               "source": "Han et al. 2025 Nat Commun s41467-025-64010-z "
-                         "(LbCas12a CRISPRi)"},
-              open(os.path.join(DATA, "han2025_dataset.json"), "w",
-                   encoding="utf-8"), ensure_ascii=False, indent=1)
+    out = {"toolbox_sequences": {t: s for t, s in seqs.items()},
+           "toolbox_features": rows,
+           "toolbox_activity": TOOLBOX_ACTIVITY,
+           "toolbox_activity_fig1g": anchors_fig1g,
+           "toolbox_cleavage": {"cis_end": cis, "trans_end": trans},
+           "fig1g_activity": fig1g,
+           "fig1f_pairs": fig1f_pairs,
+           "fig1f_source": (
+               "主文 Fig.1f 序列表视觉转录(2026-09-03): nature.com Fig1 全图 "
+               "panel f 右侧编号表, 分块放大两次独立逐字母读取 + Sanger "
+               "独立转录源 loop 六联体交叉校验; 置信度分级见各条 confidence; "
+               "其余 129 个编号的序列映射仍不可得(数值源数据无, 需向作者索取)"),
+           "sanger_tolerance": sanger_rows,
+           "sanger_source": (sanger["source"] + "; " + sanger["extraction"]
+                             if sanger_rows else None),
+           "source": "Han et al. 2025 Nat Commun s41467-025-64010-z "
+                     "(LbCas12a CRISPRi)"}
+    # 合并写: 保留 rejected_endpoints 等后加键, 避免整体重写丢数据
+    ds_path = os.path.join(DATA, "han2025_dataset.json")
+    if os.path.exists(ds_path):
+        try:
+            old = json.load(open(ds_path, encoding="utf-8"))
+            if isinstance(old, dict):
+                old.update(out)
+                out = old
+        except (ValueError, OSError):
+            pass
+    json.dump(out, open(ds_path, "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
     print("\n数据集 -> data/han2025_dataset.json (工具箱%d + Fig1g %d + "
-          "Sanger耐受%d)" % (len(rows), len(fig1g), len(sanger_rows)))
+          "Fig1f配对%d + Sanger耐受%d)" % (
+              len(rows), len(fig1g), len(fig1f_pairs), len(sanger_rows)))
 
 
 def RNA_bp_distance(s1, s2):
