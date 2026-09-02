@@ -1,0 +1,67 @@
+{
+ "label": "matrix_A1U",
+ "input": "SuCas12a2(1207aa, 8D4A链A) + crRNA(DR18+R248Q) + 靶RNA(28nt)",
+ "mode": "matrix_A1U",
+ "chains": [
+  "protein",
+  "crRNA",
+  "target_RNA"
+ ],
+ "models": [
+  {
+   "model": "scores.model_idx_0.npz",
+   "aggregate": 0.84,
+   "ptm": 0.889,
+   "iptm": 0.828,
+   "iptm_prot_crRNA": 0.419,
+   "iptm_crRNA_target": 0.028,
+   "clashes": false
+  },
+  {
+   "model": "scores.model_idx_1.npz",
+   "aggregate": 0.842,
+   "ptm": 0.892,
+   "iptm": 0.83,
+   "iptm_prot_crRNA": 0.426,
+   "iptm_crRNA_target": 0.021,
+   "clashes": false
+  },
+  {
+   "model": "scores.model_idx_2.npz",
+   "aggregate": 0.842,
+   "ptm": 0.888,
+   "iptm": 0.83,
+   "iptm_prot_crRNA": 0.421,
+   "iptm_crRNA_target": 0.036,
+   "clashes": false
+  },
+  {
+   "model": "scores.model_idx_3.npz",
+   "aggregate": 0.841,
+   "ptm": 0.889,
+   "iptm": 0.829,
+   "iptm_prot_crRNA": 0.425,
+   "iptm_crRNA_target": 0.041,
+   "clashes": false
+  },
+  {
+   "model": "scores.model_idx_4.npz",
+   "aggregate": 0.838,
+   "ptm": 0.891,
+   "iptm": 0.824,
+   "iptm_prot_crRNA": 0.42,
+   "iptm_crRNA_target": 0.034,
+   "clashes": false
+  }
+ ],
+ "best_iptm_model": {
+  "model": "scores.model_idx_1.npz",
+  "aggregate": 0.842,
+  "ptm": 0.892,
+  "iptm": 0.83,
+  "iptm_prot_crRNA": 0.426,
+  "iptm_crRNA_target": 0.021,
+  "clashes": false
+ },
+ "interpretation": "蛋白-RNA 界面未恢复(iptm~0.2, 无MSA已知短板); crRNA-靶RNA pairwise iptm~0.35 为最有意义链对; ESM 嵌入版与模板/MSA 版为后续升级路径"
+}
