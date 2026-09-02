@@ -1,0 +1,127 @@
+{
+ "spacer_dna": "AGCTCCAACTACCACAAGTTTATA",
+ "target_scanned": "TATAAACTTGTGGTAGTTGGAGCT",
+ "pfs_rule": "GAAAG",
+ "max_mismatch": 4,
+ "n_transcripts": 385659,
+ "n_sites": 14,
+ "by_mismatch": {
+  "0mm": 11,
+  "1mm": 1,
+  "4mm": 2
+ },
+ "sites": [
+  {
+   "transcript": "ENST00000256078.10|ENSG00000133703.14|OTTHUMG00000171193.4|OTTHUMT00000412232.4|KRAS-201|KRAS|5430|protein_coding|",
+   "pos": 199,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000311936.8|ENSG00000133703.14|OTTHUMG00000171193.4|OTTHUMT00000412230.2|KRAS-202|KRAS|5306|protein_coding|",
+   "pos": 199,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000556131.2|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-203|KRAS|2937|protein_coding|",
+   "pos": 199,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000557334.6|ENSG00000133703.14|OTTHUMG00000171193.4|OTTHUMT00000412231.1|KRAS-204|KRAS|1042|protein_coding|",
+   "pos": 206,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000685328.1|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-205|KRAS|5287|protein_coding|",
+   "pos": 192,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000686877.1|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-206|KRAS|5420|nonsense_mediated_decay|",
+   "pos": 178,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000686969.1|ENSG00000133703.14|OTTHUMG00000171193.4|OTTHUMT00000412233.1|KRAS-207|KRAS|2957|protein_coding|",
+   "pos": 186,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000687356.1|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-208|KRAS|5101|nonsense_mediated_decay|",
+   "pos": 197,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000688940.1|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-210|KRAS|3630|protein_coding|",
+   "pos": 210,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000690804.1|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-212|KRAS|2721|nonsense_mediated_decay|",
+   "pos": 199,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000693229.1|ENSG00000133703.14|OTTHUMG00000171193.4|-|KRAS-214|KRAS|5187|protein_coding|",
+   "pos": 169,
+   "mismatches": 0,
+   "window": "TATAAACTTGTGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000407852.2|ENSG00000220635.2|OTTHUMG00000014897.2|OTTHUMT00000040992.2|KRASP1-201|KRASP1|552|processed_pseudogene|",
+   "pos": 9,
+   "mismatches": 1,
+   "window": "TATAAACTTGCGGTAGTTGGAGCT",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000278949.9|ENSG00000160588.10|OTTHUMG00000166966.3|OTTHUMT00000392109.3|MPZL3-201|MPZL3|3983|protein_coding|",
+   "pos": 2965,
+   "mismatches": 4,
+   "window": "TCTAAACTTGAGGTAATTGGTGCT",
+   "pfs": "CTGTG",
+   "pfs_match": false
+  },
+  {
+   "transcript": "ENST00000369535.5|ENSG00000213281.5|OTTHUMG00000012059.3|OTTHUMT00000033395.3|NRAS-201|NRAS|4326|protein_coding|",
+   "pos": 140,
+   "mismatches": 4,
+   "window": "TACAAACTGGTGGTGGTTGGAGCA",
+   "pfs": "GGTGG",
+   "pfs_match": false
+  }
+ ]
+}

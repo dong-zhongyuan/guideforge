@@ -48,6 +48,70 @@ def load_han():
     return np.array(X), np.array(y), tags, d
 
 
+ENDPOINTS = {"fig1g": "fig1g", "cis_end": "cis_end", "trans_end": "trans_end"}
+
+
+def load_han_endpoints():
+    """同源多终点训练集: fig1g(抑制) + cis_end + trans_end(切割, 与旁切杀伤最近缘)"""
+    d = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
+                       encoding="utf-8"))
+    out = {}
+    for ep, key in ENDPOINTS.items():
+        X, y, tags = [], [], []
+        for r in d["toolbox_features"]:
+            if key not in r:
+                continue
+            X.append([float(r[f]) for f in FEATURES])
+            y.append(float(r[key]))
+            tags.append(r["tag"])
+        if len(y) >= 5:
+            out[ep] = (np.array(X), np.array(y), tags)
+    return out
+
+
+def rank_family(models):
+    """对 8 员跨型候选族(orientation_library, 含 compensatory)逐终点预测排序"""
+    import crrna_scaffold_design as core
+    import RNA
+    lib = json.load(open(os.path.join(DATA, "orientation_library.json"),
+                         encoding="utf-8"))
+    spacer = core.to_rna(lib["spacer"])
+    dr_wt = core.to_rna(lib["orientations"][0]["wt_construct"][:19]) if \
+        lib["orientations"][0].get("wt_construct") else None
+    wt_top = json.load(open(os.path.join(
+        DATA, "tp53_r248q_zengdr.v6.top.json"), encoding="utf-8"))
+    wt_dr = core.to_rna(wt_top["top"][0]["dr_seq"])
+    wt_full_ss, _ = core.fold(wt_dr + spacer)
+    _, wt_dr_mfe = core.fold(wt_dr)
+    wt_stem = core.stem_pairs_of(core.fold(wt_dr)[0])
+    fam = [{"desc": "WT", "dr": wt_dr}]
+    seen = {"WT"}
+    for p in lib["orientations"]:
+        b = p["best"]
+        if b["desc"] in seen:
+            continue
+        seen.add(b["desc"])
+        fam.append({"desc": b["desc"], "dr": core.to_rna(b["dr_seq"])})
+    rows = []
+    for m in fam:
+        dr = m["dr"]
+        full = dr + spacer
+        ss, _ = core.fold(full)
+        _, dr_mfe = core.fold(dr)
+        cross_nt, _ = core.cross_pairs(full, len(dr))
+        p_fold = core.stem_intact_prob(full, wt_stem) if wt_stem else 1.0
+        _, sp_up, _ = core.pf_stats(full, len(dr), 7)
+        feats = [round(dr_mfe - wt_dr_mfe, 2),
+                 RNA.bp_distance(wt_full_ss, ss), cross_nt,
+                 round(p_fold, 5), round(sp_up, 3)]
+        row = {"scaffold": m["desc"],
+               "features": dict(zip(FEATURES, feats))}
+        for ep, dt in models.items():
+            row["pred_" + ep] = round(float(dt.predict([feats])[0]), 4)
+        rows.append(row)
+    return rows
+
+
 def load_our_candidates():
     import crrna_scaffold_design as core
     import RNA
@@ -160,6 +224,27 @@ def main():
                 [p for r, p in zip(tol, tol_pred) if r["group"] == g])), 4)
                 for g in sorted({r["group"] for r in tol})}}
 
+    # === 同源多终点: cis/trans 切割终点模型 + 8 员家族逐终点排序 ===
+    multi = {ep: (X_e, y_e) for ep, (X_e, y_e, _) in
+             load_han_endpoints().items()}
+    models = {"fig1g": dt}
+    print("\n=== 同源多终点模型(cis/trans = LbCas12a 切割, trans 与旁切杀伤最近缘) ===")
+    for ep, (X_e, y_e) in multi.items():
+        m = DecisionTreeRegressor(max_leaf_nodes=4, min_samples_leaf=1,
+                                  random_state=42)
+        m.fit(X_e, y_e)
+        models[ep] = m
+        print("  %-9s n=%d  训练范围 %.4f-%.4f" % (ep, len(y_e),
+                                                  y_e.min(), y_e.max()))
+    fam_rows = rank_family(models)
+    print("\n=== 8 员跨型候选族逐终点预测(fig1g/cis 低=抑制强; trans 高=切割强) ===")
+    print("%-22s %10s %10s %10s" % ("scaffold", "fig1g", "cis_end", "trans_end"))
+    for r in fam_rows:
+        print("%-22s %10.4f %10.3f %10.3f" % (
+            r["scaffold"], r.get("pred_fig1g", float("nan")),
+            r.get("pred_cis_end", float("nan")),
+            r.get("pred_trans_end", float("nan"))))
+
     # 输出
     out = {"model": "DecisionTreeRegressor(max_leaf=4)",
            "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a "
@@ -172,11 +257,18 @@ def main():
            "applied_to": "tp53_r248q_zengdr.v6 (%d passed)" % len(cands),
            "vs_pipeline_score_spearman": round(float(rho), 3),
            "sanger_tolerance_check": tol_stats,
+           "multi_endpoint": {"endpoints": sorted(models),
+                              "note": "cis/trans 终点比 = 同源(LbCas12a)切割先验, "
+                                      "trans 与 Cas12a2 旁切杀伤最近缘; 均 n=7"},
+           "family_ranking_8": fam_rows,
            "top10_lit_model": [{"desc": n, "lit_pred": round(p, 4),
                                 "ddG_dr": float(d), "score": float(s)}
                                for n, p, d, s in ranked[:10]]}
     json.dump(out, open(os.path.join(DATA, "selector_model.json"), "w",
                         encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump({"family": fam_rows, "models": sorted(models)},
+              open(os.path.join(DATA, "selector_family_ranking.json"), "w",
+                   encoding="utf-8"), ensure_ascii=False, indent=1)
 
     with open(os.path.join(DATA, "selector_ranked_candidates.csv"), "w",
               newline="", encoding="utf-8") as f:

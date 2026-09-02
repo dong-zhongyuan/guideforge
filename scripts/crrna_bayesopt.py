@@ -63,12 +63,61 @@ def expected_improvement(gp, X, xi=0.01):
     return (mu - best) * norm.cdf(z) + sd * norm.pdf(z)
 
 
+def prior_han_mode(batch):
+    """同源先验模式: Han 2025 工具箱(选择器特征空间)作 GP 观测, EI 提案。
+
+    观测 y = -fig1g(抑制强度, 越大越好); 候选库 = 本仓库 204 通过变体。
+    诚实边界: LbCas12a CRISPRi 抑制终点, 非 Cas12a2 旁切杀伤。
+    """
+    import crrna_train_selector as sel
+    han = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
+                         encoding="utf-8"))
+    X_h, y_h, tags = [], [], []
+    for r in han["toolbox_features"]:
+        if "fig1g" not in r:
+            continue
+        X_h.append([float(r[f]) for f in sel.FEATURES])
+        y_h.append(-float(r["fig1g"]))  # 翻转: 大 = 抑制强 = 好
+        tags.append(r["tag"])
+    cands = sel.load_our_candidates()
+    X_c = np.array([[float(r[f]) for f in sel.FEATURES] for r in cands])
+    gp = fit_gp(np.array(X_h), np.array(y_h))
+    ei = expected_improvement(gp, X_c)
+    order = np.argsort(-ei)
+    prop = []
+    for i in order:
+        prop.append({"desc": cands[i]["desc"],
+                     "ei": round(float(ei[i]), 4),
+                     "score": cands[i]["score"],
+                     **{k: cands[i][k] for k in sel.FEATURES}})
+        if len(prop) >= batch:
+            break
+    print("[同源先验(LbCas12a CRISPRi, n=%d 观测)] 提案 %d 条(EI 降序):" % (
+        len(y_h), len(prop)))
+    for p in prop:
+        print("  %-18s EI=%.4f  ddG_dr=%s" % (p["desc"], p["ei"], p["ddG_dr"]))
+    json.dump({"mode": "同源先验(Han 2025 LbCas12a CRISPRi 抑制终点, n=7; "
+                       "非 Cas12a2 杀伤, 等待 IVT --ingest 替换)",
+               "proposals": prop, "n_observations": len(y_h),
+               "n_library": len(cands), "features": sel.FEATURES},
+              open(os.path.join(DATA, "bayesopt_proposals_priorhan.json"), "w",
+                   encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("输出 -> data/bayesopt_proposals_priorhan.json")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--cold-start", action="store_true")
     ap.add_argument("--ingest", default=None, help="IVT 矩阵 CSV(desc,Vmax,EC50)")
+    ap.add_argument("--prior-han", action="store_true",
+                    help="同源先验: Han 2025 工具箱 7 条作 GP 观测"
+                         "(LbCas12a CRISPRi 抑制终点, 非 Cas12a2 杀伤)")
     ap.add_argument("--batch", type=int, default=4)
     args = ap.parse_args()
+
+    if args.prior_han:
+        prior_han_mode(args.batch)
+        return
 
     lib = load_library()
     if not lib:

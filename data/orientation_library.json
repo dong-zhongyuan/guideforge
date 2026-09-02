@@ -1,8 +1,8 @@
 {
  "effector": "cas12a2_zeng2026",
  "spacer": "GTTCATGCCGCCCATGCAGGAACT",
- "rule": "四取向各取前2去重 + WT, 组成跨型候选族(V3 §4.2)",
- "n_library_with_wt": 7,
+ "rule": "四取向各取前2去重 + WT + compensatory 代表 = 8 员跨型候选族(V3 §4.2 口径: 8 骨架 x 4 靶标 = 32 组合)",
+ "n_library_with_wt": 8,
  "orientations": [
   {
    "orientation": "low_threshold",
@@ -395,6 +395,22 @@
     "rank": "2"
    },
    "wt_construct": null
+  },
+  {
+   "orientation": "compensatory",
+   "extra_args": [
+    "(外部设计: 补偿臂, 见 ivt_compensatory_panel.json)"
+   ],
+   "n_passed": 1,
+   "wt_construct": null,
+   "best": {
+    "desc": "B_break_compensate",
+    "dr_seq": "AATTTCTACTCTTCTACAT",
+    "construct_dna": "AATTTCTACTCTTCTACATGTTCATGCCGCCCATGCAGGAACT",
+    "score": "0",
+    "ddG_dr": "NA",
+    "note": "DR-spacer 侵占配对补偿设计, 非四取向管线产物"
+   }
   }
  ]
 }

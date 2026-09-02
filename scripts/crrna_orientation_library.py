@@ -89,6 +89,24 @@ def main():
         if b["desc"] not in seen:
             seen.add(b["desc"])
             library.append(p)
+    # V3 口径补第 8 员: compensatory 代表(B_break_compensate, zengDR+G11C/G14C/G17C,
+    # 源: data/ivt_compensatory_panel.json, 机制故事=侵占配对破坏-补偿因果臂)
+    comp = json.load(open(os.path.join(DATA, "ivt_compensatory_panel.json"),
+                          encoding="utf-8"))
+    for arm in comp["arms"]:
+        if arm["arm"] == "B_break_compensate":
+            dr19 = arm["dr_dna"][:19]
+            library.append({
+                "orientation": "compensatory",
+                "extra_args": ["(外部设计: 补偿臂, 见 ivt_compensatory_panel.json)"],
+                "n_passed": 1, "wt_construct": None,
+                "best": {"desc": "B_break_compensate", "dr_seq": dr19,
+                         "construct_dna": dr19 + args.spacer,
+                         "score": "0", "ddG_dr": "NA",
+                         "note": "DR-spacer 侵占配对补偿设计, 非四取向管线产物"}})
+            seen.add("B_break_compensate")
+            print("[compensatory] 代表: B_break_compensate (DR=%s)" % dr19)
+            break
     wt_construct = None
     for name in ORIENTATIONS:
         tj = os.path.join(DATA, "orientation.%s.top.json" % name)
@@ -97,9 +115,10 @@ def main():
             break
     out = os.path.join(DATA, "orientation_library.json")
     json.dump({"effector": args.effector, "spacer": args.spacer,
-               "rule": "四取向各取前2去重 + WT, 组成跨型候选族(V3 §4.2)",
+               "rule": "四取向各取前2去重 + WT + compensatory 代表 = 8 员跨型"
+                       "候选族(V3 §4.2 口径: 8 骨架 x 4 靶标 = 32 组合)",
                "n_library_with_wt": len(library) + 1,
-               "orientations": picked},
+               "orientations": picked + [library[-1]]},
               open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     with open(os.path.join(DATA, "orientation_library.fasta"), "w") as f:
         f.write(">WT|orientation_reference\n%s\n" % wt_construct)

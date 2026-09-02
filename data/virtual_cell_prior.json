@@ -1,0 +1,333 @@
+{
+ "status": "文献先验场景(数量级口径), 非标定预测; IVT 实测回填 virtual_cell_params.json 后由 --twin-check 出校验",
+ "assumptions": {
+  "ec50_tpm_grid": [
+   0.5,
+   1.0,
+   2.0,
+   5.0,
+   10.0,
+   20.0,
+   50.0
+  ],
+  "basis": "Cas12a2 体外旁切激活靶 RNA 为低 nM 量级(Dmytrenko 2023 Science; 2026 Nature 细胞杀伤工作); 胞内有效浓度不可由体外直接换算, 故场景化",
+  "n_hill": 2.0,
+  "mutant_allele_fraction": 0.5,
+  "note": "突变本转录本按基因总 RNA 的 50% 计(杂合突变表达比场景)"
+ },
+ "scenarios": [
+  {
+   "gene": "TP53",
+   "ec50_tpm": 0.5,
+   "act_p90": 1.0,
+   "act_p10": 0.971,
+   "window": 0.029
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 0.5,
+   "act_p90": 0.997,
+   "act_p10": 0.96,
+   "window": 0.037
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 0.5,
+   "act_p90": 0.995,
+   "act_p10": 0.952,
+   "window": 0.043
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 0.5,
+   "act_p90": 1.0,
+   "act_p10": 0.997,
+   "window": 0.003
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 1.0,
+   "act_p90": 1.0,
+   "act_p10": 0.893,
+   "window": 0.107
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 1.0,
+   "act_p90": 0.989,
+   "act_p10": 0.858,
+   "window": 0.131
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 1.0,
+   "act_p90": 0.98,
+   "act_p10": 0.831,
+   "window": 0.149
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 1.0,
+   "act_p90": 1.0,
+   "act_p10": 0.988,
+   "window": 0.012
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 2.0,
+   "act_p90": 0.998,
+   "act_p10": 0.676,
+   "window": 0.322
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 2.0,
+   "act_p90": 0.957,
+   "act_p10": 0.602,
+   "window": 0.355
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 2.0,
+   "act_p90": 0.926,
+   "act_p10": 0.552,
+   "window": 0.374
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 2.0,
+   "act_p90": 1.0,
+   "act_p10": 0.953,
+   "window": 0.046
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.989,
+   "act_p10": 0.25,
+   "window": 0.739
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.78,
+   "act_p10": 0.195,
+   "window": 0.585
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.665,
+   "act_p10": 0.165,
+   "window": 0.501
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 5.0,
+   "act_p90": 0.999,
+   "act_p10": 0.766,
+   "window": 0.233
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.959,
+   "act_p10": 0.077,
+   "window": 0.882
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.47,
+   "act_p10": 0.057,
+   "window": 0.413
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.332,
+   "act_p10": 0.047,
+   "window": 0.285
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 10.0,
+   "act_p90": 0.996,
+   "act_p10": 0.45,
+   "window": 0.546
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.854,
+   "act_p10": 0.02,
+   "window": 0.834
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.181,
+   "act_p10": 0.015,
+   "window": 0.166
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.111,
+   "act_p10": 0.012,
+   "window": 0.098
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 20.0,
+   "act_p90": 0.983,
+   "act_p10": 0.17,
+   "window": 0.813
+  },
+  {
+   "gene": "TP53",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.483,
+   "act_p10": 0.003,
+   "window": 0.48
+  },
+  {
+   "gene": "KRAS",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.034,
+   "act_p10": 0.002,
+   "window": 0.032
+  },
+  {
+   "gene": "APC",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.019,
+   "act_p10": 0.002,
+   "window": 0.018
+  },
+  {
+   "gene": "MYC",
+   "ec50_tpm": 50.0,
+   "act_p90": 0.905,
+   "act_p10": 0.032,
+   "window": 0.873
+  }
+ ],
+ "named_cell_lines": [
+  {
+   "cell_line": "HCT116_LARGE_INTESTINE",
+   "rpkm": {
+    "APC": 7.14473,
+    "MYC": 136.91283,
+    "KRAS": 5.34346,
+    "TP53": 15.95084
+   },
+   "act_tp53_ec50_0.5": 0.999,
+   "act_kras_ec50_0.5": 0.991,
+   "act_tp53_ec50_1": 0.996,
+   "act_kras_ec50_1": 0.966,
+   "act_tp53_ec50_2": 0.985,
+   "act_kras_ec50_2": 0.877,
+   "act_tp53_ec50_5": 0.911,
+   "act_kras_ec50_5": 0.533,
+   "act_tp53_ec50_10": 0.718,
+   "act_kras_ec50_10": 0.222,
+   "act_tp53_ec50_20": 0.389,
+   "act_kras_ec50_20": 0.067,
+   "act_tp53_ec50_50": 0.092,
+   "act_kras_ec50_50": 0.011
+  },
+  {
+   "cell_line": "PANC1005_PANCREAS",
+   "rpkm": {
+    "APC": 3.37096,
+    "MYC": 49.8345,
+    "KRAS": 3.42716,
+    "TP53": 13.52572
+   },
+   "act_tp53_ec50_0.5": 0.999,
+   "act_kras_ec50_0.5": 0.979,
+   "act_tp53_ec50_1": 0.995,
+   "act_kras_ec50_1": 0.922,
+   "act_tp53_ec50_2": 0.979,
+   "act_kras_ec50_2": 0.746,
+   "act_tp53_ec50_5": 0.88,
+   "act_kras_ec50_5": 0.32,
+   "act_tp53_ec50_10": 0.647,
+   "act_kras_ec50_10": 0.105,
+   "act_tp53_ec50_20": 0.314,
+   "act_kras_ec50_20": 0.029,
+   "act_tp53_ec50_50": 0.068,
+   "act_kras_ec50_50": 0.005
+  },
+  {
+   "cell_line": "PANC1_PANCREAS",
+   "rpkm": {
+    "APC": 4.62755,
+    "MYC": 23.35134,
+    "KRAS": 5.11667,
+    "TP53": 16.16368
+   },
+   "act_tp53_ec50_0.5": 0.999,
+   "act_kras_ec50_0.5": 0.991,
+   "act_tp53_ec50_1": 0.996,
+   "act_kras_ec50_1": 0.963,
+   "act_tp53_ec50_2": 0.985,
+   "act_kras_ec50_2": 0.867,
+   "act_tp53_ec50_5": 0.913,
+   "act_kras_ec50_5": 0.512,
+   "act_tp53_ec50_10": 0.723,
+   "act_kras_ec50_10": 0.207,
+   "act_tp53_ec50_20": 0.395,
+   "act_kras_ec50_20": 0.061,
+   "act_tp53_ec50_50": 0.095,
+   "act_kras_ec50_50": 0.01
+  },
+  {
+   "cell_line": "SW480_LARGE_INTESTINE",
+   "rpkm": {
+    "APC": 2.83527,
+    "MYC": 40.87094,
+    "KRAS": 5.33281,
+    "TP53": 32.11592
+   },
+   "act_tp53_ec50_0.5": 1.0,
+   "act_kras_ec50_0.5": 0.991,
+   "act_tp53_ec50_1": 0.999,
+   "act_kras_ec50_1": 0.966,
+   "act_tp53_ec50_2": 0.996,
+   "act_kras_ec50_2": 0.877,
+   "act_tp53_ec50_5": 0.976,
+   "act_kras_ec50_5": 0.532,
+   "act_tp53_ec50_10": 0.912,
+   "act_kras_ec50_10": 0.221,
+   "act_tp53_ec50_20": 0.721,
+   "act_kras_ec50_20": 0.066,
+   "act_tp53_ec50_50": 0.292,
+   "act_kras_ec50_50": 0.011
+  },
+  {
+   "cell_line": "SW620_LARGE_INTESTINE",
+   "rpkm": {
+    "APC": 4.15343,
+    "MYC": 98.45737,
+    "KRAS": 12.80328,
+    "TP53": 31.64622
+   },
+   "act_tp53_ec50_0.5": 1.0,
+   "act_kras_ec50_0.5": 0.998,
+   "act_tp53_ec50_1": 0.999,
+   "act_kras_ec50_1": 0.994,
+   "act_tp53_ec50_2": 0.996,
+   "act_kras_ec50_2": 0.976,
+   "act_tp53_ec50_5": 0.976,
+   "act_kras_ec50_5": 0.868,
+   "act_tp53_ec50_10": 0.909,
+   "act_kras_ec50_10": 0.621,
+   "act_tp53_ec50_20": 0.715,
+   "act_kras_ec50_20": 0.291,
+   "act_tp53_ec50_50": 0.286,
+   "act_kras_ec50_50": 0.062
+  }
+ ]
+}

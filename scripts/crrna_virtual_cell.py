@@ -77,12 +77,97 @@ def load_local_ccle(genes):
     return out or None
 
 
+def prior_lit_mode(ec50_grid):
+    """文献先验场景版(策划案 §4.3 的"实验前预测"先做先验口径)。
+
+    依据(数量级口径, 非精确值):
+      Dmytrenko 2023 Science / 2026 两篇 Nature 的 Cas12a2 体外/细胞实验:
+      体外旁切激活的靶 RNA 浓度在低 nM 量级; 细胞内有效浓度不可由体外
+      直接换算, 故取 EC50(TPM) 网格做场景分析, 每档给出杀伤窗口与
+      主验证细胞系激活率。输出明确标注"文献先验场景, 非标定预测"。
+    """
+    abundance = json.load(open(os.path.join(DATA, "virtual_cell_abundance.json"),
+                               encoding="utf-8"))["genes"]
+    gct = os.path.join(DATA, "CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct")
+    named = {}
+    if os.path.isfile(gct):
+        import gzip
+        op = gzip.open if gct.endswith(".gz") else open
+        want = ("HCT116", "SW480", "SW620", "AsPC", "BxPC", "PANC1", "PANC-1")
+        with op(gct, "rt", encoding="utf-8", errors="ignore") as f:
+            header = None
+            for line in f:
+                parts = line.rstrip("\n").split("\t")
+                if header is None:
+                    if parts[0] == "Name":
+                        header = parts
+                    continue
+                sym = parts[1] if len(parts) > 1 else ""
+                if sym not in abundance:
+                    continue
+                for i, v in enumerate(parts[2:]):
+                    col = header[i + 2]
+                    if any(w in col for w in want):
+                        try:
+                            named.setdefault(col.split(" (")[0], {})[sym] = float(v)
+                        except ValueError:
+                            pass
+
+    def hill(rna, ec50, n=2.0):
+        return rna ** n / (ec50 ** n + rna ** n)
+
+    grid = [float(x) for x in ec50_grid.split(",")]
+    scen = []
+    for ec50 in grid:
+        for g, a in abundance.items():
+            hi = hill(a["p90_tpm"], ec50)
+            lo = hill(a["p10_tpm"], ec50)
+            scen.append({"gene": g, "ec50_tpm": ec50,
+                         "act_p90": round(hi, 3), "act_p10": round(lo, 3),
+                         "window": round(hi - lo, 3)})
+    lines_tbl = []
+    for cl, genes in sorted(named.items()):
+        row = {"cell_line": cl, "rpkm": genes}
+        for ec50 in grid:
+            row["act_tp53_ec50_%g" % ec50] = round(
+                hill(genes.get("TP53", 0.0), ec50), 3)
+            row["act_kras_ec50_%g" % ec50] = round(
+                hill(genes.get("KRAS", 0.0), ec50), 3)
+        lines_tbl.append(row)
+    out = {"status": "文献先验场景(数量级口径), 非标定预测; IVT 实测回填 "
+                     "virtual_cell_params.json 后由 --twin-check 出校验",
+           "assumptions": {
+               "ec50_tpm_grid": grid,
+               "basis": "Cas12a2 体外旁切激活靶 RNA 为低 nM 量级"
+                        "(Dmytrenko 2023 Science; 2026 Nature 细胞杀伤工作); "
+                        "胞内有效浓度不可由体外直接换算, 故场景化",
+               "n_hill": 2.0,
+               "mutant_allele_fraction": 0.5,
+               "note": "突变本转录本按基因总 RNA 的 50% 计(杂合突变表达比场景)"},
+           "scenarios": scen,
+           "named_cell_lines": lines_tbl}
+    p = os.path.join(DATA, "virtual_cell_prior.json")
+    json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("文献先验场景 -> %s" % p)
+    print("  EC50 网格: %s; 命名细胞系 %d 条" % (grid, len(lines_tbl)))
+    for r in lines_tbl:
+        print("  %-14s TP53=%-7s KRAS=%-7s  act(TP53@10)=%s" % (
+            r["cell_line"], r["rpkm"].get("TP53"), r["rpkm"].get("KRAS"),
+            r.get("act_tp53_ec50_10")))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--genes", default="TP53,KRAS,APC,MYC")
     ap.add_argument("--ec50-grid", default="0.5,1,2,5,10,20,50",
                     help="EC50(TPM) 扫描网格, 预校准包络用")
+    ap.add_argument("--prior-lit", action="store_true",
+                    help="文献先验场景表(替代 UN-CALIBRATED 空转: 数量级口径)")
     args = ap.parse_args()
+
+    if args.prior_lit:
+        prior_lit_mode(args.ec50_grid)
+        return
 
     abundance = {}
     genes = [g.strip() for g in args.genes.split(",")]

@@ -8,18 +8,22 @@
 
 启动(服务器): nohup python scripts/crrna_agent_webapp.py --port 8899 &
 访问(本机):   ssh -L 8899:localhost:8899 srv  然后打开 http://localhost:8899
-边界: 输出为结构口径排序与分型建议, 不含活性预测(README 路径A校准)。
+边界: 结构口径分型建议 + 文献先验活性排序(Han 2025 Fig1g 尺度, n=7 外部锚点,
+  非活性保证; 与 crrna_train_selector.py 同一模型同一定义)。
 """
 import argparse
 import json
 import os
 import sys
 
+import numpy as np
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, HERE)
 
 from flask import Flask, jsonify, request  # noqa: E402
+from sklearn.tree import DecisionTreeRegressor  # noqa: E402
 
 import crrna_scaffold_design as core  # noqa: E402
 import crrna_design_agent as agent  # noqa: E402
@@ -32,6 +36,69 @@ MODEL = agent.load_type_models(
     os.path.join(DATA, "context_typing", "typing.clusters.json"),
     os.path.join(DATA, "context_typing", "spacers.txt"),
     DR)
+
+# ---- 模块三: 文献先验选择器(与 crrna_train_selector.py 同一配方) ----
+FEATURES = ["ddG_dr", "bp_dist", "cross_nt", "p_fold", "spacer_up"]
+
+
+def _train_selector():
+    d = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
+                       encoding="utf-8"))
+    X, y = [], []
+    for r in d["toolbox_features"]:
+        if "fig1g" not in r:
+            continue
+        X.append([float(r[f]) for f in FEATURES])
+        y.append(float(r["fig1g"]))
+    dt = DecisionTreeRegressor(max_leaf_nodes=4, min_samples_leaf=1,
+                               random_state=42)
+    dt.fit(np.array(X), np.array(y))
+    return dt
+
+
+SELECTOR = _train_selector()
+
+
+def _load_library_drs():
+    """orientation_library.fasta 的 7 成员(含 WT) DR 序列"""
+    drs = []
+    for line in open(os.path.join(DATA, "orientation_library.fasta")):
+        if line.startswith(">"):
+            label = line[1:].strip().split("|")
+            drs.append([label[0] if label[0] == "WT" else label[1], ""])
+        elif line.strip() and drs:
+            full = core.to_rna(line.strip())
+            drs[-1][1] = full[:len(DR)]
+    return drs
+
+
+LIBRARY = _load_library_drs()
+
+
+def lit_rank_scaffolds(spacer_rna):
+    """对 7 成员骨架逐个算特征并给文献模型预测(Fig1g 尺度, 低=抑制强)"""
+    import RNA
+    wt_full_ss, _ = core.fold(DR + spacer_rna)
+    _, wt_dr_mfe = core.fold(DR)
+    wt_stem = core.stem_pairs_of(core.fold(DR)[0])
+    out = []
+    for desc, dr in LIBRARY:
+        full = dr + spacer_rna
+        ss, _ = core.fold(full)
+        _, dr_mfe = core.fold(dr)
+        cross_nt, _ = core.cross_pairs(full, len(dr))
+        p_fold = core.stem_intact_prob(full, wt_stem) if wt_stem else 1.0
+        _, sp_up, _ = core.pf_stats(full, len(dr), 7)
+        feats = [round(dr_mfe - wt_dr_mfe, 2),
+                 RNA.bp_distance(wt_full_ss, ss), cross_nt,
+                 round(p_fold, 5), round(sp_up, 3)]
+        pred = float(SELECTOR.predict(np.array([feats]))[0])
+        out.append({"scaffold": desc, "lit_pred_fig1g": round(pred, 4),
+                    "features": dict(zip(FEATURES, feats))})
+    out.sort(key=lambda r: r["lit_pred_fig1g"])
+    for i, r in enumerate(out, 1):
+        r["rank"] = i
+    return out
 
 PANEL = {"TP53-R248Q": "tp53_r248q", "KRAS-G12C": "kras_g12c",
          "KRAS-G12D": "kras_g12d", "TP53-R273H": "tp53_r273h",
@@ -51,7 +118,7 @@ pre{background:#f0f4f8;padding:.8em;border-radius:6px;overflow-x:auto;white-spac
 .small{color:#62788a;font-size:.85em}
 </style></head><body>
 <h1>GuideForge — Cas12a2 crRNA 设计智能体(演示)</h1>
-<div class="small">输出为结构口径的骨架分型建议与排序, 不含活性预测(见仓库 README 校准声明)。</div>
+<div class="small">输出 = 结构口径分型建议 + 文献先验活性排序(Han 2025 Fig1g 尺度, n=7 外部锚点, 非活性保证)。</div>
 <div class="card"><b>① spacer 模式</b>(项目本体口径, 秒级)<br>
 spacer (17-25nt ACGT):<br>
 <input id="sp" value="GTTCATGCCGCCCATGCAGGAACT">
@@ -90,7 +157,11 @@ def design():
                         "confidence": sel["confidence"],
                         "features": sel["features"],
                         "type_representative": rep.get("representative_desc"),
-                        "note": "结构口径分型建议; 非活性预测"})
+                        "scaffold_ranking_lit": lit_rank_scaffolds(
+                            core.to_rna(sp)),
+                        "note": "结构分型建议 + 文献先验活性排序"
+                                "(Han 2025 Fig1g 尺度, n=7 锚点, 低=抑制强,"
+                                "非活性保证)"})
     except Exception as e:
         return jsonify({"error": str(e)[:200]}), 500
 
@@ -102,7 +173,12 @@ def panel():
     if not os.path.isfile(f):
         return jsonify({"error": "未知靶标"}), 404
     d = json.load(open(f, encoding="utf-8"))
-    return jsonify({"target": key, "design": d})
+    top_spacer = d["designs"][0]["spacer_dna"] if d.get("designs") else None
+    extra = {}
+    if top_spacer:
+        extra = {"scaffold_ranking_lit": lit_rank_scaffolds(
+            core.to_rna(top_spacer))}
+    return jsonify({"target": key, "design": d, **extra})
 
 
 def main():

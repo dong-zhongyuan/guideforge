@@ -30,6 +30,120 @@
    "loop": 0.4603
   }
  },
+ "multi_endpoint": {
+  "endpoints": [
+   "cis_end",
+   "fig1g",
+   "trans_end"
+  ],
+  "note": "cis/trans 终点比 = 同源(LbCas12a)切割先验, trans 与 Cas12a2 旁切杀伤最近缘; 均 n=7"
+ },
+ "family_ranking_8": [
+  {
+   "scaffold": "WT",
+   "features": {
+    "ddG_dr": 0.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.86603,
+    "spacer_up": 0.427
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 6.8845,
+   "pred_trans_end": 39.248
+  },
+  {
+   "scaffold": "A8C+U15G",
+   "features": {
+    "ddG_dr": -2.2,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.27749,
+    "spacer_up": 0.431
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 6.8845,
+   "pred_trans_end": 7.65
+  },
+  {
+   "scaffold": "A1G+U3A+A8G+U15C",
+   "features": {
+    "ddG_dr": -2.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.8191,
+    "spacer_up": 0.457
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 6.8845,
+   "pred_trans_end": 7.65
+  },
+  {
+   "scaffold": "A1C",
+   "features": {
+    "ddG_dr": 0.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.86558,
+    "spacer_up": 0.426
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 6.8845,
+   "pred_trans_end": 39.248
+  },
+  {
+   "scaffold": "A1U",
+   "features": {
+    "ddG_dr": 0.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.86574,
+    "spacer_up": 0.426
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 6.8845,
+   "pred_trans_end": 39.248
+  },
+  {
+   "scaffold": "U5G+A18C",
+   "features": {
+    "ddG_dr": -1.9,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.99221,
+    "spacer_up": 0.426
+   },
+   "pred_fig1g": 0.5825,
+   "pred_cis_end": 17.586,
+   "pred_trans_end": 12.109
+  },
+  {
+   "scaffold": "A1U+A2C",
+   "features": {
+    "ddG_dr": 0.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.86541,
+    "spacer_up": 0.426
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 6.8845,
+   "pred_trans_end": 39.248
+  },
+  {
+   "scaffold": "B_break_compensate",
+   "features": {
+    "ddG_dr": 4.8,
+    "bp_dist": 5,
+    "cross_nt": 0,
+    "p_fold": 0.0,
+    "spacer_up": 0.448
+   },
+   "pred_fig1g": 0.4603,
+   "pred_cis_end": 13.983,
+   "pred_trans_end": 7.65
+  }
+ ],
  "top10_lit_model": [
   {
    "desc": "WT",

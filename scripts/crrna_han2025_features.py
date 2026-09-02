@@ -89,6 +89,29 @@ def extract_screen():
     return seen
 
 
+def extract_cleavage(sheet="Sup Fig. 5", col0=1):
+    """Sup Fig.5(cis)/6(trans, b 面板) 实时切割曲线终点/起点比(三重复均值)。
+
+    返回 {标签: 终点比}; 标签 Canonical -> CN。b 面板列布局: 7 个 crRNA x 3 重复。
+    """
+    wb = openpyxl.load_workbook(
+        os.path.join(DATA, "41467_2025_64010_MOESM7_ESM.xlsx"),
+        data_only=True, read_only=True)
+    ws = wb[sheet]
+    rows = list(ws.iter_rows(values_only=True))
+    hdr = [str(c) if c is not None else "" for c in rows[1]]
+    out = {}
+    for i, h in enumerate(hdr):
+        if h in ("Canonical", "L1", "L2", "FL1", "FL2", "F1", "F2"):
+            tri = [j for j in range(i, min(i + 3, len(hdr)))
+                   if rows[2][j] is not None]
+            first = np.mean([float(rows[2][j]) for j in tri])
+            last = np.mean([float(rows[-1][j]) for j in tri])
+            tag = "CN" if h == "Canonical" else h
+            out[tag] = round(float(last / max(first, 1e-9)), 3)
+    return out
+
+
 def compute_features(dr_rna, spacer_rna, wt_dr_mfe=0.0):
     full = dr_rna + spacer_rna
     ss, mfe = core.fold(full)
@@ -171,6 +194,17 @@ def main():
     print("\nFig1g 全表 %d 条; 工具箱同尺度锚点 %d 条: %s" % (
         len(fig1g), len(anchors_fig1g), anchors_fig1g))
 
+    # === 同源多终点: cis(Sup Fig.5b) / trans(Sup Fig.6b) 切割终点比 ===
+    cis = extract_cleavage("Sup Fig. 5")
+    trans = extract_cleavage("Sup Fig. 6")
+    for r in rows:
+        if r["tag"] in cis:
+            r["cis_end"] = cis[r["tag"]]
+        if r["tag"] in trans:
+            r["trans_end"] = trans[r["tag"]]
+    print("cis 终点比: %s" % cis)
+    print("trans 终点比: %s" % trans)
+
     # === Sanger 耐受集(MOESM1 Sup Fig.2/3, 54 条)特征计算 ===
     sanger_path = os.path.join(DATA, "han2025_sanger_sequences.json")
     sanger_rows = []
@@ -194,6 +228,7 @@ def main():
                "toolbox_features": rows,
                "toolbox_activity": TOOLBOX_ACTIVITY,
                "toolbox_activity_fig1g": anchors_fig1g,
+               "toolbox_cleavage": {"cis_end": cis, "trans_end": trans},
                "fig1g_activity": fig1g,
                "sanger_tolerance": sanger_rows,
                "sanger_source": (sanger["source"] + "; " + sanger["extraction"]
