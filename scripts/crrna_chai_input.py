@@ -26,6 +26,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--cif", default=os.path.join(ROOT, "data", "8D4A.cif"))
     ap.add_argument("--out", default=os.path.join(ROOT, "data", "chai_input_WT.fasta"))
+    ap.add_argument("--m8-out", default=os.path.join(ROOT, "data", "chai_template_hits.m8"),
+                    help="自模板 m8(查询=本体序列, 模板=8D4A 链A, 100%% 同一)")
     args = ap.parse_args()
 
     f = PDBxFile(args.cif)
@@ -46,8 +48,13 @@ def main():
         out.write(">protein|name=SuCas12a2\n%s\n" % seq_prot)
         out.write(">rna|name=crRNA\n%s\n" % seq_crna)
         out.write(">rna|name=target\n%s\n" % seq_tgt)
-    print("蛋白 %daa + crRNA %dnt + 靶 %dnt -> %s" % (
-        len(seq_prot), len(seq_crna), len(seq_tgt), args.out))
+    # 自模板 m8: 查询名须与 fasta 实体名一致(SuCas12a2), 模板=8D4A 认证链 A;
+    # subject 区间按模板缺口剥离序列计数, 本体系查询即从同一结构原子记录提取, 逐位一致
+    with open(args.m8_out, "w") as m8:
+        m8.write("SuCas12a2\t8D4A_A\t100.000\t%d\t0\t0\t1\t%d\t1\t%d\t0.0\t5000\t\n" % (
+            len(seq_prot), len(seq_prot), len(seq_prot)))
+    print("蛋白 %daa + crRNA %dnt + 靶 %dnt -> %s; 自模板 m8 -> %s" % (
+        len(seq_prot), len(seq_crna), len(seq_tgt), args.out, args.m8_out))
 
 
 if __name__ == "__main__":
