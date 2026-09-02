@@ -1,14 +1,18 @@
-"""选型分类器训练: Han 2025 数据 + 本仓库候选库(2026-09-02)。
+"""选型分类器训练: Han 2025 数据 + 本仓库候选库(2026-09-02, Fig1g 尺度版)。
 
 两段式:
-  第一段(文献预训练): Han 2025 的 7 条工具箱变体 × 结构特征 × 实测活性
+  第一段(文献预训练): Han 2025 工具箱变体 × 结构特征 × Fig1g 实测活性
+    (归一化 GFP 表达, 低=抑制强; 与筛选图同尺度, 优于旧 RBS0/33 端点)
     -> 决策树回归(可解释): "什么 DR 结构特征区间活性最优"
   第二段(应用): 把第一段模型应用到本仓库 zengdr 口径全部通过变体
     -> 按文献模型预测活性排序候选库
+  附加(Sanger 耐受集体检): 54 条真实 Sanger 变体特征经模型预测,
+    与 204 候选分布对比 —— 检查模型是否把真实耐受变体排到离谱位置。
 
-诚实边界: n=7 训练样本(工具箱级), 预测为先验排序非活性保证;
-  LbCas12a CRISPRi ≠ Cas12a2 杀伤, 迁移假设已在 README 声明;
-  模型类型选决策树 = 答辩可解释("AI 学到什么"有话可答)。
+诚实边界: n=7 干净监督对(Fig1g 尺度); Han 2025 的 145 个编号变体
+  (F/S/L/FL)与序列的映射未随论文发表(2026-09-02 查证 MOESM1-7 全部
+  补充材料 + 主文), 96 变体序列级训练集不可得; LbCas12a CRISPRi ≠
+  Cas12a2 杀伤, 迁移假设已在 README 声明; 决策树 = 答辩可解释。
 运行: python scripts/crrna_train_selector.py
 输出: data/selector_model.json + data/selector_ranked_candidates.csv
 """
@@ -34,15 +38,14 @@ def load_han():
     d = json.load(open(os.path.join(DATA, "han2025_dataset.json"),
                        encoding="utf-8"))
     rows = d["toolbox_features"]
-    X, y0, y33, tags = [], [], [], []
+    X, y, tags = [], [], []
     for r in rows:
-        if "rbs0" not in r:
+        if "fig1g" not in r:
             continue
         X.append([float(r[f]) for f in FEATURES])
-        y0.append(float(r["rbs0"]))
-        y33.append(float(r["rbs33"]))
+        y.append(float(r["fig1g"]))
         tags.append(r["tag"])
-    return np.array(X), np.array(y0), np.array(y33), tags
+    return np.array(X), np.array(y), tags, d
 
 
 def load_our_candidates():
@@ -83,17 +86,14 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     args = ap.parse_args()
 
-    # === 第一段: 文献预训练 ===
-    X, y0, y33, tags = load_han()
-    print("=== 训练集 ===")
+    # === 第一段: 文献预训练(Fig1g 尺度) ===
+    X, y, tags, han = load_han()
+    print("=== 训练集(Fig1g 归一化 GFP, 低=抑制强) ===")
     print("%-6s" % "var", " ".join("%10s" % f for f in FEATURES),
-          "  RBS0(活性)")
+          "  Fig1g")
     for i, t in enumerate(tags):
         print("%-6s" % t, " ".join("%10.3f" % v for v in X[i]),
-              "  %6.1f" % y0[i])
-
-    # 目标 = 两档均值(低=抑制好)
-    y = (y0 + y33) / 2
+              "  %6.4f" % y[i])
 
     # 决策树(小样本: max_leaf=4, min_samples_leaf=1)
     dt = DecisionTreeRegressor(max_leaf_nodes=4, min_samples_leaf=1,
@@ -137,17 +137,42 @@ def main():
                       np.argsort(np.argsort(our_scores)))[0, 1]
     print("\n文献模型 vs 管线综合分 Spearman = %+.3f" % rho)
 
+    # === Sanger 耐受集体检: 真实变体在模型预测分布中的位置 ===
+    tol_stats = None
+    if han.get("sanger_tolerance"):
+        tol = [r for r in han["sanger_tolerance"]
+               if r["group"] in ("flank", "loop")]  # 与 Cas12a2 DR 口径近缘
+        X_tol = np.array([[float(r[f]) for f in FEATURES] for r in tol])
+        tol_pred = dt.predict(X_tol)
+        cand_pred = dt.predict(X_ours)
+        pct = float(np.mean([(cand_pred < p).mean() for p in tol_pred]))
+        print("\n=== Sanger 耐受集体检(n=%d, flank+loop) ===" % len(tol))
+        print("真实耐受变体预测活性中位数 = %.4f (工具箱锚点范围 %.4f-%.4f)"
+              % (np.median(tol_pred), y.min(), y.max()))
+        print("耐受变体在 204 候选预测分布中的平均分位 = %.1f%%" % (pct * 100))
+        tol_stats = {
+            "n": len(tol),
+            "pred_median": round(float(np.median(tol_pred)), 4),
+            "pred_min": round(float(tol_pred.min()), 4),
+            "pred_max": round(float(tol_pred.max()), 4),
+            "avg_percentile_in_candidates": round(pct, 3),
+            "by_group": {g: round(float(np.median(
+                [p for r, p in zip(tol, tol_pred) if r["group"] == g])), 4)
+                for g in sorted({r["group"] for r in tol})}}
+
     # 输出
     out = {"model": "DecisionTreeRegressor(max_leaf=4)",
-           "training_data": "Han 2025 (PMC12508434) LbCas12a 7 DR toolbox",
+           "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a "
+                            "toolbox, Fig1g-scale activity (n=%d)" % len(y),
            "features": FEATURES,
            "feature_importance": {f: float(imp) for f, imp in
                                   zip(FEATURES, dt.feature_importances_)},
            "tree_rules": export_text(dt, feature_names=FEATURES),
            "train_spearman": round(float(rho_train), 3),
-           "applied_to": "tp53_r248q_zengdr.v6 (204 passed)",
+           "applied_to": "tp53_r248q_zengdr.v6 (%d passed)" % len(cands),
            "vs_pipeline_score_spearman": round(float(rho), 3),
-           "top10_lit_model": [{"desc": n, "lit_pred": round(p, 1),
+           "sanger_tolerance_check": tol_stats,
+           "top10_lit_model": [{"desc": n, "lit_pred": round(p, 4),
                                 "ddG_dr": float(d), "score": float(s)}
                                for n, p, d, s in ranked[:10]]}
     json.dump(out, open(os.path.join(DATA, "selector_model.json"), "w",
@@ -162,7 +187,7 @@ def main():
         for i, (n, p, d, s) in enumerate(ranked, 1):
             row_idx = [j for j, r in enumerate(cands) if r["desc"] == n]
             feats = [cands[row_idx[0]][f] for f in FEATURES] if row_idx else []
-            w.writerow([i, n, round(p, 1), float(d), float(s)] + feats)
+            w.writerow([i, n, round(p, 4), float(d), float(s)] + feats)
 
     print("\n输出 -> data/selector_model.json / selector_ranked_candidates.csv")
 

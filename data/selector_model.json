@@ -1,6 +1,6 @@
 {
  "model": "DecisionTreeRegressor(max_leaf=4)",
- "training_data": "Han 2025 (PMC12508434) LbCas12a 7 DR toolbox",
+ "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a toolbox, Fig1g-scale activity (n=7)",
  "features": [
   "ddG_dr",
   "bp_dist",
@@ -9,74 +9,85 @@
   "spacer_up"
  ],
  "feature_importance": {
-  "ddG_dr": 0.38341511409905243,
+  "ddG_dr": 0.11532098144983548,
   "bp_dist": 0.0,
-  "cross_nt": 0.0,
-  "p_fold": 0.6165848859009475,
+  "cross_nt": 0.33031745526543504,
+  "p_fold": 0.5543615632847295,
   "spacer_up": 0.0
  },
- "tree_rules": "|--- ddG_dr <= -5.15\n|   |--- value: [44.25]\n|--- ddG_dr >  -5.15\n|   |--- p_fold <= 0.87\n|   |   |--- ddG_dr <= -4.35\n|   |   |   |--- value: [43.70]\n|   |   |--- ddG_dr >  -4.35\n|   |   |   |--- value: [53.15]\n|   |--- p_fold >  0.87\n|   |   |--- value: [87.05]\n",
- "train_spearman": 0.929,
+ "tree_rules": "|--- p_fold <= 0.87\n|   |--- value: [0.46]\n|--- p_fold >  0.87\n|   |--- cross_nt <= 4.00\n|   |   |--- ddG_dr <= 0.25\n|   |   |   |--- value: [0.58]\n|   |   |--- ddG_dr >  0.25\n|   |   |   |--- value: [0.53]\n|   |--- cross_nt >  4.00\n|   |   |--- value: [0.50]\n",
+ "train_spearman": 0.964,
  "applied_to": "tp53_r248q_zengdr.v6 (204 passed)",
  "vs_pipeline_score_spearman": -0.895,
+ "sanger_tolerance_check": {
+  "n": 30,
+  "pred_median": 0.4603,
+  "pred_min": 0.4603,
+  "pred_max": 0.5825,
+  "avg_percentile_in_candidates": 0.193,
+  "by_group": {
+   "flank": 0.4603,
+   "loop": 0.4603
+  }
+ },
  "top10_lit_model": [
   {
    "desc": "WT",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": 0.0
   },
   {
    "desc": "A1C",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.0001
   },
   {
    "desc": "A1U",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.0001
   },
   {
    "desc": "A1G",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.012
   },
   {
    "desc": "A8G+U15C",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": -2.0,
    "score": -0.4391
   },
   {
    "desc": "U7C+A16G",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": -2.0,
    "score": -0.4633
   },
   {
    "desc": "A1U+U3A",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.5486
   },
   {
    "desc": "U3A",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.5495
   },
   {
    "desc": "A1C+U3A",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.5507
   },
   {
    "desc": "A1U+U3G",
-   "lit_pred": 53.2,
+   "lit_pred": 0.4603,
    "ddG_dr": 0.0,
    "score": -0.5537
   }

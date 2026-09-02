@@ -1,16 +1,21 @@
-"""Han 2025 (Nat Commun, PMC12508434) LbCas12a DR 变体数据提取与特征计算。
+"""Han 2025 (Nat Commun, s41467-025-64010-z) LbCas12a DR 变体数据提取与特征计算。
 
 数据来源(全部已下载入库):
-  MOESM3 XLSX: 7 条工具箱变体序列(CN/F1/F2/L1/L2/FL1/FL2)
-  MOESM7 XLSX Fig.1 列63-64: 96 变体筛选活性(归一化 GFP, 低=抑制强)
+  MOESM3 XLSX: 工具箱 DR 序列(gfp-1 系 7 条 + P1 系 L3/L4)
+  MOESM7 XLSX Fig.1 列63-64: Fig1g 活性表(归一化 GFP, 低=抑制强,
+    2026-09-02 修正: 含 FL 组共 145 条, 旧版漏 48 条 FL)
   MOESM7 XLSX Fig.3b: 7 条工具箱两档表达(RBS0/RBS33)活性(n=3)
+  data/han2025_sanger_sequences.json: MOESM1 Sup Fig.2/3 的 54 条
+    Sanger 序列(600dpi 视觉转录+模板校验, 含置信度标注)
 本脚本:
-  1. 解析 MOESM3 提取 7 条 DR 序列;
+  1. 解析 MOESM3 提取 9 条工具箱 DR 序列(含 L3/L4);
   2. 对每条跑本管线特征(DDR-alone 折叠/ΔΔG/bp_dist/cross_pairs/stem_intact_prob/系综);
-  3. 与 Fig.3b 活性做 Spearman 相关;
-  4. 全部 97 条筛选活性值存 data/han2025_screen.json。
+  3. Fig1g 145 条活性全表 + 工具箱 7 条 Fig1g 同尺度锚点值;
+  4. 54 条 Sanger 耐受集特征计算(耐受先验, 无逐条活性标签);
+  5. 与 Fig.3b 活性做 Spearman 相关(参考)。
 诚实边界: LbCas12a CRISPRi(GFP 抑制)体系, 非 Cas12a2 RNA 触发杀伤;
-  n=7 有序列为工具箱级(非全 96 变体), 全量序列需补充 PDF(MOESM1)。
+  Fig1g 的 145 个编号(F/S/L/FL)与序列的映射未随论文发表,
+  干净监督对 = 工具箱 7 条(Fig1g 同尺度); 96 变体序列不可得(2026-09-02 查证)。
 运行: python scripts/crrna_han2025_features.py
 """
 import argparse
@@ -53,38 +58,38 @@ def parse_sequences():
             continue
         name = str(name).strip()
         seq = str(seq).replace(" ", "").replace("T", "U").upper()
-        # 只取 gfp-1 系列的(同一 spacer, 不同 DR)——保证单变量
-        if name.startswith("gfp-1-"):
-            tag = name.replace("gfp-1-", "")
-            seqs[tag] = seq
+        # gfp-1 系列(同一 spacer, 不同 DR)保证单变量;
+        # L3/L4 只在 P1 系列出(取 DR 21nt, 同一 DR 跨系列一致)
+        for prefix in ("gfp-1-", "P1-"):
+            if name.startswith(prefix):
+                tag = name.replace(prefix, "")
+                if tag not in seqs:
+                    seqs[tag] = seq
     return seqs
 
 
 def extract_screen():
-    """Fig.1 列63-64 的 96 变体筛选活性"""
+    """Fig.1 列63-64 的 Fig1g 活性表(含 FL 组, 共 145 条 + Canonical)"""
+    import re
     wb = openpyxl.load_workbook(
         os.path.join(DATA, "41467_2025_64010_MOESM7_ESM.xlsx"),
         data_only=True, read_only=True)
     ws = wb["Fig. 1"]
+    pat = re.compile(r"^(FL|F|S|L)\d+$")
     seen = {}
-    for r in range(1, ws.max_row + 1):
-        for c in range(55, min(65, ws.max_column + 1)):
-            v = ws.cell(r, c).value
-            if v is not None:
-                s = str(v).strip()
-                if s == "Canonical" or (len(s) <= 5 and s[0] in "SLF"
-                                         and s[1:].isdigit() and s[1:] != ""):
-                    for c2 in range(c + 1, min(c + 3, ws.max_column + 1)):
-                        v2 = ws.cell(r, c2).value
-                        if v2 is not None and isinstance(v2, (int, float)):
-                            if s not in seen:
-                                seen[s] = float(v2)
-                            break
-                    break
+    for row in ws.iter_rows(min_row=1, min_col=63, max_col=64,
+                            values_only=True):
+        s, v = row
+        if s is None or v is None:
+            continue
+        s = str(s).strip()
+        if s == "Canonical" or pat.match(s):
+            if s not in seen and isinstance(v, (int, float)):
+                seen[s] = float(v)
     return seen
 
 
-def compute_features(dr_rna, spacer_rna):
+def compute_features(dr_rna, spacer_rna, wt_dr_mfe=0.0):
     full = dr_rna + spacer_rna
     ss, mfe = core.fold(full)
     dr_ss, dr_mfe = core.fold(dr_rna)
@@ -94,7 +99,7 @@ def compute_features(dr_rna, spacer_rna):
     stem_pairs = core.stem_pairs_of(dr_ss)
     p_fold = core.stem_intact_prob(full, stem_pairs) if stem_pairs else 1.0
     return {
-        "mfe": round(mfe, 2), "ddG_dr": round(dr_mfe, 2),
+        "mfe": round(mfe, 2), "ddG_dr": round(dr_mfe - wt_dr_mfe, 2),
         "bp_dist": None,  # 需 WT 基准, 主循环里算
         "cross_nt": cross_nt, "cross_pp": round(cross_pp, 4),
         "inv_max_run": inv_run,
@@ -124,7 +129,7 @@ def main():
     rows = []
     for tag, full_seq in sorted(seqs.items()):
         dr = full_seq[:21]
-        feats = compute_features(dr, spacer)
+        feats = compute_features(dr, spacer, wt_dr_mfe)
         feats["bp_dist"] = None  # 后填
         act = TOOLBOX_ACTIVITY.get(tag, {})
         rows.append({"tag": tag, "dr_rna": dr, "n_mut": sum(
@@ -154,16 +159,51 @@ def main():
         rho33 = spearman(vals[mask], acts33[mask])
         print("%-10s  rho(RBS0)=%+.3f  rho(RBS33)=%+.3f" % (feat, rho0, rho33))
 
-    screen = extract_screen()
+    # === Fig1g 活性全表 + 工具箱同尺度锚点(程序化提取, 不硬编码) ===
+    fig1g = extract_screen()
+    tag_map = {"CN": "Canonical"}
+    anchors_fig1g = {}
+    for r in rows:
+        key = tag_map.get(r["tag"], r["tag"])
+        if key in fig1g:
+            r["fig1g"] = fig1g[key]
+            anchors_fig1g[r["tag"]] = fig1g[key]
+    print("\nFig1g 全表 %d 条; 工具箱同尺度锚点 %d 条: %s" % (
+        len(fig1g), len(anchors_fig1g), anchors_fig1g))
+
+    # === Sanger 耐受集(MOESM1 Sup Fig.2/3, 54 条)特征计算 ===
+    sanger_path = os.path.join(DATA, "han2025_sanger_sequences.json")
+    sanger_rows = []
+    if os.path.exists(sanger_path):
+        sanger = json.load(open(sanger_path, encoding="utf-8"))
+        for e in sanger["entries"]:
+            dr = e["seq"]
+            feats = compute_features(dr, spacer, wt_dr_mfe)
+            v_ss, _ = core.fold(dr + spacer)
+            feats["bp_dist"] = RNA_bp_distance(wt_full_ss, v_ss)
+            sanger_rows.append({
+                "label": e["label"], "group": e["group"],
+                "dr_rna": dr, "confidence": e["confidence"],
+                "reads": e.get("reads", 1),
+                "matches_toolbox": e.get("matches_toolbox"),
+                "n_mut": sum(1 for a, b in zip(wt_dr, dr) if a != b),
+                **feats})
+        print("Sanger 耐受集 %d 条特征计算完成" % len(sanger_rows))
+
     json.dump({"toolbox_sequences": {t: s for t, s in seqs.items()},
                "toolbox_features": rows,
                "toolbox_activity": TOOLBOX_ACTIVITY,
-               "screen_96": screen,
-               "source": "Han et al. 2025 Nat Commun PMC12508434 (LbCas12a CRISPRi)"},
+               "toolbox_activity_fig1g": anchors_fig1g,
+               "fig1g_activity": fig1g,
+               "sanger_tolerance": sanger_rows,
+               "sanger_source": (sanger["source"] + "; " + sanger["extraction"]
+                                 if sanger_rows else None),
+               "source": "Han et al. 2025 Nat Commun s41467-025-64010-z "
+                         "(LbCas12a CRISPRi)"},
               open(os.path.join(DATA, "han2025_dataset.json"), "w",
                    encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("\n数据集 -> data/han2025_dataset.json (工具箱%d + 筛选%d)" % (
-        len(rows), len(screen)))
+    print("\n数据集 -> data/han2025_dataset.json (工具箱%d + Fig1g %d + "
+          "Sanger耐受%d)" % (len(rows), len(fig1g), len(sanger_rows)))
 
 
 def RNA_bp_distance(s1, s2):
