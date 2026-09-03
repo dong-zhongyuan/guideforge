@@ -1,11 +1,101 @@
 {
  "model": "DecisionTreeRegressor(max_leaf=4)",
+ "usage_scope": "文献先验排序(相对次序)专用; 绝对预测值不可引用——fig1f 留出 MAE 超预登记阈值(归因见 fig1f_holdout_check)",
  "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a toolbox n=7 + Fig.1f 视觉转录 n=9 (置信度分级见 han2025_dataset.json fig1f_pairs)",
  "fig1f_holdout_check": {
   "design": "train toolbox n=7, test fig1f n=9",
   "spearman": 0.25,
   "mae": 0.2167,
-  "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; Spearman>0 且 MAE<工具箱 y 范围的 1/3 视为转录配对可用"
+  "spearman_boot_ci95": [
+   -0.4,
+   0.793
+  ],
+  "mae_boot_ci95": [
+   0.1606,
+   0.2888
+  ],
+  "mae_threshold_prereg": 0.1617,
+  "train_y_range": [
+   0.443,
+   0.5829
+  ],
+  "test_labels_above_train_range": 9,
+  "per_point": [
+   {
+    "tag": "FL4",
+    "confidence": "fig1f:medium",
+    "y_true": 0.7755,
+    "y_pred": 0.4991,
+    "abs_err": 0.2764,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S10",
+    "confidence": "fig1f:medium",
+    "y_true": 0.6301,
+    "y_pred": 0.4603,
+    "abs_err": 0.1698,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S14",
+    "confidence": "fig1f:medium",
+    "y_true": 0.6816,
+    "y_pred": 0.4603,
+    "abs_err": 0.2213,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S16",
+    "confidence": "fig1f:medium",
+    "y_true": 0.6477,
+    "y_pred": 0.4603,
+    "abs_err": 0.1874,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S20",
+    "confidence": "fig1f:medium",
+    "y_true": 0.928,
+    "y_pred": 0.4603,
+    "abs_err": 0.4676,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S21",
+    "confidence": "fig1f:medium",
+    "y_true": 0.6415,
+    "y_pred": 0.4603,
+    "abs_err": 0.1811,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S3",
+    "confidence": "fig1f:high",
+    "y_true": 0.6109,
+    "y_pred": 0.4603,
+    "abs_err": 0.1505,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S5",
+    "confidence": "fig1f:high",
+    "y_true": 0.6734,
+    "y_pred": 0.5825,
+    "abs_err": 0.0909,
+    "label_in_train_range": false
+   },
+   {
+    "tag": "S7",
+    "confidence": "fig1f:medium",
+    "y_true": 0.6659,
+    "y_pred": 0.4603,
+    "abs_err": 0.2055,
+    "label_in_train_range": false
+   }
+  ],
+  "extrapolation_note": "决策树预测上界=训练 y 最大值; 全部 9 条 fig1f 标签高于训练上界 0.583 → MAE 超阈主因是 Fig1g 主图与 Fig1f 附图两图版间的水平偏移叠加树模型不可外推, 非排序能力失败; 本用途(先验排序)的有效判据是秩一致性(Spearman 及其 CI)",
+  "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; Spearman>0 且 MAE<全体 y 值域的 1/3 视为转录配对可用; MAE 超阈后果: fig1f 配对仅用于秩级体检, 绝对水平不采用"
  },
  "features": [
   "ddG_dr",

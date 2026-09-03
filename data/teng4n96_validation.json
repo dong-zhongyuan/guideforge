@@ -20,12 +20,12 @@
   "cons3_hits": 0,
   "contact_mode": "对齐转移"
  },
- "relative_score_at_pipeline_weights": -1.2464,
+ "relative_score_at_pipeline_weights": -1.2787,
  "hard_filters_pass": true,
  "reference_distribution": {
   "file": "tp53_r248q_zengdr.v2.variants.csv",
   "n_passed": 256,
-  "percentile_of_variant": 86.7
+  "percentile_of_variant": 85.2
  },
  "verdict": "PASS(不误伤): 分数百分位 >= 25%",
  "disclaimer": "Cas12a/哺乳体系证据; 检验对象是打分体系与文献正向证据的一致性, 非 Cas12a2 提活证明"

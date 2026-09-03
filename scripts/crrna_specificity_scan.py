@@ -19,8 +19,12 @@ import argparse
 import csv
 import json
 import os
+import sys
 from urllib.parse import quote
 from urllib.request import urlopen
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scaffold_registry import get_pam  # noqa: E402
 
 def _build_comp():
     table = str.maketrans({'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'U': 'A'})
@@ -92,7 +96,8 @@ def main():
     ap.add_argument('--spacer', required=True, help='固定 spacer(17-25nt ACGT/U)')
     ap.add_argument('--fasta', default=None, help='转录本 FASTA(可多条)')
     ap.add_argument('--gene', default=None, help='基因名(经 NCBI 拉 mRNA, 与 --fasta 二选一)')
-    ap.add_argument('--pfs', default='GAAAG', help='PFS 规则(默认注册表 cas12a2 口径 GAAAG)')
+    ap.add_argument('--pfs', default=None,
+                    help='PFS 规则(默认取注册表 cas12a2 条目 pam.rule; 换体系用 --pfs 覆盖)')
     ap.add_argument('--max-mismatch', type=int, default=4)
     ap.add_argument('--out', default='crrna_specificity', help='输出前缀')
     args = ap.parse_args()
@@ -100,7 +105,7 @@ def main():
     spacer = normalize(args.spacer)
     if not 17 <= len(spacer) <= 25 or set(spacer) - set('ACGT'):
         ap.error('--spacer 必须为 17-25nt ACGT/U')
-    pfs_rule = normalize(args.pfs)
+    pfs_rule = normalize(args.pfs or get_pam('cas12a2')['rule'])
     target = revcomp(spacer)  # spacer 与靶 RNA 反向互补
 
     if args.fasta:

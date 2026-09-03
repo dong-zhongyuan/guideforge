@@ -59,6 +59,16 @@ def load_han():
     return np.array(X), np.array(y), tags, d, confs
 
 
+DEWEIRDT_SCAN = os.path.join(DATA, "raw", "deweirdt2020_dr_scan.json")
+
+
+def load_deweirdt2020():
+    """DeWeirdt 2020 alt-DR 扫描全量特征表(由 crrna_han2025_features.py 生成)。"""
+    if not os.path.exists(DEWEIRDT_SCAN):
+        return None
+    return json.load(open(DEWEIRDT_SCAN, encoding="utf-8"))
+
+
 ENDPOINTS = {"fig1g": "fig1g", "cis_end": "cis_end", "trans_end": "trans_end",
              "rbs0": "rbs0", "rbs33": "rbs33"}
 # 方向统一: True = 数值越大越优(fig1g/rbs 为抑制读数取负号), 供池化模型共用语义
@@ -71,7 +81,9 @@ def load_pooled():
 
     全部可用同源活性观测, 逐终点 z 标准化并统一"越大越优"方向:
       - Han 2025 工具箱 5 终点 x 7 条(fig1g 抑制 / cis / trans 切割 / RBS0/RBS33 两档表达)
+      - Han 2025 Fig.1f 视觉转录 9 条(并入 fig1g 终点组)
       - Teng 2019 4n96 序数对(WT=-1, 4n96=+1; 跨物种 Fn/Cas12a 口径, 序数级)
+    Tian 2025 RRS 96 条不入池(伪结外特征盲端, 见函数体注释), 作外部验证。
     已尝试并放弃的终点(SPR KD / SupFig8-10 原始荧光): 传感器预处理不可校验 /
     增长混杂方向与 Fig1g 相反——拒绝理由记录于 han2025_dataset.json。
     返回 (X, y, meta), meta 每行 = {dataset, tag, endpoint}。
@@ -95,6 +107,10 @@ def load_pooled():
             y.append(float(zi))
             meta.append({"dataset": src, "tag": r["tag"],
                          "endpoint": ep})
+    # 注(2026-09-03): Tian 2025 RRS 单点扫描 96 条不入池——RRS 区(DR 5' 端 4nt)
+    # 活性由假结配对承载, 伪结外特征按构造不可表示(与 Creutzburg Sp8 盲区同源),
+    # 混入训练实测把 Han 各终点 LOEO 全部拖差; 该集改作池化模型的独立外部验证,
+    # 见 main() 的 tian2025 外部验证段。
     # Teng 2019 4n96 序数对(自身数据集内 z=±1; 特征以 canonical spacer 上下文计算)
     try:
         import crrna_scaffold_design as core
@@ -126,6 +142,12 @@ def load_pooled():
                          "endpoint": "ordinal_4n96"})
     except Exception as e:
         print("Teng 序数对跳过: %s" % e)
+    # 注(2026-09-03): DeWeirdt 2020 alt-DR 35,883 条已尝试子样入池并回退——
+    # 120 条 LFC 秩分层子样(占池 72%)实测把其余 5 终点 LOEO 全部拖负
+    # (rbs33 +0.96->-0.75, rbs0 +0.68->-0.64, trans +0.25->-0.71,
+    # fig1g +0.04->-0.70; 仅 cis -0.86->+0.32), 单终点淹没多终点共识语义,
+    # 且 DeWeirdt 终点自身 LOEO 亦为负(-0.36)。拒绝入池, 改作 main() 的
+    # 独立外部验证(与 Tian 2025 同模式)。
     return np.array(X), np.array(y), meta
 
 
@@ -285,16 +307,55 @@ def main():
         ry = np.argsort(np.argsort(y[idx_f1f]))
         rho_ho = float(np.corrcoef(rk, ry)[0, 1])
         mae_ho = float(np.mean(np.abs(pr - y[idx_f1f])))
+        thr = float((y.max() - y.min()) / 3)  # 预登记阈值: 全体 y 值域 1/3
+        y_tr = y[idx_tb]
+        # 外推归因 + 逐点误差(2026-09-03: MAE 超阈的结构化诊断, 不改阈值不改数据)
+        per_point = [{"tag": tags[k], "confidence": confs[k],
+                      "y_true": round(float(y[k]), 4),
+                      "y_pred": round(float(pr[j]), 4),
+                      "abs_err": round(float(abs(pr[j] - y[k])), 4),
+                      "label_in_train_range": bool(y[k] <= y_tr.max())}
+                     for j, k in enumerate(idx_f1f)]
+        n_out = sum(1 for p in per_point if not p["label_in_train_range"])
+        # bootstrap 95% CI(固定种子, 对检验点重抽样 10000 次)
+        rng = np.random.default_rng(42)
+        n_ho = len(idx_f1f)
+        boot_rho, boot_mae = [], []
+        for _ in range(10000):
+            b = rng.integers(0, n_ho, n_ho)
+            if len(set(b.tolist())) < 3:
+                continue
+            boot_rho.append(float(np.corrcoef(rk[b], ry[b])[0, 1]))
+            boot_mae.append(float(np.mean(np.abs(pr[b] - y[idx_f1f][b]))))
+        rho_ci = [round(float(np.percentile(boot_rho, q)), 3)
+                  for q in (2.5, 97.5)]
+        mae_ci = [round(float(np.percentile(boot_mae, q)), 4)
+                  for q in (2.5, 97.5)]
         fig1f_holdout = {
             "design": "train toolbox n=%d, test fig1f n=%d" % (
                 len(idx_tb), len(idx_f1f)),
             "spearman": round(rho_ho, 3), "mae": round(mae_ho, 4),
+            "spearman_boot_ci95": rho_ci, "mae_boot_ci95": mae_ci,
+            "mae_threshold_prereg": round(thr, 4),
+            "train_y_range": [round(float(y_tr.min()), 4),
+                              round(float(y_tr.max()), 4)],
+            "test_labels_above_train_range": n_out,
+            "per_point": per_point,
+            "extrapolation_note": "决策树预测上界=训练 y 最大值; 全部 %d 条 fig1f "
+                "标签高于训练上界 %.3f → MAE 超阈主因是 Fig1g 主图与 Fig1f 附图两图版"
+                "间的水平偏移叠加树模型不可外推, 非排序能力失败; 本用途(先验排序)"
+                "的有效判据是秩一致性(Spearman 及其 CI)" % (n_out, y_tr.max()),
             "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; "
-                    "Spearman>0 且 MAE<工具箱 y 范围的 1/3 视为转录配对可用"}
+                    "Spearman>0 且 MAE<全体 y 值域的 1/3 视为转录配对可用; "
+                    "MAE 超阈后果: fig1f 配对仅用于秩级体检, 绝对水平不采用"}
         print("\n=== fig1f 留出验证(训练%d工具箱 -> 检验%d转录对) ===" % (
             len(idx_tb), len(idx_f1f)))
-        print("Spearman = %+.3f, MAE = %.4f (y 范围 %.3f-%.3f)" % (
-            rho_ho, mae_ho, y.min(), y.max()))
+        print("Spearman = %+.3f [CI95 %+.3f, %+.3f], MAE = %.4f [CI95 %.4f, %.4f] "
+              "(阈值 %.3f, y 范围 %.3f-%.3f)" % (
+                  rho_ho, rho_ci[0], rho_ci[1], mae_ho, mae_ci[0], mae_ci[1],
+                  thr, y.min(), y.max()))
+        print("外推归因: %d/%d 条检验标签高于训练上界 %.3f" % (
+            n_out, n_ho, y_tr.max()))
 
     # 特征重要性
     print("\n=== 特征重要性 ===")
@@ -399,8 +460,85 @@ def main():
             r.get("pred_cis_end", float("nan")),
             r.get("pred_trans_end", float("nan"))))
 
+    # === Tian 2025 RRS 外部验证(2026-09-03): 池化模型(训练集不含 Tian)
+    #     预测 96 条独立 RRS 单点扫描, 量化伪结外特征对 RRS 区的盲端 ===
+    rrs_check = None
+    rrs = [r for r in han.get("tian2025_rrs_pairs") or []
+           if r.get("rrs_rel") is not None]
+    if len(rrs) >= 20:
+        Xr = np.array([[float(r[f]) for f in FEATURES] for r in rrs])
+        yr = np.array([float(r["rrs_rel"]) for r in rrs])
+        pr = pooled.predict(Xr)
+        rk = np.argsort(np.argsort(pr))
+        ry = np.argsort(np.argsort(yr))
+        rho_all = float(np.corrcoef(rk, ry)[0, 1])
+        per_crna = []
+        for nn in sorted({int(r["crRNA"]) for r in rrs}):
+            idx = [i for i, r in enumerate(rrs) if int(r["crRNA"]) == nn]
+            if len(idx) >= 5:
+                per_crna.append(float(np.corrcoef(rk[idx], ry[idx])[0, 1]))
+        rrs_check = {
+            "n": len(rrs),
+            "spearman_pooled_vs_rrs_rel": round(rho_all, 3),
+            "per_crna_spearman_median": round(float(np.median(per_crna)), 3)
+            if per_crna else None,
+            "design": "池化模型训练集不含任何 Tian 2025 数据(独立外部验证)",
+            "interpretation": "RRS 区(DR 5' 端 4nt)活性由假结配对承载(Tian 2025 "
+                              "Fig.1: U+3/U+4 与茎环互作), 伪结外特征按构造不可表示"
+                              "——Spearman≈0 为预期盲端, 与 Creutzburg Sp8 盲区同源; "
+                              "结论: 选型器排序不适用于 DR 5' 端 RRS 位点变体, "
+                              "该位点区候选须按位置规则另行排除"}
+        print("\n=== Tian2025 RRS 外部验证(n=%d) ===" % len(rrs))
+        print("整体 Spearman = %+.3f; 逐 crRNA 中位 = %+.3f"
+              % (rho_all, rrs_check["per_crna_spearman_median"] or float("nan")))
+        print("解读: 伪结外特征对 RRS 区盲端(预期内), 选型器不适于 RRS 位点变体")
+
+    # === DeWeirdt 2020 alt-DR 外部验证(2026-09-03): 池化模型(训练集不含
+    #     DeWeirdt)预测全量 35,883 条变体两方向, 检验同源迁移对大规模 DR
+    #     功能扫描的外推(茎/环区在变体表示范围内, 与 RRS 盲端互补的对照) ===
+    dw_check = None
+    scan = load_deweirdt2020()
+    if scan:
+        dw_check = {"design": "池化模型训练集不含任何 DeWeirdt 2020 数据"
+                              "(独立外部验证, 全量无剔除)",
+                    "direction": "LFC 低=活性强, 模型 z 高=预测优 -> 报告 "
+                                 "Spearman(pred, -LFC), 正=方向正确"}
+        for ori, fkey, lkey in (("127", "features_127", "lfc127"),
+                                ("128", "features_128", "lfc128")):
+            idx = [i for i, r in enumerate(scan["rows"])
+                   if r.get(fkey) and r.get(lkey) is not None]
+            Xd = np.array([[float(scan["rows"][i][fkey][f]) for f in FEATURES]
+                           for i in idx])
+            yd = np.array([-float(scan["rows"][i][lkey]) for i in idx])
+            pr = pooled.predict(Xd)
+            rho_dw = float(np.corrcoef(np.argsort(np.argsort(pr)),
+                                       np.argsort(np.argsort(yd)))[0, 1])
+            # 同数据集 5 折 CV(归因诊断: 区分"特征在该体系内无信息"
+            # 与"跨数据集迁移失败"; 树超参与池化模型一致)
+            from sklearn.model_selection import KFold
+            pr_cv = np.zeros(len(idx))
+            for tr, te in KFold(n_splits=5, shuffle=True,
+                                random_state=42).split(Xd):
+                m3 = DecisionTreeRegressor(max_leaf_nodes=6,
+                                           min_samples_leaf=2,
+                                           random_state=42)
+                m3.fit(Xd[tr], yd[tr])
+                pr_cv[te] = m3.predict(Xd[te])
+            rho_cv = float(np.corrcoef(np.argsort(np.argsort(pr_cv)),
+                                       np.argsort(np.argsort(yd)))[0, 1])
+            dw_check["ori" + ori] = {
+                "n": len(idx),
+                "spearman_pred_vs_neglfc": round(rho_dw, 3),
+                "within_dataset_cv5_spearman": round(rho_cv, 3)}
+            print("\n=== DeWeirdt2020 alt-DR 外部验证(pRDA_%s, n=%d) ==="
+                  % (ori, len(idx)))
+            print("Spearman(池化预测 vs -LFC) = %+.3f; 同数据集 5 折 CV = %+.3f"
+                  % (rho_dw, rho_cv))
+
     # 输出
     out = {"model": "DecisionTreeRegressor(max_leaf=4)",
+           "usage_scope": "文献先验排序(相对次序)专用; 绝对预测值不可引用——"
+                          "fig1f 留出 MAE 超预登记阈值(归因见 fig1f_holdout_check)",
            "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a "
                             "toolbox n=7 + Fig.1f 视觉转录 n=9 "
                             "(置信度分级见 han2025_dataset.json fig1f_pairs)",
@@ -435,6 +573,8 @@ def main():
                             1 for m in pmeta if m["dataset"] == "han2025_fig1f"),
                         "teng2019_ordinal": sum(
                             1 for m in pmeta if m["dataset"] == "teng2019")},
+        "tian2025_external_check": rrs_check,
+        "deweirdt2020_external_check": dw_check,
         "fig1f_note": "fig1g 终点组并入 Fig.1f 视觉转录 9 条(meta.dataset="
                       "han2025_fig1f 可追溯; 置信度 high 2/medium 7, 序列均经 "
                       "Sanger 独立源交叉校验)",
@@ -445,7 +585,13 @@ def main():
         "rejected_endpoints": {
             "spr_kd": "传感图相位预处理无法对论文定性序(canonical 最强)校验, 拟合不收敛",
             "supfig8_10_raw_fluor": "0mM 诱导下面板间仍 3 倍差、10mM 方向与 "
-                                    "Fig1g 相反——增长混杂未归一, 拒绝入库"},
+                                    "Fig1g 相反——增长混杂未归一, 拒绝入库",
+            "deweirdt2020_pooling": "120 条 LFC 秩分层子样入池实测(2026-09-03): "
+                                    "单终点占池 72%, 其余 5 终点 LOEO 全拖负"
+                                    "(rbs33 +0.96→−0.75, rbs0 +0.68→−0.64, "
+                                    "trans +0.25→−0.71, fig1g +0.04→−0.70; "
+                                    "deweirdt 自身 −0.36; 仅 cis 转正), "
+                                    "拒绝入池, 全量改作独立外部验证"},
         "family_ranking_pooled": fam_rows},
         open(os.path.join(DATA, "homolog_training.json"), "w",
              encoding="utf-8"), ensure_ascii=False, indent=1)

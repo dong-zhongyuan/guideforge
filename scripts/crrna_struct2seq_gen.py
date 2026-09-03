@@ -26,6 +26,7 @@ def main():
     ap.add_argument('--out-dir', required=True)
     ap.add_argument('--up-bias', type=float, default=0.85, help='向 WT 序列偏倚的强度(0-1)')
     ap.add_argument('--weights', default=os.path.join(S2S_DIR, 'Struct2SeQ_SHAPE.pt'))
+    ap.add_argument('--seed', type=int, default=0, help='随机种子(生成式提案可复现)')
     args = ap.parse_args()
 
     os.chdir(S2S_DIR)  # generate.py 用相对路径读 test10_configs/
@@ -48,6 +49,13 @@ def main():
         _orig_load = torch.load
         torch.load = lambda *a, **k: _orig_load(  # type: ignore
             *a, **dict(k, map_location=k.get('map_location', 'cpu')))
+
+    # 生成式提案可复现: 统一随机种子(2026-09-03 审计修复, 此前全链路无 seed 传参)
+    import random
+    import numpy as np
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
 
     os.makedirs(args.out_dir, exist_ok=True)
     sys.argv = [

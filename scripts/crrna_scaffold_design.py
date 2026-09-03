@@ -72,6 +72,9 @@ import csv
 import hashlib
 import json
 import os
+import shutil
+import sys
+import tempfile
 import urllib.request
 
 import numpy as np
@@ -199,7 +202,10 @@ def compute_contacts(expected_dr, cif_path=PDB_CIF, cutoff=CONTACT_CUTOFF_A):
     if not os.path.isfile(cif_path):
         os.makedirs(os.path.dirname(cif_path), exist_ok=True)
         print(f'下载 {PDB_ID}.cif: {PDB_URL}')
-        urllib.request.urlretrieve(PDB_URL, cif_path)
+        # urlretrieve 无超时参数, 改用 urlopen+显式超时, 防网络挂起死等
+        with urllib.request.urlopen(PDB_URL, timeout=120) as resp, \
+                open(cif_path, 'wb') as out:
+            shutil.copyfileobj(resp, out)
     structure = MMCIFParser(QUIET=True).get_structure(PDB_ID, cif_path)
     model = structure[0]
     aa_names = {'ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 'ILE',
@@ -605,7 +611,18 @@ def strategy_a(dr, args, rng):
                 variants.append(dr[:i] + b + dr[i + 1:])
     positions = list(range(len(dr)))
     seen = set()
-    while len(variants) < len(dr) * 3 + args.n_double:
+    # 双点组合上界 C(L,2)*9(位点对×3×3替换); --n-double 超上界时去重抽样会
+    # 无限循环(2026-09-03 审计修复), 截断目标到上界并加迭代上限保护
+    max_double = len(positions) * (len(positions) - 1) // 2 * 9
+    if args.n_double > max_double:
+        print(f'[策略A] --n-double {args.n_double} 超双点组合上界 {max_double}, 截断到上界')
+    n_target = len(dr) * 3 + min(args.n_double, max_double)
+    it = 0
+    while len(variants) < n_target:
+        it += 1
+        if it > 50 * max(n_target, 1):
+            print(f'[策略A] 双点抽样迭代超上限(50×目标数), 以当前 {len(variants)} 条继续')
+            break
         i, j = sorted(rng.choice(positions, size=2, replace=False).tolist())
         bi, bj = rng.choice(list(BASES)), rng.choice(list(BASES))
         if bi == dr[i] or bj == dr[j]:
@@ -643,8 +660,8 @@ def rnet_shape_screen(entries, target_db, args):
     """对 [(key, construct_rna)] 预测 RNet SHAPE 并算与 target_db 的一致性。
     返回 {key: score}; 子进程失败返回 None（不阻断主流程, 输出中标注）。"""
     import subprocess
-    workdir = os.path.join(ROOT, 'data', '_rnet_shape_run')
-    os.makedirs(workdir, exist_ok=True)
+    # 唯一临时目录(2026-09-03 审计修复: 固定共享目录并发运行会互相覆盖)
+    workdir = tempfile.mkdtemp(prefix='_rnet_shape_run_', dir=os.path.join(ROOT, 'data'))
     in_csv = os.path.join(workdir, 'in.csv')
     out_csv = os.path.join(workdir, 'out.csv')
     with open(in_csv, 'w', newline='', encoding='utf-8') as fh:
@@ -668,6 +685,10 @@ def rnet_shape_screen(entries, target_db, args):
                 profile = [float(x) for x in row['shape'].split(';')]
                 result[row['id']] = round(shape_consistency(profile, target_db), 1)
         return result
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        # 引擎环境缺失/超时只跳过本策略, 不炸掉主管线(2026-09-03 审计修复)
+        print(f"[rnet-screen] 子进程不可用或超时, 跳过: {e}")
+        return None
     finally:
         for f in os.listdir(workdir):
             os.remove(os.path.join(workdir, f))
@@ -678,19 +699,28 @@ def strategy_a2(dr, wt, args):
     """策略A2: Struct2SeQ 逆折叠提案（子进程调 rnet 环境）。
     以 WT DR 茎环结构为靶、WT 序列 upweight 生成候选，由官方 Jaccard/rescue 机制筛选。"""
     import subprocess
-    workdir = os.path.join(ROOT, 'data', '_s2s_run')
-    os.makedirs(workdir, exist_ok=True)
+    # 唯一临时目录(2026-09-03 审计修复: 固定共享目录并发运行会互相覆盖)
+    workdir = tempfile.mkdtemp(prefix='_s2s_run_', dir=os.path.join(ROOT, 'data'))
     target_csv = os.path.join(workdir, 'target.csv')
     with open(target_csv, 'w', encoding='utf-8') as fh:
         fh.write('Title,Dot-bracket,wild_type_sequence\n')
         fh.write(f"dr_wt,{wt['dr_only_struct']},{dr}\n")
     wrapper = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'crrna_struct2seq_gen.py')
-    proc = subprocess.run(
-        [args.s2s_python, wrapper, '--target-csv', target_csv,
-         '--out-dir', workdir, '--up-bias', str(args.s2s_up_bias)],
-        capture_output=True, text=True, encoding='utf-8', errors='replace',
-        timeout=args.s2s_timeout)
+    try:
+        proc = subprocess.run(
+            [args.s2s_python, wrapper, '--target-csv', target_csv,
+             '--out-dir', workdir, '--up-bias', str(args.s2s_up_bias),
+             '--seed', str(args.seed)],
+            capture_output=True, text=True, encoding='utf-8', errors='replace',
+            timeout=args.s2s_timeout)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        # 引擎环境缺失/超时只跳过本策略, 不炸掉主管线(2026-09-03 审计修复)
+        print(f"[struct2seq] 子进程不可用或超时, 跳过 A2(策略A/B 不受影响): {e}")
+        for f in os.listdir(workdir):
+            os.remove(os.path.join(workdir, f))
+        os.rmdir(workdir)
+        return []
     if proc.returncode != 0:
         print(f"[struct2seq] 子进程失败, 跳过 A2(策略A/B 不受影响): "
               f"{(proc.stderr or proc.stdout or '')[-300:]}")
@@ -720,19 +750,27 @@ def strategy_a3(dr, args):
     import subprocess
     pdb_spacer = 'UGGAGCAACACCUGAAGAAGGCU'  # 8D4A 结构原生 spacer(几何上下文)
     target_db = fold(dr + pdb_spacer)[0]  # 结构链的 WT 二级结构(RNet-SS 复核一致)
-    workdir = os.path.join(ROOT, 'data', '_grnade_run')
-    os.makedirs(workdir, exist_ok=True)
+    # 唯一临时目录(2026-09-03 审计修复: 固定共享目录并发运行会互相覆盖)
+    workdir = tempfile.mkdtemp(prefix='_grnade_run_', dir=os.path.join(ROOT, 'data'))
     out_csv = os.path.join(workdir, 'grnade.csv')
     wrapper = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'crrna_grnade_gen.py')
     pdb = os.path.join(ROOT, 'data', '8D4A_crna_chainB.pdb')
-    proc = subprocess.run(
-        [args.s2s_python, wrapper, '--pdb', pdb, '--dr-len', str(len(dr)),
-         '--n-batches', str(args.grnade_batches), '--seed', str(args.seed),
-         '--target-sec-struct', target_db,
-         '--out', out_csv],
-        capture_output=True, text=True, encoding='utf-8', errors='replace',
-        timeout=args.s2s_timeout)
+    try:
+        proc = subprocess.run(
+            [args.s2s_python, wrapper, '--pdb', pdb, '--dr-len', str(len(dr)),
+             '--n-batches', str(args.grnade_batches), '--seed', str(args.seed),
+             '--target-sec-struct', target_db,
+             '--out', out_csv],
+            capture_output=True, text=True, encoding='utf-8', errors='replace',
+            timeout=args.s2s_timeout)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        # 引擎环境缺失/超时只跳过本策略, 不炸掉主管线(2026-09-03 审计修复)
+        print(f"[grnade] 子进程不可用或超时, 跳过 A3(其他策略不受影响): {e}")
+        for f in os.listdir(workdir):
+            os.remove(os.path.join(workdir, f))
+        os.rmdir(workdir)
+        return []
     if proc.returncode != 0:
         print(f"[grnade] 子进程失败, 跳过 A3(其他策略不受影响): "
               f"{(proc.stderr or proc.stdout or '')[-300:]}")
@@ -818,7 +856,10 @@ def main():
                     help='策略A4 双对共变组合抽样数')
     ap.add_argument('--use-struct2seq', action='store_true',
                     help='启用策略A2: Struct2SeQ 逆折叠提案(子进程调 rnet 环境)')
-    ap.add_argument('--s2s-python', default='/public/home/mengxl/dzy/envs/rnet/bin/python')
+    ap.add_argument('--s2s-python', default=os.environ.get('RNET_PYTHON'),
+                    help='rnet 环境 python 路径(默认取环境变量 RNET_PYTHON; '
+                         '未设置时 A2/A3/--rnet-screen 引擎策略报清晰错误, 其余策略不受影响; '
+                         '2026-09-03 审计修复: 不再硬编码个人 HPC 路径)')
     ap.add_argument('--s2s-up-bias', type=float, default=0.85, help='Struct2SeQ 向 WT 偏倚强度')
     ap.add_argument('--s2s-timeout', type=float, default=3600)
     ap.add_argument('--rnet-screen', action='store_true',
@@ -840,6 +881,9 @@ def main():
         ap.error('--spacer 必须为 17-25nt ACGT/U')
     if entry.get('scaffold_side') != '5prime':
         ap.error(f"效应子 {args.effector} 骨架方位 {entry.get('scaffold_side')} 非 5prime, 暂不支持")
+    if (args.use_struct2seq or args.use_grnade or args.rnet_screen) and not args.s2s_python:
+        ap.error('--use-struct2seq/--use-grnade/--rnet-screen 需要 rnet 环境 python: '
+                 '请传 --s2s-python 或设环境变量 RNET_PYTHON')
     rng = np.random.default_rng(args.seed)
 
     wt = wt_reference(dr, spacer, args.seed_len)
@@ -966,9 +1010,13 @@ def main():
                    ('strategy', 'n_double', 'sa_steps', 'seed', 'max_bp_dist',
                     'spacer_unpaired_margin', 'w_bp', 'w_ddg', 'w_contact', 'w_ens',
                     'w_hbond', 'w_fold', 'w_seed', 'seed_len', 'w_stab', 'w_cons3', 'cons3_window', 'proc_window',
-                    'no_protect_processing', 'use_covariation', 'cov_double',
-                    'use_struct2seq', 's2s_up_bias', 'rnet_screen',
-                    'rnet_screen_n', 'no_contacts', 'stab_dr_only', 'topk')},
+                    'no_protect_processing', 'allow_cross_pairing',
+                    'use_covariation', 'cov_double',
+                    'use_struct2seq', 's2s_python', 's2s_up_bias', 's2s_timeout',
+                    'use_grnade', 'grnade_batches',
+                    'rnet_screen', 'rnet_screen_n', 'no_contacts', 'stab_dr_only', 'topk')},
+        # 生成命令行血缘(2026-09-03 审计修复: params 全但产出无法自证由哪条命令生成)
+        'argv': sys.argv[1:],
         'n_variants': len(rows), 'n_passed': n_pass, 'n_pareto': n_pareto,
         'library_sha256': hashlib.sha256(
             json.dumps([r['dr_seq'] for r in rows], sort_keys=True).encode()).hexdigest(),

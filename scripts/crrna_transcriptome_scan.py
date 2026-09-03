@@ -31,6 +31,7 @@ ROOT = os.path.abspath(os.path.join(HERE, '..'))
 sys.path.insert(0, HERE)
 
 from crrna_specificity_scan import revcomp, normalize  # noqa: E402
+from scaffold_registry import get_pam  # noqa: E402
 
 B2I = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
 SEED_LEN = 7  # 窗口 5' 端 7nt ↔ spacer 3' 种子区(Bravo 2023)
@@ -129,7 +130,8 @@ def main():
     ap.add_argument('--spacer', required=True)
     ap.add_argument('--fasta', required=True, help='主 FASTA(如 pc_transcripts)')
     ap.add_argument('--fasta2', default=None, help='追加 FASTA(如 lncRNA)')
-    ap.add_argument('--pfs', default='GAAAG')
+    ap.add_argument('--pfs', default=None,
+                    help='PFS 规则(默认取注册表 cas12a2 条目 pam.rule; 换体系用 --pfs 覆盖)')
     ap.add_argument('--max-mismatch', type=int, default=4)
     ap.add_argument('--out', default='transcriptome_scan')
     args = ap.parse_args()
@@ -138,7 +140,7 @@ def main():
     if not 17 <= len(spacer) <= 25 or set(spacer) - set('ACGT'):
         ap.error('--spacer 必须为 17-25nt ACGT/U')
     target = revcomp(spacer)
-    pfs = normalize(args.pfs)
+    pfs = normalize(args.pfs or get_pam('cas12a2')['rule'])
 
     records = read_fasta_annot(args.fasta)
     n1 = len(records)

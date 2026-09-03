@@ -15,6 +15,10 @@
   5. 与 Fig.3b 活性做 Spearman 相关(参考);
   6. (2026-09-03) 主文 Fig.1f 序列表视觉转录: 从编号-序列桥中恢复
      9 条新监督对(见 FIG1F_TRANSCRIPTION 溯源), 干净监督对 7 -> 16。
+  7. (2026-09-03) Tian 2025 RRS 单点扫描入库(parse_tian2025):
+     8 crRNA x 12 突变 = 96 条 LbCas12a trans-切割相对活性监督对。
+  8. (2026-09-03) DeWeirdt 2020 AsCas12a 替代 DR 扫描入库(parse_deweirdt2020):
+     35,883 条 20nt DR 变体 x 2 方向构建的负筛 LFC(全量特征写 data/raw/)。
 诚实边界: LbCas12a CRISPRi(GFP 抑制)体系, 非 Cas12a2 RNA 触发杀伤;
   Fig1g 的 145 个编号(F/S/L/FL)与序列的映射未随论文数值源数据发表
   (2026-09-02 查证 MOESM1-7; 2026-09-03 复查 MOESM7 全部 25 个工作表 +
@@ -148,6 +152,169 @@ def extract_cleavage(sheet="Sup Fig. 5", col0=1):
     return out
 
 
+# === DeWeirdt 2020 alt-DR 扫描(2026-09-03 入库) ===
+# 来源: DeWeirdt et al. 2020, Nat Biotechnol 39:94-104, doi:10.1038/s41587-020-0600-6
+#   Supp Data 4 (= springer 41587_2020_600_MOESM6_ESM.xlsx, sheet alt_DR_reads):
+#   35,682 随机化变体(茎区 ≤3 可变碱基对 + 单链/环区 ≤3 可变核苷酸)
+#   + intend-6T/random 对照 + 1 条 wildtype, 共 35,883 行, 20nt DR 窗口。
+# 活性口径: MELJUSO + 2xNLS-AsCas12a 合成致死负筛(BCL2L1xMCL1 双敲致死),
+#   LFC = log2((Rep+1)/(pDNA+1)) 两重复均值, 低=活性强(功能 DR 致细胞耗竭);
+#   两方向构建分别给读数: pRDA_127 = BCL2L1 guide-DR库-MCL1 guide(变体 DR 配 MCL1 spacer),
+#   pRDA_128 = MCL1 guide-DR库-BCL2L1 guide(变体 DR 配 BCL2L1 spacer)。
+# spacer 序列: MOESM1 Supplementary Table 3 "Individual guides used in this study"(Fig.4a)。
+DEWEIRDT_WT_DR_DNA = "TAATTTCTACTCTTGTAGAT"  # alt_DR_reads type='wildtype' 行
+DEWEIRDT_SPACERS = {  # DNA, 23nt; 键名 = 构建(变体 DR 的成熟 crRNA 下游 spacer)
+    "pRDA_127": "ATGTCCAGTTTCCGAAGCATGCC",  # MCL1 guide (Fig.4a)
+    "pRDA_128": "TGGGAAAGCTTGTAGGAGAGAAA",  # BCL2L1 guide (Fig.4a)
+}
+
+
+def parse_deweirdt2020():
+    """DeWeirdt 2020 AsCas12a 替代 DR 扫描提取(2026-09-03)。
+
+    返回 rows: 每变体 {tag, dr_rna, n_mut, cls, lfc127, lfc128,
+      features_127, features_128}; 特征以各自方向 spacer 上下文、
+      同方向 WT 为基准(ddG_dr/bp_dist), 口径与工具箱 compute_features 一致。
+    源文件缺失返回 [] 并提示(不阻断)。
+    """
+    path = os.path.join(DATA, "41587_2020_600_MOESM6_ESM.xlsx")
+    if not os.path.exists(path):
+        print("DeWeirdt2020 源文件未入库(data/41587_2020_600_MOESM6_ESM.xlsx), 跳过")
+        return []
+    wb = openpyxl.load_workbook(path, data_only=True, read_only=True)
+    ws = wb["alt_DR_reads"]
+    raw = []
+    for row in ws.iter_rows(min_row=7, values_only=True):
+        if not row or row[0] is None:
+            continue
+        try:
+            counts = [float(c) for c in row[2:8]]
+        except (TypeError, ValueError):
+            continue
+        raw.append((str(row[0]).strip().upper(), str(row[1] or "").strip(),
+                    counts))
+    wb.close()
+    wt = [r for r in raw if r[1] == "wildtype"]
+    if len(wt) != 1 or wt[0][0] != DEWEIRDT_WT_DR_DNA:
+        raise SystemExit("DeWeirdt2020 WT 锚定失败: wildtype 行=%s" % (wt[:2]))
+    # 各方向 WT 折叠基准
+    base = {}
+    for ori, sp_dna in DEWEIRDT_SPACERS.items():
+        sp = sp_dna.replace("T", "U")
+        wt_dr = DEWEIRDT_WT_DR_DNA.replace("T", "U")
+        wt_full_ss, _ = core.fold(wt_dr + sp)
+        _, wt_dr_mfe = core.fold(wt_dr)
+        base[ori] = (sp, wt_dr, wt_full_ss, wt_dr_mfe)
+    rows = []
+    for seq_dna, cls, (a1, b1, p1, a2, b2, p2) in raw:
+        dr = seq_dna.replace("T", "U")
+        if len(dr) != 20 or set(dr) - set("AUCG"):
+            continue
+        entry = {"tag": "%s_%s" % (cls, seq_dna), "dr_rna": dr,
+                 "cls": cls,
+                 "n_mut": sum(a != b for a, b in zip(DEWEIRDT_WT_DR_DNA, seq_dna)),
+                 "lfc127": round(float(np.mean([
+                     np.log2((a1 + 1) / (p1 + 1)),
+                     np.log2((b1 + 1) / (p1 + 1))])), 4),
+                 "lfc128": round(float(np.mean([
+                     np.log2((a2 + 1) / (p2 + 1)),
+                     np.log2((b2 + 1) / (p2 + 1))])), 4)}
+        for ori, key in (("pRDA_127", "127"), ("pRDA_128", "128")):
+            sp, wt_dr, wt_full_ss, wt_dr_mfe = base[ori]
+            feats = compute_features(dr, sp, wt_dr_mfe)
+            v_ss, _ = core.fold(dr + sp)
+            feats["bp_dist"] = RNA_bp_distance(wt_full_ss, v_ss)
+            entry["features_" + key] = feats
+        rows.append(entry)
+    print("DeWeirdt2020 alt-DR 配对 %d 条(WT LFC: 127=%.3f, 128=%.3f)" % (
+        len(rows),
+        [r["lfc127"] for r in rows if r["cls"] == "wildtype"][0],
+        [r["lfc128"] for r in rows if r["cls"] == "wildtype"][0]))
+    return rows
+
+
+def parse_tian2025():
+    """Tian 2025 (Nat Commun, s41467-62082-5) LbCas12a RRS 单点扫描提取(2026-09-03)。
+
+    序列: data/41467_2025_62082_MOESM3_ESM.xlsx Sheet1
+      (name='WT crRNA-N' / '1A>U crRNA-N'; 全长 40nt = DR 20nt + spacer 20nt);
+    活性: data/41467_2025_62082_MOESM6_ESM.xlsx Fig.1d
+      (8 条 crRNA x (WT+12 单点突变) 的 trans-切割 ΔF, 三重复+均值列)。
+    活性口径 rrs_rel = 同一条 crRNA 内 mut_mean/WT_mean(比值去除 spacer 基线, 高=活性强);
+    特征以各 crRNA 自身 spacer 上下文计算、以各自 WT 为基准(ddG_dr/bp_dist 相对自身 WT)。
+    返回 pairs 列表; 源文件缺失时返回 [] 并提示(不阻断)。
+    """
+    import re
+    seq_path = os.path.join(DATA, "41467_2025_62082_MOESM3_ESM.xlsx")
+    act_path = os.path.join(DATA, "41467_2025_62082_MOESM6_ESM.xlsx")
+    if not (os.path.exists(seq_path) and os.path.exists(act_path)):
+        print("Tian2025 源文件未入库(data/41467_2025_62082_MOESM3/6), 跳过")
+        return []
+    wt_seqs, mut_seqs = {}, {}
+    wb = openpyxl.load_workbook(seq_path, data_only=True, read_only=True)
+    for row in wb["Sheet1"].iter_rows(values_only=True):
+        if not row or row[0] is None or len(row) < 2 or row[1] is None:
+            continue
+        name = str(row[0]).strip()
+        seq = str(row[1]).replace(" ", "").replace("T", "U").upper()
+        if name.startswith("WT crRNA-"):
+            wt_seqs[int(name.rsplit("-", 1)[1])] = seq
+            continue
+        m = re.match(r"^(\d)([ACGU])>([ACGU]) crRNA-(\d)$", name)
+        if m:
+            pos, b_from, b_to, n = m.groups()
+            mut_seqs[(f"{pos}{b_to}", int(n))] = seq
+    wb2 = openpyxl.load_workbook(act_path, data_only=True, read_only=True)
+    ws = wb2["Fig.1d"]
+    rows = list(ws.iter_rows(values_only=True))
+    hdr = [str(c).strip() if c is not None else "" for c in rows[0]]
+    mean_cols = {}
+    for j, h in enumerate(hdr):
+        if h == "WT-mean":
+            mean_cols["WT"] = j
+        elif re.match(r"^\d[ACGU]-mean$", h):
+            mean_cols[h[:-5]] = j
+    acts = {}
+    for r in rows[1:]:
+        if not r or r[0] is None or not str(r[0]).startswith("crRNA-"):
+            continue
+        n = int(str(r[0]).split("-", 1)[1])
+        for key, j in mean_cols.items():
+            v = r[j] if j < len(r) else None
+            if isinstance(v, (int, float)):
+                acts[(key, n)] = float(v)
+    pairs = []
+    for n in sorted({k[1] for k in acts}):
+        wt_seq = wt_seqs.get(n)
+        wt_act = acts.get(("WT", n))
+        if not wt_seq or not wt_act:
+            continue
+        wt_dr, spacer = wt_seq[:20], wt_seq[20:40]
+        wt_full_ss, _ = core.fold(wt_dr + spacer)
+        _, wt_dr_mfe = core.fold(wt_dr)
+        for key in ("1U", "1G", "1C", "2U", "2G", "2C",
+                    "3A", "3G", "3C", "4A", "4G", "4C"):
+            seq = mut_seqs.get((key, n))
+            act = acts.get((key, n))
+            if seq is None or act is None:
+                continue
+            dr = seq[:20]
+            pos = int(key[0]) - 1
+            if dr[pos] != key[1] or sum(a != b for a, b in zip(wt_dr, dr)) != 1:
+                print("Tian2025 命名-序列不一致, 跳过: crRNA-%d %s" % (n, key))
+                continue
+            feats = compute_features(dr, spacer, wt_dr_mfe)
+            v_ss, _ = core.fold(dr + spacer)
+            feats["bp_dist"] = RNA_bp_distance(wt_full_ss, v_ss)
+            pairs.append({"tag": "%s_crRNA%d" % (key, n), "crRNA": n,
+                          "dr_rna": dr, "spacer_rna": spacer, "n_mut": 1,
+                          "rrs_rel": round(act / wt_act, 4),
+                          "trans_df_wt": round(wt_act, 1),
+                          "trans_df_mut": round(act, 1), **feats})
+    print("Tian2025 RRS 配对 %d 条(8 条 crRNA x 12 单点突变)" % len(pairs))
+    return pairs
+
+
 def compute_features(dr_rna, spacer_rna, wt_dr_mfe=0.0):
     full = dr_rna + spacer_rna
     ss, mfe = core.fold(full)
@@ -277,6 +444,25 @@ def main():
                 **feats})
         print("Sanger 耐受集 %d 条特征计算完成" % len(sanger_rows))
 
+    # === Tian 2025 RRS 单点扫描(2026-09-03 入库): 8 crRNA x 12 突变 ===
+    tian_pairs = parse_tian2025()
+
+    # === DeWeirdt 2020 AsCas12a 替代 DR 扫描(2026-09-03 入库): 35,883 条 ===
+    # 全量特征表较大, 写 data/raw/(不入 git, 可由本脚本重算); 溯源入 dataset json
+    dw_rows = parse_deweirdt2020()
+    if dw_rows:
+        dw_path = os.path.join(DATA, "raw", "deweirdt2020_dr_scan.json")
+        os.makedirs(os.path.dirname(dw_path), exist_ok=True)
+        json.dump({
+            "source": "DeWeirdt et al. 2020 Nat Biotechnol s41587-020-0600-6 "
+                      "(AsCas12a alt-DR 负筛); 序列+读数=MOESM6 alt_DR_reads; "
+                      "spacer=MOESM1 Supp Table 3 (MCL1/BCL2L1); "
+                      "lfc127/lfc128 = log2((Rep+1)/(pDNA+1)) 两重复均值, 低=活性强",
+            "wt_dr_dna": DEWEIRDT_WT_DR_DNA, "spacers": DEWEIRDT_SPACERS,
+            "n": len(dw_rows), "rows": dw_rows},
+            open(dw_path, "w", encoding="utf-8"), ensure_ascii=False)
+        print("DeWeirdt2020 全量特征 -> %s (n=%d)" % (dw_path, len(dw_rows)))
+
     out = {"toolbox_sequences": {t: s for t, s in seqs.items()},
            "toolbox_features": rows,
            "toolbox_activity": TOOLBOX_ACTIVITY,
@@ -284,6 +470,17 @@ def main():
            "toolbox_cleavage": {"cis_end": cis, "trans_end": trans},
            "fig1g_activity": fig1g,
            "fig1f_pairs": fig1f_pairs,
+           "tian2025_rrs_pairs": tian_pairs,
+           "deweirdt2020_source": (
+               "DeWeirdt et al. 2020 Nat Biotechnol s41587-020-0600-6 (AsCas12a "
+               "alt-DR 负筛 n=%d); 全量特征表在 data/raw/deweirdt2020_dr_scan.json "
+               "(不入 git); LFC 低=活性强; 特征按方向 spacer 上下文+同向 WT 基准"
+               % len(dw_rows)),
+           "tian2025_source": (
+               "Tian et al. 2025 Nat Commun s41467-025-62082-5 (LbCas12a RRS "
+               "单点扫描); 序列=MOESM3, 活性=MOESM6 Fig.1d 三重复均值; "
+               "rrs_rel = 同 crRNA 内 mut/WT ΔF 比值(高=活性强); 特征以各 crRNA "
+               "自身 spacer 上下文计算、以各自 WT 为基准"),
            "fig1f_source": (
                "主文 Fig.1f 序列表视觉转录(2026-09-03): nature.com Fig1 全图 "
                "panel f 右侧编号表, 分块放大两次独立逐字母读取 + Sanger "

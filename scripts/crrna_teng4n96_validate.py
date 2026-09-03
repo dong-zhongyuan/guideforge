@@ -67,28 +67,40 @@ def main():
     # WT(crRNA1) 基准
     full_wt = wt_dr + spacer
     ss_wt, mfe_wt = core.fold(full_wt)
-    _, up_wt = core.pf_stats(full_wt, n)
+    div_wt, up_wt, seed_wt = core.pf_stats(full_wt, n)
     dr_ss_wt, _ = core.fold(wt_dr)
+    p_fold_wt = core.stem_intact_prob(full_wt, core.stem_pairs_of(dr_ss_wt))
 
     # 变体(4n96)
     full_v = v_dr + spacer
     ss_v, mfe_v = core.fold(full_v)
-    _, up_v = core.pf_stats(full_v, n)
+    div_v, up_v, seed_v = core.pf_stats(full_v, n)
     bp_dist = RNA.bp_distance(ss_wt, ss_v)
     ddg = mfe_v - mfe_wt
+    d_ens = div_v - div_wt
+    p_fold_v = core.stem_intact_prob(full_v, core.stem_pairs_of(dr_ss_wt))
+    dp_fold = p_fold_v - p_fold_wt
+    d_seed = seed_v - seed_wt
 
     # 接触/氢键(按 WT_DR 锚定的 8D4A 接触表, 对齐转移)
     contact = core.load_contacts(wt_dr, enabled=True)
     diff_pos = [i + 1 for i in range(n) if wt_dr[i] != v_dr[i]]
     csum = core.contact_sum(diff_pos, contact)
     hloss, hfrac = core.hbond_loss(wt_dr, v_dr, diff_pos, contact)
+    hgain = core.hbond_gain(wt_dr, v_dr, diff_pos, contact)
+    hnet = hgain - hloss
     contact_note = ('对齐转移' if contact and contact.get('transfer') else '精确锚定')
 
-    # 相对打分(同主管线权重, 3'保守窗: 位置13 不在末5nt窗内)
-    w = dict(w_bp=0.3, w_ddg=0.1, w_contact=1.0, w_ens=0.05, w_hbond=0.5, w_cons3=0.3)
+    # 相对打分(与主管线 score_variant 公式及默认权重逐项对齐; 2026-09-03 审计修复:
+    # 此前漏 w_fold/w_seed/w_stab 三项且 w_ens 未参与计算, 百分位并非真实管线分数口径;
+    # 3'保守窗: 位置13 不在末5nt窗内)
+    w = dict(w_bp=0.3, w_ddg=0.1, w_contact=1.0, w_ens=0.05, w_hbond=0.5,
+             w_fold=0.2, w_seed=0.0, w_stab=0.3, w_cons3=0.3)
     cons3_n = sum(1 for p in diff_pos if p > n - 5)
-    rel_score = -(w['w_bp'] * bp_dist + w['w_ddg'] * max(ddg, 0) + w['w_contact'] * csum
-                  + w['w_hbond'] * hloss + w['w_cons3'] * cons3_n / 5)
+    rel_score = (-(w['w_bp'] * bp_dist + w['w_ddg'] * max(ddg, 0) + w['w_contact'] * csum
+                   + w['w_ens'] * max(d_ens, 0) + w['w_cons3'] * cons3_n / 5)
+                 + w['w_hbond'] * hnet + w['w_fold'] * dp_fold + w['w_seed'] * d_seed
+                 + w['w_stab'] * max(-ddg, 0))
 
     # 硬过滤口径(以 crRNA1 为 WT)
     ok = (bp_dist <= 4 and up_v >= up_wt - 0.10

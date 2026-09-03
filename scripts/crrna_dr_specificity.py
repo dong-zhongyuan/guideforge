@@ -35,6 +35,23 @@ def duplex_mfe(spacer_rna, window_dna):
     return round(d.energy, 2)
 
 
+def layer1_conclusion(landscape):
+    """由扫描数据生成层 1 结论(2026-09-03 审计修复: 原为硬编码 TP53 文案,
+    换 spacer/位点集会输出同一句, 现改为数据驱动)。"""
+    n_high = sum(1 for l in landscape if '高危' in l['risk'])
+    n_mid = sum(1 for l in landscape if '中危' in l['risk'])
+    zero = [l for l in landscape if l['mismatches'] == 0]
+    parts = []
+    if n_high or n_mid:
+        parts.append(f'扫描位点含高危 {n_high} 个/中危 {n_mid} 个(见位点表)')
+    else:
+        parts.append('全转录组无高/中危位点')
+    if zero:
+        parts.append('0 错配位点: '
+                     + '; '.join(f"{l['gene']}(PFS {l['pfs_mm']}mm)" for l in zero))
+    return '; '.join(parts)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--run-prefix', required=True)
@@ -58,7 +75,7 @@ def main():
             'seed_mm': int(s['seed_mm']), 'pfs': s['pfs'],
             'pfs_mm': int(s['pfs_mm']), 'risk': s['risk'],
             'duplex_mfe_kcal': duplex_mfe(spacer_rna, s['window']),
-            'note': 'WT 等位位点(PFS 3mm)' if s['mismatches'] == '0' else '',
+            'note': f"WT 等位位点(PFS {s['pfs_mm']}mm)" if s['mismatches'] == '0' else '',
         })
 
     # --- 层 2+3: DR 变体逐候选复核 ---
@@ -96,8 +113,7 @@ def main():
             'principle': '识别位点集合由 spacer+PFS 决定, 与 DR 无关; 对所有 DR 变体相同',
             'transcriptome_scan': os.path.basename(args.scan_prefix),
             'duplex_landscape': landscape,
-            'conclusion': '全转录组无高/中危位点; 唯一 0 错配位点即 TP53 WT 等位'
-                          '(PFS 3mm 不匹配), 鉴别由突变产生的 PFS 完成',
+            'conclusion': layer1_conclusion(landscape),
         },
         'layer2_processing': '加工位点保护硬过滤(proc_ok)防止成熟 crRNA 长度漂移'
                              '→ 识别窗口不变; 逐候选见 candidates',

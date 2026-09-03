@@ -70,7 +70,7 @@ python scripts/crrna_specificity_scan.py --spacer GTTCATGCCGCCCATGCAGGAACT \
 
 候选库是"候选压缩"结果, 不是活性预测;打分是透明启发式(ΔΔG、结构距离、spacer 游离度、
 8D4A 蛋白接触、氢键互补、RNet SHAPE 一致性), 未经实验标定。最终活性/特异性以体外生化
-与细胞实验为准(见 docs/ 内方案)。
+与细胞实验为准(湿实验方案不随本仓库发布)。
 
 ## 来源与血缘
 

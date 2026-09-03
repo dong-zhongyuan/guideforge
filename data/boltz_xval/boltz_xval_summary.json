@@ -1,0 +1,39 @@
+{
+ "engine": "Boltz1 (boltz 2.2.1, --model boltz1, 单序列empty-MSA模式, 无模板, num_workers 0, 1模型/条)",
+ "purpose": "Chai-1 骨架分型信号的正交交叉验证: 3 代表性组合 (TP53_WT / TP53_U5GA18C / KRAS_G12D_WT)",
+ "chains": {"0": "protein SuCas12a2(1207aa)", "1": "crRNA", "2": "target_RNA(28nt)"},
+ "chai_reference": {
+  "source": "data/chai_matrix_4t_summary.json (chai-1 + 8D4A自模板m8 + ESM, 5模型均值)",
+  "prot_crRNA_pair01": {"TP53_R248Q__WT": 0.5076, "TP53_R248Q__U5GA18C": 0.4128, "KRAS_G12D__WT": 0.4918}
+ },
+ "rows": [
+  {
+   "name": "TP53_R248Q__WT",
+   "confidence_score": 0.3349, "ptm": 0.2408, "iptm": 0.2495,
+   "complex_plddt": 0.3562, "complex_iplddt": 0.4313,
+   "pair_prot_crRNA_01": 0.1760, "pair_crRNA_prot_10": 0.2566,
+   "pair_crRNA_target_12": 0.7783,
+   "chai_prot_crRNA": 0.5076
+  },
+  {
+   "name": "TP53_R248Q__U5GA18C",
+   "confidence_score": 0.3399, "ptm": 0.2785, "iptm": 0.2327,
+   "complex_plddt": 0.3667, "complex_iplddt": 0.4330,
+   "pair_prot_crRNA_01": 0.1779, "pair_crRNA_prot_10": 0.2430,
+   "pair_crRNA_target_12": 0.7216,
+   "chai_prot_crRNA": 0.4128
+  },
+  {
+   "name": "KRAS_G12D__WT",
+   "confidence_score": 0.3479, "ptm": 0.2580, "iptm": 0.2314,
+   "complex_plddt": 0.3771, "complex_iplddt": 0.4859,
+   "pair_prot_crRNA_01": 0.1648, "pair_crRNA_prot_10": 0.2196,
+   "pair_crRNA_target_12": 0.7269,
+   "chai_prot_crRNA": 0.4918
+  }
+ ],
+ "conclusion": "Boltz1 单序列(无MSA/无模板)未复现 Chai 的骨架分型信号: 三条 prot-crRNA pair ipTM 全部压在 0.165-0.178, WT 与 U5GA18C 无差异, 总 ipTM 0.23-0.25 低置信。与 Chai 已知机制一致——Chai 界面恢复依赖 8D4A 自模板注入(无模板即回退 0.02 基线)。结论: Chai 的骨架分型差量是模板依赖信号, 使用前须标注该稳健性边界; Boltz 无模板路径不具备蛋白-RNA 界面分辨力(已知短板)。crRNA-target pair(0.72-0.78)两引擎方向一致(crRNA 与靶 RNA 配对稳定)。",
+ "robustness_boundary": "骨架分型结构证据仅来自 Chai-1+8D4A自模板一路; 评审复现时不得将无模板共折叠结果当作反证。",
+ "run_provenance": "容器 a6000-ct /tmp/boltz_x, 脚本 /dawn/boltz1_x.sh(=宿主 /public/home/mengxl/openclaw/dawn/boltz1_x.sh), FASTA 由 /dawn/chai_matrix_4t/*.fasta 转头(>A|protein|empty / >B|rna / >C|rna), 2026-09-03 05:33-05:5x UTC",
+ "env_fix_notes": "boltz env 补装 cuequivariance-torch 0.11.1 + cuequivariance_ops_torch_cu12 0.11.1 + nvidia-cublas-cu12 12.6.4.1(补 cublasGemmGroupedBatchedEx), LD_LIBRARY_PATH 需含 cuequivariance_ops/lib; torch 保持 2.6.0+cu124"
+}

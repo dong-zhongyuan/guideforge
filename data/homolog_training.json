@@ -6,6 +6,27 @@
   "han2025_fig1f_fig1g": 9,
   "teng2019_ordinal": 2
  },
+ "tian2025_external_check": {
+  "n": 96,
+  "spearman_pooled_vs_rrs_rel": -0.007,
+  "per_crna_spearman_median": -0.094,
+  "design": "池化模型训练集不含任何 Tian 2025 数据(独立外部验证)",
+  "interpretation": "RRS 区(DR 5' 端 4nt)活性由假结配对承载(Tian 2025 Fig.1: U+3/U+4 与茎环互作), 伪结外特征按构造不可表示——Spearman≈0 为预期盲端, 与 Creutzburg Sp8 盲区同源; 结论: 选型器排序不适用于 DR 5' 端 RRS 位点变体, 该位点区候选须按位置规则另行排除"
+ },
+ "deweirdt2020_external_check": {
+  "design": "池化模型训练集不含任何 DeWeirdt 2020 数据(独立外部验证, 全量无剔除)",
+  "direction": "LFC 低=活性强, 模型 z 高=预测优 -> 报告 Spearman(pred, -LFC), 正=方向正确",
+  "ori127": {
+   "n": 35883,
+   "spearman_pred_vs_neglfc": 0.202,
+   "within_dataset_cv5_spearman": 0.182
+  },
+  "ori128": {
+   "n": 35883,
+   "spearman_pred_vs_neglfc": -0.024,
+   "within_dataset_cv5_spearman": 0.109
+  }
+ },
  "fig1f_note": "fig1g 终点组并入 Fig.1f 视觉转录 9 条(meta.dataset=han2025_fig1f 可追溯; 置信度 high 2/medium 7, 序列均经 Sanger 独立源交叉校验)",
  "pooled_tree_rules": "|--- ddG_dr <= -1.15\n|   |--- value: [-1.38]\n|--- ddG_dr >  -1.15\n|   |--- p_fold <= 0.99\n|   |   |--- p_fold <= 0.87\n|   |   |   |--- p_fold <= 0.87\n|   |   |   |   |--- value: [0.12]\n|   |   |   |--- p_fold >  0.87\n|   |   |   |   |--- value: [0.83]\n|   |   |--- p_fold >  0.87\n|   |   |   |--- ddG_dr <= 0.25\n|   |   |   |   |--- value: [-0.08]\n|   |   |   |--- ddG_dr >  0.25\n|   |   |   |   |--- value: [-0.83]\n|   |--- p_fold >  0.99\n|   |   |--- value: [0.72]\n",
  "pooled_feature_importance": {
@@ -24,7 +45,8 @@
  },
  "rejected_endpoints": {
   "spr_kd": "传感图相位预处理无法对论文定性序(canonical 最强)校验, 拟合不收敛",
-  "supfig8_10_raw_fluor": "0mM 诱导下面板间仍 3 倍差、10mM 方向与 Fig1g 相反——增长混杂未归一, 拒绝入库"
+  "supfig8_10_raw_fluor": "0mM 诱导下面板间仍 3 倍差、10mM 方向与 Fig1g 相反——增长混杂未归一, 拒绝入库",
+  "deweirdt2020_pooling": "120 条 LFC 秩分层子样入池实测(2026-09-03): 单终点占池 72%, 其余 5 终点 LOEO 全拖负(rbs33 +0.96→−0.75, rbs0 +0.68→−0.64, trans +0.25→−0.71, fig1g +0.04→−0.70; deweirdt 自身 −0.36; 仅 cis 转正), 拒绝入池, 全量改作独立外部验证"
  },
  "family_ranking_pooled": [
   {
