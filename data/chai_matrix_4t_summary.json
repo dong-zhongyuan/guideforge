@@ -1,0 +1,90 @@
+{
+ "engine": "chai-1 + 8D4A自模板m8 + ESM",
+ "design": "4靶 x 8骨架(含WT与B_break_compensate); 靶RNA=protospacer窗口24nt+PFS 5nt(8D4A同构)",
+ "n": 32,
+ "wt_reference": {
+  "KRAS_G12C": 0.4858,
+  "KRAS_G12D": 0.4918,
+  "TP53_R248Q": 0.5076,
+  "TP53_R273H": 0.4966
+ },
+ "scaffold_deltas": [
+  {
+   "scaffold": "A1C",
+   "delta_vs_wt": {
+    "KRAS_G12C": 0.0026,
+    "KRAS_G12D": -0.0092,
+    "TP53_R248Q": 0.0,
+    "TP53_R273H": -0.0048
+   },
+   "cross_target_spread": 0.0118
+  },
+  {
+   "scaffold": "A1U",
+   "delta_vs_wt": {
+    "KRAS_G12C": 0.0018,
+    "KRAS_G12D": -0.008,
+    "TP53_R248Q": 0.0054,
+    "TP53_R273H": -0.0016
+   },
+   "cross_target_spread": 0.0134
+  },
+  {
+   "scaffold": "A1UA2C",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.0158,
+    "KRAS_G12D": -0.074,
+    "TP53_R248Q": -0.0332,
+    "TP53_R273H": -0.0318
+   },
+   "cross_target_spread": 0.0582
+  },
+  {
+   "scaffold": "A8CU15G",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.0026,
+    "KRAS_G12D": -0.015,
+    "TP53_R248Q": -0.0188,
+    "TP53_R273H": -0.0064
+   },
+   "cross_target_spread": 0.0162
+  },
+  {
+   "scaffold": "U5GA18C",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.3252,
+    "KRAS_G12D": -0.2788,
+    "TP53_R248Q": -0.0948,
+    "TP53_R273H": -0.1184
+   },
+   "cross_target_spread": 0.2304
+  },
+  {
+   "scaffold": "A1GU3AA8GU15C",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.0412,
+    "KRAS_G12D": -0.0846,
+    "TP53_R248Q": -0.0452,
+    "TP53_R273H": -0.074
+   },
+   "cross_target_spread": 0.0434
+  },
+  {
+   "scaffold": "B_break_compensate",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.34,
+    "KRAS_G12D": -0.3766,
+    "TP53_R248Q": -0.2924,
+    "TP53_R273H": -0.4212
+   },
+   "cross_target_spread": 0.1288
+  }
+ ],
+ "reading": {
+  "A1C/A1U": "四靶界面差 |Δ|<=0.026, 界面中性且靶标无关(通用型候选)",
+  "U5GA18C": "跨靶界面差最大(KRAS 0.16-0.21 vs TP53 0.38-0.41, spread≈0.25)——骨架-靶标互作的直接观测, 分型假说的结构证据",
+  "B_break_compensate": "四靶界面均塌陷(0.075-0.215), 该补偿设计在蛋白界面口径不可用(折叠口径的优势未转化为界面保持)",
+  "A1UA2C/A1GU3AA8GU15C": "中等下降且靶标相关(spread 0.05-0.10)",
+  "note": "crRNA_target 链对本矩阵全部 0.43-0.49(合成靶完全互补), 与旧矩阵原生靶(0.03-0.2)的差异=靶构造口径差, 两表分开引用"
+ }
+}

@@ -1,0 +1,326 @@
+{
+ "engine": "chai-1 + 8D4A自模板m8 + ESM",
+ "design": "4靶 x 8骨架(含WT与B_break_compensate); 靶RNA=protospacer窗口24nt+PFS 5nt(8D4A同构)",
+ "rows": [
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1C",
+   "n_models": 5,
+   "iptm_mean": 0.8818,
+   "iptm_sd": 0.002,
+   "prot_crRNA": 0.4884,
+   "crRNA_target": 0.4812,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1GU3AA8GU15C",
+   "n_models": 5,
+   "iptm_mean": 0.821,
+   "iptm_sd": 0.0015,
+   "prot_crRNA": 0.4446,
+   "crRNA_target": 0.4706,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1U",
+   "n_models": 5,
+   "iptm_mean": 0.8842,
+   "iptm_sd": 0.0015,
+   "prot_crRNA": 0.4876,
+   "crRNA_target": 0.4804,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1UA2C",
+   "n_models": 5,
+   "iptm_mean": 0.8462,
+   "iptm_sd": 0.0013,
+   "prot_crRNA": 0.47,
+   "crRNA_target": 0.4746,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A8CU15G",
+   "n_models": 5,
+   "iptm_mean": 0.852,
+   "iptm_sd": 0.0011,
+   "prot_crRNA": 0.4832,
+   "crRNA_target": 0.4678,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "B_break_compensate",
+   "n_models": 5,
+   "iptm_mean": 0.4528,
+   "iptm_sd": 0.0795,
+   "prot_crRNA": 0.1458,
+   "crRNA_target": 0.46,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "U5GA18C",
+   "n_models": 5,
+   "iptm_mean": 0.4796,
+   "iptm_sd": 0.0663,
+   "prot_crRNA": 0.1606,
+   "crRNA_target": 0.4462,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "WT",
+   "n_models": 5,
+   "iptm_mean": 0.8904,
+   "iptm_sd": 0.0014,
+   "prot_crRNA": 0.4858,
+   "crRNA_target": 0.4844,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1C",
+   "n_models": 5,
+   "iptm_mean": 0.8664,
+   "iptm_sd": 0.0014,
+   "prot_crRNA": 0.4826,
+   "crRNA_target": 0.4742,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1GU3AA8GU15C",
+   "n_models": 5,
+   "iptm_mean": 0.7588,
+   "iptm_sd": 0.007,
+   "prot_crRNA": 0.4072,
+   "crRNA_target": 0.4746,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1U",
+   "n_models": 5,
+   "iptm_mean": 0.8704,
+   "iptm_sd": 0.0012,
+   "prot_crRNA": 0.4838,
+   "crRNA_target": 0.4744,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1UA2C",
+   "n_models": 5,
+   "iptm_mean": 0.7814,
+   "iptm_sd": 0.0054,
+   "prot_crRNA": 0.4178,
+   "crRNA_target": 0.4676,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A8CU15G",
+   "n_models": 5,
+   "iptm_mean": 0.8402,
+   "iptm_sd": 0.0017,
+   "prot_crRNA": 0.4768,
+   "crRNA_target": 0.4778,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "B_break_compensate",
+   "n_models": 5,
+   "iptm_mean": 0.4202,
+   "iptm_sd": 0.0305,
+   "prot_crRNA": 0.1152,
+   "crRNA_target": 0.4854,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "U5GA18C",
+   "n_models": 5,
+   "iptm_mean": 0.5336,
+   "iptm_sd": 0.0374,
+   "prot_crRNA": 0.213,
+   "crRNA_target": 0.459,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "WT",
+   "n_models": 5,
+   "iptm_mean": 0.8824,
+   "iptm_sd": 0.0005,
+   "prot_crRNA": 0.4918,
+   "crRNA_target": 0.4782,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1C",
+   "n_models": 5,
+   "iptm_mean": 0.8824,
+   "iptm_sd": 0.0008,
+   "prot_crRNA": 0.5076,
+   "crRNA_target": 0.4806,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1GU3AA8GU15C",
+   "n_models": 5,
+   "iptm_mean": 0.8346,
+   "iptm_sd": 0.001,
+   "prot_crRNA": 0.4624,
+   "crRNA_target": 0.4806,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1U",
+   "n_models": 5,
+   "iptm_mean": 0.8896,
+   "iptm_sd": 0.0008,
+   "prot_crRNA": 0.513,
+   "crRNA_target": 0.4798,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1UA2C",
+   "n_models": 5,
+   "iptm_mean": 0.8472,
+   "iptm_sd": 0.002,
+   "prot_crRNA": 0.4744,
+   "crRNA_target": 0.4778,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A8CU15G",
+   "n_models": 5,
+   "iptm_mean": 0.866,
+   "iptm_sd": 0.0015,
+   "prot_crRNA": 0.4888,
+   "crRNA_target": 0.4846,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "B_break_compensate",
+   "n_models": 5,
+   "iptm_mean": 0.6134,
+   "iptm_sd": 0.0623,
+   "prot_crRNA": 0.2152,
+   "crRNA_target": 0.477,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "U5GA18C",
+   "n_models": 5,
+   "iptm_mean": 0.7974,
+   "iptm_sd": 0.0062,
+   "prot_crRNA": 0.4128,
+   "crRNA_target": 0.4772,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "WT",
+   "n_models": 5,
+   "iptm_mean": 0.8912,
+   "iptm_sd": 0.0007,
+   "prot_crRNA": 0.5076,
+   "crRNA_target": 0.4826,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1C",
+   "n_models": 5,
+   "iptm_mean": 0.8686,
+   "iptm_sd": 0.0008,
+   "prot_crRNA": 0.4918,
+   "crRNA_target": 0.4754,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1GU3AA8GU15C",
+   "n_models": 5,
+   "iptm_mean": 0.7868,
+   "iptm_sd": 0.0348,
+   "prot_crRNA": 0.4226,
+   "crRNA_target": 0.4622,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1U",
+   "n_models": 5,
+   "iptm_mean": 0.8732,
+   "iptm_sd": 0.0007,
+   "prot_crRNA": 0.495,
+   "crRNA_target": 0.4766,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1UA2C",
+   "n_models": 5,
+   "iptm_mean": 0.8262,
+   "iptm_sd": 0.001,
+   "prot_crRNA": 0.4648,
+   "crRNA_target": 0.473,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A8CU15G",
+   "n_models": 5,
+   "iptm_mean": 0.859,
+   "iptm_sd": 0.0011,
+   "prot_crRNA": 0.4902,
+   "crRNA_target": 0.4758,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "B_break_compensate",
+   "n_models": 5,
+   "iptm_mean": 0.361,
+   "iptm_sd": 0.0113,
+   "prot_crRNA": 0.0754,
+   "crRNA_target": 0.4886,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "U5GA18C",
+   "n_models": 5,
+   "iptm_mean": 0.7048,
+   "iptm_sd": 0.0056,
+   "prot_crRNA": 0.3782,
+   "crRNA_target": 0.4554,
+   "clash_frac": 0.0
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "WT",
+   "n_models": 5,
+   "iptm_mean": 0.8802,
+   "iptm_sd": 0.0007,
+   "prot_crRNA": 0.4966,
+   "crRNA_target": 0.4776,
+   "clash_frac": 0.0
+  }
+ ]
+}

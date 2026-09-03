@@ -1,0 +1,24 @@
+{
+ "kras_g12c_scan_v47": {
+  "gene": "KRASP1",
+  "mismatch_window_pos": [
+   10
+  ],
+  "spacer_pos_from5": 13,
+  "in_seed_3p7nt": false,
+  "pfs": "GGTGG",
+  "risk": "medium",
+  "note": "KRASP1 为 KRAS 假基因, 表达低但真实; 错配在种子区=高危, 种子区外=中危"
+ },
+ "kras_g12d_scan_v47": {
+  "gene": "KRASP1",
+  "mismatch_window_pos": [
+   9
+  ],
+  "spacer_pos_from5": 14,
+  "in_seed_3p7nt": false,
+  "pfs": "GTGGC",
+  "risk": "medium",
+  "note": "KRASP1 为 KRAS 假基因, 表达低但真实; 错配在种子区=高危, 种子区外=中危"
+ }
+}
