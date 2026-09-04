@@ -1,6 +1,7 @@
 {
  "engine": "Chai-1 + 8D4A自模板 + ESM, 5模型/条",
- "feature": "骨架变体的蛋白-crRNA界面ipTM差量(选型分类器关键输入)",
+ "feature": "骨架变体的蛋白-crRNA界面ipTM差量(自模板口径, 仅作模板合规性 sanity check)",
+ "template_caveat": "全部运行注入 100% 一致自模板(8D4A链A): 高 ipTM 为自模板复述的平凡结果, 不能作为界面可预测性证据, '选型分类器关键输入' 的用法在 template-free/scrambled-template 对照补齐前不成立; WT prot-crRNA ipTM≈0.49 亦低于可用区间(~0.5-0.6)",
  "rows": [
   {
    "scaffold": "WT",

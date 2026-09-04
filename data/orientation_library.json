@@ -405,8 +405,8 @@
    "wt_construct": null,
    "best": {
     "desc": "B_break_compensate",
-    "dr_seq": "AATTTCTACTCTTCTACAT",
-    "construct_dna": "AATTTCTACTCTTCTACATGTTCATGCCGCCCATGCAGGAACT",
+    "dr_seq": "AATTTCTACAGGTGTAGAG",
+    "construct_dna": "AATTTCTACAGGTGTAGAGGTTCATGCCGCCCATGCAGGAACT",
     "score": "0",
     "ddG_dr": "NA",
     "note": "DR-spacer 侵占配对补偿设计, 非四取向管线产物"

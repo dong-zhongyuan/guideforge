@@ -89,8 +89,9 @@ def main():
         if b["desc"] not in seen:
             seen.add(b["desc"])
             library.append(p)
-    # V3 口径补第 8 员: compensatory 代表(B_break_compensate, zengDR+G11C/G14C/G17C,
-    # 源: data/ivt_compensatory_panel.json, 机制故事=侵占配对破坏-补偿因果臂)
+    # V3 口径补第 8 员: compensatory 代表(B_break_compensate, 补偿位点以
+    # data/ivt_compensatory_panel.json 的 design_notes 为准(v2 起为茎安全位点),
+    # 机制故事=侵占配对破坏-补偿因果臂)
     comp = json.load(open(os.path.join(DATA, "ivt_compensatory_panel.json"),
                           encoding="utf-8"))
     for arm in comp["arms"]:

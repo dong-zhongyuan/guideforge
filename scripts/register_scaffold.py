@@ -1,4 +1,9 @@
-"""骨架注册脚本：新增/更新一个效应子的注册条目（2026-08-31）。
+"""骨架注册脚本：新增/更新一个效应子的注册条目（2026-08-31；2026-09 round-3 R1 指标修复）。
+
+round-3 R1 修复（vienna_baseline）：spacer 游离度改为 bpp 行+列双向求和，
+vienna_ens_diversity 改存 fc.mean_bp_distance()（与主管线 pf_stats 同口径），
+centroid 距离另存 vienna_centroid_dist；条目记录 vienna_version。
+修复前口径（行方向求和 / centroid 距离）曾产生 0.714/0.48 的错误基线（正确 0.427/0.90）。
 
 注册流程（docs/结构维度_平行设计框架_20260831.md §1.5）：
   1) 占位 spacer 拼接骨架（spcas9: spacer+scaffold；cas12a: handle+spacer）
@@ -69,14 +74,22 @@ def bp_f1(db1, db2):
 
 
 def vienna_baseline(full_seq_rna, spacer_len, scaffold_side):
-    """ViennaRNA 配分函数基线：MFE/质心/系综距离/spacer区平均unpaired概率。"""
+    """ViennaRNA 配分函数基线：MFE/质心/系综距离/spacer区平均unpaired概率。
+
+    口径与主管线 crrna_scaffold_design.pf_stats 一致（2026-09 round-3 R1 修复）：
+      - vienna_ens_diversity = fc.mean_bp_distance()（此前误存 centroid 距离）；
+      - unpaired 概率对 bpp 上三角矩阵做行+列双向求和（此前只加行方向，
+        漏掉该核苷酸作为 3' 侧伙伴的配对，spacer 游离度被系统性高估）。
+    """
     fc = RNA.fold_compound(full_seq_rna)
     mfe_struct, mfe = fc.mfe()
     fc.pf()
-    centroid, ens_dist = fc.centroid()
+    centroid, centroid_dist = fc.centroid()
+    ens_div = fc.mean_bp_distance()
     n = len(full_seq_rna)
     bpp = fc.bpp()
-    unpaired = [1.0 - sum(bpp[i][j] for j in range(1, n + 1) if j != i)
+    unpaired = [1.0 - (sum(bpp[i][j] for j in range(1, n + 1))
+                       + sum(bpp[j][i] for j in range(1, n + 1)))
                 for i in range(1, n + 1)]
     if scaffold_side == '3prime':
         spacer_idx = range(0, spacer_len)
@@ -87,7 +100,8 @@ def vienna_baseline(full_seq_rna, spacer_len, scaffold_side):
         'vienna_mfe_struct': mfe_struct,
         'vienna_mfe_kcal': round(float(mfe), 2),
         'vienna_centroid': centroid,
-        'vienna_ens_diversity': round(float(ens_dist), 2),
+        'vienna_ens_diversity': round(float(ens_div), 2),
+        'vienna_centroid_dist': round(float(centroid_dist), 2),
         'spacer_mean_unpaired': round(spacer_unp, 3),
     }
 
@@ -135,6 +149,7 @@ def build_entry(args, baseline, rnet_result, gate, gate_f1):
             'source': ('RNet-SS × ViennaRNA pf 注册运行' if rnet_result
                        else '仅 ViennaRNA（--skip-rnet）'),
             'gate': gate,
+            'vienna_version': RNA.__version__,
             'baseline': {
                 **{k: v for k, v in baseline.items()
                    if k not in ('vienna_mfe_struct', 'vienna_centroid')},
@@ -149,6 +164,8 @@ def build_entry(args, baseline, rnet_result, gate, gate_f1):
         'registered_at': datetime.date.today().isoformat(),
         'inputs_sha256': hashlib.sha256(inputs.encode('utf-8')).hexdigest(),
     }
+    if args.registration_note:
+        entry['registration_note'] = args.registration_note
     return entry
 
 
@@ -179,6 +196,8 @@ def parse_args(argv=None):
     p.add_argument('--version', default='v1')
     p.add_argument('--bound-state-note', default='',
                    help='结合态注释（如蛋白诱导假结；仅注释不作评分基准）')
+    p.add_argument('--registration-note', default='',
+                   help='本次注册的备注（写入条目 registration_note 字段，如 metric-fix 重注册说明）')
     p.add_argument('--registry', default=DEFAULT_REGISTRY)
     p.add_argument('--rnet-python', default=DEFAULT_RNET_PYTHON)
     p.add_argument('--rnet-2d', default=DEFAULT_RNET_2D)

@@ -54,10 +54,11 @@ python scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
     --use-struct2seq --use-grnade --rnet-screen \
     --s2s-python /path/to/engine-env/bin/python --out-prefix data/run2
 
-# 特异性扫描(对 WT 与突变转录本)
+# 特异性扫描(对 WT 与突变转录本; PFS 规则默认取注册表 pfs 字段,
+# cas12a2_zeng2026 = GAAAG±2, 覆盖 R248Q 位点实测 PFS=CAGAG 场景)
 cat data/tp53_mrna_NM000546.fa data/tp53_r248q_mrna_NM000546.fa > data/_wt_mut.fa
 python scripts/crrna_specificity_scan.py --spacer GTTCATGCCGCCCATGCAGGAACT \
-    --fasta data/_wt_mut.fa --pfs CAGAG --out data/scan1
+    --effector cas12a2_zeng2026 --fasta data/_wt_mut.fa --out data/scan1
 ```
 
 注意:

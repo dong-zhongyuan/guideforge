@@ -6,8 +6,9 @@
 
 判定口径(与 crrna_specificity_scan.py / PDB 8D4A 一致):
   - 扫描目标 = revcomp(spacer), 窗口位于转录本 sense 链
-  - PFS 位于窗口 3' 下游; Cas12a2 PFS 松散(Zeng 2026: R248Q 靶点 PFS=CAGAG 为
-    GAAAG 的 1 错配), 故按 PFS 错配数分级: 0mm=高危, 1mm=中危, >=2mm=低危
+  - PFS 位于窗口 3' 下游; Cas12a2 PFS 松散(Zeng 2026: R248Q 靶点实测 PFS=CAGAG,
+    与共识 GAAAG 差 2 个错配——第 1、3 位), 故按 PFS 错配数分级: 0mm=高危,
+    1mm=中危, >=2mm=低危
   - 种子区 = spacer 3' 端 7nt(Bravo 2023) ↔ 窗口 5' 端 7nt(revcomp 方向);
     种子区错配权重高于远端(单独报告 n_seed_mm)
 
@@ -31,7 +32,7 @@ ROOT = os.path.abspath(os.path.join(HERE, '..'))
 sys.path.insert(0, HERE)
 
 from crrna_specificity_scan import revcomp, normalize  # noqa: E402
-from scaffold_registry import get_pam  # noqa: E402
+from scaffold_registry import resolve_pfs  # noqa: E402
 
 B2I = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
 SEED_LEN = 7  # 窗口 5' 端 7nt ↔ spacer 3' 种子区(Bravo 2023)
@@ -130,8 +131,12 @@ def main():
     ap.add_argument('--spacer', required=True)
     ap.add_argument('--fasta', required=True, help='主 FASTA(如 pc_transcripts)')
     ap.add_argument('--fasta2', default=None, help='追加 FASTA(如 lncRNA)')
+    ap.add_argument('--effector', default='cas12a2',
+                    help='注册表效应子条目(默认 cas12a2; PFS 规则默认取自该条目 pfs 字段)')
     ap.add_argument('--pfs', default=None,
-                    help='PFS 规则(默认取注册表 cas12a2 条目 pam.rule; 换体系用 --pfs 覆盖)')
+                    help='PFS 共识序列(默认取注册表 pfs.consensus; 换体系用 --pfs 覆盖)')
+    ap.add_argument('--pfs-tol', type=int, default=None,
+                    help='PFS 容忍错配数(默认取注册表 pfs.tolerant_mismatches)')
     ap.add_argument('--max-mismatch', type=int, default=4)
     ap.add_argument('--out', default='transcriptome_scan')
     args = ap.parse_args()
@@ -140,14 +145,18 @@ def main():
     if not 17 <= len(spacer) <= 25 or set(spacer) - set('ACGT'):
         ap.error('--spacer 必须为 17-25nt ACGT/U')
     target = revcomp(spacer)
-    pfs = normalize(args.pfs or get_pam('cas12a2')['rule'])
+    pfs_spec = resolve_pfs(args.effector, consensus=args.pfs,
+                           tolerant_mismatches=args.pfs_tol)
+    pfs = pfs_spec['consensus']
+    pfs_tol = pfs_spec['tolerant_mismatches']
 
     records = read_fasta_annot(args.fasta)
     n1 = len(records)
     if args.fasta2:
         records += read_fasta_annot(args.fasta2)
     print(f"转录本: {len(records)} 条(主编码 {n1} + lncRNA {len(records) - n1})")
-    print(f"扫描目标(revcomp): {target}  PFS: {pfs}(按错配数分级)")
+    print(f"扫描目标(revcomp): {target}  PFS: {pfs}±{pfs_tol}"
+          f"(按错配数分级, 来源 {pfs_spec['source']})")
 
     sites = scan(records, target, pfs, args.max_mismatch)
     for s in sites:
@@ -168,7 +177,13 @@ def main():
         writer = csv.DictWriter(fh, fieldnames=fields)
         writer.writeheader()
         writer.writerows(sites)
+    # 双模型脱靶计数(R5): exact=PFS 0 错配; tolerant=PFS 错配<=容忍度
+    n_pfs_exact = sum(1 for s in sites if s['pfs_mm'] == 0)
+    n_pfs_tolerant = sum(1 for s in sites if s['pfs_mm'] <= pfs_tol)
     payload = {'spacer_dna': spacer, 'target_scanned': target, 'pfs_rule': pfs,
+               'pfs_tolerant_mismatches': pfs_tol, 'pfs_source': pfs_spec['source'],
+               'pfs_models_counts': {'exact_0mm': n_pfs_exact,
+                                     f'tolerant_{pfs_tol}mm': n_pfs_tolerant},
                'pfs_tiers': 'pfs_mm 0=高危 1=中危 >=2=低危(Cas12a2 PFS 松散, Zeng 2026)',
                'seed_len_window5p': SEED_LEN,
                'max_mismatch': args.max_mismatch,

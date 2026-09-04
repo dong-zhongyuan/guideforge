@@ -52,12 +52,10 @@ def lhs(n, dim, rng, lo=0.5, hi=1.5):
 
 
 def spearman(a, b):
-    ra = np.argsort(np.argsort(a)).astype(float)
-    rb = np.argsort(np.argsort(b)).astype(float)
-    ra -= ra.mean()
-    rb -= rb.mean()
-    denom = np.sqrt((ra ** 2).sum() * (rb ** 2).sum())
-    return float((ra * rb).sum() / denom) if denom else 1.0
+    """tie-aware Spearman(midranks), 2026-09 round-3 R2 修复: 弃用手搓
+    argsort-of-argsort(并列不取平均秩), 统一走 scipy.stats.spearmanr。"""
+    from scipy.stats import spearmanr
+    return float(spearmanr(a, b).statistic)
 
 
 def main():

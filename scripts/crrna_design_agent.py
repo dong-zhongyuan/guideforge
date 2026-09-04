@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.join(ROOT, 'src'))
 
 import crrna_scaffold_design as core  # noqa: E402
 import crrna_context_typing as typing_mod  # noqa: E402
-from scaffold_registry import get_scaffold  # noqa: E402
+from scaffold_registry import get_scaffold, resolve_pfs, pfs_mismatches  # noqa: E402
 
 COMP = str.maketrans({'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'U': 'A'})
 
@@ -63,9 +63,18 @@ def revcomp(seq):
     return seq.translate(COMP)[::-1]
 
 
-def design_spacers(wt, mut, mpos, spacer_len=24, pfs_rule='CAGAG', topn=10):
+def design_spacers(wt, mut, mpos, spacer_len=24, pfs_rule=None, pfs_tol=None,
+                   effector='cas12a2_zeng2026', topn=10):
     """围绕突变 tilling: 突变可落在 PFS(窗口 3' 下游 1..5 位)或 protospacer 内。
-    返回候选列表(按鉴别档位+结构代理排序)。"""
+    返回候选列表(按鉴别档位+结构代理排序)。
+
+    PFS 规则默认取注册表 pfs 字段(round-3 R5 统一口径: 共识 + 容忍错配数);
+    pfs_rule/pfs_tol 可显式覆盖, 如 pfs_rule='CAGAG'(Zeng 2026 R248Q 位点实测
+    PFS, 与 GAAAG 共识差 2 个错配——第 1、3 位)。
+    鉴别判定: 突变型 PFS 落在共识容忍范围内 且 WT 型落在范围外
+    (突变"产生"可识别 PFS), 替代旧的首字符硬匹配。"""
+    spec = resolve_pfs(effector, consensus=pfs_rule, tolerant_mismatches=pfs_tol)
+    consensus, tol = spec['consensus'], spec['tolerant_mismatches']
     cands = []
     # 突变在 PFS: 窗口终点 = mpos - k (k=1..5), 即窗口 [mpos-k-L, mpos-k)
     for k in range(1, 6):
@@ -80,9 +89,14 @@ def design_spacers(wt, mut, mpos, spacer_len=24, pfs_rule='CAGAG', topn=10):
         mm = sum(a != b for a, b in zip(spacer, wt_window))
         if mm != 0:
             continue                # protospacer 必须与 WT 相同(鉴别全靠 PFS)
+        pfs_mm_mut = pfs_mismatches(pfs_mut, consensus)
+        pfs_mm_wt = pfs_mismatches(pfs_wt, consensus)
+        discriminates = (pfs_mm_mut is not None and pfs_mm_wt is not None
+                         and pfs_mm_mut <= tol and pfs_mm_wt > tol)
         cands.append({'spacer': spacer, 'mut_in': f'PFS+{k}', 'proto_mm': mm,
                       'pfs_mut': pfs_mut, 'pfs_wt': pfs_wt,
-                      'pfs_discriminates': pfs_mut.startswith(pfs_rule[:1]) and pfs_mut != pfs_wt,
+                      'pfs_mm_mut': pfs_mm_mut, 'pfs_mm_wt': pfs_mm_wt,
+                      'pfs_discriminates': discriminates,
                       'tier': 2 if pfs_mut != pfs_wt else 0,
                       'start': start + 1})
     # 突变在 protospacer 内: 窗口覆盖 mpos
@@ -166,6 +180,10 @@ def main():
     ap.add_argument('--spacer', default=None,
                     help='直接输入 spacer(DNA/RNA, 17-25nt); 提供时跳过 tilling 设计, 只做骨架分型选择(项目本体口径)')
     ap.add_argument('--effector', default='cas12a2_zeng2026')
+    ap.add_argument('--pfs', default=None,
+                    help='PFS 共识序列(默认取注册表 pfs 字段; 如 CAGAG=Zeng 2026 R248Q 位点实测 PFS)')
+    ap.add_argument('--pfs-tol', type=int, default=None,
+                    help='PFS 容忍错配数(默认取注册表 pfs.tolerant_mismatches)')
     ap.add_argument('--spacer-len', type=int, default=24)
     ap.add_argument('--topn', type=int, default=10)
     ap.add_argument('--clusters', required=True)
@@ -217,7 +235,9 @@ def main():
     print(f'[agent] 突变定位: 1-based {mpos} ({wt[mpos-1]}>{mut[mpos-1]}), '
           f'转录本长度 WT={len(wt)} MUT={len(mut)}')
 
-    cands = design_spacers(wt, mut, mpos, args.spacer_len, topn=args.topn)
+    cands = design_spacers(wt, mut, mpos, args.spacer_len, pfs_rule=args.pfs,
+                           pfs_tol=args.pfs_tol, effector=args.effector,
+                           topn=args.topn)
     print(f'[agent] tilling 候选 {len(cands)} 条, 取前 {args.topn} 条配骨架')
     out_rows = []
     for c in cands[:args.topn]:
@@ -238,10 +258,16 @@ def main():
               f"-> 型{sel['nearest_type']}({sel['confidence']}) 骨架={dr_pick['representative_desc']}")
 
     os.makedirs(os.path.dirname(args.out_prefix), exist_ok=True)
+    pfs_out = resolve_pfs(args.effector, consensus=args.pfs,
+                          tolerant_mismatches=args.pfs_tol)
     with open(args.out_prefix + '.design.json', 'w', encoding='utf-8') as fh:
         json.dump({'mutation': {'pos': mpos, 'wt_base': wt[mpos - 1], 'mut_base': mut[mpos - 1],
                                 'all_diffs_1based': [d + 1 for d in all_diffs]},
-                   'effector': args.effector, 'n_candidates': len(cands), 'designs': out_rows,
+                   'effector': args.effector,
+                   'pfs': {'consensus': pfs_out['consensus'],
+                           'tolerant_mismatches': pfs_out['tolerant_mismatches'],
+                           'source': pfs_out['source']},
+                   'n_candidates': len(cands), 'designs': out_rows,
                    'disclaimer': '排序为透明启发式(PFS 鉴别>单错配>结构代理), 非活性预测; '
                                  '骨架分型功能差异未实验验证; 选择器为最近邻规则'},
                   fh, ensure_ascii=False, indent=1)

@@ -1,5 +1,6 @@
 {
  "engine": "chai-1 + 8D4A自模板m8 + ESM",
+ "template_caveat": "全部 32 行为 100% 一致自模板注入结果: 仅模板合规性 sanity check, 非界面可预测性证据; 结论待 template-free/scrambled-template 对照校准",
  "design": "4靶 x 8骨架(含WT与B_break_compensate); 靶RNA=protospacer窗口24nt+PFS 5nt(8D4A同构)",
  "rows": [
   {

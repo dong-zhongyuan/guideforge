@@ -27,6 +27,7 @@ import os
 import sys
 
 import numpy as np
+from scipy.stats import rankdata
 from sklearn.tree import DecisionTreeRegressor, export_text
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -36,6 +37,14 @@ sys.path.insert(0, HERE)
 DATA = os.path.join(ROOT, "data")
 
 FEATURES = ["ddG_dr", "bp_dist", "cross_nt", "p_fold", "spacer_up"]
+
+
+def spearman(x, y):
+    """tie-aware Spearman(midranks), 2026-09 round-3 R2 修复: 弃用手搓
+    argsort-of-argsort(并列不取平均秩), 统一走 scipy.stats.spearmanr。
+    与 scripts/crrna_creutzburg_reverse.py:spearman 同写法。"""
+    from scipy.stats import spearmanr
+    return float(spearmanr(x, y).statistic)
 
 
 def load_han():
@@ -288,11 +297,10 @@ def main():
     print("\n=== 决策树规则(可解释) ===")
     print(export_text(dt, feature_names=FEATURES, decimals=3))
 
-    # 训练集拟合度
+    # 训练集拟合度(tie-aware: 树预测在本库仅个位数 distinct 值, 并列取平均秩)
     pred_train = dt.predict(X)
-    rho_train = np.corrcoef(np.argsort(np.argsort(pred_train)),
-                            np.argsort(np.argsort(y)))[0, 1]
-    print("训练集 Spearman rho = %.3f" % rho_train)
+    rho_train = spearman(pred_train, y)
+    print("训练集 Spearman rho = %.3f (tie-aware)" % rho_train)
 
     # fig1f 留出验证: 只用 7 条工具箱训练, 检验 9 条 Fig1f 转录配对
     fig1f_holdout = None
@@ -303,12 +311,17 @@ def main():
                                       random_state=42)
         dt_tb.fit(X[idx_tb], y[idx_tb])
         pr = dt_tb.predict(X[idx_f1f])
-        rk = np.argsort(np.argsort(pr))
-        ry = np.argsort(np.argsort(y[idx_f1f]))
+        # tie-aware midranks(scipy rankdata, 与 spearmanr 同值): 4 叶树预测大量
+        # 并列, 旧 argsort-of-argsort 对并列不取平均秩(2026-09-04 round-3 统一)
+        rk = rankdata(pr)
+        ry = rankdata(y[idx_f1f])
         rho_ho = float(np.corrcoef(rk, ry)[0, 1])
         mae_ho = float(np.mean(np.abs(pr - y[idx_f1f])))
-        thr = float((y.max() - y.min()) / 3)  # 预登记阈值: 全体 y 值域 1/3
         y_tr = y[idx_tb]
+        # 2026-09-04 round-3 修复(泄漏): 旧口径 thr=(y.max()-y.min())/3 用含 9 条
+        # 留出测试标签的全量 y 计算(y.max()=S20=0.928 本身是测试点), 是测试集的
+        # 函数, "预登记"名不副实; 现只用训练折 y 值域。登记见 docs/preregistration.md §C。
+        thr = float((y_tr.max() - y_tr.min()) / 3)  # 训练折可用阈: 训练 y 值域 1/3
         # 外推归因 + 逐点误差(2026-09-03: MAE 超阈的结构化诊断, 不改阈值不改数据)
         per_point = [{"tag": tags[k], "confidence": confs[k],
                       "y_true": round(float(y[k]), 4),
@@ -321,11 +334,17 @@ def main():
         rng = np.random.default_rng(42)
         n_ho = len(idx_f1f)
         boot_rho, boot_mae = [], []
+        boot_nan = 0
         for _ in range(10000):
             b = rng.integers(0, n_ho, n_ho)
             if len(set(b.tolist())) < 3:
                 continue
-            boot_rho.append(float(np.corrcoef(rk[b], ry[b])[0, 1]))
+            c = float(np.corrcoef(rk[b], ry[b])[0, 1])
+            if np.isnan(c):
+                # 并列秩重抽样零方差 → ρ 未定义, 剔除并计数(tie-aware 连带修正)
+                boot_nan += 1
+                continue
+            boot_rho.append(c)
             boot_mae.append(float(np.mean(np.abs(pr[b] - y[idx_f1f][b]))))
         rho_ci = [round(float(np.percentile(boot_rho, q)), 3)
                   for q in (2.5, 97.5)]
@@ -335,8 +354,18 @@ def main():
             "design": "train toolbox n=%d, test fig1f n=%d" % (
                 len(idx_tb), len(idx_f1f)),
             "spearman": round(rho_ho, 3), "mae": round(mae_ho, 4),
+            "spearman_method": "scipy rankdata midranks(与 scipy.stats.spearmanr "
+                               "同值, tie-aware); 2026-09-04 round-3 统一, 旧口径 "
+                               "argsort-of-argsort 对并列不取平均秩",
             "spearman_boot_ci95": rho_ci, "mae_boot_ci95": mae_ci,
-            "mae_threshold_prereg": round(thr, 4),
+            "spearman_boot_excluded_zero_variance": boot_nan,
+            "mae_threshold_trainfold": round(thr, 4),
+            "mae_threshold_note": "2026-09-04 round-3 修复: 旧字段 "
+                "mae_threshold_prereg=(y.max()-y.min())/3=0.1617 用含 9 条留出测试"
+                "标签的全量 y 计算(y.max()=S20=0.928 本身是测试点), 泄漏测试集信息, "
+                "'预登记'名不副实; 现口径仅用 7 条训练折 y 值域的 1/3。该阈仍为数据"
+                "导出(训练折)相对阈, 非外部绝对标准; 判据登记见 "
+                "docs/preregistration.md §C",
             "train_y_range": [round(float(y_tr.min()), 4),
                               round(float(y_tr.max()), 4)],
             "test_labels_above_train_range": n_out,
@@ -346,14 +375,14 @@ def main():
                 "间的水平偏移叠加树模型不可外推, 非排序能力失败; 本用途(先验排序)"
                 "的有效判据是秩一致性(Spearman 及其 CI)" % (n_out, y_tr.max()),
             "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; "
-                    "Spearman>0 且 MAE<全体 y 值域的 1/3 视为转录配对可用; "
+                    "Spearman>0 且 MAE<训练折 y 值域的 1/3 视为转录配对可用; "
                     "MAE 超阈后果: fig1f 配对仅用于秩级体检, 绝对水平不采用"}
         print("\n=== fig1f 留出验证(训练%d工具箱 -> 检验%d转录对) ===" % (
             len(idx_tb), len(idx_f1f)))
         print("Spearman = %+.3f [CI95 %+.3f, %+.3f], MAE = %.4f [CI95 %.4f, %.4f] "
-              "(阈值 %.3f, y 范围 %.3f-%.3f)" % (
+              "(训练折阈值 %.4f, 训练折 y 范围 %.3f-%.3f)" % (
                   rho_ho, rho_ci[0], rho_ci[1], mae_ho, mae_ci[0], mae_ci[1],
-                  thr, y.min(), y.max()))
+                  thr, y_tr.min(), y_tr.max()))
         print("外推归因: %d/%d 条检验标签高于训练上界 %.3f" % (
             n_out, n_ho, y_tr.max()))
 
@@ -378,12 +407,41 @@ def main():
     for name, p, ddg, score in ranked[:20]:
         print("%-16s %10.1f %10.2f %10.4f" % (name, p, float(ddg), float(score)))
 
-    # 与管线综合分的 Spearman
+    # 与管线综合分的 Spearman(tie-aware, 2026-09 round-3 R3 修复)
+    # 旧口径 np.argsort(np.argsort()) 对并列不取平均秩且默认排序不稳定:
+    # 决策树在本候选库上仅输出个位数 distinct 预测值(204 条大量并列),
+    # tie-blind 统计量随 numpy 版本/输入顺序摆动(同数据实测: 本机文件序 +0.587,
+    # 逆序 -0.493, 快照 8c33354 的 artifact 为 -0.872), 属纯伪影, 不构成
+    # "两排序系统反向"的证据。改用 scipy midrank 并附敏感度记录。
+    from scipy.stats import spearmanr as _spearmanr
     our_scores = np.array([float(s) for _, _, _, s in ranked])
     lit_preds = np.array([p for _, p, _, _ in ranked])
-    rho = np.corrcoef(np.argsort(np.argsort(lit_preds)),
-                      np.argsort(np.argsort(our_scores)))[0, 1]
-    print("\n文献模型 vs 管线综合分 Spearman = %+.3f" % rho)
+    _sp = _spearmanr(lit_preds, our_scores)
+    rho, rho_p = float(_sp.statistic), float(_sp.pvalue)
+    rho_tb_fwd = float(np.corrcoef(np.argsort(np.argsort(lit_preds)),
+                                   np.argsort(np.argsort(our_scores)))[0, 1])
+    rho_tb_rev = float(np.corrcoef(np.argsort(np.argsort(lit_preds[::-1])),
+                                   np.argsort(np.argsort(our_scores[::-1])))[0, 1])
+    n_leaf_vals = len(set(np.round(lit_preds, 6)))
+    # 顶部集合重合(K=12): 方向口径 lit_pred 低=好, score 高=优
+    sel_top = {nm for nm, *_ in ranked[:12]}
+    pipe_top = {r["desc"] for r in
+                sorted(cands, key=lambda r: -float(r["score"]))[:12]}
+    top12_overlap = {"k": 12,
+                     "intersection": len(sel_top & pipe_top),
+                     "jaccard": round(len(sel_top & pipe_top)
+                                      / len(sel_top | pipe_top), 3),
+                     "selector_top12": sorted(sel_top),
+                     "pipeline_top12": sorted(pipe_top)}
+    print("\n文献模型 vs 管线综合分 Spearman(tie-aware) = %+.3f (p=%.4f)"
+          % (rho, rho_p))
+    print("  方向口径: lit_pred 低=预测活性强, score 高=优 -> 排序一致性读 "
+          "goodness 序相关 = %+.3f" % -rho)
+    print("  tie-blind 旧口径敏感度: 正序 %+.3f / 逆序 %+.3f (distinct 预测值 %d 个,"
+          "伪影; 快照 8c33354 artifact -0.872 同源)" % (rho_tb_fwd, rho_tb_rev,
+                                                       n_leaf_vals))
+    print("  TOP-12 重合: %d/12 (Jaccard %.3f)" % (top12_overlap["intersection"],
+                                                  top12_overlap["jaccard"]))
 
     # === Sanger 耐受集体检: 真实变体在模型预测分布中的位置 ===
     tol_stats = None
@@ -439,10 +497,9 @@ def main():
                                    random_state=42)
         m2.fit(Xp[idx_tr], yp[idx_tr])
         pr = m2.predict(Xp[idx_te])
-        rk = np.argsort(np.argsort(pr))
-        ry = np.argsort(np.argsort(yp[idx_te]))
-        loeo[ep] = round(float(np.corrcoef(rk, ry)[0, 1]), 3)
-        print("  LOEO %-9s (n=%d): Spearman=%+.3f" % (ep, len(idx_te), loeo[ep]))
+        loeo[ep] = round(spearman(pr, yp[idx_te]), 3)
+        print("  LOEO %-9s (n=%d): Spearman(tie-aware)=%+.3f" % (
+            ep, len(idx_te), loeo[ep]))
     for r in fam_rows:
         fv = [r["features"][f] for f in FEATURES]
         r["pred_pooled_z"] = round(float(pooled.predict([fv])[0]), 3)
@@ -469,19 +526,27 @@ def main():
         Xr = np.array([[float(r[f]) for f in FEATURES] for r in rrs])
         yr = np.array([float(r["rrs_rel"]) for r in rrs])
         pr = pooled.predict(Xr)
-        rk = np.argsort(np.argsort(pr))
-        ry = np.argsort(np.argsort(yr))
-        rho_all = float(np.corrcoef(rk, ry)[0, 1])
-        per_crna = []
+        rho_all = spearman(pr, yr)
+        per_crna, n_undef = [], 0
         for nn in sorted({int(r["crRNA"]) for r in rrs}):
             idx = [i for i, r in enumerate(rrs) if int(r["crRNA"]) == nn]
             if len(idx) >= 5:
-                per_crna.append(float(np.corrcoef(rk[idx], ry[idx])[0, 1]))
+                # tie-aware 且在子集内重取秩(旧口径沿用全局秩切片, 并列处理不一致);
+                # 子集内预测全并列(树模型在该 crRNA 上无区分)时 ρ 未定义, 剔除并计数
+                rho_c = spearman(pr[idx], yr[idx])
+                if np.isnan(rho_c):
+                    n_undef += 1
+                else:
+                    per_crna.append(rho_c)
         rrs_check = {
             "n": len(rrs),
             "spearman_pooled_vs_rrs_rel": round(rho_all, 3),
             "per_crna_spearman_median": round(float(np.median(per_crna)), 3)
             if per_crna else None,
+            "per_crna_n_valid": len(per_crna),
+            "per_crna_n_undefined_all_tied": n_undef,
+            "method": "scipy.stats.spearmanr(tie-aware midranks), 逐 crRNA 在子集"
+                      "内重取秩; 2026-09-04 round-3 统一",
             "design": "池化模型训练集不含任何 Tian 2025 数据(独立外部验证)",
             "interpretation": "RRS 区(DR 5' 端 4nt)活性由假结配对承载(Tian 2025 "
                               "Fig.1: U+3/U+4 与茎环互作), 伪结外特征按构造不可表示"
@@ -489,8 +554,9 @@ def main():
                               "结论: 选型器排序不适用于 DR 5' 端 RRS 位点变体, "
                               "该位点区候选须按位置规则另行排除"}
         print("\n=== Tian2025 RRS 外部验证(n=%d) ===" % len(rrs))
-        print("整体 Spearman = %+.3f; 逐 crRNA 中位 = %+.3f"
-              % (rho_all, rrs_check["per_crna_spearman_median"] or float("nan")))
+        print("整体 Spearman = %+.3f; 逐 crRNA 中位 = %+.3f (有效 %d, 全并列剔除 %d)"
+              % (rho_all, rrs_check["per_crna_spearman_median"] or float("nan"),
+                 len(per_crna), n_undef))
         print("解读: 伪结外特征对 RRS 区盲端(预期内), 选型器不适于 RRS 位点变体")
 
     # === DeWeirdt 2020 alt-DR 外部验证(2026-09-03): 池化模型(训练集不含
@@ -501,6 +567,8 @@ def main():
     if scan:
         dw_check = {"design": "池化模型训练集不含任何 DeWeirdt 2020 数据"
                               "(独立外部验证, 全量无剔除)",
+                    "method": "scipy.stats.spearmanr(tie-aware midranks); "
+                              "2026-09-04 round-3 统一",
                     "direction": "LFC 低=活性强, 模型 z 高=预测优 -> 报告 "
                                  "Spearman(pred, -LFC), 正=方向正确"}
         for ori, fkey, lkey in (("127", "features_127", "lfc127"),
@@ -511,8 +579,7 @@ def main():
                            for i in idx])
             yd = np.array([-float(scan["rows"][i][lkey]) for i in idx])
             pr = pooled.predict(Xd)
-            rho_dw = float(np.corrcoef(np.argsort(np.argsort(pr)),
-                                       np.argsort(np.argsort(yd)))[0, 1])
+            rho_dw = spearman(pr, yd)
             # 同数据集 5 折 CV(归因诊断: 区分"特征在该体系内无信息"
             # 与"跨数据集迁移失败"; 树超参与池化模型一致)
             from sklearn.model_selection import KFold
@@ -524,8 +591,7 @@ def main():
                                            random_state=42)
                 m3.fit(Xd[tr], yd[tr])
                 pr_cv[te] = m3.predict(Xd[te])
-            rho_cv = float(np.corrcoef(np.argsort(np.argsort(pr_cv)),
-                                       np.argsort(np.argsort(yd)))[0, 1])
+            rho_cv = spearman(pr_cv, yd)
             dw_check["ori" + ori] = {
                 "n": len(idx),
                 "spearman_pred_vs_neglfc": round(rho_dw, 3),
@@ -534,11 +600,33 @@ def main():
                   % (ori, len(idx)))
             print("Spearman(池化预测 vs -LFC) = %+.3f; 同数据集 5 折 CV = %+.3f"
                   % (rho_dw, rho_cv))
+    else:
+        # 2026-09-04: 本机缺 data/raw/deweirdt2020_dr_scan.json 时沿用既有
+        # homolog_training.json 的全量数据运行结果并如实标注口径, 防止静默丢失
+        # (旧行为: dw_check=None 直接把上一轮的 DeWeirdt 外部验证结果覆盖为 null)
+        prev_path = os.path.join(DATA, "homolog_training.json")
+        prev_dw = None
+        if os.path.exists(prev_path):
+            try:
+                prev_dw = json.load(open(prev_path, encoding="utf-8")).get(
+                    "deweirdt2020_external_check")
+            except Exception:
+                prev_dw = None
+        if prev_dw:
+            dw_check = dict(prev_dw)
+            dw_check["preserved_from_previous_run"] = (
+                "本机缺 data/raw/deweirdt2020_dr_scan.json, 本次未重算; 保留自上一"
+                "全量数据运行(旧 tie-blind Spearman 口径), 待数据齐备后按 "
+                "tie-aware 口径重算")
+            print("\n=== DeWeirdt2020 外部验证: 本机缺 data/raw, 沿用上一全量"
+                  "运行结果并标注(见 JSON preserved_from_previous_run) ===")
 
     # 输出
     out = {"model": "DecisionTreeRegressor(max_leaf=4)",
            "usage_scope": "文献先验排序(相对次序)专用; 绝对预测值不可引用——"
-                          "fig1f 留出 MAE 超预登记阈值(归因见 fig1f_holdout_check)",
+                          "fig1f 留出 MAE 超训练折可用阈(归因见 fig1f_holdout_check; "
+                          "旧'预登记'口径含测试标签泄漏, 2026-09-04 修复说明见 "
+                          "mae_threshold_note)",
            "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a "
                             "toolbox n=7 + Fig.1f 视觉转录 n=9 "
                             "(置信度分级见 han2025_dataset.json fig1f_pairs)",
@@ -550,6 +638,41 @@ def main():
            "train_spearman": round(float(rho_train), 3),
            "applied_to": "tp53_r248q_zengdr.v6 (%d passed)" % len(cands),
            "vs_pipeline_score_spearman": round(float(rho), 3),
+           "vs_pipeline_score_spearman_pval": round(float(rho_p), 4),
+           "vs_pipeline_score_method": "scipy.stats.spearmanr(tie-aware midranks); "
+               "2026-09 round-3 R3 修复: 旧口径 argsort(argsort()) 对并列不取平均秩,"
+               "且决策树预测仅个位数 distinct 值, 结果随 numpy 版本/输入顺序摆动",
+           "vs_pipeline_score_direction": "lit_pred 低=预测活性强(Fig1g 抑制读数), "
+               "pipeline score 高=优; 两排序系统的一致性应读 goodness 序相关 = "
+               "-vs_pipeline_score_spearman",
+           "vs_pipeline_score_tieblind_artifact": {
+               "forward_order": round(rho_tb_fwd, 3),
+               "reversed_order": round(rho_tb_rev, 3),
+               "snapshot_8c33354_artifact": -0.872,
+               "distinct_pred_values": n_leaf_vals,
+               "note": "tie-blind 统计量在少 distinct 值预测上随输入顺序/numpy 版本"
+                       "摆动(+0.587/-0.493/-0.872 同源伪影), 不构成两排序系统"
+                       "真实反向分歧的证据; 以 tie-aware 值为准"},
+           "top12_overlap_pipeline_vs_selector": top12_overlap,
+           "ranking_authority": "pipeline_score",
+           "ranking_authority_reason":
+               "合成候选排序以管线打分(score_variant, 同一 Cas12a2 zeng2026 构建的 "
+               "ViennaRNA 结构口径)为准。(1) 本选型器是 n=16 LbCas12a CRISPRi 终点"
+               "训练的文献先验, fig1f 留出 MAE 超训练折可用阈、LOEO 在 cis 端点反预测"
+               "(%.3f, 本运行计算值), 按 usage_scope 仅供先验排序参考; (2) 决策树在本候选库仅"
+               "输出个位数 distinct 预测值, 对多数保守变体无区分力; (3) 管线打分经 "
+               "filter+random 基线检验(data/selection_baseline.cas12a2_zeng2026.json)"
+               "确认相对'硬过滤+随机'有大效应排序信息量。" % loeo["cis_end"],
+           "divergence_note":
+               "修正后两排序并非反向: tie-aware rho(lit_pred, score)=%+.3f "
+               "(p=%.4f), 按方向口径折算 goodness 序相关=%+.3f, 仅为弱残余分歧; "
+               "TOP-12 重合 %d 条(Jaccard %.3f), 顶部集合大体一致。残余分歧的可能"
+               "解释: 选型器偏好 DR 单独强稳定化(ddG_dr<=-1.15 叶节点), 而管线在"
+               "全长口径下 ddG 仅 0.1 罚/0.3 赏; 且训练终点为 LbCas12a CRISPRi GFP "
+               "抑制, 与 Cas12a2 旁切杀伤存在体系迁移差距。快照 8c33354 artifact 的 "
+               "-0.872 为 tie-blind 伪影(见 vs_pipeline_score_tieblind_artifact)。"
+               % (rho, rho_p, -rho, top12_overlap["intersection"],
+                  top12_overlap["jaccard"]),
            "sanger_tolerance_check": tol_stats,
            "multi_endpoint": {"endpoints": sorted(models),
                               "note": "cis/trans 终点比 = 同源(LbCas12a)切割先验, "
@@ -582,6 +705,10 @@ def main():
         "pooled_feature_importance": {f: float(imp) for f, imp in
                                       zip(FEATURES, pooled.feature_importances_)},
         "loeo_spearman": loeo,
+        "spearman_method": "scipy.stats.spearmanr(tie-aware midranks); "
+                           "2026-09-04 round-3 统一: LOEO/Tian2025/DeWeirdt 各 ρ "
+                           "弃用手搓 argsort-of-argsort(并列不取平均秩), "
+                           "与旧 tie-blind 口径的数值差异为并列秩处理所致",
         "rejected_endpoints": {
             "spr_kd": "传感图相位预处理无法对论文定性序(canonical 最强)校验, 拟合不收敛",
             "supfig8_10_raw_fluor": "0mM 诱导下面板间仍 3 倍差、10mM 方向与 "

@@ -63,5 +63,6 @@
   "iptm_crRNA_target": 0.314,
   "clashes": false
  },
- "interpretation": "蛋白-RNA 界面未恢复(iptm~0.2, 无MSA已知短板); crRNA-靶RNA pairwise iptm~0.35 为最有意义链对; ESM 嵌入版与模板/MSA 版为后续升级路径"
+ "interpretation": "5模型均值: ipTM 0.250, prot-crRNA ipTM 0.048, crRNA-靶RNA ipTM 0.313; prot-crRNA ipTM 0.05 低于可用界面预测区间(~0.5-0.6); 单序列口径(无MSA/无模板): 分数为裸序列预测能力下限",
+ "self_template": false
 }

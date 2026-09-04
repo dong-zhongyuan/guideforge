@@ -1,13 +1,18 @@
 {
  "spacer_dna": "GTTCATGCCGCCCATGCAGGAACT",
  "target_scanned": "AGTTCCTGCATGGGCGGCATGAAC",
- "pfs_rule": "CAGAG",
+ "pfs_rule": "GAAAG",
+ "pfs_tolerant_mismatches": 2,
+ "pfs_source": "registry:cas12a2_zeng2026",
+ "pfs_models_counts": {
+  "exact_0mm": 0,
+  "tolerant_2mm": 1
+ },
  "max_mismatch": 4,
  "n_transcripts": 2,
  "n_sites": 2,
  "by_mismatch": {
-  "0mm+PFS": 1,
-  "0mm": 1
+  "0mm": 2
  },
  "sites": [
   {
@@ -16,7 +21,9 @@
    "mismatches": 0,
    "window": "AGTTCCTGCATGGGCGGCATGAAC",
    "pfs": "CAGAG",
-   "pfs_match": true
+   "pfs_mm": 2,
+   "pfs_match": false,
+   "pfs_tolerant": true
   },
   {
    "transcript": "TP53_WT_mRNA_NM_000546.6",
@@ -24,7 +31,9 @@
    "mismatches": 0,
    "window": "AGTTCCTGCATGGGCGGCATGAAC",
    "pfs": "CGGAG",
-   "pfs_match": false
+   "pfs_mm": 3,
+   "pfs_match": false,
+   "pfs_tolerant": false
   }
  ]
 }

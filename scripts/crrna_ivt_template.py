@@ -1,7 +1,8 @@
 """IVT 首轮矩阵模板与回填校验(V3 §5.1 8x4 矩阵的回流前置件, 2026-09-02)。
 
-模板: 8 骨架(WT + 四取向候选族去重 7 条) x 4 靶标(R248Q/G12C/G12D/R273H;
-APC 为无义截短型, 骨架-向导互扰口径与错义一致, 可选 --with-apc 扩 10x8)
+模板: 8 骨架(WT + 四取向候选族去重 7 条, 含 round-3 去混杂补偿因果臂) x 4 靶标
+(策划案 V3 表2: R248Q/G12D/R273H/APC 无义 Q1312x; APC 为无义截短型, 骨架-向导
+互扰口径与错义一致; KRAS-G12C 为干实验附加证据, 不入湿实验矩阵)
 = 32 行, 每行含: 组合 id / 靶标 / 骨架 desc(与 variants.csv 及 BO ingest 一致) /
 完整构建序列 / 空白测量列(Vmax_1-3, EC50_1-3, mismatch_stringency)。
 
@@ -24,8 +25,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
 DATA = os.path.join(ROOT, "data")
 
-TARGETS = [("TP53-R248Q", "tp53_r248q"), ("KRAS-G12C", "kras_g12c"),
-           ("KRAS-G12D", "kras_g12d"), ("TP53-R273H", "tp53_r273h")]
+# 策划案 V3 表2 四靶: R248Q / G12D / R273H / APC 无义(Q1312x, MCR 区 CAG->TAG);
+# KRAS-G12C 仅作干实验附加证据保留(data/kras_g12c_scan_v47.*), 不入湿实验矩阵
+TARGETS = [("TP53-R248Q", "tp53_r248q"), ("KRAS-G12D", "kras_g12d"),
+           ("TP53-R273H", "tp53_r273h"), ("APC-Q1312x", "apc_q1338x")]
 
 # 主靶标锚定项目正典 spacer(Zeng 2026 gRNA3), 保证与既有全部工作可比;
 # 其余靶标用智能体 tilling 最优设计(源: data/agent/*.design.json)。
@@ -59,7 +62,7 @@ def load_spacers():
     return out
 
 
-def gen_template(path):
+def gen_template(path, order_sheet=None):
     scaf = load_scaffolds()
     sp = load_spacers()
     rows = []
@@ -81,6 +84,21 @@ def gen_template(path):
         w.writeheader()
         w.writerows(rows)
     print("模板 %d 行(骨架 %d x 靶标 %d) -> %s" % (len(rows), len(scaf), len(sp), path))
+    if order_sheet:
+        cols2 = ["oligo_name", "target", "scaffold_desc", "sequence_5to3_RNA",
+                 "length_nt", "spacer_dna_ref"]
+        with open(order_sheet, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=cols2)
+            w.writeheader()
+            for r in rows:
+                w.writerow({
+                    "oligo_name": "GF_" + r["combo_id"].replace("|", "_"),
+                    "target": r["target"],
+                    "scaffold_desc": r["scaffold_desc"],
+                    "sequence_5to3_RNA": r["construct_dna"].replace("T", "U"),
+                    "length_nt": len(r["construct_dna"]),
+                    "spacer_dna_ref": r["spacer_dna"]})
+        print("订单表 %d 行 -> %s" % (len(rows), order_sheet))
 
 
 def check_filled(path, out):
@@ -258,6 +276,9 @@ def main():
     ap.add_argument("--cell-csv", default=None,
                     help="细胞 SI 实测(scaffold_desc,target,SI_measured)")
     ap.add_argument("--out", default=os.path.join(DATA, "ivt_round1_template.csv"))
+    ap.add_argument("--out-order-sheet", default=os.path.join(
+        DATA, "ivt_round1_order_sheet.csv"),
+                    help="合成订单表输出(随模板一起生成; 空串则跳过)")
     args = ap.parse_args()
     if args.check:
         check_filled(args.check, args.out_round1)
@@ -266,7 +287,7 @@ def main():
     elif args.twin_check:
         twin_check(args.twin_check, args.cell_csv)
     else:
-        gen_template(args.out)
+        gen_template(args.out, args.out_order_sheet or None)
 
 
 if __name__ == "__main__":

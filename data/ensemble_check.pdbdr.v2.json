@@ -1,14 +1,123 @@
 {
- "source_top_json": "/public/home/mengxl/dzy/guideforge/data/tp53_r248q_pdbdr.v2.top.json",
+ "source_top_json": "data/tp53_r248q_pdbdr.v2.top.json",
  "n_samples": 100,
  "seed": 42,
  "rt_kcal": 0.61632,
  "rules": {
   "R1_shift_over_1kcal": "1.0",
-  "R2_noise_over_effect": "None",
-  "R3_sample_range_over_4kcal": "4.0",
+  "R2p_effect_floor_kcal": "1.0",
+  "R2p_p_contra_over": "0.2",
+  "R3p_spread_ratio_over": "2.0",
   "R4_stem_bimodal_20_80": "(0.2, 0.8)"
  },
+ "rule_summary": {
+  "R1": {
+   "criterion": "|ddG_mfe - ddG_ens| > 1.0 kcal (MFE 点估计偏移过大)",
+   "fired": 0,
+   "total": 12,
+   "fired_candidates": []
+  },
+  "R2'": {
+   "criterion": "|ddG_ens| >= 1.0 且 P_contra > 0.2 (序翻转; 两枚举窗口卷积精确值)",
+   "fired": 0,
+   "total": 12,
+   "fired_candidates": [],
+   "tested": 4,
+   "untested_note": "|ddG_ens| < 1.0 的近中性候选 8 条不判定(其'无实效'即主张本身), P_contra 逐候选披露"
+  },
+  "R3'": {
+   "criterion": "sd_ens(var)/sd_ens(WT) > 2.0 (景观粗糙度; 窗口精确值)",
+   "fired": 0,
+   "total": 12,
+   "fired_candidates": []
+  },
+  "R4": {
+   "criterion": "茎完整构象占比在 20%~80% (构象二态; 窗口精确值)",
+   "fired": 0,
+   "total": 12,
+   "fired_candidates": []
+  }
+ },
+ "conclusion_strength": "passed_all_rules",
+ "conclusion_note": "R1 + 重设计 R2'/R3' + R4 全部未触发: 全部 12 候选 |ddG_mfe-ddG_ens| ≤ 1.0(MFE 口径与精确系综自由能差一致); 4 条实效候选(|ddG_ens|≥1.0) 序翻转概率 P_contra 均 ≤ 0.2; 景观展宽比均 ≤ 2.0(WT 分裂半零分布 p95=1.36, 超阈经验率 1.0%); 无构象二态——'打分输入端在系综采样下稳定'主张在 重设计判据下成立。近中性候选(|ddG_ens|<1.0) P_contra≈0.5 属普通热涨落重叠, 按登记判据不判定(逐候选披露)。旧 R2/R3 已退役, 见 deprecated_ill_posed_R2R3。",
+ "r3_null_calibration": {
+  "method": "WT 枚举窗口随机分裂半, Boltzmann 加权 sd 之比, 200 次",
+  "reps": 200,
+  "ratio_p95": 1.362,
+  "ratio_max": 2.39,
+  "n_over_threshold": 2,
+  "null_trigger_rate": 0.01,
+  "note": "零分布在 R3' 阈值 2.0 处的经验触发率 1.0%——阈值假阳性率 极低, 标定成立"
+ },
+ "deprecated_ill_posed_R2R3": {
+  "note": "旧 R2(std(ddG_sample)>|ddG_ens|)/R3(max-min>4.0) 统计构造病态(alfa round-2 #4, 2026-09-04): ddG_samp = e_v - e_w 为两组相互独立的 Boltzmann 抽样按采样序号配对求差, 其 std 按构造 ≈ sqrt(sd_v^2+sd_w^2)(本库 WT sd=0.81; 逐候选构造值与观测值最大偏差 0.09 kcal)——在普通系综涨落尺度上武装, 对 |ddG_ens|≲1.3 kcal 的候选必然触发, 其普遍触发不能作为真实构象不稳的证据, 该检验按构造无法检出设计目标病理。该两条规则已退役, 数值仅供溯源, 判定以重设计的 R2'/R3' 为准(判据登记: docs/preregistration.md §B)。",
+  "constructed_std_formula": "sqrt(sd_v^2 + sd_w^2) (独立 Boltzmann 抽样按采样序号配对)",
+  "wt_E_sample_std": 0.81,
+  "per_candidate": [
+   {
+    "name": "A7C+U14G",
+    "constructed_std": 1.24,
+    "observed_ddG_sample_std": 1.3
+   },
+   {
+    "name": "A7G+U14C",
+    "constructed_std": 1.27,
+    "observed_ddG_sample_std": 1.24
+   },
+   {
+    "name": "U6C+A15G",
+    "constructed_std": 1.46,
+    "observed_ddG_sample_std": 1.47
+   },
+   {
+    "name": "A15G",
+    "constructed_std": 1.17,
+    "observed_ddG_sample_std": 1.2
+   },
+   {
+    "name": "U2G",
+    "constructed_std": 1.26,
+    "observed_ddG_sample_std": 1.26
+   },
+   {
+    "name": "U2A",
+    "constructed_std": 1.37,
+    "observed_ddG_sample_std": 1.46
+   },
+   {
+    "name": "U2C",
+    "constructed_std": 1.36,
+    "observed_ddG_sample_std": 1.42
+   },
+   {
+    "name": "A7G",
+    "constructed_std": 1.4,
+    "observed_ddG_sample_std": 1.42
+   },
+   {
+    "name": "U6G+A15C",
+    "constructed_std": 1.42,
+    "observed_ddG_sample_std": 1.49
+   },
+   {
+    "name": "A1C",
+    "constructed_std": 1.11,
+    "observed_ddG_sample_std": 1.11
+   },
+   {
+    "name": "A1G",
+    "constructed_std": 1.12,
+    "observed_ddG_sample_std": 1.17
+   },
+   {
+    "name": "U18C",
+    "constructed_std": 1.2,
+    "observed_ddG_sample_std": 1.2
+   }
+  ],
+  "max_abs_deviation_kcal": 0.09
+ },
+ "preregistration": "判据集中登记于 docs/preregistration.md (2026-09-04) §B; R2'/R3' 为 2026-09-04 登记的重设计判据(先登记后评估); 判据变更须先登记后评估",
  "dr_stem_pairs_0based": [
   [
    3,
@@ -37,11 +146,13 @@
   "ddG_ens": 0.0,
   "tail_mass": 0.0101,
   "delta_centigrade": 500,
-  "stem_intact_frac": 0.81,
+  "stem_intact_frac": 0.872,
   "p_stem_pf": 0.86598,
-  "spacer_paired_mean": 0.578,
-  "spacer_paired_std": 0.02,
-  "E_sample_std": 0.81
+  "spacer_paired_mean": 0.575,
+  "spacer_paired_std": 0.032,
+  "E_sample_std": 0.81,
+  "E_win_mean": -10.08,
+  "E_win_sd": 1.0
  },
  "candidates": [
   {
@@ -51,6 +162,10 @@
    "ddG_mfe": -2.2,
    "ddG_ens": -2.2,
    "ddG_mfe_vs_ens_shift": -0.0,
+   "window_mean_gap": -2.2,
+   "p_order_contra": 0.074,
+   "spread_ratio": 0.995,
+   "r2_tested": true,
    "ddG_sample_mean": -2.08,
    "ddG_sample_std": 1.3,
    "ddG_sample_min": -5.9,
@@ -61,13 +176,13 @@
    ],
    "tail_mass": 0.0098,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.87,
+   "stem_intact_frac": 0.873,
    "p_stem_pf": 0.86639,
-   "spacer_paired_mean": 0.577,
-   "spacer_paired_std": 0.03,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 0.94,
    "unstable_flags": [
-    "R3"
+    "OK"
    ]
   },
   {
@@ -77,6 +192,10 @@
    "ddG_mfe": -2.0,
    "ddG_ens": -2.0,
    "ddG_mfe_vs_ens_shift": 0.0,
+   "window_mean_gap": -1.99,
+   "p_order_contra": 0.077,
+   "spread_ratio": 1.011,
+   "r2_tested": true,
    "ddG_sample_mean": -1.89,
    "ddG_sample_std": 1.24,
    "ddG_sample_min": -5.7,
@@ -87,13 +206,13 @@
    ],
    "tail_mass": 0.0122,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.92,
+   "stem_intact_frac": 0.87,
    "p_stem_pf": 0.84514,
-   "spacer_paired_mean": 0.573,
-   "spacer_paired_std": 0.04,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.033,
    "E_sample_std": 0.98,
    "unstable_flags": [
-    "R3"
+    "OK"
    ]
   },
   {
@@ -103,6 +222,10 @@
    "ddG_mfe": -2.0,
    "ddG_ens": -2.0,
    "ddG_mfe_vs_ens_shift": -0.0,
+   "window_mean_gap": -2.0,
+   "p_order_contra": 0.075,
+   "spread_ratio": 0.995,
+   "r2_tested": true,
    "ddG_sample_mean": -1.7,
    "ddG_sample_std": 1.47,
    "ddG_sample_min": -5.5,
@@ -113,13 +236,13 @@
    ],
    "tail_mass": 0.0097,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.88,
+   "stem_intact_frac": 0.872,
    "p_stem_pf": 0.86836,
-   "spacer_paired_mean": 0.572,
-   "spacer_paired_std": 0.043,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 1.22,
    "unstable_flags": [
-    "R3"
+    "OK"
    ]
   },
   {
@@ -129,6 +252,10 @@
    "ddG_mfe": 0.3,
    "ddG_ens": 0.3,
    "ddG_mfe_vs_ens_shift": 0.0,
+   "window_mean_gap": 0.31,
+   "p_order_contra": 0.22,
+   "spread_ratio": 1.01,
+   "r2_tested": false,
    "ddG_sample_mean": 0.31,
    "ddG_sample_std": 1.2,
    "ddG_sample_min": -3.4,
@@ -139,14 +266,13 @@
    ],
    "tail_mass": 0.012,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.91,
+   "stem_intact_frac": 0.871,
    "p_stem_pf": 0.85588,
-   "spacer_paired_mean": 0.576,
-   "spacer_paired_std": 0.027,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 0.84,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -156,6 +282,10 @@
    "ddG_mfe": 0.0,
    "ddG_ens": -0.01,
    "ddG_mfe_vs_ens_shift": 0.01,
+   "window_mean_gap": 0.04,
+   "p_order_contra": 0.766,
+   "spread_ratio": 1.037,
+   "r2_tested": false,
    "ddG_sample_mean": 0.1,
    "ddG_sample_std": 1.26,
    "ddG_sample_min": -3.7,
@@ -166,14 +296,13 @@
    ],
    "tail_mass": 0.0111,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.88,
+   "stem_intact_frac": 0.865,
    "p_stem_pf": 0.85726,
-   "spacer_paired_mean": 0.572,
-   "spacer_paired_std": 0.029,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 0.96,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -183,6 +312,10 @@
    "ddG_mfe": 0.0,
    "ddG_ens": -0.02,
    "ddG_mfe_vs_ens_shift": 0.02,
+   "window_mean_gap": 0.06,
+   "p_order_contra": 0.757,
+   "spread_ratio": 1.05,
+   "r2_tested": false,
    "ddG_sample_mean": 0.29,
    "ddG_sample_std": 1.46,
    "ddG_sample_min": -3.7,
@@ -193,14 +326,13 @@
    ],
    "tail_mass": 0.0112,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.82,
+   "stem_intact_frac": 0.86,
    "p_stem_pf": 0.8537,
-   "spacer_paired_mean": 0.577,
-   "spacer_paired_std": 0.028,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 1.11,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -210,6 +342,10 @@
    "ddG_mfe": 0.0,
    "ddG_ens": -0.01,
    "ddG_mfe_vs_ens_shift": 0.01,
+   "window_mean_gap": 0.06,
+   "p_order_contra": 0.765,
+   "spread_ratio": 1.081,
+   "r2_tested": false,
    "ddG_sample_mean": 0.15,
    "ddG_sample_std": 1.42,
    "ddG_sample_min": -3.7,
@@ -220,14 +356,13 @@
    ],
    "tail_mass": 0.0134,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.92,
+   "stem_intact_frac": 0.874,
    "p_stem_pf": 0.86822,
    "spacer_paired_mean": 0.573,
-   "spacer_paired_std": 0.037,
+   "spacer_paired_std": 0.038,
    "E_sample_std": 1.09,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -237,6 +372,10 @@
    "ddG_mfe": 0.0,
    "ddG_ens": -0.01,
    "ddG_mfe_vs_ens_shift": 0.01,
+   "window_mean_gap": 0.01,
+   "p_order_contra": 0.776,
+   "spread_ratio": 1.023,
+   "r2_tested": false,
    "ddG_sample_mean": 0.2,
    "ddG_sample_std": 1.42,
    "ddG_sample_min": -3.7,
@@ -247,14 +386,13 @@
    ],
    "tail_mass": 0.0151,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.87,
+   "stem_intact_frac": 0.869,
    "p_stem_pf": 0.82919,
-   "spacer_paired_mean": 0.573,
-   "spacer_paired_std": 0.031,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.034,
    "E_sample_std": 1.14,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -264,6 +402,10 @@
    "ddG_mfe": -1.4,
    "ddG_ens": -1.4,
    "ddG_mfe_vs_ens_shift": 0.0,
+   "window_mean_gap": -1.4,
+   "p_order_contra": 0.128,
+   "spread_ratio": 0.996,
+   "r2_tested": true,
    "ddG_sample_mean": -1.23,
    "ddG_sample_std": 1.49,
    "ddG_sample_min": -5.1,
@@ -274,14 +416,13 @@
    ],
    "tail_mass": 0.0104,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.89,
+   "stem_intact_frac": 0.872,
    "p_stem_pf": 0.86553,
-   "spacer_paired_mean": 0.573,
-   "spacer_paired_std": 0.039,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 1.17,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -291,6 +432,10 @@
    "ddG_mfe": 0.0,
    "ddG_ens": 0.0,
    "ddG_mfe_vs_ens_shift": -0.0,
+   "window_mean_gap": -0.01,
+   "p_order_contra": 0.22,
+   "spread_ratio": 0.987,
+   "r2_tested": false,
    "ddG_sample_mean": -0.05,
    "ddG_sample_std": 1.11,
    "ddG_sample_min": -3.7,
@@ -301,14 +446,13 @@
    ],
    "tail_mass": 0.0095,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.88,
+   "stem_intact_frac": 0.872,
    "p_stem_pf": 0.86635,
-   "spacer_paired_mean": 0.576,
-   "spacer_paired_std": 0.029,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 0.76,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -318,6 +462,10 @@
    "ddG_mfe": 0.0,
    "ddG_ens": 0.0,
    "ddG_mfe_vs_ens_shift": -0.0,
+   "window_mean_gap": -0.0,
+   "p_order_contra": 0.221,
+   "spread_ratio": 0.996,
+   "r2_tested": false,
    "ddG_sample_mean": -0.0,
    "ddG_sample_std": 1.17,
    "ddG_sample_min": -3.7,
@@ -328,14 +476,13 @@
    ],
    "tail_mass": 0.0103,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.85,
+   "stem_intact_frac": 0.872,
    "p_stem_pf": 0.86493,
-   "spacer_paired_mean": 0.577,
-   "spacer_paired_std": 0.023,
+   "spacer_paired_mean": 0.575,
+   "spacer_paired_std": 0.032,
    "E_sample_std": 0.77,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   },
   {
@@ -345,6 +492,10 @@
    "ddG_mfe": -0.1,
    "ddG_ens": -0.11,
    "ddG_mfe_vs_ens_shift": 0.01,
+   "window_mean_gap": -0.11,
+   "p_order_contra": 0.229,
+   "spread_ratio": 0.971,
+   "r2_tested": false,
    "ddG_sample_mean": 0.03,
    "ddG_sample_std": 1.2,
    "ddG_sample_min": -3.8,
@@ -355,16 +506,15 @@
    ],
    "tail_mass": 0.0092,
    "delta_centigrade": 500,
-   "stem_intact_frac": 0.81,
+   "stem_intact_frac": 0.854,
    "p_stem_pf": 0.84744,
-   "spacer_paired_mean": 0.573,
-   "spacer_paired_std": 0.03,
+   "spacer_paired_mean": 0.576,
+   "spacer_paired_std": 0.031,
    "E_sample_std": 0.88,
    "unstable_flags": [
-    "R2",
-    "R3"
+    "OK"
    ]
   }
  ],
- "note": "ViennaRNA 2.7.2 pbacktrack 本构建返回空元组; 改用 subopt 精确枚举 + Boltzmann 权重采样, 各序列窗口尾部质量已随行报告"
+ "note": "ViennaRNA 2.7.2 pbacktrack 本构建返回空元组; 改用 subopt 精确枚举 + Boltzmann 权重, 各序列窗口尾部质量已随行报告; 能量均值/展宽/序翻转/茎完整率/spacer 配对均为枚举窗口精确值; 100 采样仅用于退役统计量溯源与 ddG 均值 bootstrap CI"
 }

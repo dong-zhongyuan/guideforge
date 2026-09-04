@@ -137,9 +137,10 @@ def main():
               "活性态竞争假说的检验需统一假结能量模型(中期工作)")
 
     acts = np.array([r["activity"] for r in rows], float)
+    from scipy.stats import spearmanr
     for feat in ("P_active", "dG_comp"):
         vals = np.array([r[feat] if r[feat] is not None else 0.0 for r in rows], float)
-        rho = float(np.corrcoef(np.argsort(np.argsort(vals)), np.argsort(np.argsort(acts)))[0, 1])
+        rho = float(spearmanr(vals, acts).statistic)  # tie-aware midranks (R2 修复口径)
         print("%-9s vs activity Spearman = %+.3f" % (feat, rho))
 
     json.dump({"dataset": args.dataset, "active_template_pairs_0based": sorted(stem_pairs),

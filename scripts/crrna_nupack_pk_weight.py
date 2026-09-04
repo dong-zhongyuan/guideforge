@@ -74,10 +74,10 @@ def assemble():
     print("\n判别检验: Sp8 W_pk 升序名次 %d/%d -> %s" % (rank, len(rows_ok), verdict))
 
     import numpy as np
+    from scipy.stats import spearmanr
     acts = np.array([r["activity"] for r in rows_ok], float)
     wpk = np.array([r["W_pk"] for r in rows_ok], float)
-    rho = float(np.corrcoef(np.argsort(np.argsort(wpk)),
-                            np.argsort(np.argsort(acts)))[0, 1])
+    rho = float(spearmanr(wpk, acts).statistic)  # tie-aware midranks (R2 修复口径)
     print("W_pk vs activity Spearman = %+.3f" % rho)
 
     gf = {k: {"W_pk": round((v["pk"]["Z"] - v["nopk"]["Z"]) / v["pk"]["Z"], 4)

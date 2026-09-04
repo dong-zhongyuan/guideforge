@@ -44,9 +44,10 @@ def bpp_sum_regions(seq, region_a, region_b):
 
 
 def spearman(x, y):
-    rx = np.argsort(np.argsort(np.asarray(x, float))).astype(float)
-    ry = np.argsort(np.argsort(np.asarray(y, float))).astype(float)
-    return float(np.corrcoef(rx, ry)[0, 1])
+    """tie-aware Spearman(midranks), 2026-09 round-3 R2 修复: 弃用手搓
+    argsort-of-argsort(并列不取平均秩), 统一走 scipy.stats.spearmanr。"""
+    from scipy.stats import spearmanr
+    return float(spearmanr(x, y).statistic)
 
 
 def loo_sign_stability(vals, acts):
@@ -56,10 +57,12 @@ def loo_sign_stability(vals, acts):
 
 
 def partial_spearman_gc(vals, acts, gc):
-    """对 GC 做 rank 残差后的偏相关。"""
+    """对 GC 做 rank 残差后的偏相关(秩取 tie-aware midranks, R2 修复口径)。"""
+    from scipy.stats import rankdata
+
     def resid(v, g):
-        rv = np.argsort(np.argsort(np.asarray(v, float))).astype(float)
-        rg = np.argsort(np.argsort(np.asarray(g, float))).astype(float)
+        rv = rankdata(np.asarray(v, float))
+        rg = rankdata(np.asarray(g, float))
         b = np.polyfit(rg, rv, 1)
         return rv - np.polyval(b, rg)
     return float(np.corrcoef(resid(vals, gc), resid(acts, gc))[0, 1])

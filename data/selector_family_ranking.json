@@ -122,19 +122,19 @@
   {
    "scaffold": "B_break_compensate",
    "features": {
-    "ddG_dr": 4.8,
-    "bp_dist": 5,
-    "cross_nt": 0,
-    "p_fold": 0.0,
-    "spacer_up": 0.448
+    "ddG_dr": 0.4,
+    "bp_dist": 1,
+    "cross_nt": 2,
+    "p_fold": 0.89354,
+    "spacer_up": 0.413
    },
    "pred_fig1g": 0.6094,
-   "pred_cis_end": 13.983,
-   "pred_trans_end": 7.65,
-   "pred_rbs0": 37.5,
-   "pred_rbs33": 67.8,
-   "pred_pooled_z": 0.121,
-   "tolerance_neighborhood": 0.163
+   "pred_cis_end": 11.9625,
+   "pred_trans_end": 1.8253,
+   "pred_rbs0": 81.4333,
+   "pred_rbs33": 92.6667,
+   "pred_pooled_z": -0.825,
+   "tolerance_neighborhood": 0.63
   }
  ],
  "models": [

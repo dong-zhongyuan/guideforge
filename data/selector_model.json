@@ -1,20 +1,23 @@
 {
  "model": "DecisionTreeRegressor(max_leaf=4)",
- "usage_scope": "文献先验排序(相对次序)专用; 绝对预测值不可引用——fig1f 留出 MAE 超预登记阈值(归因见 fig1f_holdout_check)",
+ "usage_scope": "文献先验排序(相对次序)专用; 绝对预测值不可引用——fig1f 留出 MAE 超训练折可用阈(归因见 fig1f_holdout_check; 旧'预登记'口径含测试标签泄漏, 2026-09-04 修复说明见 mae_threshold_note)",
  "training_data": "Han 2025 (s41467-025-64010-z) LbCas12a toolbox n=7 + Fig.1f 视觉转录 n=9 (置信度分级见 han2025_dataset.json fig1f_pairs)",
  "fig1f_holdout_check": {
   "design": "train toolbox n=7, test fig1f n=9",
-  "spearman": 0.25,
+  "spearman": 0.388,
   "mae": 0.2167,
+  "spearman_method": "scipy rankdata midranks(与 scipy.stats.spearmanr 同值, tie-aware); 2026-09-04 round-3 统一, 旧口径 argsort-of-argsort 对并列不取平均秩",
   "spearman_boot_ci95": [
-   -0.4,
-   0.793
+   0.0,
+   0.864
   ],
   "mae_boot_ci95": [
-   0.1606,
-   0.2888
+   0.1596,
+   0.2884
   ],
-  "mae_threshold_prereg": 0.1617,
+  "spearman_boot_excluded_zero_variance": 1033,
+  "mae_threshold_trainfold": 0.0467,
+  "mae_threshold_note": "2026-09-04 round-3 修复: 旧字段 mae_threshold_prereg=(y.max()-y.min())/3=0.1617 用含 9 条留出测试标签的全量 y 计算(y.max()=S20=0.928 本身是测试点), 泄漏测试集信息, '预登记'名不副实; 现口径仅用 7 条训练折 y 值域的 1/3。该阈仍为数据导出(训练折)相对阈, 非外部绝对标准; 判据登记见 docs/preregistration.md §C",
   "train_y_range": [
    0.443,
    0.5829
@@ -95,7 +98,7 @@
    }
   ],
   "extrapolation_note": "决策树预测上界=训练 y 最大值; 全部 9 条 fig1f 标签高于训练上界 0.583 → MAE 超阈主因是 Fig1g 主图与 Fig1f 附图两图版间的水平偏移叠加树模型不可外推, 非排序能力失败; 本用途(先验排序)的有效判据是秩一致性(Spearman 及其 CI)",
-  "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; Spearman>0 且 MAE<全体 y 值域的 1/3 视为转录配对可用; MAE 超阈后果: fig1f 配对仅用于秩级体检, 绝对水平不采用"
+  "note": "Fig1f 视觉转录配对对工具箱模型的独立一致性体检; Spearman>0 且 MAE<训练折 y 值域的 1/3 视为转录配对可用; MAE 超阈后果: fig1f 配对仅用于秩级体检, 绝对水平不采用"
  },
  "features": [
   "ddG_dr",
@@ -112,9 +115,55 @@
   "spacer_up": 0.0
  },
  "tree_rules": "|--- ddG_dr <= -1.15\n|   |--- p_fold <= 0.86\n|   |   |--- value: [0.63]\n|   |--- p_fold >  0.86\n|   |   |--- value: [0.93]\n|--- ddG_dr >  -1.15\n|   |--- p_fold <= 0.98\n|   |   |--- value: [0.61]\n|   |--- p_fold >  0.98\n|   |   |--- value: [0.50]\n",
- "train_spearman": 0.729,
+ "train_spearman": 0.501,
  "applied_to": "tp53_r248q_zengdr.v6 (204 passed)",
- "vs_pipeline_score_spearman": -0.872,
+ "vs_pipeline_score_spearman": 0.152,
+ "vs_pipeline_score_spearman_pval": 0.0296,
+ "vs_pipeline_score_method": "scipy.stats.spearmanr(tie-aware midranks); 2026-09 round-3 R3 修复: 旧口径 argsort(argsort()) 对并列不取平均秩,且决策树预测仅个位数 distinct 值, 结果随 numpy 版本/输入顺序摆动",
+ "vs_pipeline_score_direction": "lit_pred 低=预测活性强(Fig1g 抑制读数), pipeline score 高=优; 两排序系统的一致性应读 goodness 序相关 = -vs_pipeline_score_spearman",
+ "vs_pipeline_score_tieblind_artifact": {
+  "forward_order": 0.587,
+  "reversed_order": -0.493,
+  "snapshot_8c33354_artifact": -0.872,
+  "distinct_pred_values": 3,
+  "note": "tie-blind 统计量在少 distinct 值预测上随输入顺序/numpy 版本摆动(+0.587/-0.493/-0.872 同源伪影), 不构成两排序系统真实反向分歧的证据; 以 tie-aware 值为准"
+ },
+ "top12_overlap_pipeline_vs_selector": {
+  "k": 12,
+  "intersection": 10,
+  "jaccard": 0.714,
+  "selector_top12": [
+   "A1C",
+   "A1C+U3A",
+   "A1C+U3C",
+   "A1C+U3G",
+   "A1G",
+   "A1U",
+   "A1U+U3A",
+   "A1U+U3C",
+   "A1U+U3G",
+   "U3A",
+   "U3G",
+   "WT"
+  ],
+  "pipeline_top12": [
+   "A1C",
+   "A1C+U3A",
+   "A1C+U3G",
+   "A1G",
+   "A1U",
+   "A1U+U3A",
+   "A1U+U3G",
+   "A8G+U15C",
+   "U3A",
+   "U3G",
+   "U7C+A16G",
+   "WT"
+  ]
+ },
+ "ranking_authority": "pipeline_score",
+ "ranking_authority_reason": "合成候选排序以管线打分(score_variant, 同一 Cas12a2 zeng2026 构建的 ViennaRNA 结构口径)为准。(1) 本选型器是 n=16 LbCas12a CRISPRi 终点训练的文献先验, fig1f 留出 MAE 超训练折可用阈、LOEO 在 cis 端点反预测(-0.692, 本运行计算值), 按 usage_scope 仅供先验排序参考; (2) 决策树在本候选库仅输出个位数 distinct 预测值, 对多数保守变体无区分力; (3) 管线打分经 filter+random 基线检验(data/selection_baseline.cas12a2_zeng2026.json)确认相对'硬过滤+随机'有大效应排序信息量。",
+ "divergence_note": "修正后两排序并非反向: tie-aware rho(lit_pred, score)=+0.152 (p=0.0296), 按方向口径折算 goodness 序相关=-0.152, 仅为弱残余分歧; TOP-12 重合 10 条(Jaccard 0.714), 顶部集合大体一致。残余分歧的可能解释: 选型器偏好 DR 单独强稳定化(ddG_dr<=-1.15 叶节点), 而管线在全长口径下 ddG 仅 0.1 罚/0.3 赏; 且训练终点为 LbCas12a CRISPRi GFP 抑制, 与 Cas12a2 旁切杀伤存在体系迁移差距。快照 8c33354 artifact 的 -0.872 为 tie-blind 伪影(见 vs_pipeline_score_tieblind_artifact)。",
  "sanger_tolerance_check": {
   "n": 30,
   "pred_median": 0.6094,
@@ -259,19 +308,19 @@
   {
    "scaffold": "B_break_compensate",
    "features": {
-    "ddG_dr": 4.8,
-    "bp_dist": 5,
-    "cross_nt": 0,
-    "p_fold": 0.0,
-    "spacer_up": 0.448
+    "ddG_dr": 0.4,
+    "bp_dist": 1,
+    "cross_nt": 2,
+    "p_fold": 0.89354,
+    "spacer_up": 0.413
    },
    "pred_fig1g": 0.6094,
-   "pred_cis_end": 13.983,
-   "pred_trans_end": 7.65,
-   "pred_rbs0": 37.5,
-   "pred_rbs33": 67.8,
-   "pred_pooled_z": 0.121,
-   "tolerance_neighborhood": 0.163
+   "pred_cis_end": 11.9625,
+   "pred_trans_end": 1.8253,
+   "pred_rbs0": 81.4333,
+   "pred_rbs33": 92.6667,
+   "pred_pooled_z": -0.825,
+   "tolerance_neighborhood": 0.63
   }
  ],
  "top10_lit_model": [

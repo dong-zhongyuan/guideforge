@@ -11,27 +11,34 @@
       "full_construct_dna": "ATTTCTACTATTGTAGATTGGAGCAACACCTGAAGAAGGCT",
       "pam": {
         "rule": "GAAAG",
+        "side": "5prime"
+      },
+      "pfs": {
+        "consensus": "GAAAG",
         "side": "5prime",
-        "note": "Cas12a2 为 RNA 靶向激活, 无 PAM; GAAAG 为靶 RNA 上的 PFS (protospacer-flanking sequence), 位于靶序列 5' 侧"
+        "tolerant_mismatches": 1,
+        "note": "PFS = protospacer 侧翼识别基序(靶 RNA 上, spacer 5' 端侧); 扫描实现中取 sense 链窗口 3' 下游 5nt(与 PDB 8D4A 靶 RNA 实测排布一致); Cas12a2 PFS 松散, 1 错配容忍口径用于敏感性分析"
       },
       "reference": {
         "full_len": 41,
         "dotbracket": "...(((((....)))))...........(((.....)))..",
         "source": "RNet-SS × ViennaRNA pf 注册运行",
         "gate": "confident",
+        "vienna_version": "2.7.2",
         "baseline": {
           "vienna_mfe_kcal": -7.1,
-          "vienna_ens_diversity": 1.19,
-          "spacer_mean_unpaired": 0.848,
+          "vienna_ens_diversity": 2.04,
+          "vienna_centroid_dist": 1.19,
+          "spacer_mean_unpaired": 0.692,
           "vienna_rnet_structure_f1": 1.0,
-          "rnet_confidence_f1": 0.955
+          "rnet_confidence_f1": 0.954
         },
         "bound_state_note": "PDB 8D4A 为结合态结构; 游离态 RNet-SS 与 ViennaRNA 复核一致"
       },
       "version": "v1",
-      "registered_at": "2026-08-31",
+      "registered_at": "2026-09-04",
       "inputs_sha256": "3fe9e61169e5fd44f6a05f245b2918205777371be73ea5c12d1c07f37682a60b",
-      "placeholder_note": "占位 spacer 为 PDB 8D4A 结构用序列(23nt), 非项目靶标; 项目固定 spacer 为 TP53-R248Q 靶向序列, 由实验侧提供后替换"
+      "registration_note": "2026-09 round-3 R1 metric-fix 重注册: 修复 ViennaRNA 基线口径(bpp 行+列双向求和; vienna_ens_diversity 改存 mean_bp_distance, centroid 距离另存 vienna_centroid_dist), 输入与 inputs_sha256 未变, RNet-SS 实跑复核"
     },
     "cas12a": {
       "effector": "cas12a",
@@ -50,18 +57,21 @@
         "dotbracket": ".....(((((.....))))).....................",
         "source": "RNet-SS × ViennaRNA pf 注册运行",
         "gate": "confident",
+        "vienna_version": "2.7.2",
         "baseline": {
           "vienna_mfe_kcal": -4.7,
-          "vienna_ens_diversity": 0.59,
-          "spacer_mean_unpaired": 0.993,
+          "vienna_ens_diversity": 1.12,
+          "vienna_centroid_dist": 0.59,
+          "spacer_mean_unpaired": 0.975,
           "vienna_rnet_structure_f1": 1.0,
           "rnet_confidence_f1": 0.952
         },
         "bound_state_note": "handle 假结为 Cas12a 蛋白诱导, 游离态不出现"
       },
       "version": "v1",
-      "registered_at": "2026-08-31",
-      "inputs_sha256": "5f5165050b45ce2c3a205eae690e4f1793ecba93fd0050d7c64eb911c78f5e09"
+      "registered_at": "2026-09-04",
+      "inputs_sha256": "5f5165050b45ce2c3a205eae690e4f1793ecba93fd0050d7c64eb911c78f5e09",
+      "registration_note": "2026-09 round-3 R1 metric-fix 重注册: 修复 ViennaRNA 基线口径(bpp 行+列双向求和; vienna_ens_diversity 改存 mean_bp_distance, centroid 距离另存 vienna_centroid_dist), 输入与 inputs_sha256 未变, RNet-SS 实跑复核"
     },
     "spcas9": {
       "effector": "spcas9",
@@ -80,18 +90,21 @@
         "dotbracket": "...............((((.(((((((.((((....))))...))))))).)))).............((((....))))(((((((...)))))))......",
         "source": "RNet-SS × ViennaRNA pf 注册运行",
         "gate": "confident",
+        "vienna_version": "2.7.2",
         "baseline": {
           "vienna_mfe_kcal": -25.5,
-          "vienna_ens_diversity": 5.69,
-          "spacer_mean_unpaired": 0.777,
+          "vienna_ens_diversity": 9.3,
+          "vienna_centroid_dist": 5.69,
+          "spacer_mean_unpaired": 0.773,
           "vienna_rnet_structure_f1": 0.917,
           "rnet_confidence_f1": 0.891
         },
         "bound_state_note": "spacer 3' 端与 SL1 基部可有少数配对, 属天然构象"
       },
       "version": "v1",
-      "registered_at": "2026-08-31",
-      "inputs_sha256": "63dd634220c6592ac399a88f3ac6c4a3a90ae61057e6873aa4d2e38b6d3c461f"
+      "registered_at": "2026-09-04",
+      "inputs_sha256": "63dd634220c6592ac399a88f3ac6c4a3a90ae61057e6873aa4d2e38b6d3c461f",
+      "registration_note": "2026-09 round-3 R1 metric-fix 重注册: 修复 ViennaRNA 基线口径(bpp 行+列双向求和; vienna_ens_diversity 改存 mean_bp_distance, centroid 距离另存 vienna_centroid_dist), 输入与 inputs_sha256 未变, RNet-SS 实跑复核"
     },
     "cas12a2_zeng2026": {
       "effector": "cas12a2_zeng2026",
@@ -102,26 +115,36 @@
       "placeholder_spacer": "GTTCATGCCGCCCATGCAGGAACT",
       "full_construct_dna": "AATTTCTACTGTTGTAGATGTTCATGCCGCCCATGCAGGAACT",
       "pam": {
-        "rule": "A_RICH",
-        "side": "5prime"
+        "rule": "NONE",
+        "side": "5prime",
+        "note": "Cas12a2 为 RNA 靶向效应子, 无 PAM; 识别基序见 pfs 字段(原 A_RICH 为扫描器不可消费的符号标签, 2026-09 round-3 R5 替换)"
+      },
+      "pfs": {
+        "consensus": "GAAAG",
+        "side": "5prime",
+        "tolerant_mismatches": 2,
+        "note": "Zeng 2026 细胞实验口径: PFS 为 A-rich 上下文; R248Q 位点实测 PFS=CAGAG, 与 GAAAG 共识差 2 个错配(第 1、3 位), 故容忍度取 2; 几何口径同 cas12a2 条目(sense 链窗口 3' 下游 5nt)"
       },
       "reference": {
         "full_len": 43,
         "dotbracket": "....(((((....))))).((((.(((.......))).)))).",
         "source": "RNet-SS × ViennaRNA pf 注册运行",
         "gate": "confident",
+        "vienna_version": "2.7.2",
         "baseline": {
           "vienna_mfe_kcal": -10.6,
-          "vienna_ens_diversity": 0.48,
-          "spacer_mean_unpaired": 0.714,
+          "vienna_ens_diversity": 0.9,
+          "vienna_centroid_dist": 0.48,
+          "spacer_mean_unpaired": 0.427,
           "vienna_rnet_structure_f1": 1.0,
           "rnet_confidence_f1": 0.988
         },
         "bound_state_note": "Zeng 2026 合成 gRNA 用 DR; PFS 松散, R248Q 靶点 PFS 由突变本身产生 (G>A)"
       },
       "version": "v1",
-      "registered_at": "2026-08-31",
-      "inputs_sha256": "e00dfe08d06fc3a0ff07bd3384440e8b61cdaf670e93b2c47dc0810e664d376c"
+      "registered_at": "2026-09-04",
+      "inputs_sha256": "e5f86bb903d591508af98c7817ab56906a3a18e00b01a74d22f792c34cbf0311",
+      "registration_note": "2026-09 round-3 R1 metric-fix 重注册: 修复 ViennaRNA 基线口径(bpp 行+列双向求和; vienna_ens_diversity 改存 mean_bp_distance, centroid 距离另存 vienna_centroid_dist), 输入与 inputs_sha256 未变, RNet-SS 实跑复核"
     }
   }
 }

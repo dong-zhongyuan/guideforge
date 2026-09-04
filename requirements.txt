@@ -3,3 +3,23 @@
 numpy
 biopython
 viennarna   # import RNA; 也可用 conda: conda install -c bioconda viennarna
+scipy       # spearmanr/rankdata 硬依赖: crrna_dmytrenko_validate / crrna_score_ablation /
+            # crrna_selection_baseline / crrna_train_selector / crrna_creutzburg_reverse /
+            # crrna_cross_decompose
+scikit-learn  # import sklearn: crrna_bayesopt(GP) / crrna_train_selector(决策树+KFold) /
+              # crrna_agent_webapp
+openpyxl    # crrna_han2025_features 读取 data/ 下 MOESM xlsx, 顶层硬依赖
+matplotlib  # crrna_pareto_plot 顶层硬依赖; crrna_dmytrenko_validate /
+            # crrna_transcriptome_scan / weight_sensitivity 三处有 try/except 兜底
+            # (缺库时仅跳过出图), 但因 pareto_plot 无兜底, 故列为必装
+
+flask       # scripts/crrna_agent_webapp.py 顶层 from flask import, 为正式依赖
+pytest      # 测试运行器: python -m pytest tests/ -q (测试本身为 unittest 风格)
+
+# --- 可选: MD 证据链 (scripts/crrna_md_prep/md_run/md_analysis/md_togmx.py,
+# --- crrna_active_template.py, crrna_chai_input.py); 建议独立环境,
+# --- openmm/pdbfixer 推荐 conda: conda install -c conda-forge openmm pdbfixer ---
+# openmm
+# pdbfixer
+# parmed
+# MDAnalysis

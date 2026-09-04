@@ -1,0 +1,77 @@
+{
+ "generated_by": "scripts/crrna_af3_input.py (2026-09-04)",
+ "purpose": "策划案 V3 表1 AF3 复合物定性终检输入; AlphaFold Server 上传即用; template-free(服务器不接受自定义模板)= Chai-1 自模板口径的独立对照层",
+ "chains": {
+  "A": "SuCas12a2 蛋白 1207aa(data/chai_input_WT.fasta, 与 Chai 矩阵同源)",
+  "B": "crRNA 构建 = DR 变体 19nt + R248Q spacer 24nt",
+  "C": "靶 RNA = R248Q protospacer 窗口 24nt + PFS CAGAG 5nt(与 Chai 4t 同构)"
+ },
+ "submission": "https://alphafoldserver.com/ 逐文件上传; 结果放回 data/af3_results/",
+ "jobs": [
+  {
+   "file": "GF_WT.json",
+   "desc": "WT",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1C.json",
+   "desc": "A1C",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1U.json",
+   "desc": "A1U",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1G.json",
+   "desc": "A1G",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A8G_U15C.json",
+   "desc": "A8G+U15C",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_U7C_A16G.json",
+   "desc": "U7C+A16G",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1U_U3A.json",
+   "desc": "A1U+U3A",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_U3A.json",
+   "desc": "U3A",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1C_U3A.json",
+   "desc": "A1C+U3A",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1U_U3G.json",
+   "desc": "A1U+U3G",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_U3G.json",
+   "desc": "U3G",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1C_U3G.json",
+   "desc": "A1C+U3G",
+   "crRNA_nt": 43
+  },
+  {
+   "file": "GF_A1U_U3C.json",
+   "desc": "A1U+U3C",
+   "crRNA_nt": 43
+  }
+ ]
+}

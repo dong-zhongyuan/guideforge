@@ -6,7 +6,9 @@
 
 模型(Hill 激活阈值框架, 参数留接口待 IVT 实测回填——未标定前只输出
 参数扫描包络, 不给点预测, 不写活性结论):
-  activation = [RNA]^n / (EC50^n + [RNA]^n) × crRNA_rel
+  activation = [RNA]^n / ((EC50/crrna_rel)^n + [RNA]^n)
+  (crrna_rel 为细胞内 crRNA 相对丰度场景因子: 线性剂量-效力近似,
+   即相对剂量κ倍等效于有效 EC50 除以 κ——假设, 未标定)
   杀伤窗口 = 靶基因高表达系激活率 - 低表达系(如同基因 WT 背景/低丰度系)激活率
 
 运行: python scripts/crrna_virtual_cell.py [--genes TP53,KRAS,APC,MYC]
@@ -87,13 +89,16 @@ def prior_lit_mode(ec50_grid):
     分子层注记: Kunwar 2026 (bioRxiv v2) SEC 纯化后结合无双曲线协同性
     (binary-靶 RNA Kd=18±4 nM), 细胞层 h=1.78 为有效剂量斜率非分子协同。
     移植边界: 标定体系为 RNP 电转; 本项目质粒/U6 表达体系的有效 RNP 剂量
-    不同, crrna_rel 保留场景因子 {0.3, 1, 3}。
+    不同, crrna_rel 场景因子 {0.3, 1, 3} 已接入 survival()(e50/crrna_rel
+    线性剂量-效力近似), 场景表按三档给出; 因子数值本身未标定。
+    池化口径 QA 见输出 JSON 的 qa 字段(>100% 存活点计数/池化警告)。
     """
     cal = json.load(open(os.path.join(
         DATA, "scholz2026_fig1h_calibration.json"), encoding="utf-8"))
     ec50, h = cal["ec50_fpkm"], cal["hill"]
     ec50_lo, ec50_hi = cal["ec50_ci95"]
     scenarios = [ec50_lo, ec50, ec50_hi]
+    crrna_rels = [0.3, 1.0, 3.0]
 
     abundance = json.load(open(os.path.join(DATA, "virtual_cell_abundance.json"),
                                encoding="utf-8"))["genes"]
@@ -122,10 +127,13 @@ def prior_lit_mode(ec50_grid):
                         except ValueError:
                             pass
 
-    def survival(rpkm, e50):
+    def survival(rpkm, e50, crrna_rel=1.0):
         # Scholz 拟合: 存活% = 平台 + 跨度/(1+(F/EC50)^h); F≈RPKM(同类长度归一)
+        # crrna_rel(κ): 线性剂量-效力近似——相对 crRNA 剂量 κ 倍等效于
+        # 有效 EC50 除以 κ(κ>1 杀伤增强)。近似本身未标定, 仅作场景扫描。
+        e50_eff = e50 / crrna_rel
         return cal["surv_min_pct"] + cal["surv_span_pct"] / (
-            1.0 + (max(rpkm, 1e-9) / e50) ** h)
+            1.0 + (max(rpkm, 1e-9) / e50_eff) ** h)
 
     lines_tbl = []
     for cl, genes in sorted(named.items()):
@@ -135,16 +143,43 @@ def prior_lit_mode(ec50_grid):
                 genes.get("TP53", 0.0) * 0.5, e50), 1)  # 突变本按杂合 50%
             row["surv_kras_%s" % lab] = round(survival(
                 genes.get("KRAS", 0.0) * 0.5, e50), 1)
+        # crrna_rel 场景档(mid EC50): 旋钮实际参与计算
+        for cr in crrna_rels:
+            tag = "cr%s" % str(cr).replace(".", "p")
+            row["surv_tp53_mid_%s" % tag] = round(survival(
+                genes.get("TP53", 0.0) * 0.5, ec50, cr), 1)
+            row["surv_kras_mid_%s" % tag] = round(survival(
+                genes.get("KRAS", 0.0) * 0.5, ec50, cr), 1)
         lines_tbl.append(row)
+    pts = cal.get("points", [])
+    over100 = [p for p in pts if p.get("survival_pct", 0) > 100]
+    qa = {
+        "n_calibration_points": len(pts),
+        "pooling_caveat": "单曲线池化 %d 点(%s 靶标 x 4 细胞系混合, 未按细胞系/"
+                          "靶标分层, 无随机效应); 分层拟合前结论仅作包络参考"
+                          % (len(pts), len({p.get('target') for p in pts})),
+        "survival_gt100_count": len(over100),
+        "survival_gt100_points": over100,
+        "survival_gt100_handling": "如实保留, 未截断未重拟合(归一化噪声点)",
+        "cross_source_caveat": "Scholz FPKM 与 CCLE 2018q3 RPKM 跨数据集/跨年份"
+                               "等效(F≈RPKM), 长度归一仅为近似",
+        "allele_factor_caveat": "全部细胞系统一按杂合 50% 等位因子, "
+                                "突变状态未逐系复核(以 DepMap mutation calls 为准)",
+        "crrna_rel_note": "crrna_rel∈%s 已接入 survival()(e50/κ 线性近似, "
+                          "未标定); misactivation_check 固定在 κ=1.0 口径"
+                          % crrna_rels,
+    }
     out = {
         "status": "文献实测标定(Scholz 2026 Fig 1h, n=15 剂量点, R2=0.867); "
-                  "移植边界=RNP电转体系, 质粒体系 crrna_rel 场景因子未定; "
-                  "IVT/细胞实测回填 virtual_cell_params.json 后 --twin-check 校验",
+                  "移植边界=RNP电转体系, crrna_rel 为未标定场景因子(已接入计算, "
+                  "e50/κ 线性近似); IVT/细胞实测回填 virtual_cell_params.json "
+                  "后 --twin-check 校验",
+        "qa": qa,
         "calibration": {k: cal[k] for k in (
             "ec50_fpkm", "hill", "surv_min_pct", "surv_span_pct", "r2",
             "ec50_ci95", "n_points", "source")},
         "scenario_ec50_fpkm": {"lo": ec50_lo, "mid": ec50, "hi": ec50_hi},
-        "crrna_rel_scenarios": [0.3, 1.0, 3.0],
+        "crrna_rel_scenarios": crrna_rels,
         "named_cell_lines": lines_tbl}
 
     # === 全 CCLE 系杀伤扫描(策划案 §4.3 完整输出: 杀伤窗口/系推荐/误激活检验) ===
@@ -173,6 +208,8 @@ def prior_lit_mode(ec50_grid):
                 continue
             mut_rpkm.append((header[i].split(" (")[0], v))
         surv = [survival(r, ec50) for _, r in mut_rpkm]
+        surv_cr = {cr: [survival(r, ec50, cr) for _, r in mut_rpkm]
+                   for cr in crrna_rels if cr != 1.0}
         n = len(surv)
         hi_lines = sorted(mut_rpkm, key=lambda x: -x[1])[:15]
         scan[sym] = {
@@ -180,6 +217,10 @@ def prior_lit_mode(ec50_grid):
             "pct_surv_lt30": round(100.0 * sum(1 for s in surv if s < 30) / n, 1),
             "pct_surv_lt50": round(100.0 * sum(1 for s in surv if s < 50) / n, 1),
             "pct_surv_ge95": round(100.0 * sum(1 for s in surv if s >= 95) / n, 1),
+            "pct_surv_lt30_by_crrna_rel": {
+                "cr%s" % str(cr).replace(".", "p"): round(
+                    100.0 * sum(1 for s in sv if s < 30) / n, 1)
+                for cr, sv in sorted(surv_cr.items())},
             "top15_high_expression_lines": [
                 {"line": cl, "mut_rpkm": round(r, 2),
                  "pred_survival_mid": round(survival(r, ec50), 1)}

@@ -514,9 +514,10 @@ def RNA_bp_distance(s1, s2):
 
 
 def spearman(x, y):
-    rx = np.argsort(np.argsort(x)).astype(float)
-    ry = np.argsort(np.argsort(y)).astype(float)
-    return float(np.corrcoef(rx, ry)[0, 1])
+    """tie-aware Spearman(midranks), 2026-09 round-3 R2 修复: 弃用手搓
+    argsort-of-argsort(并列不取平均秩), 统一走 scipy.stats.spearmanr。"""
+    from scipy.stats import spearmanr
+    return float(spearmanr(x, y).statistic)
 
 
 if __name__ == "__main__":

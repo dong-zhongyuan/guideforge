@@ -2,7 +2,9 @@
 
 定位：Cas12a2 由靶 RNA 激活，"脱靶"= 转录组中与 spacer 部分错配、可能错误激活的
 其他 RNA。本模块在转录本序列（FASTA，sense 链）中扫描 spacer 互补区的近似位点，
-并检查位点 3' 侧的 PFS（注册表 cas12a2 条目: GAAAG，位于靶 RNA 上）。
+并检查位点 3' 侧的 PFS（默认取注册表条目 pfs 字段: 共识 GAAAG + 容忍错配数，
+可用 --effector/--pfs/--pfs-tol 覆盖；PFS 位于 sense 链窗口 3' 下游，
+即靶 RNA 上 spacer 5' 端侧翼，8D4A 实测排布）。
 
 判定口径（与 PDB 8D4A 复合物一致）:
   - crRNA spacer 与靶 RNA 反向互补配对 → 扫描目标 = revcomp(spacer)
@@ -24,7 +26,7 @@ from urllib.parse import quote
 from urllib.request import urlopen
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from scaffold_registry import get_pam  # noqa: E402
+from scaffold_registry import resolve_pfs, pfs_mismatches  # noqa: E402
 
 def _build_comp():
     table = str.maketrans({'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'U': 'A'})
@@ -76,8 +78,11 @@ def read_fasta(path):
     return records
 
 
-def scan_record(name, seq, target, pfs_rule, max_mm):
-    """在单条转录本上找 target 的 <=max_mm 错配窗口, 并读 3' 下游 PFS。"""
+def scan_record(name, seq, target, pfs_rule, max_mm, pfs_tol=0):
+    """在单条转录本上找 target 的 <=max_mm 错配窗口, 并读 3' 下游 PFS。
+
+    pfs_match = 与共识精确匹配(0 错配); pfs_tolerant = 错配数 <= pfs_tol
+    （容忍模型, 容忍度默认取注册表 pfs.tolerant_mismatches, R5 统一口径）。"""
     L, lp = len(target), len(pfs_rule)
     sites = []
     for i in range(0, len(seq) - L - lp + 1):
@@ -85,9 +90,11 @@ def scan_record(name, seq, target, pfs_rule, max_mm):
         mm = sum(a != b for a, b in zip(window, target))
         if mm <= max_mm:
             pfs = seq[i + L:i + L + lp]
+            pmm = pfs_mismatches(pfs, pfs_rule)
             sites.append({'transcript': name, 'pos': i, 'mismatches': mm,
-                          'window': window, 'pfs': pfs,
-                          'pfs_match': pfs == pfs_rule})
+                          'window': window, 'pfs': pfs, 'pfs_mm': pmm,
+                          'pfs_match': pmm == 0,
+                          'pfs_tolerant': pmm is not None and pmm <= pfs_tol})
     return sites
 
 
@@ -96,8 +103,12 @@ def main():
     ap.add_argument('--spacer', required=True, help='固定 spacer(17-25nt ACGT/U)')
     ap.add_argument('--fasta', default=None, help='转录本 FASTA(可多条)')
     ap.add_argument('--gene', default=None, help='基因名(经 NCBI 拉 mRNA, 与 --fasta 二选一)')
+    ap.add_argument('--effector', default='cas12a2',
+                    help='注册表效应子条目(默认 cas12a2; PFS 规则默认取自该条目 pfs 字段)')
     ap.add_argument('--pfs', default=None,
-                    help='PFS 规则(默认取注册表 cas12a2 条目 pam.rule; 换体系用 --pfs 覆盖)')
+                    help='PFS 共识序列(默认取注册表 pfs.consensus; 换体系用 --pfs 覆盖)')
+    ap.add_argument('--pfs-tol', type=int, default=None,
+                    help='PFS 容忍错配数(默认取注册表 pfs.tolerant_mismatches)')
     ap.add_argument('--max-mismatch', type=int, default=4)
     ap.add_argument('--out', default='crrna_specificity', help='输出前缀')
     args = ap.parse_args()
@@ -105,7 +116,10 @@ def main():
     spacer = normalize(args.spacer)
     if not 17 <= len(spacer) <= 25 or set(spacer) - set('ACGT'):
         ap.error('--spacer 必须为 17-25nt ACGT/U')
-    pfs_rule = normalize(args.pfs or get_pam('cas12a2')['rule'])
+    pfs_spec = resolve_pfs(args.effector, consensus=args.pfs,
+                           tolerant_mismatches=args.pfs_tol)
+    pfs_rule = pfs_spec['consensus']
+    pfs_tol = pfs_spec['tolerant_mismatches']
     target = revcomp(spacer)  # spacer 与靶 RNA 反向互补
 
     if args.fasta:
@@ -118,19 +132,25 @@ def main():
 
     sites = []
     for name, seq in records:
-        sites.extend(scan_record(name, seq, target, pfs_rule, args.max_mismatch))
+        sites.extend(scan_record(name, seq, target, pfs_rule, args.max_mismatch,
+                                 pfs_tol))
 
     sites.sort(key=lambda s: (s['mismatches'], not s['pfs_match'], s['transcript'], s['pos']))
     by_mm = {}
     for s in sites:
         key = f"{s['mismatches']}mm" + ('+PFS' if s['pfs_match'] else '')
         by_mm[key] = by_mm.get(key, 0) + 1
+    # 双模型脱靶计数(R5): exact=PFS 0 错配; tolerant=PFS 错配<=容忍度
+    n_exact = sum(1 for s in sites if s['pfs_match'])
+    n_tolerant = sum(1 for s in sites if s['pfs_tolerant'])
 
     print(f'spacer({len(spacer)}nt): {spacer}')
-    print(f'扫描目标(revcomp): {target}  PFS: {pfs_rule}(位点 3\' 下游)')
+    print(f"扫描目标(revcomp): {target}  PFS: {pfs_rule}±{pfs_tol}"
+          f"(位点 3' 下游, 来源 {pfs_spec['source']})")
     print(f'转录本: {len(records)} 条  命中位点(<= {args.max_mismatch} 错配): {len(sites)}')
     for key in sorted(by_mm):
         print(f'  {key}: {by_mm[key]}')
+    print(f'  PFS 双模型计数: exact(0mm)={n_exact}  tolerant(<={pfs_tol}mm)={n_tolerant}')
     print('\n位点明细(错配升序):')
     print(f"{'转录本':<16}{'位置':>8}{'错配':>5}{'PFS':>8}{'窗口'}")
     for s in sites[:50]:
@@ -145,7 +165,11 @@ def main():
         writer.writerows(sites)
     out_json = args.out + '.summary.json'
     with open(out_json, 'w', encoding='utf-8') as fh:
-        json.dump({'spacer_dna': spacer, 'target_scanned': target, 'pfs_rule': pfs_rule,
+        json.dump({'spacer_dna': spacer, 'target_scanned': target,
+                   'pfs_rule': pfs_rule, 'pfs_tolerant_mismatches': pfs_tol,
+                   'pfs_source': pfs_spec['source'],
+                   'pfs_models_counts': {'exact_0mm': n_exact,
+                                         f'tolerant_{pfs_tol}mm': n_tolerant},
                    'max_mismatch': args.max_mismatch, 'n_transcripts': len(records),
                    'n_sites': len(sites), 'by_mismatch': by_mm, 'sites': sites},
                   fh, ensure_ascii=False, indent=1)

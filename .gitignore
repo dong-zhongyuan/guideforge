@@ -11,7 +11,10 @@ data/_*
 GuideForge_webapp_20260821/
 data_pkg/
 _目录结构说明_先看这个.md
-docs/
+# docs/ 默认不入库(内部过程文档), 但评审/提交相关文档例外放行:
+docs/*
+!docs/preregistration.md
+!docs/wetlab_plan.md
 scripts/tmp/
 # 大文件走 Release data-v1 (清单见 BIG_FILES.md)
 toolbox/rnet-inference/RibonanzaNet-Weights/
@@ -24,3 +27,6 @@ toolbox/OpenKnotAIDesignData/.gitattributes
 data/transcriptome/
 data/md/*
 data/raw/
+
+# 本地工作区(scratch日志/备份/临时扫描, 不入库)
+tmp/

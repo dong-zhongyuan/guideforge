@@ -55,21 +55,27 @@ def dr_stem_pairs(dr_rna):
 
 
 def seed5_unpaired(full_rna, prefix_len):
-    """spacer 5端 5nt(Cas12a 种子区, 论文口径 nucleotides 1-5)平均未配对概率。"""
+    """spacer 5端 5nt(Cas12a 种子区, 论文口径 nucleotides 1-5)平均未配对概率。
+
+    2026-09 round-3 R1 修复: bpp 为上三角矩阵, 配对概率须行+列双向求和
+    (此前只加行方向, 漏掉该 nt 作为 3' 侧伙伴的配对, 与 pf_stats 口径对齐)。"""
     fc = RNA.fold_compound(full_rna)
     fc.pf()
     bpp = fc.bpp()
+    n = len(full_rna)
     probs = []
     for k in range(prefix_len, prefix_len + 5):
-        p_pair = sum(bpp[k + 1][j + 1] for j in range(len(full_rna)) if j != k)
+        p_pair = (sum(bpp[k + 1][j + 1] for j in range(n))
+                  + sum(bpp[j + 1][k + 1] for j in range(n)))
         probs.append(max(0.0, 1.0 - p_pair))
     return float(np.mean(probs))
 
 
 def spearman(x, y):
-    rx = np.argsort(np.argsort(x)).astype(float)
-    ry = np.argsort(np.argsort(y)).astype(float)
-    return float(np.corrcoef(rx, ry)[0, 1])
+    """tie-aware Spearman(midranks), 2026-09 round-3 R2 修复: 弃用手搓
+    argsort-of-argsort(并列不取平均秩), 统一走 scipy.stats.spearmanr。"""
+    from scipy.stats import spearmanr
+    return float(spearmanr(x, y).statistic)
 
 
 def perm_p(vals, acts, rho, n=20000, seed=0):

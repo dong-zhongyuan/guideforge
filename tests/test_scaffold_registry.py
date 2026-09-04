@@ -52,6 +52,20 @@ class TestScaffoldRegistry(unittest.TestCase):
         with self.assertRaises(KeyError):
             get_entry('__no_such_effector__')
 
+    def test_pfs_consumable_for_rna_targeting(self):
+        """R5 契约：RNA 靶向条目必须有可消费 pfs 字段（具体 ACGT 共识 +
+        整数容忍度，扫描器逐字符比对）；DNA 靶向条目无 pfs，调用抛 KeyError。"""
+        from scaffold_registry import get_pfs, pfs_mismatches
+        for name in ('cas12a2', 'cas12a2_zeng2026'):
+            pfs = get_pfs(name)
+            self.assertLessEqual(set(pfs['consensus']), set('ACGT'),
+                                 f'{name} pfs.consensus 含不可消费字符')
+            self.assertIsInstance(pfs['tolerant_mismatches'], int)
+            self.assertEqual(pfs_mismatches(pfs['consensus'], pfs['consensus']), 0)
+        for name in ('cas12a', 'spcas9'):
+            with self.assertRaises(KeyError):
+                get_pfs(name)
+
     def test_cas12a_layout(self):
         """cas12a 条目：骨架在 5' 端（handle-spacer），PAM 5' 侧。"""
         e = get_entry('cas12a')

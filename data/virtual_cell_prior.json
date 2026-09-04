@@ -1,5 +1,22 @@
 {
- "status": "文献实测标定(Scholz 2026 Fig 1h, n=15 剂量点, R2=0.867); 移植边界=RNP电转体系, 质粒体系 crrna_rel 场景因子未定; IVT/细胞实测回填 virtual_cell_params.json 后 --twin-check 校验",
+ "status": "文献实测标定(Scholz 2026 Fig 1h, n=15 剂量点, R2=0.867); 移植边界=RNP电转体系, crrna_rel 为未标定场景因子(已接入计算, e50/κ 线性近似); IVT/细胞实测回填 virtual_cell_params.json 后 --twin-check 校验",
+ "qa": {
+  "n_calibration_points": 15,
+  "pooling_caveat": "单曲线池化 15 点(7 靶标 x 4 细胞系混合, 未按细胞系/靶标分层, 无随机效应); 分层拟合前结论仅作包络参考",
+  "survival_gt100_count": 1,
+  "survival_gt100_points": [
+   {
+    "target": "CD8A",
+    "fpkm": 1.0,
+    "log10_fpkm": 0.0,
+    "survival_pct": 103.1
+   }
+  ],
+  "survival_gt100_handling": "如实保留, 未截断未重拟合(归一化噪声点)",
+  "cross_source_caveat": "Scholz FPKM 与 CCLE 2018q3 RPKM 跨数据集/跨年份等效(F≈RPKM), 长度归一仅为近似",
+  "allele_factor_caveat": "全部细胞系统一按杂合 50% 等位因子, 突变状态未逐系复核(以 DepMap mutation calls 为准)",
+  "crrna_rel_note": "crrna_rel∈[0.3, 1.0, 3.0] 已接入 survival()(e50/κ 线性近似, 未标定); misactivation_check 固定在 κ=1.0 口径"
+ },
  "calibration": {
   "ec50_fpkm": 11.31,
   "hill": 1.78,
@@ -37,7 +54,13 @@
    "surv_tp53_mid": 70.4,
    "surv_kras_mid": 93.7,
    "surv_tp53_hi": 82.9,
-   "surv_kras_hi": 96.8
+   "surv_kras_hi": 96.8,
+   "surv_tp53_mid_cr0p3": 94.7,
+   "surv_kras_mid_cr0p3": 99.0,
+   "surv_tp53_mid_cr1p0": 70.4,
+   "surv_kras_mid_cr1p0": 93.7,
+   "surv_tp53_mid_cr3p0": 33.2,
+   "surv_kras_mid_cr3p0": 70.2
   },
   {
    "cell_line": "PANC1005_PANCREAS",
@@ -52,7 +75,13 @@
    "surv_tp53_mid": 75.7,
    "surv_kras_mid": 96.9,
    "surv_tp53_hi": 86.5,
-   "surv_kras_hi": 98.4
+   "surv_kras_hi": 98.4,
+   "surv_tp53_mid_cr0p3": 95.9,
+   "surv_kras_mid_cr0p3": 99.4,
+   "surv_tp53_mid_cr1p0": 75.7,
+   "surv_kras_mid_cr1p0": 96.9,
+   "surv_tp53_mid_cr3p0": 37.6,
+   "surv_kras_mid_cr3p0": 83.1
   },
   {
    "cell_line": "PANC1_PANCREAS",
@@ -67,7 +96,13 @@
    "surv_tp53_mid": 69.9,
    "surv_kras_mid": 94.1,
    "surv_tp53_hi": 82.6,
-   "surv_kras_hi": 97.0
+   "surv_kras_hi": 97.0,
+   "surv_tp53_mid_cr0p3": 94.6,
+   "surv_kras_mid_cr0p3": 99.0,
+   "surv_tp53_mid_cr1p0": 69.9,
+   "surv_kras_mid_cr1p0": 94.1,
+   "surv_tp53_mid_cr3p0": 32.9,
+   "surv_kras_mid_cr3p0": 71.6
   },
   {
    "cell_line": "SW480_LARGE_INTESTINE",
@@ -82,7 +117,13 @@
    "surv_tp53_mid": 45.0,
    "surv_kras_mid": 93.7,
    "surv_tp53_hi": 60.7,
-   "surv_kras_hi": 96.8
+   "surv_kras_hi": 96.8,
+   "surv_tp53_mid_cr0p3": 84.6,
+   "surv_kras_mid_cr0p3": 99.0,
+   "surv_tp53_mid_cr1p0": 45.0,
+   "surv_kras_mid_cr1p0": 93.7,
+   "surv_tp53_mid_cr3p0": 21.6,
+   "surv_kras_mid_cr3p0": 70.3
   },
   {
    "cell_line": "SW620_LARGE_INTESTINE",
@@ -97,7 +138,13 @@
    "surv_tp53_mid": 45.5,
    "surv_kras_mid": 77.3,
    "surv_tp53_hi": 61.2,
-   "surv_kras_hi": 87.6
+   "surv_kras_hi": 87.6,
+   "surv_tp53_mid_cr0p3": 84.9,
+   "surv_kras_mid_cr0p3": 96.3,
+   "surv_tp53_mid_cr1p0": 45.5,
+   "surv_kras_mid_cr1p0": 77.3,
+   "surv_tp53_mid_cr3p0": 21.8,
+   "surv_kras_mid_cr3p0": 39.3
   }
  ],
  "ccle_linescan": {
@@ -106,6 +153,10 @@
    "pct_surv_lt30": 1.0,
    "pct_surv_lt50": 1.6,
    "pct_surv_ge95": 53.9,
+   "pct_surv_lt30_by_crrna_rel": {
+    "cr0p3": 0.2,
+    "cr3p0": 2.4
+   },
    "top15_high_expression_lines": [
     {
      "line": "HUG1N_STOMACH",
@@ -190,6 +241,10 @@
    "pct_surv_lt30": 6.5,
    "pct_surv_lt50": 36.0,
    "pct_surv_ge95": 15.0,
+   "pct_surv_lt30_by_crrna_rel": {
+    "cr0p3": 0.0,
+    "cr3p0": 56.0
+   },
    "top15_high_expression_lines": [
     {
      "line": "OCILY19_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE",

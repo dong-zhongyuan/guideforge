@@ -72,9 +72,81 @@ def get_pam(effector, path=None):
     return get_entry(effector, path)['pam']
 
 
+IUPAC_CODES = frozenset('ACGTURYSWKMBDHVN')
+_PFS_REQUIRED = ('consensus', 'side', 'tolerant_mismatches')
+
+
+def _validate_pfs(effector, pfs):
+    """校验 pfs 字段可被扫描器直接消费（具体 ACGTU 共识 + 整数容忍度）。"""
+    missing = [k for k in _PFS_REQUIRED if k not in pfs]
+    if missing:
+        raise ValueError(f"注册条目 '{effector}' 的 pfs 缺字段: {missing}")
+    consensus = str(pfs['consensus']).upper().replace('U', 'T')
+    if not consensus or set(consensus) - set('ACGT'):
+        raise ValueError(
+            f"注册条目 '{effector}' 的 pfs.consensus 必须为具体 ACGT/U 序列 "
+            f"(扫描器逐字符比对, 不支持简并码/符号标签), 实为 {pfs['consensus']!r}")
+    tol = pfs['tolerant_mismatches']
+    if not isinstance(tol, int) or isinstance(tol, bool) or not 0 <= tol < len(consensus):
+        raise ValueError(
+            f"注册条目 '{effector}' 的 pfs.tolerant_mismatches 须为 [0, len(consensus)) 整数, "
+            f"实为 {tol!r}")
+    if pfs['side'] not in ('3prime', '5prime'):
+        raise ValueError(f"注册条目 '{effector}' 的 pfs.side 非法: {pfs['side']!r}")
+
+
+def get_pfs(effector, path=None):
+    """返回 PFS（protospacer-flanking sequence）规则 dict 的副本。
+
+    含 consensus（具体 ACGT 序列）、tolerant_mismatches（容忍错配数，int）、
+    side，可选 note。PFS 是 RNA 靶向效应子（Cas12a2）靶 RNA 上的侧翼识别基序；
+    DNA 靶向条目（cas12a/spcas9）无 pfs 字段，调用抛 KeyError。
+    """
+    entry = get_entry(effector, path)
+    if 'pfs' not in entry:
+        raise KeyError(
+            f"效应子 '{effector}' 未注册 pfs 字段（仅 RNA 靶向条目有 PFS 概念）")
+    pfs = dict(entry['pfs'])
+    _validate_pfs(effector, pfs)
+    return pfs
+
+
+def pfs_mismatches(seq, consensus):
+    """观察 PFS 与共识序列的汉明距离（U→T 归一）；长度不等返回 None（不可判）。"""
+    seq = str(seq).upper().replace('U', 'T')
+    ref = str(consensus).upper().replace('U', 'T')
+    if len(seq) != len(ref):
+        return None
+    return sum(a != b for a, b in zip(seq, ref))
+
+
+def resolve_pfs(effector, consensus=None, tolerant_mismatches=None, path=None):
+    """解析生效 PFS 规则：默认注册表 pfs 字段，允许调用方（CLI）覆盖。
+
+    返回 dict: consensus / tolerant_mismatches / side / note / source
+    （source = 'registry:<effector>' 或 'cli-override' 组合）。
+    """
+    spec = get_pfs(effector, path)
+    source = f'registry:{effector}'
+    if consensus is not None:
+        spec['consensus'] = str(consensus).upper().replace('U', 'T')
+        source = 'cli-override'
+    if tolerant_mismatches is not None:
+        spec['tolerant_mismatches'] = int(tolerant_mismatches)
+        if consensus is None:
+            source = f'registry:{effector}+cli-tol'
+        else:
+            source = 'cli-override'
+    _validate_pfs(effector, spec)
+    spec['source'] = source
+    return spec
+
+
 if __name__ == '__main__':
     for name in list_effectors():
         e = get_entry(name)
+        pfs = f", PFS {e['pfs']['consensus']}±{e['pfs']['tolerant_mismatches']}" \
+            if 'pfs' in e else ''
         print(f"{name}: scaffold {e['scaffold_len']}nt ({e['scaffold_side']}), "
-              f"PAM {e['pam']['rule']} ({e['pam']['side']}), "
+              f"PAM {e['pam']['rule']} ({e['pam']['side']}){pfs}, "
               f"gate={e['reference']['gate']}, version={e['version']}")

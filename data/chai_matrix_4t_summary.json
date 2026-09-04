@@ -1,7 +1,31 @@
 {
  "engine": "chai-1 + 8D4A自模板m8 + ESM",
+ "generated_by": "scripts/crrna_chai_matrix_summary.py (reading 由 scaffold_deltas 程序化生成)",
  "design": "4靶 x 8骨架(含WT与B_break_compensate); 靶RNA=protospacer窗口24nt+PFS 5nt(8D4A同构)",
  "n": 32,
+ "claim_downgrade": "Chai-1 '界面恢复' 为 100% 一致自模板(8D4A链A, 全长1207aa)复述: 注入与查询完全相同的蛋白坐标后, 高 aggregate/ipTM 是模板合规性的平凡结果, 只能作为模板合规性/健全性检查(sanity check), 不能作为界面可预测性证据。在获得 template-free 或 scrambled-template 对照(以相同流程打分)之前, 本文件所有 reading 仅描述自模板口径下的数值表型, 不得引为'分型假说的结构证据'或'骨架-靶标互作的直接观测'。",
+ "prot_crRNA_usability": {
+  "wt_mean": 0.4955,
+  "usable_band": "~0.5-0.6",
+  "usable": false,
+  "note": "WT prot-crRNA ipTM 四靶均值 0.495 低于可用界面预测区间(~0.5-0.6), 即使撇开自模板问题, 该链对分数本身也不足以支撑界面水平结论"
+ },
+ "staleness": {
+  "checked": "2026-09-04",
+  "B_break_compensate": "chai_matrix_4t.json 该行折叠对象为 round-3 前的旧补偿臂(DR AATTTCTACTCTTCTACAT, 茎破坏混杂臂, p_fold=0.0); 2026-09-04 起 orientation_library / ivt_round1_template / ivt_round1_order_sheet 均已切换为去混杂新臂(zengDR+T10A/T12G/T19G, DR AATTTCTACAGGTGTAGAG, p_fold=0.89)。本矩阵 B 臂 reading 是**已退役分子**的数值表型(其'界面塌陷'正是该混杂的可预测表型), 不得引为当前分子的界面结论; 重折叠待 Chai 环境机时。"
+ },
+ "reading_thresholds": {
+  "neutral_abs": 0.03,
+  "collapse_abs": 0.25,
+  "spread_flag": 0.1,
+  "null_sd_k": 2.0,
+  "sd_note": "iptm_sd 为 aggregate ipTM 的 5 模型 sd, 作 prot-crRNA 噪声代理(后者 model sd 未存盘)"
+ },
+ "controls_pending": [
+  "template-free 运行(同流程打分)",
+  "scrambled-template 运行(同流程打分)",
+  "prot-crRNA 链对的 per-model sd 存盘"
+ ],
  "wt_reference": {
   "KRAS_G12C": 0.4858,
   "KRAS_G12D": 0.4918,
@@ -17,47 +41,12 @@
     "TP53_R248Q": 0.0,
     "TP53_R273H": -0.0048
    },
-   "cross_target_spread": 0.0118
-  },
-  {
-   "scaffold": "A1U",
-   "delta_vs_wt": {
-    "KRAS_G12C": 0.0018,
-    "KRAS_G12D": -0.008,
-    "TP53_R248Q": 0.0054,
-    "TP53_R273H": -0.0016
-   },
-   "cross_target_spread": 0.0134
-  },
-  {
-   "scaffold": "A1UA2C",
-   "delta_vs_wt": {
-    "KRAS_G12C": -0.0158,
-    "KRAS_G12D": -0.074,
-    "TP53_R248Q": -0.0332,
-    "TP53_R273H": -0.0318
-   },
-   "cross_target_spread": 0.0582
-  },
-  {
-   "scaffold": "A8CU15G",
-   "delta_vs_wt": {
-    "KRAS_G12C": -0.0026,
-    "KRAS_G12D": -0.015,
-    "TP53_R248Q": -0.0188,
-    "TP53_R273H": -0.0064
-   },
-   "cross_target_spread": 0.0162
-  },
-  {
-   "scaffold": "U5GA18C",
-   "delta_vs_wt": {
-    "KRAS_G12C": -0.3252,
-    "KRAS_G12D": -0.2788,
-    "TP53_R248Q": -0.0948,
-    "TP53_R273H": -0.1184
-   },
-   "cross_target_spread": 0.2304
+   "cross_target_spread": 0.0118,
+   "iptm_sd_max": 0.002,
+   "null_within_2sd": [
+    "KRAS_G12C",
+    "TP53_R248Q"
+   ]
   },
   {
    "scaffold": "A1GU3AA8GU15C",
@@ -67,7 +56,47 @@
     "TP53_R248Q": -0.0452,
     "TP53_R273H": -0.074
    },
-   "cross_target_spread": 0.0434
+   "cross_target_spread": 0.0434,
+   "iptm_sd_max": 0.0348,
+   "null_within_2sd": []
+  },
+  {
+   "scaffold": "A1U",
+   "delta_vs_wt": {
+    "KRAS_G12C": 0.0018,
+    "KRAS_G12D": -0.008,
+    "TP53_R248Q": 0.0054,
+    "TP53_R273H": -0.0016
+   },
+   "cross_target_spread": 0.0134,
+   "iptm_sd_max": 0.0015,
+   "null_within_2sd": [
+    "KRAS_G12C"
+   ]
+  },
+  {
+   "scaffold": "A1UA2C",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.0158,
+    "KRAS_G12D": -0.074,
+    "TP53_R248Q": -0.0332,
+    "TP53_R273H": -0.0318
+   },
+   "cross_target_spread": 0.0582,
+   "iptm_sd_max": 0.0054,
+   "null_within_2sd": []
+  },
+  {
+   "scaffold": "A8CU15G",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.0026,
+    "KRAS_G12D": -0.015,
+    "TP53_R248Q": -0.0188,
+    "TP53_R273H": -0.0064
+   },
+   "cross_target_spread": 0.0162,
+   "iptm_sd_max": 0.0017,
+   "null_within_2sd": []
   },
   {
    "scaffold": "B_break_compensate",
@@ -77,14 +106,31 @@
     "TP53_R248Q": -0.2924,
     "TP53_R273H": -0.4212
    },
-   "cross_target_spread": 0.1288
+   "cross_target_spread": 0.1288,
+   "iptm_sd_max": 0.0795,
+   "null_within_2sd": []
+  },
+  {
+   "scaffold": "U5GA18C",
+   "delta_vs_wt": {
+    "KRAS_G12C": -0.3252,
+    "KRAS_G12D": -0.2788,
+    "TP53_R248Q": -0.0948,
+    "TP53_R273H": -0.1184
+   },
+   "cross_target_spread": 0.2304,
+   "iptm_sd_max": 0.0663,
+   "null_within_2sd": []
   }
  ],
  "reading": {
-  "A1C/A1U": "四靶界面差 |Δ|<=0.026, 界面中性且靶标无关(通用型候选)",
-  "U5GA18C": "跨靶界面差最大(KRAS 0.16-0.21 vs TP53 0.38-0.41, spread≈0.25)——骨架-靶标互作的直接观测, 分型假说的结构证据",
-  "B_break_compensate": "四靶界面均塌陷(0.075-0.215), 该补偿设计在蛋白界面口径不可用(折叠口径的优势未转化为界面保持)",
-  "A1UA2C/A1GU3AA8GU15C": "中等下降且靶标相关(spread 0.05-0.10)",
-  "note": "crRNA_target 链对本矩阵全部 0.43-0.49(合成靶完全互补), 与旧矩阵原生靶(0.03-0.2)的差异=靶构造口径差, 两表分开引用"
+  "A1C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C +0.0026, KRAS_G12D -0.0092, TP53_R248Q +0.0000, TP53_R273H -0.0048; KRAS_G12C/TP53_R248Q 在 2sd 噪声内(判 null); max|Δ|=0.0092 <= 0.03 → 界面中性且靶标无关(通用型候选); 跨靶 spread 0.0118 < 0.10 → 未见靶标相关",
+  "A1GU3AA8GU15C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.0412, KRAS_G12D -0.0846, TP53_R248Q -0.0452, TP53_R273H -0.0740; 四靶界面中等下降(|Δ| 0.0412-0.0846); 跨靶 spread 0.0434 < 0.10 → 未见靶标相关",
+  "A1U": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C +0.0018, KRAS_G12D -0.0080, TP53_R248Q +0.0054, TP53_R273H -0.0016; KRAS_G12C 在 2sd 噪声内(判 null); max|Δ|=0.0080 <= 0.03 → 界面中性且靶标无关(通用型候选); 跨靶 spread 0.0134 < 0.10 → 未见靶标相关",
+  "A1UA2C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.0158, KRAS_G12D -0.0740, TP53_R248Q -0.0332, TP53_R273H -0.0318; 四靶界面中等下降(|Δ| 0.0158-0.0740); 跨靶 spread 0.0582 < 0.10 → 未见靶标相关",
+  "A8CU15G": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.0026, KRAS_G12D -0.0150, TP53_R248Q -0.0188, TP53_R273H -0.0064; max|Δ|=0.0188 <= 0.03 → 界面中性且靶标无关(通用型候选); 跨靶 spread 0.0162 < 0.10 → 未见靶标相关",
+  "B_break_compensate": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.3400, KRAS_G12D -0.3766, TP53_R248Q -0.2924, TP53_R273H -0.4212; 四靶界面均塌陷(|Δ| 0.2924-0.4212, 方向: 下降); 跨靶 spread 0.1288 ≥ 0.10, 但 KRAS/0.3583 与 TP53/0.3568 族均值几乎相同, spread 由靶点个体差异(最深 TP53_R273H)驱动, 非族间互作信号",
+  "U5GA18C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.3252, KRAS_G12D -0.2788, TP53_R248Q -0.0948, TP53_R273H -0.1184; 四靶界面均塌陷(|Δ| 0.0948-0.3252, 方向: 下降); 跨靶 spread 0.2304 ≥ 0.10 → 靶标相关: KRAS |Δ|均值 0.3020 > TP53 0.1066; 与骨架-靶标互作一致的单构建观测(自模板口径, 待对照校准)",
+  "note": "crRNA_target 链对本矩阵全部 0.45-0.49(合成靶完全互补), 与旧矩阵原生靶(0.03-0.2)的差异=靶构造口径差, 两表分开引用"
  }
 }

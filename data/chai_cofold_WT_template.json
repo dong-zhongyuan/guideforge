@@ -63,5 +63,6 @@
   "iptm_crRNA_target": 0.315,
   "clashes": false
  },
- "interpretation": "蛋白-RNA 界面未恢复(iptm~0.2, 无MSA已知短板); crRNA-靶RNA pairwise iptm~0.35 为最有意义链对; ESM 嵌入版与模板/MSA 版为后续升级路径"
+ "interpretation": "5模型均值: ipTM 0.252, prot-crRNA ipTM 0.045, crRNA-靶RNA ipTM 0.313; prot-crRNA ipTM 0.05 低于可用界面预测区间(~0.5-0.6); 本运行注入 100% 一致自模板(8D4A链A): 上述分数为模板合规性/健全性检查(sanity check), 高 ipTM 是自模板复述的平凡结果, 不能作为界面可预测性证据; 相关结论待 template-free 或 scrambled-template 对照校准",
+ "self_template": true
 }

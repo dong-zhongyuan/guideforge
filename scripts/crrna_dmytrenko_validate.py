@@ -26,6 +26,7 @@ import os
 import sys
 
 import numpy as np
+from scipy.stats import spearmanr
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..'))
@@ -71,12 +72,15 @@ def check_dr_swap(spacer_dna, effector_wt, effector_swap, margin=0.10):
 
 
 def conservation_partition(dr, cons3_window=5):
-    """位置保守性分区(Fig.1c 定性口径): 3'保守窗=2, 茎/悬垂=1, loop=0。"""
+    """位置保守性分区(Fig.1c 定性口径): 3'保守窗=2, 茎/悬垂=1, loop=0。
+
+    loop 判据 = flanked-by-paired: 连续未配对 run 且左右两侧紧邻位均为配对位;
+    5'/3' 端悬垂(序列端点处的未配对 run, 只有一侧有配对)不算 loop, 归入茎/悬垂=1。
+    """
     ss = core.fold(dr)[0]
     n = len(dr)
     part = {}
     loop_pos = set()
-    # 点括号直接给配对; loop = 茎环之间的未配对段(取连续未配对且两侧为配对的最长段)
     unpaired_runs, run = [], []
     for i, ch in enumerate(ss):
         if ch == '.':
@@ -87,8 +91,11 @@ def conservation_partition(dr, cons3_window=5):
                 run = []
     if run:
         unpaired_runs.append(run)
-    if unpaired_runs:
-        loop_pos = set(max(unpaired_runs, key=len))
+    flanked = [r for r in unpaired_runs
+               if r[0] > 0 and r[-1] < n - 1
+               and ss[r[0] - 1] in '()' and ss[r[-1] + 1] in '()']
+    if flanked:
+        loop_pos = set(max(flanked, key=len))
     for i in range(n):
         pos = i + 1
         if pos > n - cons3_window:
@@ -138,6 +145,8 @@ def check_conservation_correlation(variants_csv, effector, cons3_window=5, cons3
     p_adj = _perm_p(cons, madj, rho_adj)
     return {'rows': rows, 'loop_positions_1based': [i + 1 for i in loop_idx],
             'cons_partition': {str(k): v for k, v in part.items()},
+            'partition_rule': 'flanked_by_paired',
+            'spearman': 'tie-aware midranks (scipy.stats.spearmanr)',
             'spearman_cons_vs_tolerance': {'rho': round(rho_tol, 3), 'perm_p': round(p_tol, 4)},
             'spearman_cons_vs_meanscore': {'rho': round(rho_msc, 3), 'perm_p': round(p_msc, 4)},
             'spearman_cons_vs_scoreadj': {'rho': round(rho_adj, 3), 'perm_p': round(p_adj, 4),
@@ -148,9 +157,8 @@ def check_conservation_correlation(variants_csv, effector, cons3_window=5, cons3
 
 
 def _spearman(x, y):
-    rx = np.argsort(np.argsort(x))
-    ry = np.argsort(np.argsort(y))
-    return np.corrcoef(rx, ry)[0, 1]
+    """tie-aware Spearman: scipy 对并列取 midranks(平均秩)。"""
+    return float(spearmanr(x, y).statistic)
 
 
 def _perm_p(x, y, observed, n_perm=20000, seed=0):

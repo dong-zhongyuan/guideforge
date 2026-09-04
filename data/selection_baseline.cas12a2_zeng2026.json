@@ -1,0 +1,236 @@
+{
+ "task": "R3 filter+random 基线: 管线打分相对\"硬过滤+随机选K\"的增量信息",
+ "generated": "2026-09-04",
+ "vienna_version": "2.7.2",
+ "numpy_version": "2.3.5",
+ "config": {
+  "effector": "cas12a2_zeng2026",
+  "dr_dna": "AATTTCTACTGTTGTAGAT",
+  "spacer_fixed_dna": "GTTCATGCCGCCCATGCAGGAACT",
+  "library_params": {
+   "n_double": 200,
+   "sa_steps": 300,
+   "seed": 0,
+   "cov_double": 150,
+   "max_bp_dist": 4.0,
+   "spacer_unpaired_margin": 0.1,
+   "w_bp": 0.3,
+   "w_ddg": 0.1,
+   "w_contact": 1.0,
+   "w_ens": 0.05,
+   "w_hbond": 0.5,
+   "w_fold": 0.2,
+   "w_seed": 0.0,
+   "seed_len": 7,
+   "w_stab": 0.3,
+   "w_cons3": 0.3,
+   "cons3_window": 5,
+   "proc_window": 4,
+   "allow_cross_pairing": false,
+   "no_protect_processing": false,
+   "stab_dr_only": false
+  },
+  "topk": 12,
+  "n_rep": 200,
+  "baseline_seed": 20260905,
+  "scope": "纯 ViennaRNA 口径; RNet SHAPE 一致性需 rnet 引擎环境, 本检验未做(round-3 R3 授权跳过)"
+ },
+ "library": {
+  "n_variants": 441,
+  "n_passed": 203,
+  "provenance_check": {
+   "shipped_csv": "data/tp53_r248q_zengdr.v6.variants.csv",
+   "same_variant_pool": true,
+   "same_passed_set": true,
+   "max_abs_score_diff": 0.0,
+   "n_shipped_variants": 441,
+   "note": "枚举库+硬过滤+打分与 shipped v6 完全一致(逐项对拍)"
+  }
+ },
+ "topk_members": [
+  {
+   "desc": "A1C",
+   "score": -0.0001,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.009,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A1U",
+   "score": -0.0001,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.007,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A1G",
+   "score": -0.012,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.043,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A8G+U15C",
+   "score": -0.4391,
+   "stem_gc": 0.6,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.67,
+   "selector_lit_pred": 0.6301
+  },
+  {
+   "desc": "U7C+A16G",
+   "score": -0.4633,
+   "stem_gc": 0.6,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.029,
+   "selector_lit_pred": 0.6301
+  },
+  {
+   "desc": "A1U+U3A",
+   "score": -0.5486,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.004,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "U3A",
+   "score": -0.5495,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.005,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A1C+U3A",
+   "score": -0.5507,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.005,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A1U+U3G",
+   "score": -0.5537,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.029,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "U3G",
+   "score": -0.5553,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.034,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A1C+U3G",
+   "score": -0.5596,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.034,
+   "selector_lit_pred": 0.6094
+  },
+  {
+   "desc": "A1U+U3C",
+   "score": -0.5672,
+   "stem_gc": 0.4,
+   "loop_mut_frac": 0.0,
+   "cross_pp": 0.066,
+   "selector_lit_pred": 0.6094
+  }
+ ],
+ "score_separation_test": {
+  "hypothesis": "H0: 硬过滤后候选可交换(打分无增量信息); obs=TOP-K 平均打分",
+  "obs_topk_mean_score": -0.3999,
+  "random_k_mean_mean": -1.7142,
+  "random_k_mean_sd": 0.2183,
+  "random_k_mean_q95": -1.3587,
+  "random_k_mean_max": -1.1425,
+  "mc_p_greater": 0.005,
+  "effect_size_mean_diff_over_pool_sd": 1.701,
+  "z_vs_null": 6.02,
+  "pool_score_sd": 0.7729,
+  "pool_score_iqr": 0.852,
+  "topk_score_range": [
+   -0.5672,
+   -0.0001
+  ],
+  "note": "TOP-K 按构造是分数最大子集, MC p 必然近 1/(n_rep+1); 该检验的真正内容在效应量: 若打分无区分力, TOP-K 均值≈随机均值(效应量≈0)。实测效应量以通过池 SD 归一报告。"
+ },
+ "independent_property_tests": {
+  "stem_gc": {
+   "property": "stem_gc",
+   "direction_note": "WT 茎区位点 GC 含量(纯序列性质, 打分不含)",
+   "topk_mean": 0.4333,
+   "pool_mean": 0.4133,
+   "pool_sd": 0.0686,
+   "random_k_mean_q05": 0.3833,
+   "random_k_mean_median": 0.4167,
+   "random_k_mean_q95": 0.4417,
+   "mc_p_two_sided": 0.3582,
+   "cliffs_delta_topk_vs_pool": 0.074,
+   "ks_stat_vs_pool": 0.132,
+   "ks_p_vs_pool": 0.9724,
+   "interpretation": "TOP-K 与随机基线无显著差异"
+  },
+  "loop_mut_frac": {
+   "property": "loop_mut_frac",
+   "direction_note": "突变落真 loop(1-based [10, 11, 12, 13], 两侧配对判据)比例; 打分只用 3' 保守窗, 不用 loop 归属",
+   "topk_mean": 0.0,
+   "pool_mean": 0.2373,
+   "pool_sd": 0.3203,
+   "random_k_mean_q05": 0.0972,
+   "random_k_mean_median": 0.2153,
+   "random_k_mean_q95": 0.375,
+   "mc_p_two_sided": 0.0149,
+   "cliffs_delta_topk_vs_pool": -0.424,
+   "ks_stat_vs_pool": 0.424,
+   "ks_p_vs_pool": 0.0238,
+   "interpretation": "TOP-K 显著偏离随机基线"
+  },
+  "cross_pp": {
+   "property": "cross_pp",
+   "direction_note": "DR-spacer 交叉配对系综概率(连续量; 过滤用整数 cross_nt/inv_max_run, 打分不含此项; 低=侵占少)",
+   "topk_mean": 0.0779,
+   "pool_mean": 0.5485,
+   "pool_sd": 1.2105,
+   "random_k_mean_q05": 0.1503,
+   "random_k_mean_median": 0.5015,
+   "random_k_mean_q95": 1.244,
+   "mc_p_two_sided": 0.1244,
+   "cliffs_delta_topk_vs_pool": -0.444,
+   "ks_stat_vs_pool": 0.434,
+   "ks_p_vs_pool": 0.0187,
+   "interpretation": "TOP-K 与随机基线无显著差异"
+  },
+  "selector_lit_pred": {
+   "property": "selector_lit_pred",
+   "direction_note": "Han2025 文献先验树预测(Fig1g 尺度, 低=预测活性强; 半独立: 与打分共享部分底层特征, 模型由独立数据训练)",
+   "topk_mean": 0.6129,
+   "pool_mean": 0.616,
+   "pool_sd": 0.0443,
+   "random_k_mean_q05": 0.6094,
+   "random_k_mean_median": 0.6094,
+   "random_k_mean_q95": 0.636,
+   "mc_p_two_sided": 1.0,
+   "cliffs_delta_topk_vs_pool": 0.129,
+   "ks_stat_vs_pool": 0.132,
+   "ks_p_vs_pool": 0.9724,
+   "interpretation": "TOP-K 与随机基线无显著差异"
+  }
+ },
+ "topk_overlap_test": {
+  "expected_hypergeometric": 0.71,
+  "random_draw_overlap_mean": 0.72,
+  "random_draw_overlap_max": 3,
+  "note": "随机 K=12 与管线 TOP-12 的期望重合 K^2/N=0.71 条; 若过滤+随机即可捞回同一批候选, 实测重合应显著高于期望——实测不高于期望"
+ },
+ "conclusion_zh": "检验一: 管线 TOP-12 平均打分 -0.400, 随机基线均值 -1.714 (SD 0.218), MC p=0.0050(按构造上界), 效应量 1.70 个通过池 SD——打分在通过池中提供了大效应的排序区分(池 SD 0.773, TOP-12 内部跨度 -0.5672~-0.0001), 并非噪声级重排。检验二: 独立性质上显著偏离随机基线的性质 = ['loop_mut_frac'](其余与随机无显著差异, 如实报告)。重合度: 随机抽取与管线 TOP-12 平均重合 0.72 条(期望 0.71), 过滤器+随机不能捞回同一批候选。结论: 打分相对'硬过滤+随机'提供显著增量信息; 独立性质上的具体偏离方向见各性质项。",
+ "disclaimer": "排序信息检验, 非活性预测; 打分提供的是相对排序信息, 活性/特异性以体外生化与细胞实验为准。"
+}

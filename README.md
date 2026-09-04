@@ -16,7 +16,7 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
   → 湿实验闭环(体外旁切初筛 → 细胞杀伤验证)
 
 平台扩展(v1.1): spacer 上下文分型 → 设计智能体
-  86 条文献 spacer 按全长折叠特征聚 3 型, 各型最优 DR 位点图谱不同
+  86 条文献 spacer 按全长折叠特征聚 3 型, 各型最优 DR 位点图谱不同(弱证据阳性, 见文献依据表披露)
   → 智能体: 输入 spacer(项目口径)或突变转录本(换靶标) → 骨架分型选择/tilling 设计
   * 加工位点保护与 3'保守窗惩罚的文献依据见下"Dmytrenko 2023"条
 ```
@@ -26,7 +26,7 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 - **活性态-侵占态竞争模型**(`scripts/crrna_state_competition.py`, ViennaRNA 单能量标尺约束配分, hc_add_bp/up): 预注册判别检验 **FAIL**——14 条中 Sp8 的 dG_comp 仅排 6/14; 互斥定义(强制侵占螺旋+禁死茎臂)下所有可枚举侵占态均比茎态贵 5.8+ kcal(含 Sp8), 论文失活折叠在伪结外能量面上不可达。**结论: Sp8 正式定性 `out_of_model_domain`**, 活性态竞争假说的检验需统一假结能量模型(中期, RNAstructure/统一 pk 模型)。
 - **交叉特征阶段拆分+组成校正**(`scripts/crrna_cross_decompose.py`, 单碱基组成匹配 N=200 + LOO + GC 偏相关): raw cross_coreDR rho=+0.55(LOO 稳定) 在组成匹配后降至 +0.17~+0.21、GC 偏相关后 +0.08~+0.18; flank 信号 z 后归零(纯成分代理, 且配对对象是被加工丢弃的 U-rich 残留 repeat)。**判据 R1: raw cross_pp 退出主评分获数据支持**; 阶段拆分保留(flank 只进加工模块口径)。
 - **v1.7 结构置换口径过滤**: `inv_max_run`(最长连续 DR-spacer 侵占螺旋) <= 同上下文 WT(t1 型 WT 自身 6 对连续侵占故禁用固定阈值) + `partner_switch` 标注(t1 诊断: A8G 类 DDR-alone 稳定化突变在型1 口径强化的恰是侵占螺旋) + `ddG_dr` 语义更名 "DR 单独折叠稳定化(DDR-alone 口径)" + top.json 增加 `model_domain` 声明(伪结外: 仅侵占筛查+同 spacer 相对排序)。
-- **补偿突变实验面板**(`scripts/crrna_compensatory_design.py` -> `data/ivt_compensatory_panel.*`): MYCg1 三臂 C_WT(inv_run=6)/A_break(0, GC 不变, 靶向配对保持)/B_break_compensate(6 恢复), 各配同源靶——A vs B 活性差 = 折叠竞争的因果检验, 寡核苷酸级成本。
+- **补偿突变实验面板**(`scripts/crrna_compensatory_design.py` -> `data/ivt_compensatory_panel.*`): MYCg1 三臂 C_WT(inv_run=6)/A_break(0, GC 不变, 靶向配对保持)/B_break_compensate(6 恢复), 各配同源靶——A vs B 活性差 = 折叠竞争的因果检验, 寡核苷酸级成本。**round-3 去混杂重设计(design_mode=deconfounded)**: 旧 B 臂补偿位点落在天然茎 3' 臂(毁掉茎, DR-only p_fold 0.0), A vs B 无法归因单一变量; 新 B 臂(zengDR T10A/T12G/T19G)补偿位点全部避开天然茎, DR-only p_fold 0.93≥WT 0.87、bp_dist 0, A vs B 可归因于折叠竞争(计算口径, 待 IVT 验证)。
 
 ### NUPACK 3.2.2 含假结配分检验(第四模型, 2026-09-02)
 
@@ -45,15 +45,16 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 `scripts/crrna_chai_input.py` + `scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR+固定 spacer)+靶RNA 三元共折叠。能力递进三步:
 
 1. **单序列/ESM 基线(历史首跑)**: 无模板下 aggregate 0.23-0.24、蛋白-crRNA 链间 ipTM 0.02-0.08——1200aa RNA 引导核酸酶的已知短板, 界面不可用。
-2. **8D4A 自模板注入(提交 e69fc74, 界面特征正式可用)**: 蛋白链自模板 m8(8D4A 链A, 100% 同一)注入后 **aggregate/ipTM 0.25→0.874, 蛋白-crRNA 链间 ipTM 0.02→0.49**——蛋白-RNA 界面恢复到可作选型特征的置信水平; 模板注入是界面恢复的承载步骤(无模板即回退到基线)。
-3. **7 骨架 × 5 模型界面差量表(提交 963745d, `data/chai_cofold_matrix_*.json` / `chai_matrix_iptm.json`)**: WT/6 变体的 aggregate 与 prot-crRNA ipTM 模型间一致(sd≤0.007/0.09), 变体间排序稳定; **口径张力如实声明: crRNA-靶RNA 链对分数低(0.02-0.43)且部分变体模型间方差大, RNA-RNA 双链预测的模型稳定性存疑**——界面差量以 prot-crNA 链对为主口径, crRNA-靶对仅作参考; 与 MD 判据(M1-M3 预注册)的结论各自独立陈述。
-4. **四靶 × 8 骨架 32 组合矩阵(运行中, `chai_matrix_4t/`)**: 靶 RNA 统一为 protospacer 窗口 24nt + PFS 5nt(8D4A 排布同构), 供选型分类器的"骨架×靶标界面特征差量"输入(策划案 V3 §4.1/§5.1); 出齐后入库 `data/chai_matrix_4t.json`。
+2. **8D4A 自模板注入(提交 e69fc74)**: 蛋白链自模板 m8(8D4A 链A, 100% 同一)注入后 aggregate/ipTM 0.25→0.874, 蛋白-crRNA 链间 ipTM 0.02→0.49。**round-3 降级声明: 100% 一致自模板注入的高分是模板复述的必然结果, 只能作为模板合规性 sanity check, 不能作为界面可预测性证据; 且 prot-crRNA ipTM≈0.49 低于 0.5-0.6 可用界面预测区间; template-free / scrambled-template 对照补齐前, 所有"界面恢复"表述均按此口径理解**(声明同步写入各 chai_* JSON)。
+3. **AF3 独立对照层(2026-09-04, 策划案 V3 表1 口径)**: 本机无 AF3 权重(需 DeepMind 审批)与 GPU 机时, 已生成 AlphaFold Server 就绪任务 13 套(WT + TOP-12, `data/af3_inputs/`, 生成器 `scripts/crrna_af3_input.py`, 蛋白/靶 RNA 与 Chai 矩阵同源); 服务器不接受自定义模板 → 全部 template-free, 正是上条要求的独立对照; 人工提交后结果回填 `data/af3_results/`。若 AF3 template-free 下 prot-crRNA 界面同样恢复, "界面可预测"才具备首个独立证据。
+3. **7 骨架 × 5 模型界面差量表(提交 963745d, `data/chai_cofold_matrix_*.json` / `chai_matrix_iptm.json`)**: WT/6 变体的 aggregate 与 prot-crRNA ipTM 模型间一致(sd≤0.007/0.09), 变体间排序稳定; **口径张力如实声明: crRNA-靶RNA 链对分数低(0.02-0.43)且部分变体模型间方差大, RNA-RNA 双链预测的模型稳定性存疑**——界面差量以 prot-crNA 链对为主口径, crRNA-靶对仅作参考(全部为 100% 自模板口径的模板合规性检查, 非界面可预测性证据——见上条降级声明); 与 MD 判据(M1-M3 预注册)的结论各自独立陈述。
+4. **四靶 × 8 骨架 32 组合矩阵(已完成 n=32, `data/chai_matrix_4t.json`)**: 靶 RNA 统一为 protospacer 窗口 24nt + PFS 5nt(8D4A 排布同构)。reading/interpretation 由 `scripts/crrna_chai_matrix_summary.py` 从 scaffold_deltas 数值程序化生成(round-3 修复: 旧版手写 reading 与自身数值方向相反); 结论口径为"与骨架-靶标互作一致的单构建观测(自模板口径, 待对照校准)", 不作分型假说的结构证据。
 
 ### Han 2025 数据集与选型分类器(同源外部数据, 2026-09-02)
 
 `scripts/crrna_han2025_features.py` + `scripts/crrna_train_selector.py`(数据: `data/han2025_dataset.json`, `data/han2025_sanger_sequences.json`)。
 
-**数据链(全部程序化提取, 无硬编码)**:
+**数据链(除 Fig.3b RBS0/RBS33 两终点为源数据手动提取——代码内 TOOLBOX_ACTIVITY 如实标注——外, 其余全部程序化提取)**:
 - Fig1g 活性全表 **145 值**(F×25/S×23/L×48/FL×48 + Canonical; 修正了旧版漏 48 条 FL 的解析 bug);
 - 工具箱 9 条序列(CN/F1/F2/L1-L4/FL1/FL2, MOESM3)与 Fig1g 同尺度锚点 7 条;
 - **54 条 Sanger 耐受集**(MOESM1 Sup Fig.2/3, 600dpi 视觉转录 ×2-3 次独立读数共识 + 模板守恒校验 + 与 MOESM3/主文锚点交叉验证, 逐条置信度分级; S8 的 20 条与论文自报数完全吻合);
@@ -63,37 +64,43 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 - **Tian 2025 RRS 单点扫描入库(2026-09-03, 同源第二个数据集)**: [Tian et al., Nat Commun 16:6694](https://www.nature.com/articles/s41467-025-62082-5) 系统扫描 LbCas12a DR 的 RRS 区(5' 端 4nt)——8 条 crRNA × 12 单点突变 = **96 条带序列+活性配对**(序列=MOESM3, trans-切割 ΔF=MOESM6 Fig.1d 三重复均值, 活性口径=同 crRNA 内 mut/WT 比值), 程序化提取零命名冲突(`parse_tian2025()`); 论文结论: RRS 3/4 位突变近乎灭活(假结承载)。**该集按设计用作选型器的独立外部验证而非训练数据**: 池化模型(训练集不含 Tian)预测 96 条, 整体 Spearman **−0.007**、逐 crRNA 中位 −0.094——证实伪结外特征对 RRS/假结区按构造无分辨力(与 Creutzburg Sp8 盲区同源); **选型器排序不适用 DR 5' 端 RRS 位点变体, 候选库中该区突变应按位置规则排除**。入库字段: `han2025_dataset.json` 的 `tian2025_rrs_pairs` / 验证结论 `homolog_training.json` 的 `tian2025_external_check`。
 - **DeWeirdt 2020 alt-DR 大库入库(2026-09-03, 同源第三个数据集)**: [DeWeirdt et al., Nat Biotechnol 39:94](https://www.nature.com/articles/s41587-020-0600-6) 的 AsCas12a 替代 DR 深度扫描——**35,883 条 20nt DR 变体**(茎区 ≤3 可变碱基对 + 单链/环区 ≤3 可变核苷酸)× 2 方向构建(BCL2L1×MCL1 合成致死负筛, MELJUSO/2xNLS-AsCas12a, LFC 低=活性强; 序列+读数=MOESM6 alt_DR_reads, spacer 上下文=MOESM1 Supp Table 3 的 MCL1/BCL2L1 guide), 程序化提取 + 逐方向特征(`parse_deweirdt2020()`, 全量特征表 `data/raw/deweirdt2020_dr_scan.json` 不入 git)。**入池实测被拒**: 120 条 LFC 秩分层子样(占池 72%)把其余 5 终点 LOEO 全部拖负(rbs33 +0.96→−0.75、rbs0 +0.68→−0.64、trans +0.25→−0.71、fig1g +0.04→−0.70, 自身 −0.36, 仅 cis 转正)——单终点淹没多终点共识, 与 Tian 同模式改作独立外部验证(拒绝记录见 `homolog_training.json` rejected_endpoints)。**外部验证(训练集不含 DeWeirdt, 全量无剔除)**: pRDA_127(MCL1 spacer 上下文) Spearman **+0.202**, 且不低于同数据集 5 折 CV(+0.182)——迁移预测不差于同集训练, 瓶颈在特征/终点本身而非迁移; pRDA_128(BCL2L1 上下文) −0.024(CV +0.109)。判读: 该筛选动态范围由茎/环随机化细节主导, 5 维伪结外特征仅携带弱信号(秩方差 ~3%), 定性为**方向正确的弱正证据**, 不足以支撑逐点排序。Nguyen 2020(Nat Commun 11:4906)已评估不入库: 其变体为 crRNA 3'/5' 端尾延伸(DNA/RNA/PS), DR 序列不变, 非 DR 序列-活性配对。
 
-**选型分类器(先验排序口径, 2026-09-03 用 16 对重训)**: 决策树(Fig1g 尺度, n=16), 特征重要性 p_fold 0.52 / ddG_dr 0.48; 训练集 Spearman 0.729(样本内读数, 仅作参考); **fig1f 留出验证(训练 7 工具箱 → 检验 9 转录对): Spearman +0.25 [bootstrap CI95 −0.40, +0.79], MAE 0.217 [CI95 0.161, 0.289](超预登记可用阈 1/3 值域=0.162); MAE 超阈已结构化归因——9/9 条 fig1f 标签高于工具箱训练上界 0.583, 决策树按构造不可外推, 超阈主因为主图/附图两图版间水平偏移而非排序能力失败; 秩方向为正但 n=9 功效有限(CI 跨 0), 故 fig1f 配对只用于秩级体检、绝对水平不采用, 两口径并列报告**; 对保守变体仍无区分力(多数候选落同一叶节点)——定位为文献先验排序, 非活性预测。池化模型扩至 n=46(Han 5 终点×7 + Fig1f×9 + Teng 序数对); LOEO 有升有降(rbs33 0.64→0.96, rbs0 0.39→0.68; trans 0.68→0.25, fig1g 0.29→0.04, cis -0.68→-0.86), 8 员族池化排序**翻转**(旧 U5G+A18C +0.58 居首 → 新 WT/A1C/A1U 0.12 居首, U5G+A18C -1.38 末位; 新数据的 loop 同聚物变体均为中等 ddG_dr/p_fold 而活性不差, 强茎稳定化奖赏被压低)——排序对数据增量敏感, 印证"先验排序"而非稳定预测的定位。多终点版: cis/trans 切割终点各训一树, 8 员族逐终点排序入库(`data/selector_family_ranking.json`); **trans 旁切终点上同源骨架间差 30 倍(WT 39.2 vs L1 1.2)**, 为"DR 可调旁切活性"提供了同家族文献证据; 不同终点给出不同排序, 正是"骨架分型"的同源佐证。Sanger 耐受集体检: 真实耐受变体预测中位 0.609(锚点范围内), 204 候选分布中平均 6.5% 分位(模型不排斥真实功能变体)。
+**选型分类器(先验排序口径, 2026-09-03 用 16 对重训; 2026-09-04 round-3 全面切 tie-aware Spearman)**: 决策树(Fig1g 尺度, n=16), 特征重要性 p_fold 0.52 / ddG_dr 0.48; 训练集 Spearman 0.501(样本内读数, 仅作参考); **fig1f 留出验证(训练 7 工具箱 → 检验 9 转录对): Spearman +0.388 [bootstrap CI95 0.00, +0.864], MAE 0.217 [CI95 0.161, 0.289](超训练折可用阈 0.0467; 旧"预登记"阈 0.162 用含测试标签的全量 y 计算, 标签泄漏已于 round-3 修复并改名 mae_threshold_trainfold——两口径下 MAE 均超阈, 判定方向不变); MAE 超阈已结构化归因——9/9 条 fig1f 标签高于工具箱训练上界 0.583, 决策树按构造不可外推, 超阈主因为主图/附图两图版间水平偏移而非排序能力失败; 秩方向为正但 n=9 功效有限, 故 fig1f 配对只用于秩级体检、绝对水平不采用, 两口径并列报告**; 对保守变体仍无区分力(多数候选落同一叶节点)——定位为文献先验排序, 非活性预测。池化模型扩至 n=46(Han 5 终点×7 + Fig1f×9 + Teng 序数对); LOEO 有升有降(rbs33 0.64→0.889, rbs0 0.39→0.667; trans 0.68→0.433, fig1g 0.29→0.216, cis -0.68→-0.692 反预测依旧), 8 员族池化排序**翻转**(旧 U5G+A18C +0.58 居首 → 新 WT/A1C/A1U 0.12 居首, U5G+A18C -1.38 末位; 新数据的 loop 同聚物变体均为中等 ddG_dr/p_fold 而活性不差, 强茎稳定化奖赏被压低)——排序对数据增量敏感, 印证"先验排序"而非稳定预测的定位。多终点版: cis/trans 切割终点各训一树, 8 员族逐终点排序入库(`data/selector_family_ranking.json`); **trans 旁切终点上同源骨架间差 30 倍(WT 39.2 vs L1 1.2)**, 为"DR 可调旁切活性"提供了同家族文献证据; 不同终点给出不同排序, 正是"骨架分型"的同源佐证。Sanger 耐受集体检: 真实耐受变体预测中位 0.609(锚点范围内), 204 候选分布中平均 6.5% 分位(模型不排斥真实功能变体)。**排序权威声明(round-3 R3): 合成候选排序以管线打分为准(`data/selector_model.json` 的 `ranking_authority: "pipeline_score"`); 此前 JSON 中"管线 vs 选型器 ρ=−0.872"为 tie-blind 统计伪影(决策树仅 3 个 distinct 预测值, 统计量随 numpy 版本/输入顺序摆动 +0.587/−0.493/−0.872), tie-aware 重算为 +0.152(p=0.030), 顶部 TOP-12 重合 10/12, 残余弱分歧源于选型器偏好 DR 单独强稳定化与 LbCas12a→Cas12a2 终点迁移差距**。
 
 ### V3 计算侧(第 8 员骨架 / 四靶扫描 / 统计件 / 智能体, 2026-09-02)
 
-- **8 员跨型候选族**(`scripts/crrna_orientation_library.py`): 四取向代表 6 + WT + compensatory 代表 B_break_compensate(zengDR+G11C/G14C/G17C, 补偿臂因果设计), **IVT 模板 32 行(8 骨架 × 4 靶标: R248Q/G12C/G12D/R273H, `data/ivt_round1_template.csv`)**——正合策划案 V3 §5.1 的 8×4=32 组合矩阵口径。
-- **四靶转录组脱靶扫描**(GENCODE v47, 385,659 转录本, 统一口径含 TP53 重扫; `data/*_scan_v47.*`): 四条 spacer 的 0 错配位点全部落在本基因异构体(预期靶点); KRAS 两 spacer 在 **KRASP1 假基因各 1 个 1 错配位点**(错配位置与风险评级见扫描表); 无高危脱靶。参考库 gencode.v47.transcripts.fa 不入 git(`data/raw/`, 源 URL 见 summary)。
+- **8 员跨型候选族**(`scripts/crrna_orientation_library.py`): 四取向代表 6 + WT + compensatory 代表 B_break_compensate(zengDR+T10A/T12G/T19G, round-3 去混杂重设计, 补偿位点避开天然茎; `data/orientation_library.json` 已于 round-3 重跑同步); 构成口径披露——补偿臂为 round-3 评审要求的因果检验臂(非优化取向产物), 计入策划案 V3 "约 8 个跨型候选(含 WT 对照)"的"约 8"口径, 特此说明。**IVT 模板 32 行(8 骨架 × 4 靶标, `data/ivt_round1_template.csv`)2026-09-04 起按策划案 V3 表2 对齐: R248Q/G12D/R273H/APC-Q1312x**(KRAS-G12C 移出湿实验矩阵, 其 v47 扫描等干实验产物保留作附加证据); 模板与订单表(`data/ivt_round1_order_sheet.csv`)已同步重生成——**同步传播了去混杂新补偿臂**(旧版两文件仍编码 round-3 前退役臂 AATTTCTACTCTTCTACAT, 按旧单合成将买到已撤回分子; 旧订单表备份于 `tmp/ivt_round1_order_sheet.retired_arm.bak.csv`); 面板-库-订单三向一致性由 `tests/test_ivt_panel_sync.py` 契约测试锁定。
+- **五靶转录组脱靶扫描**(GENCODE v47, 385,659 转录本; `data/*_scan_v47.*`; 策划案 V3 表2 四靶 R248Q/G12D/R273H/APC-Q1312x + KRAS-G12C 干实验附加): 五条 spacer 的 0 错配位点全部落在本基因异构体(预期靶点); KRAS 两 spacer 在 **KRASP1 假基因各 1 个 1 错配位点**; **APC 无任何 ≤2 错配位点(最干净)**, 仅 6 个 4mm 位点在 HNRNPR; 无高危脱靶。参考库 gencode.v47.transcripts.fa 不入 git(`data/raw/`; 源: EBI GENCODE release_47 FTP, 2026-09-04 重新下载, 385,659 条与旧扫描计数一致)。**口径注记(round-3 R5; v47 表 2026-09-04 已用修复版扫描器重跑为 tiered 口径, APC 同日补扫)**: "R248Q PFS=CAGAG" 与共识 GAAAG 实为 2 个错配(第 1、3 位), 早期文档"1 错配"表述有误; PFS 规则已统一入注册表 `pfs` 字段(scanner/agent/面板均消费同源); **v47 五靶重扫(effector=cas12a2_zeng2026, GAAAG±2)位点计数与旧表逐一一致(四靶), 每站点现含 pfs_mm/pfs_tolerant 分级与双模型计数——全转录组 PFS 匹配脱靶五靶均 exact 0mm=0 / tolerant ≤2mm=0**(参考库为 WT 等位, 突变体转录本不在其中; R248Q 突变体场景由 2 转录本重扫覆盖: exact 0mm=0, tolerant ≤2mm=1, 容忍模型恰好覆盖 CAGAG, `data/tp53_r248q_scan.summary.json`)。注意: 参考库中本基因 0 错配位点的 WT PFS 语境距共识 3~5 错配(CGGAG/GGTGG/GTGGC/CGTGT/CAGAT), KRAS G12C/D、R273H 与 APC Q1312x 突变体的 PFS 语境未入任何扫描——属设计层遗留问题, 不在脱靶扫描口径内。
 - **贝叶斯优化同源先验版**(`scripts/crrna_bayesopt.py --prior-han`): Han 工具箱 7 条作 GP 观测(选择器特征空间), 对 204 候选提 EI 建议; 明确标注"LbCas12a CRISPRi 抑制终点, 非 Cas12a2 杀伤, 待 IVT `--ingest` 替换"。
-- **虚拟细胞文献先验场景版**(`scripts/crrna_virtual_cell.py --prior-lit`): 依据 Cas12a2 体外激活浓度量级(Dmytrenko 2023 / 2026 Nature)场景化 EC50(TPM) 网格, 输出杀伤窗口表与主验证细胞系激活率(HCT116/SW480 等), 状态标注"文献先验场景, 非标定预测"。
-- **矩阵统计件(数据一到即出)**: `scripts/crrna_ivt_template.py --anova`(骨架×靶标两因素方差分析含交互项——"分型假说是否成立"的统计判定, 合成数据自测通过)与 `--twin-check`(数字孪生预测 vs 细胞实测 Spearman/RMSE; 参数未标定时如实报 UN-CALIBRATED)。
-- **智能体模块三接入选型器**(`scripts/crrna_agent_webapp.py`): `/api/design` 与 `/api/panel` 输出 8 员族文献先验活性排序(与 `crrna_train_selector.py` 同一模型同一定义, 随机种子固定可复现)。
+- **虚拟细胞文献标定场景版**(`scripts/crrna_virtual_cell.py --prior-lit`): Scholz 2026 Fig 1h 剂量曲线标定(n=15 点, R²=0.867)的 EC50(TPM) 网格 + Cas12a2 体外激活浓度量级场景化, 输出杀伤窗口表与主验证细胞系激活率(HCT116/SW480 等)。**round-3 修复与如实标注**: crrna_rel 场景旋钮已接入计算(e50/κ 线性近似, 未标定); 输出 JSON 含 `qa` 字段——15 点为 7 靶标×4 细胞系混合池化(未分层, 仅作包络参考)、含 1 个 >100% 存活点(如实保留)、RPKM≈FPKM 跨源等效与统一 50% 杂合因子为近似假设。
+- **矩阵统计件(数据一到即出)**: `scripts/crrna_ivt_template.py --anova`(骨架×靶标两因素方差分析含交互项——"分型假说是否成立"的统计判定, 合成数据自测通过; **ivt_round1.csv 数据待补, 当前为 data-pending 占位**)与 `--twin-check`(数字孪生预测 vs 细胞实测 Spearman/RMSE; 参数未标定时如实报 UN-CALIBRATED)。
+- **智能体模块三接入选型器**(`scripts/crrna_agent_webapp.py`): `/api/design` 与 `/api/panel` 输出 8 员族文献先验活性排序。**口径修正(round-3)**: webapp 侧为轻量重训(n=7 工具箱锚点), 与 `crrna_train_selector.py` 的 n=16/n=46 模型**不同规模**——此前"同一模型同一定义"的表述不准确, webapp 排序仅作演示, 正式先验排序以 `data/selector_model.json` 为准。
 
 ### 打分输入端可靠性(系综采样检验)
 
-`scripts/crrna_ensemble_check.py`(输出: `data/ensemble_check.pdbdr.v2.json` / `ensemble_check.zengdr.v6.json`): 对 WT+TOP-12(两口径共 26 构建)做 Boltzmann 系综采样检验(ViennaRNA 2.7.2 pbacktrack 本构建不可用, 改用 subopt 精确枚举 5 kcal 窗口 + 权重采样, 窗口尾部质量均 <2.2%, 采样 100/构建, seed=42)——
-- **MFE 口径 ΔΔG 与精确系综自由能差 F_var−F_WT(pf 精确值)全部一致, 偏差 ≤0.03 kcal/mol**, "-2.2 kcal/mol 茎稳定化"等数字不是 MFE 单构象假象;
-- 稳定化候选(−2.2/−2.0/−1.4)的 ΔΔG bootstrap 95% CI 均不含 0(PDB 口径 [−2.33,−1.83] 等), 系综口径下主张成立;
-- DR 茎完整构象占比 0.81~0.93(WT 0.81~0.83), 无构象二态; 单构象能量涨落 sd≈1.1~1.5 kcal/mol 属系综固有涨落, 在自由能差中抵消。
+`scripts/crrna_ensemble_check.py`(输出: `data/ensemble_check.pdbdr.v2.json` / `ensemble_check.zengdr.v6.json`): 对 WT+TOP-12(两口径共 26 构建)做 Boltzmann 系综检验(ViennaRNA 2.7.2 pbacktrack 本构建不可用, 改用 subopt 精确枚举 5 kcal 窗口, 窗口尾部质量均 <2.2%; 能量均值/展宽/序翻转/茎完整率全部为枚举窗口 Boltzmann 加权精确值, 100 采样仅供退役统计量溯源, seed=42)——
+- **R1 腿成立(24/24)**: MFE 口径 ΔΔG 与精确系综自由能差 F_var−F_WT(pf 精确值)全部一致, 偏差 ≤0.03 kcal/mol, "-2.2 kcal/mol 茎稳定化"等数字不是 MFE 单构象假象; 稳定化候选(−2.2/−2.0/−1.4)的 ΔΔG bootstrap 95% CI 均不含 0;
+- **旧 R2/R3 判据退役 + 重设计 R2′/R3′ 全部通过(round-3, 先登记后评估)**: 旧 R2/R3 统计量按构造病态(独立抽样按采样序号配对, std≈√(sd_v²+sd_w²)≈1.3 kcal, 与观测最大偏差 0.09 kcal——构造性必然), 其普遍触发(19/24、24/24)不构成真实不稳证据, 已退役并留档 JSON `deprecated_ill_posed_R2R3`; 重设计判据(登记于 `docs/preregistration.md` §B, 登记先于评估运行): R2′ 序翻转——6 条实效候选(|ΔΔG_ens|≥1.0) P_contra ≤0.13(阈 0.2, 两枚举窗口卷积精确值, 近中性候选 P_contra≈0.5 属普通热涨落重叠, 按登记不判定、逐候选披露); R3′ 景观粗糙度——展宽比 ≤1.14(阈 2.0, WT 分裂半零分布超阈经验率 1.0%/0.5%, 在 ≤1% 采信线内); R1 0/24、R4 0/24(茎完整率改精确窗口值, 消除 100 采样在 0.8 判界附近的噪声)。**结论强度=`passed_all_rules`——"打分输入端在系综采样下稳定"主张在重设计判据下成立**;
+- DR 茎完整构象占比 0.83~0.87(WT 0.87, 枚举窗口精确值), 无构象二态; 单构象能量涨落 sd≈1.0 kcal/mol(WT 窗口精确值 1.00/1.02)属系综固有涨落, 在自由能差中抵消。
 - 边界: 此检验证明的是 ViennaRNA 最近邻模型内的数值可靠性(指标计算端), 不涉及指标与活性的相关性(见"路径A"条, 后者已证明不构成跨体系活性预测器)。
+
+### 打分增量信息与排序权威(2026-09 round-3 R3)
+
+- **filter+random 基线**(`scripts/crrna_selection_baseline.py` → `data/selection_baseline.cas12a2_zeng2026.json`): 对 zeng2026 口径重枚举同一突变库(441 变体/203 通过, 与 v6 逐条对拍一致), 管线 TOP-12 均分 −0.400 vs 过滤后随机基线 −1.714±0.218(200 次重复, MC p=0.005 为构造性上界), 效应量 1.70 个通过池 SD; 随机抽取与 TOP-12 重合≈超几何期望(0.72 vs 0.71)——"硬过滤+随机"捞不回同一批候选。独立性质上 TOP-12 显著避开真 loop 突变(0.0 vs 随机中位 0.215, p=0.015); 茎区 GC/选型器先验与随机无显著差异(如实报告)。
+- **逐项消融(LOO)与 ddG 不对称**(`scripts/crrna_score_ablation.py` → `data/score_ablation.cas12a2_zeng2026.json`): w_contact 是对 TOP-12 构成影响最大的打分项(置零后重合仅 4/12, TOP-1 易主), w_ens 次之(7/12), 其余项重合 ≥10/12, 严格无效项不存在(w_seed 默认已为 0); ddG 轴 0.1 罚/0.3 赏的 V 形不对称对 TOP-12 构成不敏感(对称化两档重合 ≥10/12, TOP-1 不变), 是否保留随湿实验标定复核。
+- **排序权威**: 合成候选排序以管线打分为准; 选型器(n=16 文献先验)仅为先验参考, 不作合成排序依据(分歧细节见上"选型分类器"段末尾声明)。
 
 ## 文献依据（对应模块）
 
 | 模块 | 文献依据 |
 |---|---|
-| 加工位点保护硬过滤 / DR 互换不误杀验证 | Dmytrenko et al. 2023, Nature 613:588-594 (ED Fig.2c Cas12a↔Cas12a2 DR 互换功能保持; ED Fig.3 加工切点在 Cas12a 下游 1nt)。位点敏感性×保守性相关验证**仅 score 口径方向一致(ρ=−0.33, p=0.17, n=19 功效低)**, tolerance 口径为零相关(ρ=−0.01)——引用时只可引 score 口径并说明样本量 |
+| 加工位点保护硬过滤 / DR 互换不误杀验证 | Dmytrenko et al. 2023, Nature 613:588-594 (ED Fig.2c Cas12a↔Cas12a2 DR 互换功能保持; ED Fig.3 加工切点在 Cas12a 下游 1nt)。位点敏感性×保守性相关验证(round-3 R2 修复后重算: loop 分区改 flanked-by-paired——旧版把 5' 悬垂 1–4 位错标为 loop; Spearman 改 tie-aware midranks): score-adj 口径 ρ=−0.335 (置换 p=0.16), mean-score 口径 ρ=−0.392 (p=0.10), tolerance 口径 ρ=−0.426 (p=0.08), n=19 功效低、均不显著但三口径方向一致为负——引用时须注明修复口径与样本量 |
 | 3'保守窗惩罚 | Dmytrenko et al. 2023, Fig.1c 跨家族 DR 3' 端保守/loop 可变(定性结论); **窗口大小 --cons3-window=5nt 为项目设定, 非文献出处**; 功能佐证: Zhang et al. 2025 (PMC11780881, DR 3' 端化学修饰可逆调控 Cas12a 活性——非序列突变, 佐证 3' 端敏感性) |
 | spacer-DR 互扰 / spacer 游离度硬过滤 | **Creutzburg et al. 2020, NAR 48(6):3228-3243** (PMC7102956, 同家族直接证据): "base pairing of the direct repeat, other than with itself, was found to be detrimental"—DR 与 spacer 碱基配对损害 Cas12a 活性; Sp8 案例证实 spacer 侵占 DR 致假结破坏; 通过 spacer 尾部回折竞争性保护 DR 挽救活性(与本项目 spacer 游离度约束直接对应)。**Cas12a→Cas12a2 为同家族短迁移(DR 均含保守 5' 假结), 非跨体系假设** |
 | spacer 上下文分型的机制前提 | 同上(Creutzburg 2020, 同家族); 补充: Bush et al. 2023, Cell Chem Biol 30:879-892 (SpCas9 体系, sgRNA 80nt 大骨架, 跨体系佐证); Liao et al. 2018 (PMC6546362, FnCas12a DR 下游发卡抑制切割)。分型主张的直接证据为本仓库分型试验计算结果; Cas12a2 本体系暂无直接折叠互扰研究(待验) |
 | DR/骨架序列工程先例(Cas12a, 存在性证明) | Lin et al. 2018, Mol Ther; Han et al. 2025 (PMC12508434, DR 突变策略调编辑与检测) |
 | guide 层修改跨体系迁移的边界 | **Cas9(II 类)与 Cas12a2(V 类)蛋白无同源性, 不存在也不应主张 Cas9→Cas12a2 序列级迁移**(骨架排布相反: Cas9 骨架在 spacer 3' 侧, Cas12a/Cas12a2 在 5' 侧, Kweon 2017 PMC5700056)。可用证据分三层: ①同家族 DR 互换直接证据 = Dmytrenko 2023 ED Fig.2c (Cas12a↔Cas12a2, 本项目迁移链的唯一同源层); ②同一 guide 策略跨两体系的唯一直接演示 = zCRISPR, Nat Commun 2024 (s41467-024-48012-x, 碱基 Z 修饰同时提升 Cas9 与 Cas12a——化学修饰层, 非骨架序列层); ③类比层 = Cas9 侧 sgRNA 骨架工程 (Chen 2013 eSG; Bush 2023) 与 Cas12a 侧 DR 工程 (Han 2025/Zhang 2025/Teng 2019/DeWeirdt 2020) 各自独立成立, 仅支持"骨架工程调活性为跨 II/V 类重复出现的原理", 不支持设计移植 |
-| "按靶标分型选骨架" | **无先例(空白区)**: 本仓库分型试验提供了反对"单一通用骨架"的计算证据(型间最优位点图谱结构性不同); 功能收益待湿实验 |
-| 游离态指标→活性 反向验证(路径A, 阴性校准) | **Creutzburg 2020 Fig 1D 逐条反向打分**(本仓库 `scripts/crrna_creutzburg_reverse.py` / `data/creutzburg_reverse_validation.json`): 14 spacer × 构建内真实 DR(反向引物公共尾 revcomp 推得 AATTTCTACTGTTGTAGA±T, 与注册表 zeng2026 条目一致; 差异位点与正文三重吻合: Sp8/Sp12=0基 10,11,19,20, Sp12/Sp14=5,7,9, 位置19=K(G/U))——**本仓库自行复算未能复现该文自报的正相关**: spacer_up ρ=−0.45 / stem_prob ρ=−0.51, 好坏 AUC 0.23–0.38(方向反转); 仅 5端种子区可及性弱正向(seed5_up ρ=+0.41, AUC 0.68, 置换 p≈0.14); 机制个案复现(Sp8 MFE=spacer 自缠发夹, Sp12 全游离); 好 guide Sp4/Sp9 游离态茎概率≈0.001 但活性 72–83%(蛋白重折叠可挽救茎)。对照: 该文自报特征相关为正(pre-crRNA 口径, n≈25, 茎含手工定义假结 P1 配对, ViennaRNA 不可算假结)。**校准结论: 游离态指标仅用于同 spacer 下 DR 变体相对排序(结构口径), 不主张游离态结构预测活性; 排序主张(TOP1>WT)未经实验标定——Creutzburg 层只支持特征类型与活性相关(论文自报 n约25 显著; 自有复算 n=14 不显著、方向混合, 两口径并列引用), MD 阳性仅为必要条件, 最终确认须体外旁切实验**。Sp8 盲区(复算最有价值发现): 唯一 0% 活性样本未被 spacer_up(全长平均稀释)/stem_prob(DR 自配与 DR-spacer 错配混同)抓住, 已据此新增 **DR-spacer 交叉配对硬过滤** v1.6(变体 MFE 交叉配对 nt 不得多于 WT; Creutzburg 设计守则的保守实现, 定位=无损工程规则, 非活性预测器)。**回验结果为阴性且方向反转**: 三口径 cross 均未抓住 Sp8。机制诊断(2026-09-01): Cas12a 家族 crRNA 的活性态含 5' 假结, 在伪结外折叠空间不可表示, Sp8/Sp12 之争本质是与假结活性态的平衡竞争, 伪结外模型按构造无法打分; 次优空间中侵占型嵌套中间态在好坏 guide 均大量出现(Sp8 93/318 vs Sp12 146/391, Sp12 反而更多), 故任何伪结外交叉指标对该案例无区分力。cross_pp 与活性的显著正相关(mature rho=+0.61, p=0.023)为成分混杂: spacer 5' A 富集与被加工丢弃的 U-rich 残留 repeat 配对, GC vs 活性 rho=-0.32 同向, n=14。Sp8 盲区仍开放。过滤回溯审计(`data/cross_audit.json`): 两主线口径 0 拦截/TOP-12 不受影响; **t1_MYCg1 口径 WT 自身 cross_nt=20**(MYC spacer 与 DR 大量交叉配对, 型1 上下文注脚), 拦截 46/118 条含 TOP-12 中 6 条茎稳定化候选——通用候选 A8G+U15C 在型1 口径不再通过 v1.6, 其通用性主张须降级 |
+| "按靶标分型选骨架" | **无先例(空白区)**: 本仓库分型试验提供了反对"单一通用骨架"的计算证据(型间最优位点图谱结构性不同); 功能收益待湿实验。**round-3 脆弱性如实披露**: 判据=全型公共 TOP 子集 ≤ topk/2=4 即阳性, 实测公共集 3 条且全为 position-1 惰性突变(A1C/A1G/A1U), 仅以 1 条余量通过; k=3 vs k=2 轮廓系数差仅 0.006; 型 0/2(覆盖 77/86 spacer)TOP 并集 Jaccard 1.00/0.78, 型间差异主要由 junction-pairing 驱动的 n=9 小簇贡献——判定为**弱证据阳性**(判据登记 docs/preregistration.md §A) |
+| 游离态指标→活性 反向验证(路径A, 阴性校准) | **Creutzburg 2020 Fig 1D 逐条反向打分**(本仓库 `scripts/crrna_creutzburg_reverse.py` / `data/creutzburg_reverse_validation.json`): 14 spacer × 构建内真实 DR(反向引物公共尾 revcomp 推得 AATTTCTACTGTTGTAGA±T, 与注册表 zeng2026 条目一致; 差异位点与正文三重吻合: Sp8/Sp12=0基 10,11,19,20, Sp12/Sp14=5,7,9, 位置19=K(G/U))——**本仓库自行复算未能复现该文自报的正相关**: spacer_up ρ=−0.45 / stem_prob ρ=−0.51(mature19 口径, tie-aware), 好坏 AUC 0.28–0.33(方向反转); 此前"5端种子区可及性弱正向(seed5_up ρ=+0.41)"经 round-3 R1 修复(seed5_unpaired 与注册表同源的 bpp 行-only bug)后**不再成立**——修正后 seed5_up ρ=+0.21/+0.14/−0.10(三口径, 置换 p=0.45/0.64/0.73; 该 JSON 的 stats 块经独立克隆复算发现为"修复 rows + 旧 tie-blind spearman"中间态, 2026-09-04 已用终版脚本重跑刷新), 方向混合不显著, 不作为任何排序依据; 机制个案复现(Sp8 MFE=spacer 自缠发夹, Sp12 全游离); 好 guide Sp4/Sp9 游离态茎概率≈0.001 但活性 72–83%(蛋白重折叠可挽救茎)。对照: 该文自报特征相关为正(pre-crRNA 口径, n≈25, 茎含手工定义假结 P1 配对, ViennaRNA 不可算假结)。**校准结论: 游离态指标仅用于同 spacer 下 DR 变体相对排序(结构口径), 不主张游离态结构预测活性; 排序主张(TOP1>WT)未经实验标定——Creutzburg 层只支持特征类型与活性相关(论文自报 n约25 显著; 自有复算 n=14 不显著、方向混合, 两口径并列引用), MD 阳性仅为必要条件, 最终确认须体外旁切实验**。Sp8 盲区(复算最有价值发现): 唯一 0% 活性样本未被 spacer_up(全长平均稀释)/stem_prob(DR 自配与 DR-spacer 错配混同)抓住, 已据此新增 **DR-spacer 交叉配对硬过滤** v1.6(变体 MFE 交叉配对 nt 不得多于 WT; Creutzburg 设计守则的保守实现, 定位=无损工程规则, 非活性预测器)。**回验结果为阴性且方向反转**: 三口径 cross 均未抓住 Sp8。机制诊断(2026-09-01): Cas12a 家族 crRNA 的活性态含 5' 假结, 在伪结外折叠空间不可表示, Sp8/Sp12 之争本质是与假结活性态的平衡竞争, 伪结外模型按构造无法打分; 次优空间中侵占型嵌套中间态在好坏 guide 均大量出现(Sp8 93/318 vs Sp12 146/391, Sp12 反而更多), 故任何伪结外交叉指标对该案例无区分力。cross_pp 与活性的显著正相关(mature rho=+0.61, p=0.025)为成分混杂: spacer 5' A 富集与被加工丢弃的 U-rich 残留 repeat 配对, GC vs 活性 rho=-0.32 同向, n=14。Sp8 盲区仍开放。过滤回溯审计(`data/cross_audit.json`): 两主线口径 0 拦截/TOP-12 不受影响; **t1_MYCg1 口径 WT 自身 cross_nt=20**(MYC spacer 与 DR 大量交叉配对, 型1 上下文注脚), 拦截 47/118 条含 TOP-12 中 6 条茎稳定化候选——通用候选 A8G+U15C 在型1 口径不再通过 v1.6, 其通用性主张须降级 |
 
 > 引用层级声明: 机制前提的证据链为 **Cas12a 同家族(Creutzburg 2020)→ Cas12a2(本体系, 暂无直接折叠研究)**, 而非跨体系的 SpCas9→Cas12a2; 硬过滤"结构保持/spacer 游离"两项由此获得同家族文献锚定而非纯启发式。 路径A反向复算为阴性(见上行): 游离态全局指标不构成跨体系活性预测器, 打分体系定位=结构口径相对排序+文献机制锚定。
 
@@ -125,18 +132,23 @@ PY=/public/home/mengxl/dzy/envs/guideforge/bin/python
 
 $PY scripts/crrna_scaffold_design.py --effector cas12a2_zeng2026 \
     --spacer GTTCATGCCGCCCATGCAGGAACT --topk 12 --out-prefix data/repro_v6   # 候选库重生成
-$PY scripts/crrna_ensemble_check.py           # ΔΔG 系综可靠性(≤0.03 kcal/mol 主张)
+$PY scripts/crrna_ensemble_check.py           # ΔΔG 系综可靠性(R1+R2'/R3'+R4 全部通过, passed_all_rules; 旧 R2/R3 已退役留档)
 $PY scripts/crrna_creutzburg_reverse.py       # 路径A 阴性校准(方向反转主张)
 $PY scripts/crrna_cross_decompose.py          # 交叉特征组成去混杂(rho +0.55→+0.17)
 $PY scripts/crrna_state_competition.py        # Sp8 状态竞争 FAIL 判定
 $PY scripts/crrna_pk_competition.py           # Knotty DP09 FAIL 判定(容器)
 $PY scripts/crrna_nupack_pk_weight.py         # NUPACK 第四模型 FAIL 判定
-$PY scripts/crrna_negative_control.py         # 19×上下文负对照
+$PY scripts/crrna_negative_control.py         # 19×上下文负对照(pdbdr.v2 口径 V3 FAIL, zengdr.v6 全 PASS; 判据见 docs/preregistration.md §D)
 $PY scripts/crrna_han2025_features.py         # Han2025 数据链(Fig1g 145/Sanger 54/cis-trans)
-$PY scripts/crrna_train_selector.py           # 选型器训练+204 候选应用+耐受集体检
+$PY scripts/crrna_train_selector.py           # 选型器训练+204 候选应用+耐受集体检(tie-aware)
+$PY scripts/crrna_selection_baseline.py       # R3 filter+random 基线检验
+$PY scripts/crrna_score_ablation.py           # R3 逐项消融 + ddG 对称性分析
+$PY scripts/crrna_chai_matrix_summary.py      # Chai 4 靶矩阵 summary 程序化重生成
+$PY scripts/crrna_af3_input.py                # AF3 服务器就绪检查输入 13 套(V3 表1 口径, template-free 独立对照)
+$PY scripts/crrna_compensatory_design.py      # 补偿臂去混杂版面板重生成
 $PY scripts/crrna_bayesopt.py --cold-start    # 冷启动 EI; --prior-han 同源先验版
-$PY scripts/crrna_virtual_cell.py --prior-lit # 文献先验场景表
-$PY scripts/crrna_ivt_template.py --anova data/ivt_round1.csv   # 矩阵交互项判定(数据到位后)
+$PY scripts/crrna_virtual_cell.py --prior-lit # 文献标定场景表
+$PY scripts/crrna_ivt_template.py --anova data/ivt_round1.csv   # 矩阵交互项判定【数据待补: ivt_round1.csv 尚不存在, 为占位标记】
 ```
 
 ## 安装
@@ -153,6 +165,7 @@ $PY scripts/crrna_ivt_template.py --anova data/ivt_round1.csv   # 矩阵交互�
 
 模型权重与 OpenKnot 基准数据不进 git 历史，存放在本仓库 **Release `data-v1`** 的资产中，
 清单（路径/大小/sha256）见 `BIG_FILES.md`；下载后按相同相对路径放回即可。
+**sha256 校验现状(round-3 起)**: BIG_FILES.md 中 RibonanzaNet.pt 为完整 64 位可校验; 其余 9 件目前为截断前缀(† 标注, 仅可前缀比对)——完整 64 位值需从 Release 上传机补录, 见 BIG_FILES.md 注记。
 双源说明：Gitee Release `data-v1` 已附 7 件单附件（RibonanzaNet×4 / gRNAde / OpenKnot M2·M2R）；
 其余 3 件超 Gitee 单附件 100MB 上限（Struct2SeQ.pt / Struct2SeQ_SHAPE.pt / OpenKnotBench CSV），
 已按 95MB 分片（.part00/.part01）同附于 [Gitee Release data-v1](https://gitee.com/eastern-zhongyuan/guideforge/releases/data-v1)——
@@ -161,18 +174,19 @@ $PY scripts/crrna_ivt_template.py --anova data/ivt_round1.csv   # 矩阵交互�
 
 ## 目录
 
-- `configs/scaffold_registry.json` — 骨架注册表(cas12a2 PDB 结构口径 / cas12a2_zeng2026 细胞实验口径, 均 gate=confident)
+- `configs/scaffold_registry.json` — 骨架注册表(cas12a2 PDB 结构口径 / cas12a2_zeng2026 细胞实验口径, 均 gate=confident; 含可消费 `pfs` 字段(共识+tolerant_mismatches), round-3 R1 已重注册修正基线口径并记录 vienna_version, 漂移测试守护)
 - `scripts/` `src/` `tests/` — 管线代码与契约测试; 主管线 `crrna_scaffold_design.py`,
   文献验证 `crrna_dmytrenko_validate.py`, 上下文分型 `crrna_context_typing.py`,
   设计智能体 `crrna_design_agent.py`(--spacer 直输选骨架 / 突变转录本 tilling 设计)
 - `data/` — 8D4A 结构、DR-蛋白接触表、TP53 WT/R248Q 转录本、正式候选库产出
-  (zengdr.v2 = 加工保护+3'窗+共变口径; context_typing/ = 分型试验; agent/ = 智能体演示)
+  (zengdr.v2 = 加工保护+3'窗+共变口径; context_typing/ = 分型试验; agent/ = 智能体演示;
+  **zengdr.v6 已于 round-3 用当前 HEAD 重生成: 排名/分数/library_sha256 与旧版零差异, 补齐 cross_nt/inv_max_run/partner_switch 列与 model_domain 声明**)
 - `toolbox/` — 结构工具链: rnet-inference (RNet/RibonanzaNet) · Struct2SeQ · geometric-rna-design (gRNAde) · OpenKnotAIDesignData(竞赛基准数据)
 
 ## 诚实声明与边界限定
 
 候选库是"候选压缩"结果, 不是活性预测; 打分为透明启发式, 未经实验标定。
-最终活性/特异性以体外生化与细胞实验为准。两条必须主动声明的口径边界:
+最终活性/特异性以体外生化与细胞实验为准。**判据治理(round-3 起)**: 全部 PASS/FAIL 判据集中登记于 `docs/preregistration.md`(2026-09-04, 区分真预登记/项目设定常数/事后导出三级); 判据变更须先登记后评估; 失败的预登记判据(如旧系综 R2/R3(已退役并重设计为 R2′/R3′)、阴性对照 pdbdr.v2 口径 V3)在头条如实报告而非埋在 JSON。两条必须主动声明的口径边界:
 
 - **假结**: Cas12a2 crRNA 5' 端假结为蛋白诱导的结合态结构(Dmytrenko 2023; Methods in Enzymology 2025),
   游离态预测中不出现——本管线双路结构预测(ViennaRNA × RNet-SS)均为游离态口径,
