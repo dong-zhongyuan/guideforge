@@ -1,0 +1,85 @@
+{
+ "generated_by": "scripts/crrna_chai_increment_input.py (2026-09-05)",
+ "protocol": "与旧矩阵一致: 8D4A 自模板 m8(data/chai_template_hits.m8) + ESM; template-free 对照由 Protenix/AF3 层承担",
+ "increment": "APC×8 + 新补偿臂×3 = 11 折, 拼旧矩阵 21 行成新 4×8=32",
+ "crosscheck": "R248Q 靶链重构与 GF_WT.json 逐字符一致",
+ "jobs": [
+  {
+   "file": "CHAI_TP53_R248Q_B_break_compensate.fasta",
+   "target": "TP53_R248Q",
+   "scaffold": "B_break_compensate",
+   "crRNA": "AAUUUCUACAGGUGUAGAGGUUCAUGCCGCCCAUGCAGGAACU",
+   "target_rna": "AGUUCCUGCAUGGGCGGCAUGAACCAGAG"
+  },
+  {
+   "file": "CHAI_KRAS_G12D_B_break_compensate.fasta",
+   "target": "KRAS_G12D",
+   "scaffold": "B_break_compensate",
+   "crRNA": "AAUUUCUACAGGUGUAGAGCAGCUCCAACUACCACAAGUUUAU",
+   "target_rna": "AUAAACUUGUGGUAGUUGGAGCUGAUGGC"
+  },
+  {
+   "file": "CHAI_TP53_R273H_B_break_compensate.fasta",
+   "target": "TP53_R273H",
+   "scaffold": "B_break_compensate",
+   "crRNA": "AAUUUCUACAGGUGUAGAGCACCUCAAAGCUGUUCCGUCCCAG",
+   "target_rna": "CUGGGACGGAACAGCUUUGAGGUGCAUGU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_WT.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "WT",
+   "crRNA": "AAUUUCUACUGUUGUAGAUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_A8C_U15G.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "A8C_U15G",
+   "crRNA": "AAUUUCUCCUGUUGGAGAUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_A1G_U3A_A8G_U15C.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "A1G_U3A_A8G_U15C",
+   "crRNA": "GAAUUCUGCUGUUGCAGAUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_A1C.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "A1C",
+   "crRNA": "CAUUUCUACUGUUGUAGAUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_A1U.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "A1U",
+   "crRNA": "UAUUUCUACUGUUGUAGAUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_U5G_A18C.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "U5G_A18C",
+   "crRNA": "AAUUGCUACUGUUGUAGCUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_A1U_A2C.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "A1U_A2C",
+   "crRNA": "UCUUUCUACUGUUGUAGAUCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  },
+  {
+   "file": "CHAI_APC_Q1312x_B_break_compensate.fasta",
+   "target": "APC_Q1312x",
+   "scaffold": "B_break_compensate",
+   "crRNA": "AAUUUCUACAGGUGUAGAGCUUCCUGUGUCGUCUGAUUACAUC",
+   "target_rna": "GAUGUAAUCAGACGACACAGGAAGUAGAU"
+  }
+ ]
+}
