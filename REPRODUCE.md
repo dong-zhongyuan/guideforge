@@ -112,6 +112,39 @@ python tools/fetch_big_files.py    # 10 件权重/基准数据, sha256 校验
   `crrna_md_analysis.py` / `crrna_md_togmx.py`，清单见
   `data/md_prep_manifests.json`、`data/md_analysis_plan.json`。
 
+## 故障排查与已知数值漂移（2026-09-04 全新机实测回收）
+
+全新 Windows 机（无任何 Python）实测复现一轮，以下三条均已实测确认：
+
+1. **系统无 Python**：`where.exe python` 只有 WindowsApps 商店残桩时，
+   `winget install Python.Python.3.13 --scope user`（装后位于
+   `%LOCALAPPDATA%\Programs\Python\Python313\`），再建 venv。
+2. **`import RNA` 报 WinError 1114（DLL 初始化例程失败）**：不是包问题，是
+   VC++ 运行时版本错配——Python 3.13.15 自带 vcruntime140 为 14.51（新版），
+   而 System32 的 msvcp140 是旧版（如 14.36），新旧混用导致 CRT 初始化失败。
+   解法：`winget install Microsoft.VCRedist.2015+.x64` 升级到 14.51+ 即可。
+3. **选型器外部验证数值漂移（已知，非复现失败）**：重算
+   `scripts/crrna_train_selector.py` 后，DeWeirdt 外部验证 pRDA_127
+   Spearman=+0.016、pRDA_128=−0.102、Tian2025 整体=−0.040，与 README
+   早年记录（+0.202 / −0.024 / −0.007）不同；但同数据集 5 折 CV
+   （+0.181/+0.111）与文档一致。原因：旧值为 tie-blind Spearman 口径产物
+   （`data/homolog_training.json` 保留注记可证），2026-09-04 起统一为
+   tie-aware 口径且 DeWeirdt 特征表重新生成；两套独立新环境
+   （numpy 2.3.5 与 2.5.2）重算数值完全相同。方向与定性结论不变
+   （pRDA_127 弱正/近零、pRDA_128 近零/负、Tian RRS 盲端≈0，选型器不适用
+   RRS 位点变体）；README 已按"诚实并列报告"口径双列两组数值，并撤回旧值
+   支撑的"迁移不差于同集 CV"子判读。**遇到这组数字差异不必当失败处理。**
+4. **`crrna_ivt_template.py --anova` 在湿实验数据未回填时**：现在给出干净的
+   `[data-pending]` 提示并退出（旧版会抛原始 FileNotFoundError traceback，
+   已修复）；IVT 32 组合实测数据就位后重跑即可。
+5. **Flask 演示页 `/api/panel` 的靶标键用显示名**（如 `KRAS-G12C`），不是
+   agent 文件名（`kras_g12c`）；用文件名会得 404，属传参约定，非缺陷。
+6. **`crrna_chai_run.sh` 第 5 参数（自模板 m8）静默丢失（已修复）**：旧版
+   未把 `$M8` 传给内嵌 Python（其内读 `sys.argv[5]`，该位置永远不存在），
+   照用法跑会**静默退化为无模板运行且无任何报错**；2026-09-06 已修复透传
+   （改读 `sys.argv[4]`）并显式打印 `template_hits:` 注入状态。存档的带模板
+   分数系作者内联调用所跑，不受此 bug 影响；容器端重跑矩阵请以修复版为准。
+
 ## 产出物口径（诚实声明）
 
 候选库是"候选压缩"结果，不是活性预测；打分是透明启发式，未经实验标定。

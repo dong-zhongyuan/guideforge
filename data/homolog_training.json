@@ -18,18 +18,18 @@
  },
  "deweirdt2020_external_check": {
   "design": "池化模型训练集不含任何 DeWeirdt 2020 数据(独立外部验证, 全量无剔除)",
+  "method": "scipy.stats.spearmanr(tie-aware midranks); 2026-09-04 round-3 统一",
   "direction": "LFC 低=活性强, 模型 z 高=预测优 -> 报告 Spearman(pred, -LFC), 正=方向正确",
   "ori127": {
    "n": 35883,
-   "spearman_pred_vs_neglfc": 0.202,
-   "within_dataset_cv5_spearman": 0.182
+   "spearman_pred_vs_neglfc": 0.016,
+   "within_dataset_cv5_spearman": 0.181
   },
   "ori128": {
    "n": 35883,
-   "spearman_pred_vs_neglfc": -0.024,
-   "within_dataset_cv5_spearman": 0.109
-  },
-  "preserved_from_previous_run": "本机缺 data/raw/deweirdt2020_dr_scan.json, 本次未重算; 保留自上一全量数据运行(旧 tie-blind Spearman 口径), 待数据齐备后按 tie-aware 口径重算"
+   "spearman_pred_vs_neglfc": -0.102,
+   "within_dataset_cv5_spearman": 0.111
+  }
  },
  "fig1f_note": "fig1g 终点组并入 Fig.1f 视觉转录 9 条(meta.dataset=han2025_fig1f 可追溯; 置信度 high 2/medium 7, 序列均经 Sanger 独立源交叉校验)",
  "pooled_tree_rules": "|--- ddG_dr <= -1.15\n|   |--- value: [-1.38]\n|--- ddG_dr >  -1.15\n|   |--- p_fold <= 0.99\n|   |   |--- p_fold <= 0.87\n|   |   |   |--- p_fold <= 0.87\n|   |   |   |   |--- value: [0.12]\n|   |   |   |--- p_fold >  0.87\n|   |   |   |   |--- value: [0.83]\n|   |   |--- p_fold >  0.87\n|   |   |   |--- ddG_dr <= 0.25\n|   |   |   |   |--- value: [-0.08]\n|   |   |   |--- ddG_dr >  0.25\n|   |   |   |   |--- value: [-0.83]\n|   |--- p_fold >  0.99\n|   |   |--- value: [0.72]\n",

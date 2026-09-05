@@ -1,0 +1,87 @@
+{
+ "generated_by": "scripts/crrna_protenix_input.py (2026-09-05)",
+ "purpose": "AF3 级开源引擎(Protenix-v1) template-free 共折叠输入; 替代 gated AF3, 作 Chai-1 自模板口径的独立对照层",
+ "model": "protenix_base_default_v1.0.0 (368M, 训练截止 2021-09-30 对齐 AF3)",
+ "license": "Apache-2.0 代码+权重",
+ "template_free": "输入不含 templates 字段即 template-free",
+ "jobs": [
+  {
+   "file": "PX_A1C.json",
+   "name": "GF_A1C",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1C_U3A.json",
+   "name": "GF_A1C_U3A",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1C_U3G.json",
+   "name": "GF_A1C_U3G",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1G.json",
+   "name": "GF_A1G",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1U.json",
+   "name": "GF_A1U",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1U_U3A.json",
+   "name": "GF_A1U_U3A",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1U_U3C.json",
+   "name": "GF_A1U_U3C",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A1U_U3G.json",
+   "name": "GF_A1U_U3G",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_A8G_U15C.json",
+   "name": "GF_A8G_U15C",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_U3A.json",
+   "name": "GF_U3A",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_U3G.json",
+   "name": "GF_U3G",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_U7C_A16G.json",
+   "name": "GF_U7C_A16G",
+   "n_chains": 3,
+   "n_residues": 1279
+  },
+  {
+   "file": "PX_WT.json",
+   "name": "GF_WT",
+   "n_chains": 3,
+   "n_residues": 1279
+  }
+ ]
+}

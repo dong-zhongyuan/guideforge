@@ -141,6 +141,11 @@ def two_way_anova(path):
     """
     from scipy.stats import f as fdist
 
+    if not os.path.isfile(path):
+        raise SystemExit(
+            "[data-pending] %s 不存在: IVT 32 组合实测数据尚未回填; "
+            "数据就位后重跑: python scripts/crrna_ivt_template.py --anova %s"
+            % (path, path))
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     cells = {}  # (scaffold, target) -> [Vmax reps], [EC50 reps]

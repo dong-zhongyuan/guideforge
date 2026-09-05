@@ -15,6 +15,7 @@ _目录结构说明_先看这个.md
 docs/*
 !docs/preregistration.md
 !docs/wetlab_plan.md
+!docs/af3_server_runbook.md
 scripts/tmp/
 # 大文件走 Release data-v1 (清单见 BIG_FILES.md)
 toolbox/rnet-inference/RibonanzaNet-Weights/

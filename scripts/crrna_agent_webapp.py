@@ -260,11 +260,12 @@ outline:none;background:var(--canvas);border-radius:12px}
 .splash:focus-visible{outline:2px solid var(--accent);outline-offset:-6px}
 .scene{width:min(92vw,1060px)}
 .cellpng,.celldead{user-select:none}
-.hx{fill:none;stroke-linecap:round;stroke-width:3.2}
-.hx-a{stroke:#D9A93B}.hx-b{stroke:#BE8F2C}
-.hx-rung{fill:none;stroke:#E2C98D;stroke-width:2}
-.hx-mut{fill:none;stroke:#9F2F2D;stroke-width:2.6;stroke-linecap:round}
-body.dark .hx-rung{stroke:#7A6023}
+.bead{fill:url(#gTeal)}
+.bead-r{fill:url(#gRed)}
+.bp{stroke:rgba(20,40,35,.18);stroke-width:.6}
+.bp0{fill:#E85454}.bp1{fill:#4D7DE8}.bp2{fill:#4FBB5A}.bp3{fill:#E8C84D}
+.bp4{fill:#B44FD6}
+.bp-mut{fill:#F5DE4C;stroke:#B8931B;stroke-width:.9}
 .splash-cap{text-align:center}
 .splash-cap b{display:block;font-family:var(--serif);font-size:21px;
 font-weight:600;letter-spacing:.01em}
@@ -359,6 +360,14 @@ border-color:var(--accent)}
 <div class="view" id="entry">
 <div class="splash" id="splash" role="button" tabindex="0" aria-label="Cas12a2 靶向杀伤机制动画，点击跳过">
 <svg class="scene" viewBox="0 0 1200 675" role="img" aria-label="RNP 复合物切割突变转录本，靶细胞死亡示意">
+<defs>
+<radialGradient id="gTeal" cx="35%" cy="28%" r="80%">
+<stop offset="0%" stop-color="#CDEFE6"/><stop offset="48%" stop-color="#5EBBA6"/><stop offset="100%" stop-color="#2C7A68"/>
+</radialGradient>
+<radialGradient id="gRed" cx="35%" cy="28%" r="80%">
+<stop offset="0%" stop-color="#F6B1A6"/><stop offset="48%" stop-color="#D95A4B"/><stop offset="100%" stop-color="#9E2F24"/>
+</radialGradient>
+</defs>
 <g class="cell">
 <image class="cellpng" href="/static/cell_alive.png" x="0" y="0" width="1200" height="675"/>
 <image class="celldead" href="/static/cell_dead.png" x="0" y="0" width="1200" height="675" opacity="0"/>
@@ -613,22 +622,21 @@ const cap=$('capdetail');
 const cr=document.querySelector('.crack');
 const cl=cr.getTotalLength();
 gsap.set(cr,{strokeDasharray:cl,strokeDashoffset:cl});
-function helix(sel,x0,x1,y,mutX){const g=document.querySelector(sel);if(!g)return;
-let a='',b='',r='';
-for(let x=x0;x<=x1+.1;x+=4){const t=(x-330)/46*Math.PI*2;
-const ya=y+Math.sin(t)*10.5,yb=y-Math.sin(t)*10.5;
-a+=(a?'L':'M')+x.toFixed(1)+' '+ya.toFixed(1)+' ';
-b+=(b?'L':'M')+x.toFixed(1)+' '+yb.toFixed(1)+' ';}
-for(let x=x0+11.5;x<x1-3;x+=23){const t=(x-330)/46*Math.PI*2;
-const ya=y+Math.sin(t)*10.5,yb=y-Math.sin(t)*10.5;
-r+='M'+x.toFixed(1)+' '+yb.toFixed(1)+'L'+x.toFixed(1)+' '+ya.toFixed(1)+' ';}
-let m='';
-if(mutX){const t=(mutX-330)/46*Math.PI*2;
-const ya=y+Math.sin(t)*10.5,yb=y-Math.sin(t)*10.5;
-m='<path class="hx-mut" d="M'+mutX+' '+yb.toFixed(1)+'L'+mutX+' '+ya.toFixed(1)+'"/>';}
-g.innerHTML='<path class="hx hx-b" d="'+b+'"/><path class="hx-rung" d="'+r+'"/>'+m+'<path class="hx hx-a" d="'+a+'"/>';}
-helix('.strand-l',330,596,332,585);
-helix('.strand-r',604,868,332,0);
+function bead(x,y,r,cls){return '<circle class="'+cls+'" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r+'"/>';}
+function cap2(x,y1,y2,cls){const t=Math.min(y1,y2),h=Math.abs(y2-y1);
+return '<rect class="bp '+cls+'" x="'+(x-2.6).toFixed(1)+'" y="'+t.toFixed(1)+'" width="5.2" height="'+Math.max(h,1.5).toFixed(1)+'" rx="2.6"/>';}
+function helix(sel,x0,x1,y,mutX,c0,c1){const g=document.querySelector(sel);if(!g)return;
+let bk='',rg='',cr='',mu='';
+for(let x=x0;x<=x1+.1;x+=6.5){const s=Math.sin((x-330)/46*Math.PI*2);
+bk+=bead(x,y+s*15.5,5.4,'bead')+bead(x,y-s*15.5,5.4,'bead');}
+let i=0;
+for(let x=x0+11.5;x<x1-3;x+=23){const s=Math.sin((x-330)/46*Math.PI*2);
+rg+=cap2(x,y+s*15.5,y,'bp'+(i%5))+cap2(x,y,y-s*15.5,'bp'+((i+2)%5));i++;}
+if(mutX)mu=cap2(mutX,y-15.5,y+15.5,'bp-mut');
+if(c0<c1)for(let x=c0;x<=c1;x+=7.2){cr+=bead(x,y,4.3,'bead-r');}
+g.innerHTML=rg+mu+cr+bk;}
+helix('.strand-l',330,596,332,585,506,596);
+helix('.strand-r',604,868,332,0,604,694);
 const hasPath=typeof MotionPathPlugin!=='undefined';
 if(hasPath)gsap.registerPlugin(MotionPathPlugin);
 const wd=setTimeout(()=>{if(opened)return;opened=true;
