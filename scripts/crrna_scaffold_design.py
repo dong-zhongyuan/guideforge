@@ -52,8 +52,10 @@
   表述限定在组装效率/折叠均一性, 不写提高活性; 权重与 w_cons3 对称, 解决
   "纯罚分制下增强候选被保守窗+接触双重压制浮不出"的结构性问题);
   cons3_frac 为落在 DR 3' 保守窗的突变位点比例(Dmytrenko 2023 Fig.1c: 跨家族 3' 端
-  高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗大小 --cons3-window 为项目设定,
-  文献依据为定性结论; 功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
+  高度保守、loop 可变, 故 3' 窗内突变给显式惩罚; 窗长默认取同源 DR 保守性先验
+  data/dr_conservation.json 的 cons3_window_prior(任务⑪: n=11 同源库锚定+星形比对,
+  strictly_conserved 3' run + trailing3; 先验缺失时回退 5nt), --cons3-window 可显式覆盖;
+  功能佐证: Zhang 2025 DR 3' 端化学修饰可逆调控 Cas12a 活性);
   另报告 ddG、spacer_unpaired、ens_diversity、hbond_preserved 供人工挑选。
   v1.7: 过滤升级为结构置换口径——最长连续侵占螺旋 inv_max_run<=WT(WT 参照校准,
   t1 型上下文 WT 自身可有长侵占螺旋故禁用固定阈值) + 突变位点配对对象切换标注
@@ -84,6 +86,27 @@ from scaffold_registry import get_entry
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 CONTACTS_JSON_LEGACY = os.path.join(ROOT, 'data', '8D4A_dr_contacts.json')
+CONSERVATION_JSON = os.path.join(ROOT, 'data', 'dr_conservation.json')
+CONS3_WINDOW_FALLBACK = 5
+
+
+def load_cons3_window_prior(dr_dna):
+    """从同源 DR 保守性先验(dr_conservation.json, 任务⑪)读取本 DR 的 3' 保守窗
+    推荐长度。按 DR 序列精确匹配 mapped_effectors; 文件缺失/无匹配返回 None。
+    返回 (window_nt, source_note)。"""
+    if not os.path.isfile(CONSERVATION_JSON):
+        return None
+    try:
+        with open(CONSERVATION_JSON, encoding='utf-8') as fh:
+            d = json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        return None
+    for key, m in (d.get('mapped_effectors') or {}).items():
+        if m.get('dr_dna') == dr_dna and m.get('cons3_window_prior'):
+            return int(m['cons3_window_prior']), (
+                f"dr_conservation.json mapped_effectors.{key} "
+                f"({m.get('cons3_window_rule', '')})")
+    return None
 
 
 def contacts_json_path(dr_seq):
@@ -842,8 +865,10 @@ def main():
                     help='茎稳定化奖赏权重(max(-ddG,0) 正分; 组装/均一性口径, 非活性直证; 置 0 回到纯罚分制)')
     ap.add_argument('--w-cons3', type=float, default=0.3,
                     help="3'保守窗突变惩罚权重(Dmytrenko 2023 Fig.1c 跨家族 3' 端保守)")
-    ap.add_argument('--cons3-window', type=int, default=5,
-                    help="DR 3' 保守窗长度(nt)")
+    ap.add_argument('--cons3-window', type=int, default=None,
+                    help="DR 3' 保守窗长度(nt)。默认 None = 取同源 DR 保守性先验 "
+                         "data/dr_conservation.json 的 cons3_window_prior(任务⑪数据化默认); "
+                         "先验缺失/无匹配时回退 %d nt" % CONS3_WINDOW_FALLBACK)
     ap.add_argument('--proc-window', type=int, default=4,
                     help='加工位点保护窗: DR 3\' 末端 window-1 nt + 交界后首位的配对状态须与 WT 一致')
     ap.add_argument('--allow-cross-pairing', action='store_true',
@@ -876,6 +901,17 @@ def main():
 
     entry = get_entry(args.effector, args.registry)
     dr = to_rna(entry['scaffold'])
+    if args.cons3_window is None:
+        prior = load_cons3_window_prior(to_dna(dr))
+        if prior is not None:
+            args.cons3_window, cons3_src = prior
+        else:
+            args.cons3_window = CONS3_WINDOW_FALLBACK
+            cons3_src = (f"回退默认 {CONS3_WINDOW_FALLBACK}nt"
+                         "(dr_conservation.json 缺失或无本 DR 映射)")
+    else:
+        cons3_src = "CLI 显式指定"
+    print(f"3' 保守窗: {args.cons3_window} nt [{cons3_src}]")
     spacer = to_rna(args.spacer)
     if not 17 <= len(spacer) <= 25 or set(spacer) - set(BASES):
         ap.error('--spacer 必须为 17-25nt ACGT/U')
@@ -1006,6 +1042,7 @@ def main():
                       '未经 Cas12a2 实验标定, 排序含义为先验更优而非已证提活',
         'effector': args.effector, 'registry_entry_version': entry.get('version'),
         'spacer_fixed_dna': to_dna(spacer), 'wt': wt,
+        'cons3_window_source': cons3_src,
         'params': {k: getattr(args, k) for k in
                    ('strategy', 'n_double', 'sa_steps', 'seed', 'max_bp_dist',
                     'spacer_unpaired_margin', 'w_bp', 'w_ddg', 'w_contact', 'w_ens',

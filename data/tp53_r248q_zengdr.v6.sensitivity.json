@@ -13,7 +13,7 @@
  },
  "topk": 12,
  "spearman_median": 0.982,
- "spearman_min": 0.933,
+ "spearman_min": 0.934,
  "robust_frac_threshold": 0.8,
  "robust_core": [
   {
@@ -55,13 +55,13 @@
   {
    "desc": "A1U+U3G",
    "dr_seq": "TAGTTCTACTGTTGTAGAT",
-   "freq": 1.0,
+   "freq": 0.996,
    "base_score": -0.553
   },
   {
    "desc": "U3G",
    "dr_seq": "AAGTTCTACTGTTGTAGAT",
-   "freq": 0.996,
+   "freq": 0.973,
    "base_score": -0.5546
   }
  ],
@@ -80,11 +80,11 @@
   },
   {
    "desc": "A8G+U15C",
-   "freq": 0.711
+   "freq": 0.742
   },
   {
    "desc": "U7C+A16G",
-   "freq": 0.652
+   "freq": 0.684
   },
   {
    "desc": "A1U+U3A",
@@ -100,19 +100,19 @@
   },
   {
    "desc": "A1U+U3G",
-   "freq": 1.0
-  },
-  {
-   "desc": "U3G",
    "freq": 0.996
   },
   {
+   "desc": "U3G",
+   "freq": 0.973
+  },
+  {
    "desc": "A1C+U3G",
-   "freq": 0.695
+   "freq": 0.641
   },
   {
    "desc": "A1U+U3C",
-   "freq": 0.531
+   "freq": 0.469
   }
  ]
 }

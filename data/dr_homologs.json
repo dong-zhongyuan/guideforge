@@ -1,22 +1,146 @@
-[
- {
-  "name": "SuCas12a2_8D4A",
-  "dr_dna": "ATTTCTACTATTGTAGAT",
-  "provenance": "注册表 cas12a2(8D4A 结构口径)"
- },
- {
-  "name": "Cas12a2_zeng2026",
-  "dr_dna": "AATTTCTACTGTTGTAGAT",
-  "provenance": "注册表 cas12a2_zeng2026(Zeng 2026)"
- },
- {
-  "name": "FnCas12a_Creutzburg2020",
-  "dr_dna": "AATTTCTACTGTTGTAGA",
-  "provenance": "creutzburg_2020_dataset(反向引物推得)"
- },
- {
-  "name": "LbCas12a_Teng2019",
-  "dr_dna": "AATTTCTACTATTGTAGAT",
-  "provenance": "teng4n96 脚本(crRNA1, Teng 2019)"
- }
-]
+{
+ "library_version": 2,
+ "updated": "2026-09-08",
+ "scope": "同源 Cas12a2 (type V-K) 及 Cas12a (V-A) 近缘家族 crRNA 直接重复(DR)序列库; 用于位点保守性先验(scripts/crrna_dr_conservation.py)。V-K 公开可核验 DR 仅 SuCas12a2 一个天然基因座 + Zeng 2026 细胞实验口径 (Dmytrenko 2023 ED Fig.10 的 ca33Cas12a2 等其余 V-K 位点未以文本形式公布 repeat 序列, 无法核验, 不入库); V-A 条目按 Dmytrenko 2023 Fig.1c 'Cas12a2+Cas12a repeat 联合比对'的框架并入作近缘参照。",
+ "entries": [
+  {
+   "name": "SuCas12a2_8D4A",
+   "species": "Sulfuricurvum sp. PC08-66",
+   "clade": "V-K (Cas12a2)",
+   "form": "mature_handle",
+   "dr_dna": "ATTTCTACTATTGTAGAT",
+   "provenance": "注册表 cas12a2(8D4A 结构口径)",
+   "sources": [
+    "PDB 8D4A crRNA 链 B 5' 端 18nt (Bravo et al. 2023, Nature 613:582-587)",
+    "Dmytrenko et al. 2023, Nature 613:588-594 (doi:10.1038/s41586-022-05559-3)",
+    "Hallmark/Keiser et al. 2025, Methods Enzymol 712:143-181 (PMC12975306) §3: SuCas12a2 基因组 array 完整 repeat = GTCAATACGACTTTAAAAATTTCTACTATTGTAGAT (36nt), 其加工后 handle 与本条目一致"
+   ]
+  },
+  {
+   "name": "Cas12a2_zeng2026",
+   "species": "Cas12a2 (Zeng 2026 细胞实验合成 gRNA 口径)",
+   "clade": "V-K (Cas12a2)",
+   "form": "mature_handle_synthetic_construct",
+   "dr_dna": "AATTTCTACTGTTGTAGAT",
+   "provenance": "注册表 cas12a2_zeng2026(Zeng 2026)",
+   "sources": [
+    "Zeng et al. 2026, Nature (doi:10.1038/s41586-026-10738-7, 'Selective Elimination of TP53 Mutant Cells by Transcript-Activated Chromatin Shredding'); 本仓库注册表条目, 与 PDB 8D4A 结构 DR 相差 5' 端 1nt + A10G 替换"
+   ]
+  },
+  {
+   "name": "FnCas12a_Creutzburg2020",
+   "species": "Francisella novicida U112",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTGTTGTAGA",
+   "provenance": "creutzburg_2020_dataset(反向引物推得)",
+   "sources": [
+    "Creutzburg et al. 2020, NAR 48(6):3228-3243 (PMC7102956) 数据集: 构建内真实 DR, 由反向引物公共尾 revcomp 推得(18nt 口径)"
+   ]
+  },
+  {
+   "name": "FnCas12a_Zetsche2015",
+   "species": "Francisella novicida U112",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTGTTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库(19nt 口径, 3' 端较 Creutzburg 口径多 1nt)",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US10253365 Fig.2 (SEQ ID NO:13): FnCas12a crRNA 5'-AAUUUCUACUGUUGUAGAU-3'",
+    "US20200299768A1 (SEQ ID NO:13) 同序列复核"
+   ]
+  },
+  {
+   "name": "LbCas12a_Teng2019",
+   "species": "Lachnospiraceae bacterium ND2006",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTATTGTAGAT",
+   "provenance": "teng4n96 脚本(crRNA1, Teng 2019)",
+   "sources": [
+    "Teng et al. 2019, Genome Biology (doi:10.1186/s13059-019-1620-8) Additional file 5 backbone pUC19-U6-crRNA1",
+    "注: 与 Zetsche 2015 的 Lb 条目在核心第 9-10 列(ATT vs AAG)不同, 与 Pm/Bs 条目同序列; 差异已如实并列保留, 见 dr_conservation.json 的 column 9 组成"
+   ]
+  },
+  {
+   "name": "LbCas12a_Zetsche2015",
+   "species": "Lachnospiraceae bacterium ND2006",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTAAGTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US10253365 Fig.2 (SEQ ID NO:11): LbCas12a crRNA 5'-AAUUUCUACUAAGUGUAGAU-3'",
+    "AU2021364314C1 (SEQ ID NO:8) 给 5'U 延伸 21nt 口径 UAAUUUCUACUAAGUGUAGAU"
+   ]
+  },
+  {
+   "name": "AsCas12a_Zetsche2015",
+   "species": "Acidaminococcus sp. BV3L6",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTCTTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US20200299768A1 (SEQ ID NO:12): AsCas12a crRNA 5'-AAUUUCUACUCUUGUAGAU-3'",
+    "US20220315914A1 Fig.21A (SEQ ID NO:55) 与 CN116426691A 同序列复核",
+    "注: US10253365 Fig.2 将 As 印作 AAUUUCUACUCUGUAGAU(疑 OCR/排版误差, 与其余四个独立来源不一致, 不采用); 注册表 cas12a 占位条目 TAATTTCTACTAAGTGTAGAT 实为 Lb 序列(AAG), 与 As 真值(CTT)不同, 已在评审报告中标注"
+   ]
+  },
+  {
+   "name": "PmCas12a_Zetsche2015",
+   "species": "Porphyromonas macacae",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTATTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US10253365 Fig.2 (SEQ ID NO:14): PmCas12a crRNA 5'-AAUUUCUACUAUUGUAGAU-3'",
+    "US20220315914A1 Fig.21A (SEQ ID NO:56) 同序列复核"
+   ]
+  },
+  {
+   "name": "MbCas12a_Zetsche2015",
+   "species": "Moraxella bovoculi (Mb/Mb2/Mb3 三个位点共用同一 repeat)",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTGTTTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US10253365 Fig.2 (SEQ ID NO:15): MbCas12a/Mb2Cas12a/Mb3Cas12a crRNA 5'-AAUUUCUACUGUUUGUAGAU-3'",
+    "US20220315914A1 Fig.21A (SEQ ID NO:57) 同序列复核"
+   ]
+  },
+  {
+   "name": "TsCas12a_Zetsche2015",
+   "species": "Thiomicrospira sp.",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTGTTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US10253365 Fig.2 (SEQ ID NO:16): TsCas12a crRNA 5'-AAUUUCUACUGUUGUAGAU-3' (与 FnCas12a 同序列)",
+    "US20220315914A1 Fig.21A (SEQ ID NO:58) 同序列复核"
+   ]
+  },
+  {
+   "name": "BsCas12a_Zetsche2015",
+   "species": "Butyrivibrio sp.",
+   "clade": "V-A (Cas12a)",
+   "form": "mature_handle",
+   "dr_dna": "AATTTCTACTATTGTAGAT",
+   "provenance": "Zetsche 2015 直系同源库",
+   "sources": [
+    "Zetsche et al. 2015, Cell 163:759-771",
+    "US10253365 Fig.2 (SEQ ID NO:17): BsCas12a crRNA 5'-AAUUUCUACUAUUGUAGAU-3' (与 PmCas12a / Teng2019 Lb 同序列)",
+    "US11447824 Fig.3A (SEQ ID NO:17) 同序列复核"
+   ]
+  }
+ ]
+}

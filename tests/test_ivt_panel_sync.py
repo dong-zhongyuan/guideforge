@@ -3,7 +3,7 @@
 
 锁定三件事(round-3 meta W6 + V3 对齐整改):
 1. IVT 模板/订单表的 4 靶标 == V3 表2(TP53-R248Q / KRAS-G12D / TP53-R273H /
-   APC-Q1312x); KRAS-G12C 只保留干实验证据, 不入湿实验矩阵;
+   APC-Q1328x); KRAS-G12C 只保留干实验证据, 不入湿实验矩阵;
 2. 两文件的 8 骨架 == orientation_library 当前 best 去重集(含 round-3 去混杂
    补偿臂 DR AATTTCTACAGGTGTAGAG)——杜绝"订单表编码已退役分子"重演;
 3. 订单表 RNA 序列 == 模板 DNA 的 T->U 转写, 32 行一一对应。
@@ -16,10 +16,10 @@ import unittest
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 DATA = os.path.join(ROOT, "data")
 
-V3_TARGETS = {"TP53-R248Q", "KRAS-G12D", "TP53-R273H", "APC-Q1312x"}
+V3_TARGETS = {"TP53-R248Q", "KRAS-G12D", "TP53-R273H", "APC-Q1328x"}
 NEW_COMP_ARM_DR = "AATTTCTACAGGTGTAGAG"  # zengDR+T10A/T12G/T19G (round-3 去混杂)
 RETIRED_ARM_DR = "AATTTCTACTCTTCTACAT"   # round-3 前茎破坏混杂臂
-APC_SPACER = "CTTCCTGTGTCGTCTGATTACATC"
+APC_SPACER = "TGACACTGCTGGAACTTCGCTCAC"  # Q1328*(真实阅读框 MCR 首个 CAG, 4041 位)位点最优 spacer, 2026-09-08 口径切换
 
 
 def _load_csv(name):
@@ -47,7 +47,7 @@ class TestIvtPanelSync(unittest.TestCase):
         rows = _load_csv("ivt_round1_template.csv")
         self.assertEqual({r["target"] for r in rows}, V3_TARGETS)
         self.assertEqual(len(rows), 32)
-        apc = [r for r in rows if r["target"] == "APC-Q1312x"]
+        apc = [r for r in rows if r["target"] == "APC-Q1328x"]
         self.assertEqual(len(apc), 8)
         self.assertTrue(all(r["spacer_dna"] == APC_SPACER for r in apc))
 
@@ -81,6 +81,25 @@ class TestIvtPanelSync(unittest.TestCase):
             self.assertEqual(int(r["length_nt"]),
                              len(tmpl[key]["construct_dna"]))
             self.assertEqual(r["spacer_dna_ref"], tmpl[key]["spacer_dna"])
+
+    def test_demo_panels_match_v3_table2(self):
+        """演示层(webapp PANEL / 离线快照 PANEL)与湿实验矩阵同四靶;
+        KRAS-G12C 退役后不得再出现在任何对外演示入口。"""
+        import ast
+        for rel, is_dict in (("scripts/crrna_agent_webapp.py", True),
+                             ("scripts/crrna_demo_snapshot.py", False)):
+            src = open(os.path.join(ROOT, rel), encoding="utf-8").read()
+            tree = ast.parse(src)
+            panel = None
+            for node in ast.walk(tree):
+                if (isinstance(node, ast.Assign)
+                        and any(isinstance(t, ast.Name) and t.id == "PANEL"
+                                for t in node.targets)):
+                    panel = ast.literal_eval(node.value)
+            self.assertIsNotNone(panel, rel + " 未找到 PANEL 定义")
+            names = set(panel) if is_dict else {n for n, _ in panel}
+            self.assertEqual(names, V3_TARGETS, rel + " panel 与 V3 表2 不符")
+            self.assertNotIn("KRAS-G12C", names)
 
 
 if __name__ == "__main__":

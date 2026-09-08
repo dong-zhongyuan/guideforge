@@ -18,6 +18,7 @@
   "dr_only_mfe_kcal": -4.8,
   "p_fold": 0.8660275344949464
  },
+ "cons3_window_source": "dr_conservation.json mapped_effectors.cas12a2_zeng2026 (strictly_conserved 3' run(6 列) + trailing3(1 nt) = 7; 0.80 阈值 run 为 7 列, 因这些位有同源替换史不作全权重惩罚)",
  "params": {
   "strategy": "both",
   "n_double": 200,
@@ -35,7 +36,7 @@
   "seed_len": 7,
   "w_stab": 0.3,
   "w_cons3": 0.3,
-  "cons3_window": 5,
+  "cons3_window": 7,
   "proc_window": 4,
   "no_protect_processing": false,
   "allow_cross_pairing": false,
@@ -62,12 +63,12 @@
   "12",
   "--use-covariation",
   "--out-prefix",
-  "tmp/v6_rerun"
+  "data/tp53_r248q_zengdr.v6"
  ],
  "n_variants": 441,
  "n_passed": 203,
  "n_pareto": 10,
- "library_sha256": "cb302f8c62c3477c29c8b593f5f1b202f6cb56cacc6f95b083f4f79bb8c9732a",
+ "library_sha256": "e15c70476021728f820a17e232f70b9f42460bb48247c222a348b805fadfec51",
  "top": [
   {
    "desc": "WT",
@@ -264,7 +265,7 @@
    "dp_fold": -0.21126,
    "seed_up": 0.309,
    "d_seed": 0.002,
-   "cons3_frac": 0.2,
+   "cons3_frac": 0.143,
    "cross_nt": 0,
    "cross_pp": 0.67,
    "inv_max_run": 0,
@@ -278,7 +279,7 @@
    "advantage": "DR 单独折叠稳定化(DDR-alone 口径) -2.0 kcal/mol; 结构与蛋白极性接触保持",
    "shape_cons": null,
    "passed": true,
-   "score": -0.4391,
+   "score": -0.422,
    "source": "COV",
    "rank": 4
   },
@@ -309,7 +310,7 @@
    "dp_fold": -0.00306,
    "seed_up": 0.307,
    "d_seed": -0.0,
-   "cons3_frac": 0.2,
+   "cons3_frac": 0.143,
    "cross_nt": 0,
    "cross_pp": 0.029,
    "inv_max_run": 0,
@@ -323,7 +324,7 @@
    "advantage": "DR 单独折叠稳定化(DDR-alone 口径) -2.0 kcal/mol; 结构与蛋白极性接触保持",
    "shape_cons": null,
    "passed": true,
-   "score": -0.4633,
+   "score": -0.4462,
    "source": "COV",
    "rank": 5
   },

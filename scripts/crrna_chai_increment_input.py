@@ -33,7 +33,7 @@ TARGETS = {  # 靶标 -> (突变转录本 fasta, spacer DNA)
     "TP53_R248Q": ("tp53_r248q_mrna_NM000546.fa", "GTTCATGCCGCCCATGCAGGAACT"),
     "KRAS_G12D": ("agent/kras_g12d.fa", "CAGCTCCAACTACCACAAGTTTAT"),
     "TP53_R273H": ("agent/tp53_r273h.fa", "CACCTCAAAGCTGTTCCGTCCCAG"),
-    "APC_Q1312x": ("agent/apc_q1338x.fa", "CTTCCTGTGTCGTCTGATTACATC"),
+    "APC_Q1328x": ("agent/apc_q1328x.fa", "TGACACTGCTGGAACTTCGCTCAC"),
 }
 
 SCAFFOLDS = {  # 8 员族 DR (DNA)
@@ -94,7 +94,7 @@ def main():
     jobs = []
     for tgt, (fa, spacer) in TARGETS.items():
         t29 = target29(os.path.join(DATA, fa), spacer)
-        scafs = SCAFFOLDS if tgt == "APC_Q1312x" else {
+        scafs = SCAFFOLDS if tgt == "APC_Q1328x" else {
             "B_break_compensate": SCAFFOLDS["B_break_compensate"]}
         for sc, dr in scafs.items():
             crna = to_rna(dr + spacer)

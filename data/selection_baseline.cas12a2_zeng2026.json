@@ -1,6 +1,6 @@
 {
  "task": "R3 filter+random 基线: 管线打分相对\"硬过滤+随机选K\"的增量信息",
- "generated": "2026-09-04",
+ "generated": "2026-09-06",
  "vienna_version": "2.7.2",
  "numpy_version": "2.3.5",
  "config": {
@@ -24,7 +24,7 @@
    "seed_len": 7,
    "w_stab": 0.3,
    "w_cons3": 0.3,
-   "cons3_window": 5,
+   "cons3_window": 7,
    "proc_window": 4,
    "allow_cross_pairing": false,
    "no_protect_processing": false,
@@ -74,7 +74,7 @@
   },
   {
    "desc": "A8G+U15C",
-   "score": -0.4391,
+   "score": -0.422,
    "stem_gc": 0.6,
    "loop_mut_frac": 0.0,
    "cross_pp": 0.67,
@@ -82,7 +82,7 @@
   },
   {
    "desc": "U7C+A16G",
-   "score": -0.4633,
+   "score": -0.4462,
    "stem_gc": 0.6,
    "loop_mut_frac": 0.0,
    "cross_pp": 0.029,
@@ -147,16 +147,16 @@
  ],
  "score_separation_test": {
   "hypothesis": "H0: 硬过滤后候选可交换(打分无增量信息); obs=TOP-K 平均打分",
-  "obs_topk_mean_score": -0.3999,
-  "random_k_mean_mean": -1.7142,
-  "random_k_mean_sd": 0.2183,
-  "random_k_mean_q95": -1.3587,
-  "random_k_mean_max": -1.1425,
+  "obs_topk_mean_score": -0.3971,
+  "random_k_mean_mean": -1.7179,
+  "random_k_mean_sd": 0.2192,
+  "random_k_mean_q95": -1.3623,
+  "random_k_mean_max": -1.1418,
   "mc_p_greater": 0.005,
-  "effect_size_mean_diff_over_pool_sd": 1.701,
-  "z_vs_null": 6.02,
-  "pool_score_sd": 0.7729,
-  "pool_score_iqr": 0.852,
+  "effect_size_mean_diff_over_pool_sd": 1.7,
+  "z_vs_null": 6.03,
+  "pool_score_sd": 0.7768,
+  "pool_score_iqr": 0.85,
   "topk_score_range": [
    -0.5672,
    -0.0001
@@ -231,6 +231,6 @@
   "random_draw_overlap_max": 3,
   "note": "随机 K=12 与管线 TOP-12 的期望重合 K^2/N=0.71 条; 若过滤+随机即可捞回同一批候选, 实测重合应显著高于期望——实测不高于期望"
  },
- "conclusion_zh": "检验一: 管线 TOP-12 平均打分 -0.400, 随机基线均值 -1.714 (SD 0.218), MC p=0.0050(按构造上界), 效应量 1.70 个通过池 SD——打分在通过池中提供了大效应的排序区分(池 SD 0.773, TOP-12 内部跨度 -0.5672~-0.0001), 并非噪声级重排。检验二: 独立性质上显著偏离随机基线的性质 = ['loop_mut_frac'](其余与随机无显著差异, 如实报告)。重合度: 随机抽取与管线 TOP-12 平均重合 0.72 条(期望 0.71), 过滤器+随机不能捞回同一批候选。结论: 打分相对'硬过滤+随机'提供显著增量信息; 独立性质上的具体偏离方向见各性质项。",
+ "conclusion_zh": "检验一: 管线 TOP-12 平均打分 -0.397, 随机基线均值 -1.718 (SD 0.219), MC p=0.0050(按构造上界), 效应量 1.70 个通过池 SD——打分在通过池中提供了大效应的排序区分(池 SD 0.777, TOP-12 内部跨度 -0.5672~-0.0001), 并非噪声级重排。检验二: 独立性质上显著偏离随机基线的性质 = ['loop_mut_frac'](其余与随机无显著差异, 如实报告)。重合度: 随机抽取与管线 TOP-12 平均重合 0.72 条(期望 0.71), 过滤器+随机不能捞回同一批候选。结论: 打分相对'硬过滤+随机'提供显著增量信息; 独立性质上的具体偏离方向见各性质项。",
  "disclaimer": "排序信息检验, 非活性预测; 打分提供的是相对排序信息, 活性/特异性以体外生化与细胞实验为准。"
 }

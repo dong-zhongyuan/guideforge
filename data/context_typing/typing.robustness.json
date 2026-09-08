@@ -1,0 +1,471 @@
+{
+ "generated_by": "scripts/crrna_typing_robustness.py",
+ "date": "2026-09-06",
+ "scope": "post-hoc 敏感性分析, 非预登记; 与 docs/preregistration.md §A 判据并列阅读, 不替代原判据; 判读文字全部由数值按显式阈值规则生成",
+ "effector": "cas12a2_zeng2026",
+ "runtime_sec": 6.0,
+ "pipeline_reruns": {
+  "topk": 16,
+  "distinct_representatives": 30,
+  "fresh_runs": 0
+ },
+ "slice_consistency_check": {
+  "n_match_of_9": 0,
+  "per_rep": {
+   "R248Q gRNA9": false,
+   "R248Q gRNA8": false,
+   "R280K gRNA20": false,
+   "MYC gRNA1": false,
+   "CCNE1 gRNA3": false,
+   "MYC gRNA3": false,
+   "ACTB gRNA4": false,
+   "R280K gRNA12": false,
+   "R248Q gRNA15": false
+  },
+  "archived_top8_now_filtered": {
+   "R248Q gRNA8": [
+    "A1U+U3C",
+    "A1C+U3C"
+   ],
+   "MYC gRNA1": [
+    "A1C+U15C",
+    "A1C+C6A"
+   ],
+   "CCNE1 gRNA3": [
+    "A1C+A16G"
+   ],
+   "R280K gRNA12": [
+    "A1U+A8G"
+   ]
+  },
+  "note": "当前代码下 k=8 切片与档案 topk=8 输出仅 0/9 一致: 档案 top-8 中 6 条变体已被晚于档案生成的硬过滤(v1.6 交叉配对/v1.7 inv_max_run)从突变库整体剔除(当前 variants.csv 不存在), 档案判据(公共集 3 条)在当前代码下不可原样复现(现测公共集 4 条); 本文件全部分析基于当前代码"
+ },
+ "permutation_test": {
+  "observed": 4,
+  "null_median": 8.0,
+  "null_quantiles": {
+   "5": 6.0,
+   "25": 7.0,
+   "75": 8.0,
+   "95": 9.0
+  },
+  "p_observed": 0.0357,
+  "criterion_pass_rate_null": 0.0357,
+  "reading": "观测公共集=4 在零分布中罕见(p=0.0357<0.05), 随机分组下判据通过率仅 3.6%, 判据具判别力",
+  "criterion": {
+   "common": [
+    "A1C",
+    "A1G",
+    "A1U",
+    "U3A"
+   ],
+   "n_common": 4,
+   "threshold": 4,
+   "pass": true
+  },
+  "n_partitions": 280,
+  "note": "280 种无序划分(统计量组间对称, 等价 1680 种标号分配)"
+ },
+ "topk_sensitivity": {
+  "per_topk": {
+   "6": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U"
+    ],
+    "n_common": 3,
+    "threshold": 3,
+    "pass": true
+   },
+   "8": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U",
+     "U3A"
+    ],
+    "n_common": 4,
+    "threshold": 4,
+    "pass": true
+   },
+   "10": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U",
+     "U3A",
+     "U3C"
+    ],
+    "n_common": 5,
+    "threshold": 5,
+    "pass": true
+   },
+   "16": {
+    "common": [
+     "A1C",
+     "A1C+U3A",
+     "A1G",
+     "A1U",
+     "U3A",
+     "U3C"
+    ],
+    "n_common": 6,
+    "threshold": 8,
+    "pass": true
+   }
+  },
+  "reading": "判据在 topk=6/8/10/16 四档下结论一致(全部通过), 公共集大小 {'6': 3, '8': 4, '10': 5, '16': 6}, 不随 topk 翻动"
+ },
+ "de_pos1_sensitivity": {
+  "criterion": {
+   "common": [
+    "U3A",
+    "U3C"
+   ],
+   "n_common": 2,
+   "threshold": 4,
+   "pass": true
+  },
+  "removed_per_rep": {
+   "R248Q gRNA9": 8,
+   "R248Q gRNA8": 6,
+   "R280K gRNA20": 5,
+   "MYC gRNA1": 6,
+   "CCNE1 gRNA3": 6,
+   "MYC gRNA3": 10,
+   "ACTB gRNA4": 7,
+   "R280K gRNA12": 6,
+   "R248Q gRNA15": 5
+  },
+  "reading": "剔除 position-1 突变后公共集 2 条 <= 阈 4, 判据仍通过, 不依赖 position-1 惰性位点"
+ },
+ "clustering_spectrum": {
+  "silhouette_by_method_k": {
+   "kmeans_repo": {
+    "2": 0.373,
+    "3": 0.379,
+    "4": 0.356,
+    "5": 0.331,
+    "6": 0.34
+   },
+   "agglomerative_ward": {
+    "2": 0.42,
+    "3": 0.435,
+    "4": 0.313,
+    "5": 0.334,
+    "6": 0.337
+   },
+   "gaussian_mixture": {
+    "2": 0.392,
+    "3": 0.005,
+    "4": 0.016,
+    "5": 0.083,
+    "6": -0.025
+   }
+  },
+  "best_per_method": {
+   "kmeans_repo": {
+    "best_k": 3,
+    "silhouette": 0.379,
+    "margin_over_runner_up": 0.006
+   },
+   "agglomerative_ward": {
+    "best_k": 3,
+    "silhouette": 0.435,
+    "margin_over_runner_up": 0.015
+   },
+   "gaussian_mixture": {
+    "best_k": 2,
+    "silhouette": 0.392,
+    "margin_over_runner_up": 0.309
+   }
+  },
+  "reading": "k=3 仅在 2/3 种方法下最优({'kmeans_repo': 3, 'agglomerative_ward': 3, 'gaussian_mixture': 2}), 选型依赖聚类方法, 稳健性有限"
+ },
+ "criterion_vs_k": {
+  "per_k": {
+   "2": {
+    "common": [
+     "A1C",
+     "A1C+G11A",
+     "A1G",
+     "A1U",
+     "A8C+U15G",
+     "A8G+U15C",
+     "G11A",
+     "U3C",
+     "U7C+A16G"
+    ],
+    "n_common": 9,
+    "threshold": 4,
+    "pass": false,
+    "sizes": [
+     32,
+     54
+    ],
+    "silhouette": 0.373,
+    "representatives": {
+     "0": [
+      "R280K gRNA4",
+      "R280K gRNA1",
+      "R280K gRNA3"
+     ],
+     "1": [
+      "R280K gRNA12",
+      "R248Q gRNA4",
+      "ACTB gRNA4"
+     ]
+    }
+   },
+   "3": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U",
+     "U3A"
+    ],
+    "n_common": 4,
+    "threshold": 4,
+    "pass": true,
+    "sizes": [
+     36,
+     9,
+     41
+    ],
+    "silhouette": 0.379,
+    "representatives": {
+     "0": [
+      "R248Q gRNA9",
+      "R248Q gRNA8",
+      "R280K gRNA20"
+     ],
+     "1": [
+      "MYC gRNA1",
+      "CCNE1 gRNA3",
+      "MYC gRNA3"
+     ],
+     "2": [
+      "ACTB gRNA4",
+      "R280K gRNA12",
+      "R248Q gRNA15"
+     ]
+    }
+   },
+   "4": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U"
+    ],
+    "n_common": 3,
+    "threshold": 4,
+    "pass": true,
+    "sizes": [
+     44,
+     9,
+     18,
+     15
+    ],
+    "silhouette": 0.356,
+    "representatives": {
+     "0": [
+      "M246I gRNA3",
+      "R248Q gRNA6",
+      "M246I gRNA2"
+     ],
+     "1": [
+      "MYC gRNA1",
+      "CCNE1 gRNA3",
+      "MYC gRNA3"
+     ],
+     "2": [
+      "R248Q gRNA14",
+      "R248Q gRNA13",
+      "R248Q gRNA18"
+     ],
+     "3": [
+      "R280K gRNA5",
+      "R280K gRNA1",
+      "R280K gRNA4"
+     ]
+    }
+   },
+   "5": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U"
+    ],
+    "n_common": 3,
+    "threshold": 4,
+    "pass": true,
+    "sizes": [
+     9,
+     15,
+     17,
+     21,
+     24
+    ],
+    "silhouette": 0.331,
+    "representatives": {
+     "0": [
+      "MYC gRNA1",
+      "CCNE1 gRNA3",
+      "MYC gRNA3"
+     ],
+     "1": [
+      "R280K gRNA5",
+      "R280K gRNA1",
+      "R280K gRNA4"
+     ],
+     "2": [
+      "R248Q gRNA21",
+      "M246I gRNA1",
+      "R248Q gRNA3"
+     ],
+     "3": [
+      "R248Q gRNA14",
+      "R248Q gRNA15",
+      "M246I gRNA5"
+     ],
+     "4": [
+      "R280K gRNA18",
+      "M246I gRNA2",
+      "zsGreen gRNA"
+     ]
+    }
+   },
+   "6": {
+    "common": [
+     "A1C",
+     "A1G",
+     "A1U"
+    ],
+    "n_common": 3,
+    "threshold": 4,
+    "pass": true,
+    "sizes": [
+     24,
+     12,
+     9,
+     10,
+     17,
+     14
+    ],
+    "silhouette": 0.34,
+    "representatives": {
+     "0": [
+      "R280K gRNA18",
+      "M246I gRNA2",
+      "zsGreen gRNA"
+     ],
+     "1": [
+      "R248Q gRNA13",
+      "R280K gRNA14",
+      "R248Q gRNA14"
+     ],
+     "2": [
+      "MYC gRNA1",
+      "CCNE1 gRNA3",
+      "MYC gRNA3"
+     ],
+     "3": [
+      "E285K gRNA",
+      "GFP gRNA",
+      "R248Q gRNA11"
+     ],
+     "4": [
+      "R248Q gRNA21",
+      "M246I gRNA1",
+      "R248Q gRNA3"
+     ],
+     "5": [
+      "R280K gRNA5",
+      "R280K gRNA1",
+      "R280K gRNA4"
+     ]
+    }
+   }
+  },
+  "reading": "判据随 k 翻动: 通过档 ['3', '4', '5', '6'], 未通过档 ['2'] —— k=3 阳性是特定选型下的结果"
+ },
+ "small_cluster_audit": {
+  "n_members_genes": 4,
+  "genes": [
+   "CCNE1",
+   "EGFRdel",
+   "MYC",
+   "R280K"
+  ],
+  "identity_within": {
+   "mean": 0.416,
+   "median": 0.417,
+   "max": 0.667,
+   "n_pairs": 36
+  },
+  "identity_background": {
+   "mean": 0.449,
+   "median": 0.417,
+   "max": 1.0,
+   "n_pairs": 2926
+  },
+  "feature_std_diff_vs_rest": {
+   "GC": -0.07,
+   "self_mfe": 1.16,
+   "spacer_up": 0.15,
+   "junction_pairs": 18.78,
+   "internal_pairs": -1.67
+  },
+  "dominant_feature": "junction_pairs",
+  "expansion_candidates": [
+   {
+    "name": "M246I gRNA6",
+    "junction_pairs": 2.0
+   },
+   {
+    "name": "R248Q gRNA20",
+    "junction_pairs": 2.0
+   }
+  ],
+  "reading": "型1 横跨 4 个独立基因(['CCNE1', 'EGFRdel', 'MYC', 'R280K']), 簇内平均同一性 0.416(<0.80, 非同源), 分离由 junction_pairs 维主导(标准化差 18.78) —— 符合\"来源分散但 junction-pairing 特征一致的真实亚型\"; 可主动扩充候选 2 条",
+  "identity_cross": {
+   "mean": 0.424,
+   "median": 0.417,
+   "max": 0.917,
+   "n_pairs": 693
+  },
+  "members": [
+   "CCNE1 gRNA3",
+   "CCNE1 gRNA5",
+   "CCNE1 gRNA6",
+   "EGFRdel gRNA",
+   "MYC gRNA1",
+   "MYC gRNA3",
+   "R280K gRNA2",
+   "R280K gRNA6",
+   "R280K gRNA25"
+  ],
+  "feature_means_in": {
+   "GC": 0.611,
+   "self_mfe": -1.156,
+   "spacer_up": 0.568,
+   "junction_pairs": 8.778,
+   "internal_pairs": 1.444
+  },
+  "feature_means_rest": {
+   "GC": 0.616,
+   "self_mfe": -4.274,
+   "spacer_up": 0.546,
+   "junction_pairs": 0.195,
+   "internal_pairs": 5.312
+  }
+ },
+ "verdict": {
+  "weakening_flags": [
+   "判据随 k 翻动"
+  ],
+  "n_flags": 1,
+  "reading": "综合判定: 证据不变(原\"弱证据阳性\"评级维持, 脆弱项如实并列) —— 触发项: 判据随 k 翻动"
+ }
+}

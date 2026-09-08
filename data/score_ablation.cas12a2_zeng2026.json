@@ -1,6 +1,6 @@
 {
  "task": "R3 消融: score_variant 逐项 leave-one-out + ddG 罚/赏不对称分析",
- "generated": "2026-09-04",
+ "generated": "2026-09-06",
  "vienna_version": "2.7.2",
  "numpy_version": "2.3.5",
  "config": {
@@ -23,7 +23,7 @@
    "seed_len": 7,
    "w_stab": 0.3,
    "w_cons3": 0.3,
-   "cons3_window": 5,
+   "cons3_window": 7,
    "proc_window": 4,
    "allow_cross_pairing": false,
    "no_protect_processing": false,
@@ -31,7 +31,7 @@
   },
   "topk": 12,
   "scope": "纯 ViennaRNA 打分消融(固定库重打分; 指标不变, 仅权重变); SA 搜索轨迹依赖满权重, 消融不重搜库——回答\"对既有库的重排序\"; RNet/引擎部分未涉(round-3 R3 授权跳过)",
-  "rescore_vs_score_variant_max_dev": 0.0007119999999996018
+  "rescore_vs_score_variant_max_dev": 0.0008060000000007506
  },
  "library": {
   "n_variants": 441,
@@ -50,8 +50,8 @@
  },
  "leave_one_out": {
   "w_bp": {
-   "spearman_passed": 0.976,
-   "spearman_all": 0.7882,
+   "spearman_passed": 0.9748,
+   "spearman_all": 0.7873,
    "top12_intersection": 12,
    "top12_jaccard": 1.0,
    "top1_unchanged": true,
@@ -63,7 +63,7 @@
   },
   "w_ddg": {
    "spearman_passed": 0.9621,
-   "spearman_all": 0.9839,
+   "spearman_all": 0.9838,
    "top12_intersection": 12,
    "top12_jaccard": 1.0,
    "top1_unchanged": true,
@@ -74,8 +74,8 @@
    "weighted_contrib_absmax": 0.47
   },
   "w_contact": {
-   "spearman_passed": 0.8402,
-   "spearman_all": 0.921,
+   "spearman_passed": 0.8419,
+   "spearman_all": 0.9211,
    "top12_intersection": 4,
    "top12_jaccard": 0.2,
    "top1_unchanged": false,
@@ -86,8 +86,8 @@
    "weighted_contrib_absmax": 2.545
   },
   "w_ens": {
-   "spearman_passed": 0.9814,
-   "spearman_all": 0.9908,
+   "spearman_passed": 0.9802,
+   "spearman_all": 0.9906,
    "top12_intersection": 7,
    "top12_jaccard": 0.412,
    "top1_unchanged": false,
@@ -98,24 +98,24 @@
    "weighted_contrib_absmax": 0.727
   },
   "w_hbond": {
-   "spearman_passed": 0.9173,
-   "spearman_all": 0.964,
-   "top12_intersection": 12,
-   "top12_jaccard": 1.0,
+   "spearman_passed": 0.9203,
+   "spearman_all": 0.9644,
+   "top12_intersection": 11,
+   "top12_jaccard": 0.846,
    "top1_unchanged": true,
-   "default_topk_worst_rank_after": 12,
+   "default_topk_worst_rank_after": 14,
    "term": "氢键净找回(hbond_net, 有符号)",
    "default_weight": 0.5,
    "weighted_contrib_iqr": 0.5,
    "weighted_contrib_absmax": 1.0
   },
   "w_fold": {
-   "spearman_passed": 0.996,
-   "spearman_all": 0.9976,
-   "top12_intersection": 12,
-   "top12_jaccard": 1.0,
+   "spearman_passed": 0.9956,
+   "spearman_all": 0.9975,
+   "top12_intersection": 11,
+   "top12_jaccard": 0.846,
    "top1_unchanged": false,
-   "default_topk_worst_rank_after": 12,
+   "default_topk_worst_rank_after": 13,
    "term": "茎完整概率变化赏(dp_fold)",
    "default_weight": 0.2,
    "weighted_contrib_iqr": 0.14885,
@@ -128,8 +128,8 @@
    "spearman_passed": 1.0
   },
   "w_stab": {
-   "spearman_passed": 0.9934,
-   "spearman_all": 0.9899,
+   "spearman_passed": 0.9939,
+   "spearman_all": 0.9896,
    "top12_intersection": 10,
    "top12_jaccard": 0.714,
    "top1_unchanged": true,
@@ -140,47 +140,53 @@
    "weighted_contrib_absmax": 0.66
   },
   "w_cons3": {
-   "spearman_passed": 0.999,
-   "spearman_all": 0.9995,
+   "spearman_passed": 0.9991,
+   "spearman_all": 0.9997,
    "top12_intersection": 11,
    "top12_jaccard": 0.846,
    "top1_unchanged": true,
    "default_topk_worst_rank_after": 13,
    "term": "3' 保守窗突变罚(cons3_frac)",
    "default_weight": 0.3,
-   "weighted_contrib_iqr": 0.06,
-   "weighted_contrib_absmax": 0.12
+   "weighted_contrib_iqr": 0.0429,
+   "weighted_contrib_absmax": 0.0858
   }
  },
  "impact_ranking_topk_asc": [
   {
    "term": "w_contact",
-   "spearman_passed": 0.8402,
+   "spearman_passed": 0.8419,
    "top12_intersection": 4,
    "top1_unchanged": false
   },
   {
    "term": "w_ens",
-   "spearman_passed": 0.9814,
+   "spearman_passed": 0.9802,
    "top12_intersection": 7,
    "top1_unchanged": false
   },
   {
    "term": "w_stab",
-   "spearman_passed": 0.9934,
+   "spearman_passed": 0.9939,
    "top12_intersection": 10,
    "top1_unchanged": true
   },
   {
-   "term": "w_cons3",
-   "spearman_passed": 0.999,
+   "term": "w_hbond",
+   "spearman_passed": 0.9203,
    "top12_intersection": 11,
    "top1_unchanged": true
   },
   {
-   "term": "w_hbond",
-   "spearman_passed": 0.9173,
-   "top12_intersection": 12,
+   "term": "w_fold",
+   "spearman_passed": 0.9956,
+   "top12_intersection": 11,
+   "top1_unchanged": false
+  },
+  {
+   "term": "w_cons3",
+   "spearman_passed": 0.9991,
+   "top12_intersection": 11,
    "top1_unchanged": true
   },
   {
@@ -191,15 +197,9 @@
   },
   {
    "term": "w_bp",
-   "spearman_passed": 0.976,
+   "spearman_passed": 0.9748,
    "top12_intersection": 12,
    "top1_unchanged": true
-  },
-  {
-   "term": "w_fold",
-   "spearman_passed": 0.996,
-   "top12_intersection": 12,
-   "top1_unchanged": false
   }
  ],
  "strict_inert_terms": [],
@@ -213,7 +213,7 @@
    "w_ddg": 0.1,
    "w_stab": 0.1,
    "spearman_passed": 0.9969,
-   "spearman_all": 0.9947,
+   "spearman_all": 0.9945,
    "top12_intersection": 10,
    "top12_jaccard": 0.714,
    "top1_unchanged": true,
@@ -222,8 +222,8 @@
   "sym_0.3": {
    "w_ddg": 0.3,
    "w_stab": 0.3,
-   "spearman_passed": 0.9473,
-   "spearman_all": 0.9742,
+   "spearman_passed": 0.9489,
+   "spearman_all": 0.9748,
    "top12_intersection": 12,
    "top12_jaccard": 1.0,
    "top1_unchanged": true,
@@ -232,14 +232,14 @@
   "axis_off": {
    "w_ddg": 0.0,
    "w_stab": 0.0,
-   "spearman_passed": 0.9491,
-   "spearman_all": 0.9677,
+   "spearman_passed": 0.9499,
+   "spearman_all": 0.967,
    "top12_intersection": 10,
    "top12_jaccard": 0.714,
    "top1_unchanged": true,
    "default_topk_worst_rank_after": 34
   }
  },
- "conclusion_zh": "逐项消融(按 TOP-12 重合升序, 每项=[Spearman(通过池), TOP-12 重合, TOP-1不变]): [('w_contact', 0.8402, 4, False), ('w_ens', 0.9814, 7, False), ('w_stab', 0.9934, 10, True), ('w_cons3', 0.999, 11, True), ('w_hbond', 0.9173, 12, True), ('w_ddg', 0.9621, 12, True), ('w_bp', 0.976, 12, True), ('w_fold', 0.996, 12, False)]。w_contact(8D4A 接触罚)是对 TOP-12 构成影响最大的项(置零后重合仅 4/12 且 TOP-1 易主), w_ens 次之(重合 7/12); w_hbond 显著影响中部排序(rho=0.9173)但不改 TOP-12 构成; 严格无效项(重合=12 且 rho>=0.999)不存在; w_seed 默认已关闭(恒等)。ddG 轴: 罚 0.1/赏 0.3 不对称下通过池含稳定化(ddG<0) 14 条、失稳 120 条、惰性 69 条; 对称化为 0.1/0.1 后 rho=0.9969(几乎不变, 因稳定化奖赏只作用于 14 条)、0.3/0.3 后 rho=0.9473(失稳罚加重 3 倍, 重排更明显)、全轴置零 rho=0.9491——V 形激励(稳定化臂 3 倍斜率)是设计意图(解决纯罚分制下增强候选浮不出的结构性问题), 其对排序的净效应 = 把少数 ddG<0 变体系统性上拉; 实测 TOP-12 构成对该不对称不敏感(对称化两档 TOP-12 重合均>=10/12, TOP-1 均不变), 是否保留应随湿实验标定复核。",
+ "conclusion_zh": "逐项消融(按 TOP-12 重合升序, 每项=[Spearman(通过池), TOP-12 重合, TOP-1不变]): [('w_contact', 0.8419, 4, False), ('w_ens', 0.9802, 7, False), ('w_stab', 0.9939, 10, True), ('w_hbond', 0.9203, 11, True), ('w_fold', 0.9956, 11, False), ('w_cons3', 0.9991, 11, True), ('w_ddg', 0.9621, 12, True), ('w_bp', 0.9748, 12, True)]。w_contact(8D4A 接触罚)是对 TOP-12 构成影响最大的项(置零后重合仅 4/12 且 TOP-1 易主), w_ens 次之(重合 7/12); w_hbond 显著影响中部排序(rho=0.9203)但不改 TOP-12 构成; 严格无效项(重合=12 且 rho>=0.999)不存在; w_seed 默认已关闭(恒等)。ddG 轴: 罚 0.1/赏 0.3 不对称下通过池含稳定化(ddG<0) 14 条、失稳 120 条、惰性 69 条; 对称化为 0.1/0.1 后 rho=0.9969(几乎不变, 因稳定化奖赏只作用于 14 条)、0.3/0.3 后 rho=0.9489(失稳罚加重 3 倍, 重排更明显)、全轴置零 rho=0.9499——V 形激励(稳定化臂 3 倍斜率)是设计意图(解决纯罚分制下增强候选浮不出的结构性问题), 其对排序的净效应 = 把少数 ddG<0 变体系统性上拉; 实测 TOP-12 构成对该不对称不敏感(对称化两档 TOP-12 重合均>=10/12, TOP-1 均不变), 是否保留应随湿实验标定复核。",
  "disclaimer": "排序消融诊断, 非活性预测; \"无效项\"仅指在当前库/当前默认权重下对 TOP-K 排序无实际影响, 不排除其在其他上下文或权重量程内有作用。"
 }

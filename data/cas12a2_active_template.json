@@ -4,24 +4,24 @@
  "dr_len": 18,
  "stem_pairs_1based": [
   [
-   5,
-   18
-  ],
-  [
-   6,
+   4,
    17
   ],
   [
-   7,
+   5,
    16
   ],
   [
-   8,
+   6,
    15
   ],
   [
-   9,
+   7,
    14
+  ],
+  [
+   8,
+   13
   ]
  ],
  "pairs": [
@@ -30,7 +30,7 @@
    "j_1based": 17,
    "bases": "U-A",
    "region": "DR",
-   "class": "pseudoknot-crossing",
+   "class": "nested",
    "C1p_dist_A": 10.5
   },
   {
@@ -38,7 +38,7 @@
    "j_1based": 16,
    "bases": "C-G",
    "region": "DR",
-   "class": "pseudoknot-crossing",
+   "class": "nested",
    "C1p_dist_A": 10.9
   },
   {
@@ -54,7 +54,7 @@
    "j_1based": 15,
    "bases": "U-A",
    "region": "DR",
-   "class": "pseudoknot-crossing",
+   "class": "nested",
    "C1p_dist_A": 10.6
   },
   {
@@ -70,7 +70,7 @@
    "j_1based": 14,
    "bases": "A-U",
    "region": "DR",
-   "class": "pseudoknot-crossing",
+   "class": "nested",
    "C1p_dist_A": 10.6
   },
   {
@@ -78,7 +78,7 @@
    "j_1based": 13,
    "bases": "C-G",
    "region": "DR",
-   "class": "pseudoknot-crossing",
+   "class": "nested",
    "C1p_dist_A": 10.7
   },
   {

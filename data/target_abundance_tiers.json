@@ -1,0 +1,146 @@
+{
+ "source": {
+  "file": "CCLE_DepMap_18q3_RNAseq_RPKM_20180718.gct",
+  "release": "CCLE/DepMap 18q3 RNAseq RPKM (2018-07-18)",
+  "units": "RPKM",
+  "columns": {
+   "HCT116": "HCT116_LARGE_INTESTINE (ACH-000971)",
+   "SW480": "SW480_LARGE_INTESTINE (ACH-000842)"
+  },
+  "note": "2018q3 RPKM 旧版口径; 换源(如 DepMap 新版 TPM)须重标定分档阈值"
+ },
+ "tier_rule": {
+  "quantity": "mut_rpkm_het50 = total_rpkm x allele_factor",
+  "allele_factor": 0.5,
+  "allele_factor_meaning": "杂合突变场景(突变等位基因=总丰度 50%), 与 scripts/crrna_virtual_cell.py 同口径",
+  "edges_mut_rpkm": [
+   5.2,
+   17.4
+  ],
+  "tiers": {
+   "0": "mut < 5.2: 低(低于激活阈)",
+   "1": "5.2 <= mut < 17.4: 中(近激活阈)",
+   "2": "mut >= 17.4: 高(超激活阈)"
+  },
+  "anchor": "Scholz et al. 2026 Nature Fig 1h 实测 EC50=11.31 FPKM, 95%CI [5.2, 17.4](data/scholz2026_fig1h_calibration.json); RPKM≈FPKM 跨源等效为近似",
+  "implementation": "scripts/crrna_target_abundance.py:tier_of(唯一换算点)"
+ },
+ "genes": {
+  "TP53": {
+   "ensembl": "ENSG00000141510.11",
+   "lines": {
+    "HCT116": {
+     "ach": "ACH-000971",
+     "total_rpkm": 15.95084,
+     "mut_rpkm_het50": 7.97542,
+     "abundance_tier": 1,
+     "tier_label": "中(近激活阈)"
+    },
+    "SW480": {
+     "ach": "ACH-000842",
+     "total_rpkm": 32.11592,
+     "mut_rpkm_het50": 16.05796,
+     "abundance_tier": 1,
+     "tier_label": "中(近激活阈)"
+    }
+   },
+   "panel_targets": [
+    "tp53_r248q",
+    "tp53_r273h"
+   ]
+  },
+  "KRAS": {
+   "ensembl": "ENSG00000133703.7",
+   "lines": {
+    "HCT116": {
+     "ach": "ACH-000971",
+     "total_rpkm": 5.34346,
+     "mut_rpkm_het50": 2.67173,
+     "abundance_tier": 0,
+     "tier_label": "低(低于激活阈)"
+    },
+    "SW480": {
+     "ach": "ACH-000842",
+     "total_rpkm": 5.33281,
+     "mut_rpkm_het50": 2.66641,
+     "abundance_tier": 0,
+     "tier_label": "低(低于激活阈)"
+    }
+   },
+   "panel_targets": [
+    "kras_g12d"
+   ]
+  },
+  "APC": {
+   "ensembl": "ENSG00000134982.12",
+   "lines": {
+    "HCT116": {
+     "ach": "ACH-000971",
+     "total_rpkm": 7.14473,
+     "mut_rpkm_het50": 3.57237,
+     "abundance_tier": 0,
+     "tier_label": "低(低于激活阈)"
+    },
+    "SW480": {
+     "ach": "ACH-000842",
+     "total_rpkm": 2.83527,
+     "mut_rpkm_het50": 1.41763,
+     "abundance_tier": 0,
+     "tier_label": "低(低于激活阈)"
+    }
+   },
+   "panel_targets": [
+    "apc_q1328x"
+   ]
+  }
+ },
+ "panel_targets": {
+  "tp53_r248q": {
+   "gene": "TP53",
+   "cell_line": "HCT116",
+   "ach": "ACH-000971",
+   "total_rpkm": 15.95084,
+   "mut_rpkm_het50": 7.97542,
+   "abundance_tier": 1,
+   "tier_label": "中(近激活阈)",
+   "note": "V3 表2 主验证靶标, 来源癌种列=结直肠癌(HCT116)"
+  },
+  "kras_g12d": {
+   "gene": "KRAS",
+   "cell_line": "SW480",
+   "ach": "ACH-000842",
+   "total_rpkm": 5.33281,
+   "mut_rpkm_het50": 2.66641,
+   "abundance_tier": 0,
+   "tier_label": "低(低于激活阈)",
+   "note": "V3 表2 泛化验证靶标, 来源癌种列=胰腺/结直肠(SW480等)"
+  },
+  "tp53_r273h": {
+   "gene": "TP53",
+   "cell_line": "SW480",
+   "ach": "ACH-000842",
+   "total_rpkm": 32.11592,
+   "mut_rpkm_het50": 16.05796,
+   "abundance_tier": 1,
+   "tier_label": "中(近激活阈)",
+   "note": "V3 表2 同基因不同位点; SW480 为 TP53 R273H 突变结直肠系(突变状态以 DepMap mutation calls 复核)"
+  },
+  "apc_q1328x": {
+   "gene": "APC",
+   "cell_line": "HCT116",
+   "ach": "ACH-000971",
+   "total_rpkm": 7.14473,
+   "mut_rpkm_het50": 3.57237,
+   "abundance_tier": 0,
+   "tier_label": "低(低于激活阈)",
+   "note": "设计无义突变(非特定 COSMIC 条目, V3 表2 来源=结直肠癌); 代表系取主验证系 HCT116, SW480 值见 genes 块"
+  }
+ },
+ "panel_reading": [
+  "panel 靶RNA丰度(杂合场景 mut RPKM)降序: tp53_r273h 16.06(中(近激活阈)) > tp53_r248q 7.98(中(近激活阈)) > apc_q1328x 3.57(低(低于激活阈)) > kras_g12d 2.67(低(低于激活阈))",
+  "tp53_r273h: 5.2 <= 16.06 < 17.4 -> 激活阈附近",
+  "tp53_r248q: 5.2 <= 7.98 < 17.4 -> 激活阈附近",
+  "apc_q1328x: 3.57 < 5.2 -> 低于标定激活阈 CI 下界",
+  "kras_g12d: 2.67 < 5.2 -> 低于标定激活阈 CI 下界"
+ ]
+}

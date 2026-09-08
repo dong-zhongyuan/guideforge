@@ -1,0 +1,580 @@
+{
+ "mutation": {
+  "pos": 4041,
+  "wt_base": "C",
+  "mut_base": "U",
+  "all_diffs_1based": [
+   4041
+  ],
+  "typing": {
+   "rule": "最长 ORF 法: 参考 ORF=WT 最长 ORF(正义链 3 框, ATG 起, 首个框内终止子止, tie-break 长度/起点/框序); 类型由突变对参考 ORF 的影响按显式规则判定(scripts/crrna_mutation_typing.py docstring)",
+   "event": {
+    "kind": "substitution",
+    "diffs0": [
+     4040
+    ],
+    "delta": 0,
+    "wt_seg": "C",
+    "mut_seg": "T",
+    "diffs_1based": [
+     4041
+    ],
+    "diffs_in_ref_orf_1based": [
+     4041
+    ]
+   },
+   "wt_orf": {
+    "start_1based": 60,
+    "frame": 2,
+    "stop_1based": 8589,
+    "end_1based": 8591,
+    "length_nt": 8532,
+    "protein_aa": 2843,
+    "terminated": true
+   },
+   "mut_longest_orf": {
+    "start_1based": 4206,
+    "frame": 2,
+    "stop_1based": 8589,
+    "end_1based": 8591,
+    "length_nt": 4386,
+    "protein_aa": 1461,
+    "terminated": true
+   },
+   "premature_stop": {
+    "codon_no": 1328,
+    "transcript_pos_1based": 4041,
+    "wt_codon": "CAG",
+    "mut_codon": "TAG"
+   },
+   "aa_change": "Q1328*",
+   "codon_no": 1328,
+   "wt_codon": "CAG",
+   "mut_codon": "TAG",
+   "wt_aa": "Q",
+   "mut_aa": "*",
+   "truncated_fraction": 0.5332,
+   "mutation_type": "nonsense",
+   "mutation_type_label": "无义",
+   "mut_orf_same_start": {
+    "start_1based": 60,
+    "frame": 2,
+    "stop_1based": 4041,
+    "end_1based": 4043,
+    "length_nt": 3984,
+    "protein_aa": 1327,
+    "terminated": true
+   },
+   "orf_length_change_aa": -1516,
+   "reading": "密码子 1328 CAG>TAG 变为终止子: MUT 对应 ORF 在该处提前终止(蛋白 2843 aa -> 1327 aa, 截短 53.3%; WT ORF 60..8591 vs MUT 60..4043) -> 无义"
+  }
+ },
+ "effector": "cas12a2_zeng2026",
+ "target_context": {
+  "feature": {
+   "target_key": "apc_q1328x",
+   "gene": "APC",
+   "cell_line": "HCT116",
+   "total_rpkm": 7.14473,
+   "mut_rpkm_het50": 3.57237,
+   "target_abundance_tier": 0,
+   "target_abundance_tier_label": "低(低于激活阈)"
+  },
+  "gate": {
+   "verdict": "below_ci_lo",
+   "note": "靶RNA丰度 APC@HCT116 杂合场景 3.57 RPKM < 标定激活阈 CI 下界 5.2: 胞内激活预计不足, 骨架选型仅结构口径, 细胞层建议提高 crRNA 剂量或改选高丰度系"
+  },
+  "interface_deltas": {
+   "panel_key": "apc_q1328x",
+   "source": "data/chai_matrix_4t.json",
+   "delta_features": [
+    "delta_iptm_mean",
+    "delta_prot_crRNA",
+    "delta_crRNA_target",
+    "delta_clash_frac"
+   ],
+   "delta_definition": "delta_<f>(骨架s, 靶标t) = <f>(s,t) - <f>(WT,t), 同靶 WT 组合为参照; 4 维 = ['delta_iptm_mean', 'delta_prot_crRNA', 'delta_crRNA_target', 'delta_clash_frac']",
+   "limitation": "界面差量为 Chai-1 100% 一致自模板(8D4A链A)口径的模板合规性数值: 模板=查询自身的 WT 结构, 高分为自模板复述的平凡结果(sanity check); 本表只作为结构描述特征(选型特征维)记录与展示, 不构成界面可预测性证据, template-free/scrambled-template 对照(AF3/Protenix 独立引擎)补齐前不得引为分型假说的结构证据。WT prot-crRNA ipTM≈0.49 亦低于可用界面预测区间(~0.5-0.6); B_break_compensate 行为已退役混杂臂表型(见方法学注释)。",
+   "available": false,
+   "missing_reason": "界面差量特征表无 panel 键 apc_q1328x 的覆盖记录"
+  },
+  "source": "target_abundance_tiers.json",
+  "interface_source": "chai_interface_deltas.json"
+ },
+ "degradation": {
+  "criterion_id": "preregistration §A go/no-go",
+  "criterion_rule": "各型代表管线 TOP-8 DR desc 型内并集的全型公共子集 <= 4(topk//2) 且型数>1 -> 阳性(分型推荐); 否则阴性 -> 退化通用型单骨架推荐",
+  "topk": 8,
+  "threshold": 4,
+  "n_types": 3,
+  "evaluable": true,
+  "per_type_union": {
+   "0": [
+    "A16G",
+    "A1C",
+    "A1C+U3A",
+    "A1C+U3C",
+    "A1G",
+    "A1U",
+    "A1U+U3C",
+    "A8G",
+    "G11A",
+    "U3A",
+    "U3C",
+    "U3G"
+   ],
+   "1": [
+    "A16G",
+    "A1C",
+    "A1C+A16G",
+    "A1C+C6A",
+    "A1C+C6G",
+    "A1C+U15C",
+    "A1G",
+    "A1G+U15C",
+    "A1U",
+    "A1U+U15C",
+    "C6A",
+    "C6G",
+    "U15A",
+    "U15C"
+   ],
+   "2": [
+    "A1C",
+    "A1C+U3A",
+    "A1G",
+    "A1G+U3G",
+    "A1U",
+    "A1U+A8G",
+    "A8G",
+    "U3A",
+    "U3C",
+    "U3G"
+   ]
+  },
+  "per_type_union_sizes": {
+   "0": 12,
+   "1": 14,
+   "2": 10
+  },
+  "common": [
+   "A1C",
+   "A1G",
+   "A1U"
+  ],
+  "n_common": 3,
+  "pairwise_jaccard_mean": 0.299,
+  "significant": true,
+  "forced": null,
+  "robustness_evidence": {
+   "source": "typing.robustness.json(post-hoc, 非预登记, 不作触发判据)",
+   "permutation_observed_common": 4,
+   "permutation_p_observed": 0.0357,
+   "reading": "事后置换检验(post-hoc): P(零分布公共集<=观测 4 条)=0.0357 < 0.05, 观测公共集在随机分组下罕见, 支持分型判据具判别力"
+  },
+  "archive_crosscheck": {
+   "archived_common": [
+    "A1C",
+    "A1G",
+    "A1U"
+   ],
+   "recomputed_common": [
+    "A1C",
+    "A1G",
+    "A1U"
+   ],
+   "matches": true
+  },
+  "reading": "各型代表管线 TOP-8 最优骨架的全型公共子集 3 条 <= 阈 4(topk//2, 预登记判据 §A): 骨架最优解随靶标(spacer 上下文)特征变化, 分型判据通过(阳性), 维持分型推荐",
+  "mode": "typed"
+ },
+ "pfs": {
+  "consensus": "GAAAG",
+  "tolerant_mismatches": 2,
+  "source": "registry:cas12a2_zeng2026"
+ },
+ "n_candidates": 29,
+ "designs": [
+  {
+   "spacer_dna": "TGACACTGCTGGAACTTCGCTCAC",
+   "mut_in": "PFS+1",
+   "proto_mm": 0,
+   "pfs_mut": "UAGCA",
+   "pfs_wt": "CAGCA",
+   "tier": 2,
+   "self_mfe": 0.0,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.542,
+    "self_mfe": 0.0,
+    "spacer_up": 0.761,
+    "junction_pairs": 0.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATTGACACTGCTGGAACTTCGCTCAC",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTGACACTGCTGGAACTTCGCTCAC"
+  },
+  {
+   "spacer_dna": "GACACTGCTGGAACTTCGCTCACA",
+   "mut_in": "PFS+2",
+   "proto_mm": 0,
+   "pfs_mut": "AUAGC",
+   "pfs_wt": "ACAGC",
+   "tier": 2,
+   "self_mfe": 0.0,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.542,
+    "self_mfe": 0.0,
+    "spacer_up": 0.762,
+    "junction_pairs": 0.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATGACACTGCTGGAACTTCGCTCACA",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATGACACTGCTGGAACTTCGCTCACA"
+  },
+  {
+   "spacer_dna": "ACACTGCTGGAACTTCGCTCACAG",
+   "mut_in": "PFS+3",
+   "proto_mm": 0,
+   "pfs_mut": "CAUAG",
+   "pfs_wt": "CACAG",
+   "tier": 2,
+   "self_mfe": -1.7,
+   "scaffold_type": 0,
+   "confidence": "medium",
+   "type_features": {
+    "GC": 0.542,
+    "self_mfe": -1.7,
+    "spacer_up": 0.576,
+    "junction_pairs": 0.0,
+    "internal_pairs": 6.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATACACTGCTGGAACTTCGCTCACAG",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATACACTGCTGGAACTTCGCTCACAG"
+  },
+  {
+   "spacer_dna": "CACTGCTGGAACTTCGCTCACAGG",
+   "mut_in": "PFS+4",
+   "proto_mm": 0,
+   "pfs_mut": "UCAUA",
+   "pfs_wt": "UCACA",
+   "tier": 2,
+   "self_mfe": -2.8,
+   "scaffold_type": 0,
+   "confidence": "medium",
+   "type_features": {
+    "GC": 0.583,
+    "self_mfe": -2.8,
+    "spacer_up": 0.549,
+    "junction_pairs": 0.0,
+    "internal_pairs": 6.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATCACTGCTGGAACTTCGCTCACAGG",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATCACTGCTGGAACTTCGCTCACAGG"
+  },
+  {
+   "spacer_dna": "ACTGCTGGAACTTCGCTCACAGGA",
+   "mut_in": "PFS+5",
+   "proto_mm": 0,
+   "pfs_mut": "GUCAU",
+   "pfs_wt": "GUCAC",
+   "tier": 2,
+   "self_mfe": -2.8,
+   "scaffold_type": 0,
+   "confidence": "medium",
+   "type_features": {
+    "GC": 0.542,
+    "self_mfe": -2.8,
+    "spacer_up": 0.548,
+    "junction_pairs": 0.0,
+    "internal_pairs": 6.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATACTGCTGGAACTTCGCTCACAGGA",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATACTGCTGGAACTTCGCTCACAGGA"
+  },
+  {
+   "spacer_dna": "ATGACACTGCTGGAACTTCGCTCA",
+   "mut_in": "protospacer@24",
+   "proto_mm": 1,
+   "pfs_mut": "AGCAC",
+   "pfs_wt": "AGCAC",
+   "tier": 1,
+   "self_mfe": 0.0,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.5,
+    "self_mfe": 0.0,
+    "spacer_up": 0.76,
+    "junction_pairs": 0.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATATGACACTGCTGGAACTTCGCTCA",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATATGACACTGCTGGAACTTCGCTCA"
+  },
+  {
+   "spacer_dna": "TATGACACTGCTGGAACTTCGCTC",
+   "mut_in": "protospacer@23",
+   "proto_mm": 1,
+   "pfs_mut": "GCACC",
+   "pfs_wt": "GCACC",
+   "tier": 1,
+   "self_mfe": 0.0,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.5,
+    "self_mfe": 0.0,
+    "spacer_up": 0.762,
+    "junction_pairs": 0.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATTATGACACTGCTGGAACTTCGCTC",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTATGACACTGCTGGAACTTCGCTC"
+  },
+  {
+   "spacer_dna": "CTATGACACTGCTGGAACTTCGCT",
+   "mut_in": "protospacer@22",
+   "proto_mm": 1,
+   "pfs_mut": "CACCC",
+   "pfs_wt": "CACCC",
+   "tier": 1,
+   "self_mfe": 0.0,
+   "scaffold_type": 0,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.5,
+    "self_mfe": 0.0,
+    "spacer_up": 0.681,
+    "junction_pairs": 0.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AACTTCTACTGTTGTAGAT",
+   "dr_desc": "U3C",
+   "construct_dna": "AACTTCTACTGTTGTAGATCTATGACACTGCTGGAACTTCGCT",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATCTATGACACTGCTGGAACTTCGCT"
+  },
+  {
+   "spacer_dna": "GCTATGACACTGCTGGAACTTCGC",
+   "mut_in": "protospacer@21",
+   "proto_mm": 1,
+   "pfs_mut": "ACCCU",
+   "pfs_wt": "ACCCU",
+   "tier": 1,
+   "self_mfe": -0.3,
+   "scaffold_type": 1,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.542,
+    "self_mfe": -0.3,
+    "spacer_up": 0.497,
+    "junction_pairs": 14.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AATTTCTACTGTTGCAGAT",
+   "dr_desc": "U15C",
+   "construct_dna": "AATTTCTACTGTTGCAGATGCTATGACACTGCTGGAACTTCGC",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATGCTATGACACTGCTGGAACTTCGC"
+  },
+  {
+   "spacer_dna": "TGCTATGACACTGCTGGAACTTCG",
+   "mut_in": "protospacer@20",
+   "proto_mm": 1,
+   "pfs_mut": "CCCUA",
+   "pfs_wt": "CCCUA",
+   "tier": 1,
+   "self_mfe": -0.3,
+   "scaffold_type": 1,
+   "confidence": "high",
+   "type_features": {
+    "GC": 0.5,
+    "self_mfe": -0.3,
+    "spacer_up": 0.468,
+    "junction_pairs": 14.0,
+    "internal_pairs": 0.0
+   },
+   "target_features": {
+    "target_key": "apc_q1328x",
+    "gene": "APC",
+    "cell_line": "HCT116",
+    "total_rpkm": 7.14473,
+    "mut_rpkm_het50": 3.57237,
+    "target_abundance_tier": 0,
+    "target_abundance_tier_label": "低(低于激活阈)",
+    "mutation_type": "nonsense",
+    "mutation_type_label": "无义",
+    "aa_change": "Q1328*",
+    "premature_stop_codon": 1328,
+    "orf_wt_protein_aa": 2843,
+    "orf_mut_protein_aa": 1327,
+    "orf_length_change_aa": -1516
+   },
+   "dr_dna": "AATTTCTACTGTTGCAGAT",
+   "dr_desc": "U15C",
+   "construct_dna": "AATTTCTACTGTTGCAGATTGCTATGACACTGCTGGAACTTCG",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATTGCTATGACACTGCTGGAACTTCG"
+  }
+ ],
+ "disclaimer": "排序为透明启发式(PFS 鉴别>单错配>结构代理), 非活性预测; 骨架分型功能差异未实验验证; 选择器为最近邻规则"
+}

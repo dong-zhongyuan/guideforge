@@ -107,6 +107,11 @@
   "p_fold",
   "spacer_up"
  ],
+ "target_context_features": [
+  "target_abundance_tier",
+  "mutation_type"
+ ],
+ "target_context_note": "靶标上下文契约列(模块一供给)不经文献决策树消费——文献训练行无靶标上下文, 决策树在这两维上都不能分裂: 靶RNA丰度档位经显式阈值门控 crrna_target_abundance.activation_gate 进入推荐链路(数据源 data/target_abundance_tiers.json); 突变类型(mutation_type, 类目维: 错义/无义/移码)经最长 ORF 法判定进入模块一特征向量与输出展示(scripts/crrna_mutation_typing.py, 完整 ORF 证据在 data/agent/*.design.json 的 mutation.typing 块); IVT 8x4 矩阵训练集 schema 将含这两列",
  "feature_importance": {
   "ddG_dr": 0.47989127025945977,
   "bp_dist": 0.0,
@@ -117,13 +122,13 @@
  "tree_rules": "|--- ddG_dr <= -1.15\n|   |--- p_fold <= 0.86\n|   |   |--- value: [0.63]\n|   |--- p_fold >  0.86\n|   |   |--- value: [0.93]\n|--- ddG_dr >  -1.15\n|   |--- p_fold <= 0.98\n|   |   |--- value: [0.61]\n|   |--- p_fold >  0.98\n|   |   |--- value: [0.50]\n",
  "train_spearman": 0.501,
  "applied_to": "tp53_r248q_zengdr.v6 (204 passed)",
- "vs_pipeline_score_spearman": 0.152,
- "vs_pipeline_score_spearman_pval": 0.0296,
+ "vs_pipeline_score_spearman": 0.157,
+ "vs_pipeline_score_spearman_pval": 0.0249,
  "vs_pipeline_score_method": "scipy.stats.spearmanr(tie-aware midranks); 2026-09 round-3 R3 修复: 旧口径 argsort(argsort()) 对并列不取平均秩,且决策树预测仅个位数 distinct 值, 结果随 numpy 版本/输入顺序摆动",
  "vs_pipeline_score_direction": "lit_pred 低=预测活性强(Fig1g 抑制读数), pipeline score 高=优; 两排序系统的一致性应读 goodness 序相关 = -vs_pipeline_score_spearman",
  "vs_pipeline_score_tieblind_artifact": {
-  "forward_order": 0.587,
-  "reversed_order": -0.493,
+  "forward_order": 0.589,
+  "reversed_order": -0.492,
   "snapshot_8c33354_artifact": -0.872,
   "distinct_pred_values": 3,
   "note": "tie-blind 统计量在少 distinct 值预测上随输入顺序/numpy 版本摆动(+0.587/-0.493/-0.872 同源伪影), 不构成两排序系统真实反向分歧的证据; 以 tie-aware 值为准"
@@ -163,7 +168,7 @@
  },
  "ranking_authority": "pipeline_score",
  "ranking_authority_reason": "合成候选排序以管线打分(score_variant, 同一 Cas12a2 zeng2026 构建的 ViennaRNA 结构口径)为准。(1) 本选型器是 n=16 LbCas12a CRISPRi 终点训练的文献先验, fig1f 留出 MAE 超训练折可用阈、LOEO 在 cis 端点反预测(-0.692, 本运行计算值), 按 usage_scope 仅供先验排序参考; (2) 决策树在本候选库仅输出个位数 distinct 预测值, 对多数保守变体无区分力; (3) 管线打分经 filter+random 基线检验(data/selection_baseline.cas12a2_zeng2026.json)确认相对'硬过滤+随机'有大效应排序信息量。",
- "divergence_note": "修正后两排序并非反向: tie-aware rho(lit_pred, score)=+0.152 (p=0.0296), 按方向口径折算 goodness 序相关=-0.152, 仅为弱残余分歧; TOP-12 重合 10 条(Jaccard 0.714), 顶部集合大体一致。残余分歧的可能解释: 选型器偏好 DR 单独强稳定化(ddG_dr<=-1.15 叶节点), 而管线在全长口径下 ddG 仅 0.1 罚/0.3 赏; 且训练终点为 LbCas12a CRISPRi GFP 抑制, 与 Cas12a2 旁切杀伤存在体系迁移差距。快照 8c33354 artifact 的 -0.872 为 tie-blind 伪影(见 vs_pipeline_score_tieblind_artifact)。",
+ "divergence_note": "修正后两排序并非反向: tie-aware rho(lit_pred, score)=+0.157 (p=0.0249), 按方向口径折算 goodness 序相关=-0.157, 仅为弱残余分歧; TOP-12 重合 10 条(Jaccard 0.714), 顶部集合大体一致。残余分歧的可能解释: 选型器偏好 DR 单独强稳定化(ddG_dr<=-1.15 叶节点), 而管线在全长口径下 ddG 仅 0.1 罚/0.3 赏; 且训练终点为 LbCas12a CRISPRi GFP 抑制, 与 Cas12a2 旁切杀伤存在体系迁移差距。快照 8c33354 artifact 的 -0.872 为 tie-blind 伪影(见 vs_pipeline_score_tieblind_artifact)。",
  "sanger_tolerance_check": {
   "n": 30,
   "pred_median": 0.6094,

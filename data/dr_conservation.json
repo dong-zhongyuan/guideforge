@@ -1,119 +1,718 @@
 {
+ "generated_by": "scripts/crrna_dr_conservation.py (任务⑪扩库重做, 2026-09-08)",
+ "library": "data\\dr_homologs.json",
+ "library_version": 2,
+ "n_sequences": 11,
+ "n_unique_sequences": 7,
+ "scope_note": "V-K 公开可核验 DR 仅 SuCas12a2 天然基因座 + Zeng 2026 合成口径; 其余 V-K 位点(Dmytrenko 2023 ED Fig.1/10 的 ca33Cas12a2 等)未见文本形式 repeat 序列, 不入库。V-A 条目按 Dmytrenko 2023 Fig.1c 联合比对框架作近缘参照。检索路径: Dmytrenko 2023 正文+SI(仅图无文本序列)、Methods Enzymol 2025 (PMC12975306, array 全长 repeat)、Zetsche 2015 Cell 及同族专利 SEQ ID 多源复核、Zeng 2026 Nature SI。",
+ "method": {
+  "segmentation": "flank5 / 锚L(TTTCTACT) / middle / 锚R(GTAGA) / trailing3; 两锚各须唯一出现(合法性检查)",
+  "middle_msa": "星形比对, 中心=Cas12a2_zeng2026; NW match=+2 mismatch=-1 gap=-2, 回溯决胜序 对角>gap-in-seq>gap-in-ref",
+  "identity": "每列 identity = 非 gap 字符中最高频碱基占比(gap 单列报告)",
+  "thresholds": {
+   "strictly_conserved": 1.0,
+   "conserved": 0.8,
+   "variable": "< 0.80"
+  },
+  "weighting": "主口径 n=11 全条目; 敏感性口径按完整序列去重 n=7"
+ },
  "alignment": [
   {
    "name": "SuCas12a2_8D4A",
    "full": "ATTTCTACTATTGTAGAT",
+   "flank5": "A",
+   "middle": "ATT",
+   "trailing3": "T",
    "core_start_in_full": 1,
-   "core": "TTTCTACTATTGTAGA",
-   "provenance": "注册表 cas12a2(8D4A 结构口径)"
+   "provenance": "注册表 cas12a2(8D4A 结构口径)",
+   "aligned_middle": "-A-TT",
+   "aligned_core": "TTTCTACT-A-TTGTAGA"
   },
   {
    "name": "Cas12a2_zeng2026",
    "full": "AATTTCTACTGTTGTAGAT",
+   "flank5": "AA",
+   "middle": "GTT",
+   "trailing3": "T",
    "core_start_in_full": 2,
-   "core": "TTTCTACTGTTGTAGA",
-   "provenance": "注册表 cas12a2_zeng2026(Zeng 2026)"
+   "provenance": "注册表 cas12a2_zeng2026(Zeng 2026)",
+   "aligned_middle": "-G-TT",
+   "aligned_core": "TTTCTACT-G-TTGTAGA"
   },
   {
    "name": "FnCas12a_Creutzburg2020",
    "full": "AATTTCTACTGTTGTAGA",
+   "flank5": "AA",
+   "middle": "GTT",
+   "trailing3": "",
    "core_start_in_full": 2,
-   "core": "TTTCTACTGTTGTAGA",
-   "provenance": "creutzburg_2020_dataset(反向引物推得)"
+   "provenance": "creutzburg_2020_dataset(反向引物推得)",
+   "aligned_middle": "-G-TT",
+   "aligned_core": "TTTCTACT-G-TTGTAGA"
+  },
+  {
+   "name": "FnCas12a_Zetsche2015",
+   "full": "AATTTCTACTGTTGTAGAT",
+   "flank5": "AA",
+   "middle": "GTT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库(19nt 口径, 3' 端较 Creutzburg 口径多 1nt)",
+   "aligned_middle": "-G-TT",
+   "aligned_core": "TTTCTACT-G-TTGTAGA"
   },
   {
    "name": "LbCas12a_Teng2019",
    "full": "AATTTCTACTATTGTAGAT",
+   "flank5": "AA",
+   "middle": "ATT",
+   "trailing3": "T",
    "core_start_in_full": 2,
-   "core": "TTTCTACTATTGTAGA",
-   "provenance": "teng4n96 脚本(crRNA1, Teng 2019)"
+   "provenance": "teng4n96 脚本(crRNA1, Teng 2019)",
+   "aligned_middle": "-A-TT",
+   "aligned_core": "TTTCTACT-A-TTGTAGA"
+  },
+  {
+   "name": "LbCas12a_Zetsche2015",
+   "full": "AATTTCTACTAAGTGTAGAT",
+   "flank5": "AA",
+   "middle": "AAGT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库",
+   "aligned_middle": "AA-GT",
+   "aligned_core": "TTTCTACTAA-GTGTAGA"
+  },
+  {
+   "name": "AsCas12a_Zetsche2015",
+   "full": "AATTTCTACTCTTGTAGAT",
+   "flank5": "AA",
+   "middle": "CTT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库",
+   "aligned_middle": "-C-TT",
+   "aligned_core": "TTTCTACT-C-TTGTAGA"
+  },
+  {
+   "name": "PmCas12a_Zetsche2015",
+   "full": "AATTTCTACTATTGTAGAT",
+   "flank5": "AA",
+   "middle": "ATT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库",
+   "aligned_middle": "-A-TT",
+   "aligned_core": "TTTCTACT-A-TTGTAGA"
+  },
+  {
+   "name": "MbCas12a_Zetsche2015",
+   "full": "AATTTCTACTGTTTGTAGAT",
+   "flank5": "AA",
+   "middle": "GTTT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库",
+   "aligned_middle": "-GTTT",
+   "aligned_core": "TTTCTACT-GTTTGTAGA"
+  },
+  {
+   "name": "TsCas12a_Zetsche2015",
+   "full": "AATTTCTACTGTTGTAGAT",
+   "flank5": "AA",
+   "middle": "GTT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库",
+   "aligned_middle": "-G-TT",
+   "aligned_core": "TTTCTACT-G-TTGTAGA"
+  },
+  {
+   "name": "BsCas12a_Zetsche2015",
+   "full": "AATTTCTACTATTGTAGAT",
+   "flank5": "AA",
+   "middle": "ATT",
+   "trailing3": "T",
+   "core_start_in_full": 2,
+   "provenance": "Zetsche 2015 直系同源库",
+   "aligned_middle": "-A-TT",
+   "aligned_core": "TTTCTACT-A-TTGTAGA"
   }
  ],
  "conservation": [
   {
-   "pos_1based": 1,
+   "col_1based": 1,
    "consensus": "T",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 2,
+   "col_1based": 2,
    "consensus": "T",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 3,
+   "col_1based": 3,
    "consensus": "T",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 4,
+   "col_1based": 4,
    "consensus": "C",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "C": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 5,
+   "col_1based": 5,
    "consensus": "T",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 6,
+   "col_1based": 6,
    "consensus": "A",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "A": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 7,
+   "col_1based": 7,
    "consensus": "C",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "C": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 8,
+   "col_1based": 8,
    "consensus": "T",
-   "identity": 1.0
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   },
   {
-   "pos_1based": 9,
-   "consensus": "G",
-   "identity": 0.5
-  },
-  {
-   "pos_1based": 10,
-   "consensus": "T",
-   "identity": 1.0
-  },
-  {
-   "pos_1based": 11,
-   "consensus": "T",
-   "identity": 1.0
-  },
-  {
-   "pos_1based": 12,
-   "consensus": "G",
-   "identity": 1.0
-  },
-  {
-   "pos_1based": 13,
-   "consensus": "T",
-   "identity": 1.0
-  },
-  {
-   "pos_1based": 14,
+   "col_1based": 9,
    "consensus": "A",
-   "identity": 1.0
+   "identity": 0.091,
+   "nongap_n": 1,
+   "gap_n": 10,
+   "composition": {
+    "-": 10,
+    "A": 1
+   },
+   "class": "variable",
+   "identity_dedup": 0.143,
+   "class_dedup": "variable"
   },
   {
-   "pos_1based": 15,
-   "consensus": "G",
-   "identity": 1.0
-  },
-  {
-   "pos_1based": 16,
+   "col_1based": 10,
    "consensus": "A",
-   "identity": 1.0
+   "identity": 0.455,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "C": 1,
+    "A": 5,
+    "G": 5
+   },
+   "class": "variable",
+   "identity_dedup": 0.429,
+   "class_dedup": "variable"
+  },
+  {
+   "col_1based": 11,
+   "consensus": "T",
+   "identity": 0.091,
+   "nongap_n": 1,
+   "gap_n": 10,
+   "composition": {
+    "-": 10,
+    "T": 1
+   },
+   "class": "variable",
+   "identity_dedup": 0.143,
+   "class_dedup": "variable"
+  },
+  {
+   "col_1based": 12,
+   "consensus": "T",
+   "identity": 0.909,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 10,
+    "G": 1
+   },
+   "class": "conserved",
+   "identity_dedup": 0.857,
+   "class_dedup": "conserved"
+  },
+  {
+   "col_1based": 13,
+   "consensus": "T",
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
+  },
+  {
+   "col_1based": 14,
+   "consensus": "G",
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "G": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
+  },
+  {
+   "col_1based": 15,
+   "consensus": "T",
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "T": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
+  },
+  {
+   "col_1based": 16,
+   "consensus": "A",
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "A": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
+  },
+  {
+   "col_1based": 17,
+   "consensus": "G",
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "G": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
+  },
+  {
+   "col_1based": 18,
+   "consensus": "A",
+   "identity": 1.0,
+   "nongap_n": 11,
+   "gap_n": 0,
+   "composition": {
+    "A": 11
+   },
+   "class": "strictly_conserved",
+   "identity_dedup": 1.0,
+   "class_dedup": "strictly_conserved"
   }
  ],
- "n_sequences": 4,
- "method": "TTTCTACT/GTAGAT 锚定对齐(mafft 不可用; DR 高度同源)",
- "limitation": "n=4 小样本定量, 仅为 cons3 窗的仓库内定量佐证, 不替代 Dmytrenko 2023 Fig1c 跨家族结论",
- "cons3_window_5nt_mean_identity": 1.0,
- "rest_mean_identity": 0.955
+ "cons3_prior": {
+  "strictly_conserved_3prime_run": 6,
+  "conserved_3prime_run_at_threshold": 7,
+  "recommended_window": 6,
+  "rule": "管线 3' 保守窗 = strictly_conserved 3' run; 0.80-1.00 位点有同源替换史, 标注但不全权重惩罚; trailing3 位在锚外按 Fig.1c 3' 保守口径并入效应子窗口(见 mapped_effectors.*.cons3_window_rule)"
+ },
+ "cons3_window_5col_mean_identity": 1.0,
+ "rest_mean_identity": 0.811,
+ "mapped_effectors": {
+  "cas12a2": {
+   "dr_dna": "ATTTCTACTATTGTAGAT",
+   "library_entry": "SuCas12a2_8D4A",
+   "flank5": "A",
+   "trailing3": "T",
+   "middle": "ATT",
+   "positions": [
+    {
+     "pos_1based": 1,
+     "base": "A",
+     "column": null,
+     "region": "flank5",
+     "identity": null,
+     "class": "unaligned_flank5"
+    },
+    {
+     "pos_1based": 2,
+     "base": "T",
+     "column": 1,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 3,
+     "base": "T",
+     "column": 2,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 4,
+     "base": "T",
+     "column": 3,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 5,
+     "base": "C",
+     "column": 4,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 6,
+     "base": "T",
+     "column": 5,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 7,
+     "base": "A",
+     "column": 6,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 8,
+     "base": "C",
+     "column": 7,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 9,
+     "base": "T",
+     "column": 8,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 10,
+     "base": "A",
+     "column": 10,
+     "region": "core",
+     "identity": 0.455,
+     "class": "variable"
+    },
+    {
+     "pos_1based": 11,
+     "base": "T",
+     "column": 12,
+     "region": "core",
+     "identity": 0.909,
+     "class": "conserved"
+    },
+    {
+     "pos_1based": 12,
+     "base": "T",
+     "column": 13,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 13,
+     "base": "G",
+     "column": 14,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 14,
+     "base": "T",
+     "column": 15,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 15,
+     "base": "A",
+     "column": 16,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 16,
+     "base": "G",
+     "column": 17,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 17,
+     "base": "A",
+     "column": 18,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 18,
+     "base": "T",
+     "column": null,
+     "region": "trailing3",
+     "identity": null,
+     "class": "unaligned_trailing3"
+    }
+   ],
+   "cons3_window_prior": 7,
+   "cons3_window_rule": "strictly_conserved 3' run(6 列) + trailing3(1 nt) = 7; 0.80 阈值 run 为 7 列, 因这些位有同源替换史不作全权重惩罚"
+  },
+  "cas12a2_zeng2026": {
+   "dr_dna": "AATTTCTACTGTTGTAGAT",
+   "library_entry": "Cas12a2_zeng2026",
+   "flank5": "AA",
+   "trailing3": "T",
+   "middle": "GTT",
+   "positions": [
+    {
+     "pos_1based": 1,
+     "base": "A",
+     "column": null,
+     "region": "flank5",
+     "identity": null,
+     "class": "unaligned_flank5"
+    },
+    {
+     "pos_1based": 2,
+     "base": "A",
+     "column": null,
+     "region": "flank5",
+     "identity": null,
+     "class": "unaligned_flank5"
+    },
+    {
+     "pos_1based": 3,
+     "base": "T",
+     "column": 1,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 4,
+     "base": "T",
+     "column": 2,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 5,
+     "base": "T",
+     "column": 3,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 6,
+     "base": "C",
+     "column": 4,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 7,
+     "base": "T",
+     "column": 5,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 8,
+     "base": "A",
+     "column": 6,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 9,
+     "base": "C",
+     "column": 7,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 10,
+     "base": "T",
+     "column": 8,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 11,
+     "base": "G",
+     "column": 10,
+     "region": "core",
+     "identity": 0.455,
+     "class": "variable"
+    },
+    {
+     "pos_1based": 12,
+     "base": "T",
+     "column": 12,
+     "region": "core",
+     "identity": 0.909,
+     "class": "conserved"
+    },
+    {
+     "pos_1based": 13,
+     "base": "T",
+     "column": 13,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 14,
+     "base": "G",
+     "column": 14,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 15,
+     "base": "T",
+     "column": 15,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 16,
+     "base": "A",
+     "column": 16,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 17,
+     "base": "G",
+     "column": 17,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 18,
+     "base": "A",
+     "column": 18,
+     "region": "core",
+     "identity": 1.0,
+     "class": "strictly_conserved"
+    },
+    {
+     "pos_1based": 19,
+     "base": "T",
+     "column": null,
+     "region": "trailing3",
+     "identity": null,
+     "class": "unaligned_trailing3"
+    }
+   ],
+   "cons3_window_prior": 7,
+   "cons3_window_rule": "strictly_conserved 3' run(6 列) + trailing3(1 nt) = 7; 0.80 阈值 run 为 7 列, 因这些位有同源替换史不作全权重惩罚"
+  }
+ },
+ "interpretation": [
+  "n=11 条目(7 unique 序列)锚定+middle星形比对共 18 列: 完全保守 14 列, 保守(>=0.80 且 <1.00) 1 列, 可变 3 列(列 9,10,11)。",
+  "可变列为 9,10,11(identity=0.09,0.46,0.09), 位于比对区中段——对应 Dmytrenko 2023 Fig.1c 的 loop 可变区; 3' 端锚区 6 列完全保守。",
+  "3' 保守窗先验: 严格口径 run=6(管线 --cons3-window 采用), 0.80 阈值口径 run=7(列 12 有同源替换史, 仅作保守标注不作全权重惩罚)。",
+  "去重敏感性: 两口径下逐列分类完全一致。"
+ ],
+ "limitation": "n=11 条目/7 unique 序列仍为小样本定量; V-K 仅 2 条, 结论主体由 V-A 近缘参照承载, 与 Dmytrenko 2023 Fig.1c 跨家族定性结论一致(3' 保守/中段可变), 不替代其结论"
 }

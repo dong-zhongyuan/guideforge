@@ -38,6 +38,34 @@ DATA = os.path.join(ROOT, "data")
 
 FEATURES = ["ddG_dr", "bp_dist", "cross_nt", "p_fold", "spacer_up"]
 
+# 模块三靶标上下文特征(策划案 V3 §4.4 模块一 -> 模块三契约列):
+# target_abundance_tier 由模块一靶标解析供给(data/target_abundance_tiers.json,
+# 显式分档规则见 scripts/crrna_target_abundance.py); mutation_type 由模块一
+# 最长 ORF 法突变类型判定供给(错义/无义/移码, 规则与边界处理显式声明于
+# scripts/crrna_mutation_typing.py docstring, 2026-09-07 任务⑩)。
+# 诚实边界: 文献训练行(Han/Fig1f/Teng)无靶标上下文, 决策树在这两维上都不能
+# 分裂(mutation_type 为类目维, 文献行更没有突变类型标注); 丰度档维当前经显式
+# 阈值门控(crrna_target_abundance.activation_gate)进入推荐链路, 突变类型维
+# 当前经模块一判读(最长 ORF 法)进入特征向量与输出展示, IVT 8x4 矩阵训练集
+# schema 将含这两列。webapp 端与本文档共用同一 FEATURES/TARGET_FEATURES 定义
+# (crrna_agent_webapp.py 从本模块导入, 两端不得各自复制字面量)。
+TARGET_FEATURES = ["target_abundance_tier", "mutation_type"]
+
+# 结构层界面特征差量契约列(策划案 V3 §4.1 末段 / 表1「选型特征」, 2026-09-09
+# 任务⑫): 每个骨架-靶标组合的 Chai-1 界面特征(aggregate ipTM / prot-crRNA
+# 链对 ipTM / crRNA-靶链对 ipTM / 链间冲突比例)相对同靶 WT 组合的差量, 由
+# scripts/crrna_chai_interface_features.py 从 Chai 矩阵 JSON 提取落盘
+# (data/chai_interface_deltas.json, 差量定义与方法学注释见该文件)。
+# 诚实边界(与上方 target_abundance_tier 先例同): 文献训练行(Han/Fig1f/Teng)
+# 无结构数据, 决策树在这 4 维上不能分裂, 不捏造训练标签; 当前经显式附加层
+# 进入推荐链路(crrna_design_agent.target_context 的 interface_deltas 块 +
+# webapp panel/design 页同源展示), IVT 8x4 矩阵训练集 schema 将含这 4 列。
+# 单一定义在提取模块(DELTA_FEATURES), 此处 import 共用, 两端不得各自复制
+# 字面量; 数值为 100% 自模板口径的模板合规性表型, 仅作结构描述特征,
+# 不构成界面可预测性证据(round-2/round-3 评审降级口径)。
+from crrna_chai_interface_features import (  # noqa: E402
+    DELTA_FEATURES as INTERFACE_DELTA_FEATURES)
+
 
 def spearman(x, y):
     """tie-aware Spearman(midranks), 2026-09 round-3 R2 修复: 弃用手搓
@@ -621,6 +649,24 @@ def main():
             print("\n=== DeWeirdt2020 外部验证: 本机缺 data/raw, 沿用上一全量"
                   "运行结果并标注(见 JSON preserved_from_previous_run) ===")
 
+    # === 界面特征差量(任务⑫): 结构层骨架-靶标组合特征, 附加层接入声明 ===
+    if_path = os.path.join(DATA, "chai_interface_deltas.json")
+    if_block = {"status": "missing",
+                "note": "缺 %s —— 先运行 scripts/crrna_chai_interface_features.py"
+                        % if_path}
+    if os.path.isfile(if_path):
+        ifdoc = json.load(open(if_path, encoding="utf-8"))
+        cov = ifdoc.get("coverage", {}).get("panel", {})
+        if_block = {
+            "status": "loaded",
+            "source": "data/chai_interface_deltas.json",
+            "source_matrix": ifdoc["source_matrix"]["file"],
+            "n_combos": len(ifdoc.get("combos", [])),
+            "panel_covered": sorted(k for k, v in cov.items()
+                                    if v.get("covered")),
+            "panel_missing": sorted(k for k, v in cov.items()
+                                    if not v.get("covered"))}
+
     # 输出
     out = {"model": "DecisionTreeRegressor(max_leaf=4)",
            "usage_scope": "文献先验排序(相对次序)专用; 绝对预测值不可引用——"
@@ -632,6 +678,29 @@ def main():
                             "(置信度分级见 han2025_dataset.json fig1f_pairs)",
            "fig1f_holdout_check": fig1f_holdout,
            "features": FEATURES,
+           "target_context_features": TARGET_FEATURES,
+           "target_context_note": "靶标上下文契约列(模块一供给)不经文献决策树"
+               "消费——文献训练行无靶标上下文, 决策树在这两维上都不能分裂: "
+               "靶RNA丰度档位经显式阈值门控 crrna_target_abundance.activation_gate "
+               "进入推荐链路(数据源 data/target_abundance_tiers.json); 突变类型"
+               "(mutation_type, 类目维: 错义/无义/移码)经最长 ORF 法判定进入模块一"
+               "特征向量与输出展示(scripts/crrna_mutation_typing.py, 完整 ORF 证据"
+               "在 data/agent/*.design.json 的 mutation.typing 块); IVT 8x4 矩阵"
+               "训练集 schema 将含这两列",
+           "interface_delta_features": INTERFACE_DELTA_FEATURES,
+           "interface_delta_note": "结构层界面特征差量(策划案 V3 §4.1 末段/表1 "
+               "选型特征, 任务⑫): 每个骨架-靶标组合的 Chai-1 界面特征相对同靶 "
+               "WT 组合的差量(4 维契约列 = crrna_chai_interface_features."
+               "DELTA_FEATURES, import 共用单一定义)。诚实边界: 文献训练行"
+               "(Han/Fig1f/Teng)无结构数据, 文献决策树在这 4 维上不能分裂——"
+               "与 target_abundance_tier 先例相同, 当前经显式附加层进入推荐链路"
+               "(crrna_design_agent.target_context 的 interface_deltas 块与 "
+               "webapp panel/design 页同源展示), 不捏造训练标签; IVT 8x4 矩阵"
+               "训练集 schema 将含这 4 列, 实测活性回填后进入选型分类器训练。"
+               "数值为 100% 一致自模板口径的模板合规性表型(局限声明见 "
+               "data/chai_interface_deltas.json methodology), 仅作结构描述"
+               "特征, 不构成界面可预测性证据(round-2/round-3 评审降级口径)",
+           "interface_delta_data": if_block,
            "feature_importance": {f: float(imp) for f, imp in
                                   zip(FEATURES, dt.feature_importances_)},
            "tree_rules": export_text(dt, feature_names=FEATURES),

@@ -25,7 +25,7 @@
     "note": ""
    }
   ],
-  "conclusion": "全转录组无高/中危位点; 唯一 0 错配位点即 TP53 WT 等位(PFS 3mm 不匹配), 鉴别由突变产生的 PFS 完成"
+  "conclusion": "全转录组无高/中危位点; 0 错配位点: TP53(PFS 3mm)"
  },
  "layer2_processing": "加工位点保护硬过滤(proc_ok)防止成熟 crRNA 长度漂移→ 识别窗口不变; 逐候选见 candidates",
  "layer3_activation_threshold": {

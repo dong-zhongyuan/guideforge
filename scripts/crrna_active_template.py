@@ -70,9 +70,14 @@ def main():
             continue
         pairs.append((i + 1, j + 1, bi, bj, round(float(np.linalg.norm(c1i - c1j)), 1)))
 
-    # 茎配对(按 5bp 茎已知: 1基 5-9 / 14-18 对应 0基 4-8/13-17)与交叉分类
+    # 茎配对参照 register: 8D4A 的 DR 为 18nt, 真实茎 0基 [(3,16)...(7,12)]
+    # (= 1基 4-17/5-16/6-15/7-14/8-13)——双证据: (a) 与下方几何判据提取的 5 对
+    # WC 茎完全吻合; (b) crrna_md_manifest.py 对 8D4A DR 的 ViennaRNA 独立折叠
+    # 互证。旧版此处硬编码 (4,17)...(8,13), 那是 zeng2026 19nt DR 的 register
+    # (5' 端多一个 A, 整体后移一位), 用于 8D4A 导致 5 对真茎被误判为
+    # pseudoknot-crossing(外部复现评审发现, 2026-09-08 修复)。
     dr_len = 18
-    stem0 = [(4, 17), (5, 16), (6, 15), (7, 14), (8, 13)]
+    stem0 = [(3, 16), (4, 15), (5, 14), (6, 13), (7, 12)]
     stem1 = {(i + 1, j + 1) for i, j in stem0}
 
     def crosses(p, q):

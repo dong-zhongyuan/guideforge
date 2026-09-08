@@ -1,7 +1,7 @@
 """答辩离线快照演示页生成器(2026-09-02)。
 
 Web 演示页需要 ssh -L 端口转发, 答辩现场网络/设备不可控; 本脚本把
-可演示的核心产物(五靶标 panel 设计/四取向候选族/补偿三臂/预注册信息)
+可演示的核心产物(四靶标 panel 设计/四取向候选族/补偿三臂/预注册信息)
 固化进一个零依赖单文件 HTML(可 file:// 直接打开, 无服务器无网络)。
 运行: python scripts/crrna_demo_snapshot.py -> demo_snapshot.html
 """
@@ -12,9 +12,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
 DATA = os.path.join(ROOT, "data")
 
-PANEL = [("TP53-R248Q", "tp53_r248q"), ("KRAS-G12C", "kras_g12c"),
-         ("KRAS-G12D", "kras_g12d"), ("TP53-R273H", "tp53_r273h"),
-         ("APC-Q1312x", "apc_q1338x")]
+PANEL = [("TP53-R248Q", "tp53_r248q"), ("KRAS-G12D", "kras_g12d"),
+         ("TP53-R273H", "tp53_r273h"), ("APC-Q1328x", "apc_q1328x")]
 
 TPL = """<!doctype html><html><head><meta charset="utf-8">
 <title>GuideForge 离线演示快照</title><style>
@@ -28,7 +27,7 @@ th{background:#eef4f9}code{background:#f0f4f8;padding:0 .3em}
 <h1>GuideForge — Cas12a2 crRNA 骨架分型设计与 AI 智能体(离线快照)</h1>
 <div class="small">生成时间 @@DATE@@ | 输出均为结构口径排序/分型建议, 不含活性预测
 (游离态指标经三模型反向验证不构成活性预测器, 见仓库 README 校准声明)。</div>
-<h2>① 五靶标 panel 端到端设计(tilling + 骨架分型, 智能体预计算)</h2>
+<h2>① 四靶标 panel 端到端设计(tilling + 骨架分型, 智能体预计算)</h2>
 @@PANEL@@
 <h2>② 四取向跨型候选骨架族(V3 §4.2, 供体外矩阵)</h2>
 @@ORIENT@@
@@ -48,13 +47,19 @@ def main():
         d = json.load(open(os.path.join(DATA, "agent", key + ".design.json"),
                            encoding="utf-8"))
         top = d["designs"][0] if d.get("designs") else {}
+        tf = top.get("target_features") or {}
+        ab = ("tier %s %s(%s@%s, 杂合 %.2f RPKM)" % (
+            tf.get("target_abundance_tier"), tf.get("target_abundance_tier_label"),
+            tf.get("gene"), tf.get("cell_line"), tf.get("mut_rpkm_het50"))
+            ) if tf else "-"
         rows.append("<tr><th>%s</th><td><code>%s</code></td><td>%s(%s)</td>"
-                    "<td>%s</td><td><code>%s</code></td></tr>" % (
+                    "<td>%s</td><td>%s</td><td><code>%s</code></td></tr>" % (
                         label, top.get("spacer_dna", top.get("spacer", "-")),
                         top.get("dr_desc", "-"), top.get("confidence", "-"),
-                        top.get("tier", "-"), top.get("construct_dna", "-")))
+                        top.get("tier", "-"), ab, top.get("construct_dna", "-")))
     panel = ("<table><tr><th>靶标</th><th>spacer(A)</th><th>骨架型/置信</th>"
-             "<th>tier</th><th>完整 crRNA 构建</th></tr>" + "".join(rows) + "</table>")
+             "<th>tier</th><th>靶RNA丰度档位(CCLE 18q3)</th><th>完整 crRNA 构建</th></tr>"
+             + "".join(rows) + "</table>")
 
     lib = json.load(open(os.path.join(DATA, "orientation_library.json"),
                          encoding="utf-8"))

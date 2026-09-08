@@ -1,0 +1,872 @@
+{
+ "dr_dna": "AATTTCTACTGTTGTAGAT",
+ "feature_names": [
+  "GC",
+  "self_mfe",
+  "spacer_up",
+  "junction_pairs",
+  "internal_pairs"
+ ],
+ "features": {
+  "zsGreen gRNA": {
+   "spacer": "CCGTACATGAAGGCGGCGGACAAG",
+   "features": [
+    0.625,
+    -3.700000047683716,
+    0.5743522745941635,
+    1,
+    5
+   ]
+  },
+  "GFP gRNA": {
+   "spacer": "CTCAGGGCGGACTGGGTGCTCAGG",
+   "features": [
+    0.7083333333333334,
+    -5.5,
+    0.5118607172701345,
+    0,
+    5
+   ]
+  },
+  "ACTB gRNA1": {
+   "spacer": "TCCATGTCGTCCCAGTTGGTGACG",
+   "features": [
+    0.5833333333333334,
+    -5.800000190734863,
+    0.506537148711799,
+    0,
+    6
+   ]
+  },
+  "ACTB gRNA2": {
+   "spacer": "CGGATGTCCACGTCACACTTCATG",
+   "features": [
+    0.5416666666666666,
+    -2.0999999046325684,
+    0.6606418486023261,
+    0,
+    4
+   ]
+  },
+  "ACTB gRNA3": {
+   "spacer": "CATTACATAATTTACACGAAAGCA",
+   "features": [
+    0.2916666666666667,
+    0.0,
+    0.8826697268721113,
+    0,
+    0
+   ]
+  },
+  "ACTB gRNA4": {
+   "spacer": "GTGGATGCCACAGGACTCCATGCC",
+   "features": [
+    0.625,
+    -6.199999809265137,
+    0.4145901412325621,
+    0,
+    7
+   ]
+  },
+  "ACTB gRNA5": {
+   "spacer": "CGGTGGACGATGGAGGGGCCGGAC",
+   "features": [
+    0.75,
+    -5.0,
+    0.5750365108151216,
+    0,
+    5
+   ]
+  },
+  "ACTB gRNA6": {
+   "spacer": "GGGGATGCTCGCTCCAACCGACTG",
+   "features": [
+    0.6666666666666666,
+    -3.9000000953674316,
+    0.6223938909681611,
+    1,
+    4
+   ]
+  },
+  "ACTB gRNA7": {
+   "spacer": "CCGCTCGGCCGTGGTGGTGAAGCT",
+   "features": [
+    0.7083333333333334,
+    -7.5,
+    0.4672992480912144,
+    0,
+    6
+   ]
+  },
+  "GAPDH gRNA": {
+   "spacer": "CTAACGGCTGCCCATTCATTTCCT",
+   "features": [
+    0.5,
+    0.0,
+    0.8680263311459105,
+    0,
+    0
+   ]
+  },
+  "CCNE1 gRNA1": {
+   "spacer": "TTTGCTCGGGCTTTGTCCAGCAAA",
+   "features": [
+    0.5,
+    -9.199999809265137,
+    0.22887960465762966,
+    0,
+    10
+   ]
+  },
+  "CCNE1 gRNA2": {
+   "spacer": "CCTTCCTCTTCCTGGAGCGAGCCG",
+   "features": [
+    0.6666666666666666,
+    -4.800000190734863,
+    0.4651364803057702,
+    0,
+    7
+   ]
+  },
+  "CCNE1 gRNA3": {
+   "spacer": "TCAGGTGTGGGGATCAGGGAGCAG",
+   "features": [
+    0.625,
+    -0.5,
+    0.4785916988422046,
+    9,
+    2
+   ]
+  },
+  "CCNE1 gRNA4": {
+   "spacer": "CCCAGCTCAGTACAGGCAGCGGGG",
+   "features": [
+    0.7083333333333334,
+    -6.199999809265137,
+    0.3979393689369087,
+    0,
+    8
+   ]
+  },
+  "CCNE1 gRNA5": {
+   "spacer": "CTGGGGATACTGCGGCAGTAGCAC",
+   "features": [
+    0.625,
+    -3.4000000953674316,
+    0.332707054266503,
+    14,
+    1
+   ]
+  },
+  "CCNE1 gRNA6": {
+   "spacer": "CGGCCCGCTGCTCTGCTTCTTACC",
+   "features": [
+    0.6666666666666666,
+    -1.5,
+    0.5559064617737668,
+    6,
+    3
+   ]
+  },
+  "E285K gRNA": {
+   "spacer": "TGCGCCGGTCTCTCCCAGGACAGG",
+   "features": [
+    0.7083333333333334,
+    -4.5,
+    0.5157882893892043,
+    0,
+    6
+   ]
+  },
+  "EGFRdel gRNA": {
+   "spacer": "GGAGATGTCTTGATAGCGACGGGA",
+   "features": [
+    0.5416666666666666,
+    -2.0,
+    0.3841878438366919,
+    9,
+    3
+   ]
+  },
+  "HRAS gRNA": {
+   "spacer": "ATCTGCTCCCTGTACTGGTGGATG",
+   "features": [
+    0.5416666666666666,
+    -3.700000047683716,
+    0.4240974917549219,
+    1,
+    7
+   ]
+  },
+  "M246I gRNA1": {
+   "spacer": "GTTCATGCCGCCCATGCAGGAACT",
+   "features": [
+    0.5833333333333334,
+    -5.800000190734863,
+    0.42673963107005036,
+    0,
+    7
+   ]
+  },
+  "M246I gRNA2": {
+   "spacer": "GGTTGATGCCGCCCATGCAGGAAC",
+   "features": [
+    0.625,
+    -3.4000000953674316,
+    0.5719386791018901,
+    0,
+    5
+   ]
+  },
+  "M246I gRNA3": {
+   "spacer": "CGGTTGATGCCGCCCATGCAGGAA",
+   "features": [
+    0.625,
+    -4.5,
+    0.514604817611806,
+    0,
+    6
+   ]
+  },
+  "M246I gRNA4": {
+   "spacer": "GCCTCCGGTTGATGCCGCCCATGC",
+   "features": [
+    0.7083333333333334,
+    -4.199999809265137,
+    0.6132272319308293,
+    0,
+    4
+   ]
+  },
+  "M246I gRNA5": {
+   "spacer": "AGGATGGGCCTCCGGTTGATGCCG",
+   "features": [
+    0.6666666666666666,
+    -6.0,
+    0.400486986663644,
+    0,
+    8
+   ]
+  },
+  "M246I gRNA6": {
+   "spacer": "GGCCTCCGGTTGATGCCGCCCATG",
+   "features": [
+    0.7083333333333334,
+    -5.0,
+    0.478540537496108,
+    2,
+    6
+   ]
+  },
+  "MYC gRNA1": {
+   "spacer": "ACCATGTCTCCTCCCAGCAGCTCG",
+   "features": [
+    0.625,
+    0.0,
+    0.5664243188102928,
+    10,
+    1
+   ]
+  },
+  "MYC gRNA2": {
+   "spacer": "GGCTGCCGCTGTCTTTGCGCGCAG",
+   "features": [
+    0.7083333333333334,
+    -9.199999809265137,
+    0.4171781752622608,
+    0,
+    7
+   ]
+  },
+  "MYC gRNA3": {
+   "spacer": "CAACTCCGGGATCTGGTCACGCAG",
+   "features": [
+    0.625,
+    -2.0999999046325684,
+    0.47005418269472315,
+    9,
+    1
+   ]
+  },
+  "MYC gRNA4": {
+   "spacer": "CTCCTCTGCTTGGACGGACAGGAT",
+   "features": [
+    0.5833333333333334,
+    -4.300000190734863,
+    0.46920851161095206,
+    0,
+    7
+   ]
+  },
+  "MYC gRNA5": {
+   "spacer": "CTGTGGCCTCCAGCAGAAGGTGAT",
+   "features": [
+    0.5833333333333334,
+    -4.400000095367432,
+    0.4962033617060994,
+    1,
+    6
+   ]
+  },
+  "R248Q gRNA1": {
+   "spacer": "TCATGCCGCCCATGCAGGAACTGT",
+   "features": [
+    0.5833333333333334,
+    -1.7999999523162842,
+    0.597786718093467,
+    1,
+    5
+   ]
+  },
+  "R248Q gRNA2": {
+   "spacer": "TTCATGCCGCCCATGCAGGAACTG",
+   "features": [
+    0.5833333333333334,
+    -2.4000000953674316,
+    0.5499844134205872,
+    0,
+    6
+   ]
+  },
+  "R248Q gRNA3": {
+   "spacer": "GTTCATGCCGCCCATGCAGGAACT",
+   "features": [
+    0.5833333333333334,
+    -5.800000190734863,
+    0.42673963107005036,
+    0,
+    7
+   ]
+  },
+  "R248Q gRNA4": {
+   "spacer": "GGTTCATGCCGCCCATGCAGGAAC",
+   "features": [
+    0.625,
+    -4.599999904632568,
+    0.47488065297237,
+    0,
+    7
+   ]
+  },
+  "R248Q gRNA5": {
+   "spacer": "TGGTTCATGCCGCCCATGCAGGAA",
+   "features": [
+    0.5833333333333334,
+    -3.200000047683716,
+    0.5678227802411898,
+    0,
+    6
+   ]
+  },
+  "R248Q gRNA6": {
+   "spacer": "CTGGTTCATGCCGCCCATGCAGGA",
+   "features": [
+    0.625,
+    -3.299999952316284,
+    0.5510400792593523,
+    0,
+    6
+   ]
+  },
+  "R248Q gRNA7": {
+   "spacer": "TCTGGTTCATGCCGCCCATGCAGG",
+   "features": [
+    0.625,
+    -2.799999952316284,
+    0.5609829040800562,
+    0,
+    7
+   ]
+  },
+  "R248Q gRNA8": {
+   "spacer": "CTCTGGTTCATGCCGCCCATGCAG",
+   "features": [
+    0.625,
+    -2.700000047683716,
+    0.6555307166336529,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA9": {
+   "spacer": "CCTCTGGTTCATGCCGCCCATGCA",
+   "features": [
+    0.625,
+    -2.700000047683716,
+    0.668633207459528,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA10": {
+   "spacer": "GCCTCTGGTTCATGCCGCCCATGC",
+   "features": [
+    0.6666666666666666,
+    -2.700000047683716,
+    0.6499479095332127,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA11": {
+   "spacer": "GGCCTCTGGTTCATGCCGCCCATG",
+   "features": [
+    0.6666666666666666,
+    -5.0,
+    0.4941032272444044,
+    0,
+    6
+   ]
+  },
+  "R248Q gRNA12": {
+   "spacer": "GGGCCTCTGGTTCATGCCGCCCAT",
+   "features": [
+    0.6666666666666666,
+    -9.199999809265137,
+    0.37808662465598325,
+    1,
+    7
+   ]
+  },
+  "R248Q gRNA13": {
+   "spacer": "TGGGCCTCTGGTTCATGCCGCCCA",
+   "features": [
+    0.6666666666666666,
+    -9.100000381469727,
+    0.3732166334620488,
+    0,
+    8
+   ]
+  },
+  "R248Q gRNA14": {
+   "spacer": "ATGGGCCTCTGGTTCATGCCGCCC",
+   "features": [
+    0.6666666666666666,
+    -7.5,
+    0.3900985523020906,
+    0,
+    7
+   ]
+  },
+  "R248Q gRNA15": {
+   "spacer": "GATGGGCCTCTGGTTCATGCCGCC",
+   "features": [
+    0.6666666666666666,
+    -6.300000190734863,
+    0.41895791692271667,
+    0,
+    7
+   ]
+  },
+  "R248Q gRNA16": {
+   "spacer": "GGATGGGCCTCTGGTTCATGCCGC",
+   "features": [
+    0.6666666666666666,
+    -9.199999809265137,
+    0.24087653753042068,
+    0,
+    9
+   ]
+  },
+  "R248Q gRNA17": {
+   "spacer": "AGGATGGGCCTCTGGTTCATGCCG",
+   "features": [
+    0.625,
+    -8.899999618530273,
+    0.2677203217780285,
+    0,
+    9
+   ]
+  },
+  "R248Q gRNA18": {
+   "spacer": "GAGGATGGGCCTCTGGTTCATGCC",
+   "features": [
+    0.625,
+    -8.0,
+    0.30450892152480646,
+    0,
+    8
+   ]
+  },
+  "R248Q gRNA19": {
+   "spacer": "TGAGGATGGGCCTCTGGTTCATGC",
+   "features": [
+    0.5833333333333334,
+    -7.199999809265137,
+    0.3554664874305267,
+    0,
+    8
+   ]
+  },
+  "R248Q gRNA20": {
+   "spacer": "GTGAGGATGGGCCTCTGGTTCATG",
+   "features": [
+    0.5833333333333334,
+    -6.300000190734863,
+    0.3980375326568588,
+    2,
+    7
+   ]
+  },
+  "R248Q gRNA21": {
+   "spacer": "GGTGAGGATGGGCCTCTGGTTCAT",
+   "features": [
+    0.5833333333333334,
+    -5.5,
+    0.42621011869266495,
+    0,
+    7
+   ]
+  },
+  "R248Q gRNA22": {
+   "spacer": "TGGTGAGGATGGGCCTCTGGTTCA",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.5706655243680769,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA23": {
+   "spacer": "ATGGTGAGGATGGGCCTCTGGTTC",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.5979919934517027,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA24": {
+   "spacer": "GATGGTGAGGATGGGCCTCTGGTT",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.488055319988947,
+    0,
+    8
+   ]
+  },
+  "R248Q gRNA25": {
+   "spacer": "TGATGGTGAGGATGGGCCTCTGGT",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.6032749972426198,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA26": {
+   "spacer": "ATGATGGTGAGGATGGGCCTCTGG",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.6108383307816199,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA27": {
+   "spacer": "GATGATGGTGAGGATGGGCCTCTG",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.6090544518073714,
+    0,
+    4
+   ]
+  },
+  "R248Q gRNA28": {
+   "spacer": "TGATGATGGTGAGGATGGGCCTCT",
+   "features": [
+    0.5416666666666666,
+    -4.599999904632568,
+    0.6210295467775997,
+    0,
+    4
+   ]
+  },
+  "R280K gRNA1": {
+   "spacer": "CAGGACAGGCACAAACACGCACCT",
+   "features": [
+    0.5833333333333334,
+    -0.800000011920929,
+    0.7032369211310373,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA2": {
+   "spacer": "CCAGGACAGGCACAAACACGCACC",
+   "features": [
+    0.625,
+    -0.800000011920929,
+    0.7415621206998115,
+    6,
+    2
+   ]
+  },
+  "R280K gRNA3": {
+   "spacer": "CCCAGGACAGGCACAAACACGCAC",
+   "features": [
+    0.625,
+    -0.800000011920929,
+    0.7510322771709518,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA4": {
+   "spacer": "TCCCAGGACAGGCACAAACACGCA",
+   "features": [
+    0.5833333333333334,
+    -0.800000011920929,
+    0.703164171843123,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA5": {
+   "spacer": "TTCCCAGGACAGGCACAAACACGC",
+   "features": [
+    0.5833333333333334,
+    -0.10000000149011612,
+    0.7970228670718887,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA6": {
+   "spacer": "TTTCCCAGGACAGGCACAAACACG",
+   "features": [
+    0.5416666666666666,
+    -0.10000000149011612,
+    0.810605749868143,
+    7,
+    0
+   ]
+  },
+  "R280K gRNA7": {
+   "spacer": "CTTTCCCAGGACAGGCACAAACAC",
+   "features": [
+    0.5416666666666666,
+    -0.5,
+    0.6953617775701768,
+    1,
+    4
+   ]
+  },
+  "R280K gRNA8": {
+   "spacer": "TCTTTCCCAGGACAGGCACAAACA",
+   "features": [
+    0.5,
+    -0.699999988079071,
+    0.6922453843464922,
+    0,
+    5
+   ]
+  },
+  "R280K gRNA9": {
+   "spacer": "GTCTTTCCCAGGACAGGCACAAAC",
+   "features": [
+    0.5416666666666666,
+    -4.900000095367432,
+    0.49191865249949895,
+    1,
+    6
+   ]
+  },
+  "R280K gRNA10": {
+   "spacer": "GGTCTTTCCCAGGACAGGCACAAA",
+   "features": [
+    0.5416666666666666,
+    -4.599999904632568,
+    0.4303691171451449,
+    1,
+    7
+   ]
+  },
+  "R280K gRNA11": {
+   "spacer": "CGGTCTTTCCCAGGACAGGCACAA",
+   "features": [
+    0.5833333333333334,
+    -4.599999904632568,
+    0.4934624308264652,
+    0,
+    6
+   ]
+  },
+  "R280K gRNA12": {
+   "spacer": "CCGGTCTTTCCCAGGACAGGCACA",
+   "features": [
+    0.625,
+    -5.0,
+    0.47227504748439336,
+    0,
+    7
+   ]
+  },
+  "R280K gRNA13": {
+   "spacer": "GCCGGTCTTTCCCAGGACAGGCAC",
+   "features": [
+    0.6666666666666666,
+    -9.699999809265137,
+    0.3409748755943706,
+    1,
+    8
+   ]
+  },
+  "R280K gRNA14": {
+   "spacer": "CGCCGGTCTTTCCCAGGACAGGCA",
+   "features": [
+    0.6666666666666666,
+    -9.5,
+    0.37245497939282274,
+    0,
+    8
+   ]
+  },
+  "R280K gRNA15": {
+   "spacer": "GCGCCGGTCTTTCCCAGGACAGGC",
+   "features": [
+    0.7083333333333334,
+    -8.300000190734863,
+    0.3717386215922631,
+    0,
+    8
+   ]
+  },
+  "R280K gRNA16": {
+   "spacer": "TGCGCCGGTCTTTCCCAGGACAGG",
+   "features": [
+    0.6666666666666666,
+    -4.800000190734863,
+    0.472890912353956,
+    0,
+    7
+   ]
+  },
+  "R280K gRNA17": {
+   "spacer": "GTGCGCCGGTCTTTCCCAGGACAG",
+   "features": [
+    0.6666666666666666,
+    -3.200000047683716,
+    0.5668299862356617,
+    1,
+    5
+   ]
+  },
+  "R280K gRNA18": {
+   "spacer": "TGTGCGCCGGTCTTTCCCAGGACA",
+   "features": [
+    0.625,
+    -3.200000047683716,
+    0.5786818979287707,
+    0,
+    5
+   ]
+  },
+  "R280K gRNA19": {
+   "spacer": "CTGTGCGCCGGTCTTTCCCAGGAC",
+   "features": [
+    0.6666666666666666,
+    -2.0999999046325684,
+    0.6286931398384459,
+    0,
+    4
+   ]
+  },
+  "R280K gRNA20": {
+   "spacer": "TCTGTGCGCCGGTCTTTCCCAGGA",
+   "features": [
+    0.625,
+    -2.0999999046325684,
+    0.6146787492723093,
+    0,
+    4
+   ]
+  },
+  "R280K gRNA21": {
+   "spacer": "CTCTGTGCGCCGGTCTTTCCCAGG",
+   "features": [
+    0.6666666666666666,
+    -1.0,
+    0.6761417839505413,
+    0,
+    4
+   ]
+  },
+  "R280K gRNA22": {
+   "spacer": "CCTCTGTGCGCCGGTCTTTCCCAG",
+   "features": [
+    0.6666666666666666,
+    -0.4000000059604645,
+    0.7725373422936835,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA23": {
+   "spacer": "TCCTCTGTGCGCCGGTCTTTCCCA",
+   "features": [
+    0.625,
+    -0.4000000059604645,
+    0.7895917795984987,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA24": {
+   "spacer": "TTCCTCTGTGCGCCGGTCTTTCCC",
+   "features": [
+    0.625,
+    -0.30000001192092896,
+    0.8113819574389716,
+    0,
+    2
+   ]
+  },
+  "R280K gRNA25": {
+   "spacer": "CTTCCTCTGTGCGCCGGTCTTTCC",
+   "features": [
+    0.625,
+    0.0,
+    0.7714141585849495,
+    9,
+    0
+   ]
+  },
+  "R280K gRNA26": {
+   "spacer": "TCTTCCTCTGTGCGCCGGTCTTTC",
+   "features": [
+    0.5833333333333334,
+    0.0,
+    0.8227540276776107,
+    0,
+    0
+   ]
+  },
+  "R280K gRNA27": {
+   "spacer": "CTCTTCCTCTGTGCGCCGGTCTTT",
+   "features": [
+    0.5833333333333334,
+    0.0,
+    0.8093736639846432,
+    0,
+    0
+   ]
+  },
+  "R280K gRNA28": {
+   "spacer": "TCTCTTCCTCTGTGCGCCGGTCTT",
+   "features": [
+    0.5833333333333334,
+    0.0,
+    0.8356932708179938,
+    0,
+    0
+   ]
+  }
+ }
+}

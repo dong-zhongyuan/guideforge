@@ -1,0 +1,678 @@
+{
+ "generated_by": "scripts/crrna_chai_interface_features.py",
+ "task": "策划案 V3 §4.1 末段/表1 对齐(任务⑫): 骨架-靶标组合界面特征差量作为选型分类器关键输入(结构描述特征口径)",
+ "source_matrix": {
+  "file": "data/chai_matrix_4t.json",
+  "engine": "chai-1 + 8D4A自模板m8 + ESM",
+  "n_rows": 32,
+  "targets": [
+   "KRAS_G12C",
+   "KRAS_G12D",
+   "TP53_R248Q",
+   "TP53_R273H"
+  ],
+  "scaffolds": [
+   "A1C",
+   "A1GU3AA8GU15C",
+   "A1U",
+   "A1UA2C",
+   "A8CU15G",
+   "B_break_compensate",
+   "U5GA18C",
+   "WT"
+  ],
+  "preference": "chai_matrix_v3aligned.json 存在时优先, 否则 chai_matrix_4t.json(候选序见 MATRIX_CANDIDATES)"
+ },
+ "delta_features": [
+  "delta_iptm_mean",
+  "delta_prot_crRNA",
+  "delta_crRNA_target",
+  "delta_clash_frac"
+ ],
+ "delta_definition": "delta_<f>(骨架s, 靶标t) = <f>(s,t) - <f>(WT,t), 同靶 WT 组合为参照; 4 维 = ['delta_iptm_mean', 'delta_prot_crRNA', 'delta_crRNA_target', 'delta_clash_frac']",
+ "feature_field_notes": {
+  "iptm_mean": "aggregate ipTM 5 模型均值(整体复合物)",
+  "prot_crRNA": "蛋白-crRNA 链对 ipTM(界面主口径)",
+  "crRNA_target": "crRNA-靶RNA 链对 ipTM(参考口径; 本矩阵为合成完全互补靶 0.45-0.49, 与旧矩阵原生靶分开引用)",
+  "clash_frac": "5 模型带链间冲突比例(接触冲突指标)",
+  "iptm_sd": "aggregate ipTM 5 模型 sd, 模型间噪声代理(prot-crRNA per-model sd 未存盘)",
+  "unpersisted": "表1 的界面PAE 与接触残基互补度未随矩阵存盘——以实际存盘字段为准, 接触相关维度由链对 ipTM 与 clash_frac 承载, 不补造"
+ },
+ "methodology": {
+  "self_template": "自模板复述局限: 矩阵全部分数来自 100% 一致自模板(8D4A链A)注入, 模板=查询自身的 WT 结构, 高 ipTM 为模板合规性平凡结果(sanity check); 差量只描述自模板口径下模型对骨架扰动的数值表型, 不能作为界面可预测性证据",
+  "usability_band": "WT prot-crRNA ipTM 四靶均值 0.4955 低于可用界面预测区间(~0.5-0.6)",
+  "retired_arm": "B_break_compensate 行折叠对象为已退役茎破坏混杂臂(2026-09-04 起湿实验侧已换去混杂新臂, 重折叠待 Chai 机时), 其'界面塌陷'是该混杂的可预测表型, 不得引为当前分子的界面结论",
+  "controls_pending": [
+   "template-free 运行",
+   "scrambled-template 运行",
+   "AF3/Protenix 独立引擎对照(data/af3_results/, data/protenix_results/ 待回填)"
+  ],
+  "selector_integration": "接入定位: 结构描述特征(选型特征维)经显式附加层进入选型链路——文献训练行(Han/Fig1f/Teng)无结构数据, 文献决策树在这 4 维上不能分裂(与 target_abundance_tier 先例同), 不捏造训练标签; 当前消费点 = crrna_design_agent.target_context 的 interface_deltas 块(随 design.json 归档)与 webapp panel/design 页同源展示; IVT 8x4 矩阵训练集 schema 将含 这 4 列, 实测活性回填后进入选型分类器训练。"
+ },
+ "reading_rules": {
+  "neutral_abs": 0.03,
+  "collapse_abs": 0.25,
+  "null_sd_k": 2.0,
+  "note": "阈值常量 import 自 crrna_chai_matrix_summary(单一定义); 逐骨架跨靶判读与 chai_matrix_4t_summary.json 的 reading 同源同函数(scaffold_reading), 逐字一致"
+ },
+ "wt_reference": {
+  "KRAS_G12C": {
+   "iptm_mean": 0.8904,
+   "iptm_sd": 0.0014,
+   "prot_crRNA": 0.4858,
+   "crRNA_target": 0.4844,
+   "clash_frac": 0.0,
+   "n_models": 5
+  },
+  "KRAS_G12D": {
+   "iptm_mean": 0.8824,
+   "iptm_sd": 0.0005,
+   "prot_crRNA": 0.4918,
+   "crRNA_target": 0.4782,
+   "clash_frac": 0.0,
+   "n_models": 5
+  },
+  "TP53_R248Q": {
+   "iptm_mean": 0.8912,
+   "iptm_sd": 0.0007,
+   "prot_crRNA": 0.5076,
+   "crRNA_target": 0.4826,
+   "clash_frac": 0.0,
+   "n_models": 5
+  },
+  "TP53_R273H": {
+   "iptm_mean": 0.8802,
+   "iptm_sd": 0.0007,
+   "prot_crRNA": 0.4966,
+   "crRNA_target": 0.4776,
+   "clash_frac": 0.0,
+   "n_models": 5
+  }
+ },
+ "combos": [
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1C",
+   "raw": {
+    "iptm_mean": 0.8818,
+    "iptm_sd": 0.002,
+    "prot_crRNA": 0.4884,
+    "crRNA_target": 0.4812,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0086,
+    "delta_prot_crRNA": 0.0026,
+    "delta_crRNA_target": -0.0032,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA +0.0026 → 界面中性(|Δ| <= 2sd 噪声代理(判 null)); [参考] Δagg ipTM -0.0086 / ΔcrRNA-靶 -0.0032 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1C",
+   "raw": {
+    "iptm_mean": 0.8664,
+    "iptm_sd": 0.0014,
+    "prot_crRNA": 0.4826,
+    "crRNA_target": 0.4742,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.016,
+    "delta_prot_crRNA": -0.0092,
+    "delta_crRNA_target": -0.004,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0092 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0160 / ΔcrRNA-靶 -0.0040 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1C",
+   "raw": {
+    "iptm_mean": 0.8824,
+    "iptm_sd": 0.0008,
+    "prot_crRNA": 0.5076,
+    "crRNA_target": 0.4806,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0088,
+    "delta_prot_crRNA": 0.0,
+    "delta_crRNA_target": -0.002,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA +0.0000 → 界面中性(|Δ| <= 2sd 噪声代理(判 null)); [参考] Δagg ipTM -0.0088 / ΔcrRNA-靶 -0.0020 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1C",
+   "raw": {
+    "iptm_mean": 0.8686,
+    "iptm_sd": 0.0008,
+    "prot_crRNA": 0.4918,
+    "crRNA_target": 0.4754,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0116,
+    "delta_prot_crRNA": -0.0048,
+    "delta_crRNA_target": -0.0022,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0048 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0116 / ΔcrRNA-靶 -0.0022 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1GU3AA8GU15C",
+   "raw": {
+    "iptm_mean": 0.821,
+    "iptm_sd": 0.0015,
+    "prot_crRNA": 0.4446,
+    "crRNA_target": 0.4706,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0694,
+    "delta_prot_crRNA": -0.0412,
+    "delta_crRNA_target": -0.0138,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0412 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.0694 / ΔcrRNA-靶 -0.0138 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1GU3AA8GU15C",
+   "raw": {
+    "iptm_mean": 0.7588,
+    "iptm_sd": 0.007,
+    "prot_crRNA": 0.4072,
+    "crRNA_target": 0.4746,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.1236,
+    "delta_prot_crRNA": -0.0846,
+    "delta_crRNA_target": -0.0036,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0846 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.1236 / ΔcrRNA-靶 -0.0036 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1GU3AA8GU15C",
+   "raw": {
+    "iptm_mean": 0.8346,
+    "iptm_sd": 0.001,
+    "prot_crRNA": 0.4624,
+    "crRNA_target": 0.4806,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0566,
+    "delta_prot_crRNA": -0.0452,
+    "delta_crRNA_target": -0.002,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0452 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.0566 / ΔcrRNA-靶 -0.0020 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1GU3AA8GU15C",
+   "raw": {
+    "iptm_mean": 0.7868,
+    "iptm_sd": 0.0348,
+    "prot_crRNA": 0.4226,
+    "crRNA_target": 0.4622,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0934,
+    "delta_prot_crRNA": -0.074,
+    "delta_crRNA_target": -0.0154,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0740 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.0934 / ΔcrRNA-靶 -0.0154 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1U",
+   "raw": {
+    "iptm_mean": 0.8842,
+    "iptm_sd": 0.0015,
+    "prot_crRNA": 0.4876,
+    "crRNA_target": 0.4804,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0062,
+    "delta_prot_crRNA": 0.0018,
+    "delta_crRNA_target": -0.004,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA +0.0018 → 界面中性(|Δ| <= 2sd 噪声代理(判 null)); [参考] Δagg ipTM -0.0062 / ΔcrRNA-靶 -0.0040 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1U",
+   "raw": {
+    "iptm_mean": 0.8704,
+    "iptm_sd": 0.0012,
+    "prot_crRNA": 0.4838,
+    "crRNA_target": 0.4744,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.012,
+    "delta_prot_crRNA": -0.008,
+    "delta_crRNA_target": -0.0038,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0080 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0120 / ΔcrRNA-靶 -0.0038 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1U",
+   "raw": {
+    "iptm_mean": 0.8896,
+    "iptm_sd": 0.0008,
+    "prot_crRNA": 0.513,
+    "crRNA_target": 0.4798,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0016,
+    "delta_prot_crRNA": 0.0054,
+    "delta_crRNA_target": -0.0028,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA +0.0054 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0016 / ΔcrRNA-靶 -0.0028 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1U",
+   "raw": {
+    "iptm_mean": 0.8732,
+    "iptm_sd": 0.0007,
+    "prot_crRNA": 0.495,
+    "crRNA_target": 0.4766,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.007,
+    "delta_prot_crRNA": -0.0016,
+    "delta_crRNA_target": -0.001,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0016 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0070 / ΔcrRNA-靶 -0.0010 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A1UA2C",
+   "raw": {
+    "iptm_mean": 0.8462,
+    "iptm_sd": 0.0013,
+    "prot_crRNA": 0.47,
+    "crRNA_target": 0.4746,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0442,
+    "delta_prot_crRNA": -0.0158,
+    "delta_crRNA_target": -0.0098,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0158 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0442 / ΔcrRNA-靶 -0.0098 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A1UA2C",
+   "raw": {
+    "iptm_mean": 0.7814,
+    "iptm_sd": 0.0054,
+    "prot_crRNA": 0.4178,
+    "crRNA_target": 0.4676,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.101,
+    "delta_prot_crRNA": -0.074,
+    "delta_crRNA_target": -0.0106,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0740 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.1010 / ΔcrRNA-靶 -0.0106 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A1UA2C",
+   "raw": {
+    "iptm_mean": 0.8472,
+    "iptm_sd": 0.002,
+    "prot_crRNA": 0.4744,
+    "crRNA_target": 0.4778,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.044,
+    "delta_prot_crRNA": -0.0332,
+    "delta_crRNA_target": -0.0048,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0332 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.0440 / ΔcrRNA-靶 -0.0048 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A1UA2C",
+   "raw": {
+    "iptm_mean": 0.8262,
+    "iptm_sd": 0.001,
+    "prot_crRNA": 0.4648,
+    "crRNA_target": 0.473,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.054,
+    "delta_prot_crRNA": -0.0318,
+    "delta_crRNA_target": -0.0046,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0318 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.0540 / ΔcrRNA-靶 -0.0046 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "A8CU15G",
+   "raw": {
+    "iptm_mean": 0.852,
+    "iptm_sd": 0.0011,
+    "prot_crRNA": 0.4832,
+    "crRNA_target": 0.4678,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0384,
+    "delta_prot_crRNA": -0.0026,
+    "delta_crRNA_target": -0.0166,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0026 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0384 / ΔcrRNA-靶 -0.0166 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "A8CU15G",
+   "raw": {
+    "iptm_mean": 0.8402,
+    "iptm_sd": 0.0017,
+    "prot_crRNA": 0.4768,
+    "crRNA_target": 0.4778,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0422,
+    "delta_prot_crRNA": -0.015,
+    "delta_crRNA_target": -0.0004,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0150 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0422 / ΔcrRNA-靶 -0.0004 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "A8CU15G",
+   "raw": {
+    "iptm_mean": 0.866,
+    "iptm_sd": 0.0015,
+    "prot_crRNA": 0.4888,
+    "crRNA_target": 0.4846,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0252,
+    "delta_prot_crRNA": -0.0188,
+    "delta_crRNA_target": 0.002,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0188 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0252 / ΔcrRNA-靶 +0.0020 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "A8CU15G",
+   "raw": {
+    "iptm_mean": 0.859,
+    "iptm_sd": 0.0011,
+    "prot_crRNA": 0.4902,
+    "crRNA_target": 0.4758,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0212,
+    "delta_prot_crRNA": -0.0064,
+    "delta_crRNA_target": -0.0018,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0064 → 界面中性(超 2sd 噪声代理); [参考] Δagg ipTM -0.0212 / ΔcrRNA-靶 -0.0018 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "B_break_compensate",
+   "raw": {
+    "iptm_mean": 0.4528,
+    "iptm_sd": 0.0795,
+    "prot_crRNA": 0.1458,
+    "crRNA_target": 0.46,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.4376,
+    "delta_prot_crRNA": -0.34,
+    "delta_crRNA_target": -0.0244,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.3400 → 界面塌陷(超 2sd 噪声代理); [参考] Δagg ipTM -0.4376 / ΔcrRNA-靶 -0.0244 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "B_break_compensate",
+   "raw": {
+    "iptm_mean": 0.4202,
+    "iptm_sd": 0.0305,
+    "prot_crRNA": 0.1152,
+    "crRNA_target": 0.4854,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.4622,
+    "delta_prot_crRNA": -0.3766,
+    "delta_crRNA_target": 0.0072,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.3766 → 界面塌陷(超 2sd 噪声代理); [参考] Δagg ipTM -0.4622 / ΔcrRNA-靶 +0.0072 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "B_break_compensate",
+   "raw": {
+    "iptm_mean": 0.6134,
+    "iptm_sd": 0.0623,
+    "prot_crRNA": 0.2152,
+    "crRNA_target": 0.477,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.2778,
+    "delta_prot_crRNA": -0.2924,
+    "delta_crRNA_target": -0.0056,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.2924 → 界面塌陷(超 2sd 噪声代理); [参考] Δagg ipTM -0.2778 / ΔcrRNA-靶 -0.0056 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "B_break_compensate",
+   "raw": {
+    "iptm_mean": 0.361,
+    "iptm_sd": 0.0113,
+    "prot_crRNA": 0.0754,
+    "crRNA_target": 0.4886,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.5192,
+    "delta_prot_crRNA": -0.4212,
+    "delta_crRNA_target": 0.011,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.4212 → 界面塌陷(超 2sd 噪声代理); [参考] Δagg ipTM -0.5192 / ΔcrRNA-靶 +0.0110 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12C",
+   "scaffold": "U5GA18C",
+   "raw": {
+    "iptm_mean": 0.4796,
+    "iptm_sd": 0.0663,
+    "prot_crRNA": 0.1606,
+    "crRNA_target": 0.4462,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.4108,
+    "delta_prot_crRNA": -0.3252,
+    "delta_crRNA_target": -0.0382,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.3252 → 界面塌陷(超 2sd 噪声代理); [参考] Δagg ipTM -0.4108 / ΔcrRNA-靶 -0.0382 / Δclash +0.0000"
+  },
+  {
+   "target": "KRAS_G12D",
+   "scaffold": "U5GA18C",
+   "raw": {
+    "iptm_mean": 0.5336,
+    "iptm_sd": 0.0374,
+    "prot_crRNA": 0.213,
+    "crRNA_target": 0.459,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.3488,
+    "delta_prot_crRNA": -0.2788,
+    "delta_crRNA_target": -0.0192,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.2788 → 界面塌陷(超 2sd 噪声代理); [参考] Δagg ipTM -0.3488 / ΔcrRNA-靶 -0.0192 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R248Q",
+   "scaffold": "U5GA18C",
+   "raw": {
+    "iptm_mean": 0.7974,
+    "iptm_sd": 0.0062,
+    "prot_crRNA": 0.4128,
+    "crRNA_target": 0.4772,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.0938,
+    "delta_prot_crRNA": -0.0948,
+    "delta_crRNA_target": -0.0054,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.0948 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.0938 / ΔcrRNA-靶 -0.0054 / Δclash +0.0000"
+  },
+  {
+   "target": "TP53_R273H",
+   "scaffold": "U5GA18C",
+   "raw": {
+    "iptm_mean": 0.7048,
+    "iptm_sd": 0.0056,
+    "prot_crRNA": 0.3782,
+    "crRNA_target": 0.4554,
+    "clash_frac": 0.0,
+    "n_models": 5
+   },
+   "delta": {
+    "delta_iptm_mean": -0.1754,
+    "delta_prot_crRNA": -0.1184,
+    "delta_crRNA_target": -0.0222,
+    "delta_clash_frac": 0.0
+   },
+   "reading": "[主口径] Δprot-crRNA -0.1184 → 界面中等下降(超 2sd 噪声代理); [参考] Δagg ipTM -0.1754 / ΔcrRNA-靶 -0.0222 / Δclash +0.0000"
+  }
+ ],
+ "scaffold_reading": {
+  "A1C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C +0.0026, KRAS_G12D -0.0092, TP53_R248Q +0.0000, TP53_R273H -0.0048; KRAS_G12C/TP53_R248Q 在 2sd 噪声内(判 null); max|Δ|=0.0092 <= 0.03 → 界面中性且靶标无关(通用型候选); 跨靶 spread 0.0118 < 0.10 → 未见靶标相关",
+  "A1GU3AA8GU15C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.0412, KRAS_G12D -0.0846, TP53_R248Q -0.0452, TP53_R273H -0.0740; 四靶界面中等下降(|Δ| 0.0412-0.0846); 跨靶 spread 0.0434 < 0.10 → 未见靶标相关",
+  "A1U": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C +0.0018, KRAS_G12D -0.0080, TP53_R248Q +0.0054, TP53_R273H -0.0016; KRAS_G12C 在 2sd 噪声内(判 null); max|Δ|=0.0080 <= 0.03 → 界面中性且靶标无关(通用型候选); 跨靶 spread 0.0134 < 0.10 → 未见靶标相关",
+  "A1UA2C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.0158, KRAS_G12D -0.0740, TP53_R248Q -0.0332, TP53_R273H -0.0318; 四靶界面中等下降(|Δ| 0.0158-0.0740); 跨靶 spread 0.0582 < 0.10 → 未见靶标相关",
+  "A8CU15G": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.0026, KRAS_G12D -0.0150, TP53_R248Q -0.0188, TP53_R273H -0.0064; max|Δ|=0.0188 <= 0.03 → 界面中性且靶标无关(通用型候选); 跨靶 spread 0.0162 < 0.10 → 未见靶标相关",
+  "B_break_compensate": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.3400, KRAS_G12D -0.3766, TP53_R248Q -0.2924, TP53_R273H -0.4212; 四靶界面均塌陷(|Δ| 0.2924-0.4212, 方向: 下降); 跨靶 spread 0.1288 ≥ 0.10, 但 KRAS/0.3583 与 TP53/0.3568 族均值几乎相同, spread 由靶点个体差异(最深 TP53_R273H)驱动, 非族间互作信号",
+  "U5GA18C": "Δprot-crRNA ipTM vs 同靶WT: KRAS_G12C -0.3252, KRAS_G12D -0.2788, TP53_R248Q -0.0948, TP53_R273H -0.1184; 四靶界面均塌陷(|Δ| 0.0948-0.3252, 方向: 下降); 跨靶 spread 0.2304 ≥ 0.10 → 靶标相关: KRAS |Δ|均值 0.3020 > TP53 0.1066; 与骨架-靶标互作一致的单构建观测(自模板口径, 待对照校准)"
+ },
+ "coverage": {
+  "matrix_grid": {
+   "expected": 32,
+   "present": 32,
+   "missing": []
+  },
+  "panel": {
+   "tp53_r248q": {
+    "matrix_target": "TP53_R248Q",
+    "covered": true,
+    "n_combos": 7,
+    "missing_scaffolds": []
+   },
+   "kras_g12d": {
+    "matrix_target": "KRAS_G12D",
+    "covered": true,
+    "n_combos": 7,
+    "missing_scaffolds": []
+   },
+   "tp53_r273h": {
+    "matrix_target": "TP53_R273H",
+    "covered": true,
+    "n_combos": 7,
+    "missing_scaffolds": []
+   },
+   "apc_q1328x": {
+    "matrix_target": "APC_Q1328x",
+    "covered": false,
+    "n_combos": 0,
+    "missing_scaffolds": [
+     "A1C",
+     "A1GU3AA8GU15C",
+     "A1U",
+     "A1UA2C",
+     "A8CU15G",
+     "B_break_compensate",
+     "U5GA18C",
+     "WT"
+    ],
+    "reason": "矩阵 chai_matrix_4t.json 无靶标列 APC_Q1328x(现有列: KRAS_G12C/KRAS_G12D/TP53_R248Q/TP53_R273H); 该列随增量折叠回填(crrna_chai_increment_merge.py -> chai_matrix_v3aligned.json, 待 Chai 机时)后重跑本脚本即自动覆盖"
+   }
+  }
+ }
+}

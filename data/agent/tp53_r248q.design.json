@@ -5,9 +5,173 @@
   "mut_base": "A",
   "all_diffs_1based": [
    885
-  ]
+  ],
+  "typing": {
+   "rule": "最长 ORF 法: 参考 ORF=WT 最长 ORF(正义链 3 框, ATG 起, 首个框内终止子止, tie-break 长度/起点/框序); 类型由突变对参考 ORF 的影响按显式规则判定(scripts/crrna_mutation_typing.py docstring)",
+   "event": {
+    "kind": "substitution",
+    "diffs0": [
+     884
+    ],
+    "delta": 0,
+    "wt_seg": "G",
+    "mut_seg": "A",
+    "diffs_1based": [
+     885
+    ],
+    "diffs_in_ref_orf_1based": [
+     885
+    ]
+   },
+   "wt_orf": {
+    "start_1based": 143,
+    "frame": 1,
+    "stop_1based": 1322,
+    "end_1based": 1324,
+    "length_nt": 1182,
+    "protein_aa": 393,
+    "terminated": true
+   },
+   "mut_longest_orf": {
+    "start_1based": 143,
+    "frame": 1,
+    "stop_1based": 1322,
+    "end_1based": 1324,
+    "length_nt": 1182,
+    "protein_aa": 393,
+    "terminated": true
+   },
+   "premature_stop": null,
+   "aa_change": "R248Q",
+   "codon_no": 248,
+   "wt_codon": "CGG",
+   "mut_codon": "CAG",
+   "wt_aa": "R",
+   "mut_aa": "Q",
+   "mutation_type": "missense",
+   "mutation_type_label": "错义",
+   "mut_orf_same_start": {
+    "start_1based": 143,
+    "frame": 1,
+    "stop_1based": 1322,
+    "end_1based": 1324,
+    "length_nt": 1182,
+    "protein_aa": 393,
+    "terminated": true
+   },
+   "orf_length_change_aa": 0,
+   "reading": "参考 ORF 143..1324(393 aa)在 MUT 中起止与长度不变; 密码子 248 CGG>CAG(R>Q), 单氨基酸替换 R248Q -> 错义"
+  }
  },
  "effector": "cas12a2_zeng2026",
+ "target_context": {
+  "feature": {
+   "target_key": "tp53_r248q",
+   "gene": "TP53",
+   "cell_line": "HCT116",
+   "total_rpkm": 15.95084,
+   "mut_rpkm_het50": 7.97542,
+   "target_abundance_tier": 1,
+   "target_abundance_tier_label": "中(近激活阈)"
+  },
+  "gate": {
+   "verdict": "within_ci",
+   "note": "靶RNA丰度 TP53@HCT116 杂合场景 7.98 RPKM 落在标定 EC50 95%CI [5.2, 17.4] 内: 激活阈附近, 杀伤窗口对剂量与骨架增益敏感"
+  },
+  "source": "target_abundance_tiers.json"
+ },
+ "degradation": {
+  "criterion_id": "preregistration §A go/no-go",
+  "criterion_rule": "各型代表管线 TOP-8 DR desc 型内并集的全型公共子集 <= 4(topk//2) 且型数>1 -> 阳性(分型推荐); 否则阴性 -> 退化通用型单骨架推荐",
+  "topk": 8,
+  "threshold": 4,
+  "n_types": 3,
+  "evaluable": true,
+  "per_type_union": {
+   "0": [
+    "A16G",
+    "A1C",
+    "A1C+U3A",
+    "A1C+U3C",
+    "A1G",
+    "A1U",
+    "A1U+U3C",
+    "A8G",
+    "G11A",
+    "U3A",
+    "U3C",
+    "U3G"
+   ],
+   "1": [
+    "A16G",
+    "A1C",
+    "A1C+A16G",
+    "A1C+C6A",
+    "A1C+C6G",
+    "A1C+U15C",
+    "A1G",
+    "A1G+U15C",
+    "A1U",
+    "A1U+U15C",
+    "C6A",
+    "C6G",
+    "U15A",
+    "U15C"
+   ],
+   "2": [
+    "A1C",
+    "A1C+U3A",
+    "A1G",
+    "A1G+U3G",
+    "A1U",
+    "A1U+A8G",
+    "A8G",
+    "U3A",
+    "U3C",
+    "U3G"
+   ]
+  },
+  "per_type_union_sizes": {
+   "0": 12,
+   "1": 14,
+   "2": 10
+  },
+  "common": [
+   "A1C",
+   "A1G",
+   "A1U"
+  ],
+  "n_common": 3,
+  "pairwise_jaccard_mean": 0.299,
+  "significant": true,
+  "forced": null,
+  "robustness_evidence": {
+   "source": "typing.robustness.json(post-hoc, 非预登记, 不作触发判据)",
+   "permutation_observed_common": 4,
+   "permutation_p_observed": 0.0357,
+   "reading": "事后置换检验(post-hoc): P(零分布公共集<=观测 4 条)=0.0357 < 0.05, 观测公共集在随机分组下罕见, 支持分型判据具判别力"
+  },
+  "archive_crosscheck": {
+   "archived_common": [
+    "A1C",
+    "A1G",
+    "A1U"
+   ],
+   "recomputed_common": [
+    "A1C",
+    "A1G",
+    "A1U"
+   ],
+   "matches": true
+  },
+  "reading": "各型代表管线 TOP-8 最优骨架的全型公共子集 3 条 <= 阈 4(topk//2, 预登记判据 §A): 骨架最优解随靶标(spacer 上下文)特征变化, 分型判据通过(阳性), 维持分型推荐",
+  "mode": "typed"
+ },
+ "pfs": {
+  "consensus": "GAAAG",
+  "tolerant_mismatches": 2,
+  "source": "registry:cas12a2_zeng2026"
+ },
  "n_candidates": 29,
  "designs": [
   {
@@ -26,6 +190,22 @@
     "spacer_up": 0.598,
     "junction_pairs": 1.0,
     "internal_pairs": 5.0
+   },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
    },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",
@@ -49,6 +229,22 @@
     "junction_pairs": 0.0,
     "internal_pairs": 4.0
    },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
+   },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",
    "construct_dna": "AACTTCTACTGTTGTAGATCATGCCGCCCATGCAGGAACTGTT",
@@ -70,6 +266,22 @@
     "spacer_up": 0.55,
     "junction_pairs": 0.0,
     "internal_pairs": 6.0
+   },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
    },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",
@@ -93,6 +305,22 @@
     "junction_pairs": 0.0,
     "internal_pairs": 7.0
    },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
+   },
    "dr_dna": "AAATTCTACTGTTGTAGAT",
    "dr_desc": "U3A",
    "construct_dna": "AAATTCTACTGTTGTAGATGGTTCATGCCGCCCATGCAGGAAC",
@@ -114,6 +342,22 @@
     "spacer_up": 0.427,
     "junction_pairs": 0.0,
     "internal_pairs": 7.0
+   },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
    },
    "dr_dna": "AAATTCTACTGTTGTAGAT",
    "dr_desc": "U3A",
@@ -137,6 +381,22 @@
     "junction_pairs": 0.0,
     "internal_pairs": 4.0
    },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
+   },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",
    "construct_dna": "AACTTCTACTGTTGTAGATCTCTGGTTCATGCCGCCCATGCAG",
@@ -158,6 +418,22 @@
     "spacer_up": 0.669,
     "junction_pairs": 0.0,
     "internal_pairs": 4.0
+   },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
    },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",
@@ -181,6 +457,22 @@
     "junction_pairs": 0.0,
     "internal_pairs": 4.0
    },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
+   },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",
    "construct_dna": "AACTTCTACTGTTGTAGATGCCTCTGGTTCATGCCGCCCATGC",
@@ -203,6 +495,22 @@
     "junction_pairs": 0.0,
     "internal_pairs": 7.0
    },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
+   },
    "dr_dna": "AAATTCTACTGTTGTAGAT",
    "dr_desc": "U3A",
    "construct_dna": "AAATTCTACTGTTGTAGATTCTGGTTCATGCCGCCCATGCAGG",
@@ -224,6 +532,22 @@
     "spacer_up": 0.568,
     "junction_pairs": 0.0,
     "internal_pairs": 6.0
+   },
+   "target_features": {
+    "target_key": "tp53_r248q",
+    "gene": "TP53",
+    "cell_line": "HCT116",
+    "total_rpkm": 15.95084,
+    "mut_rpkm_het50": 7.97542,
+    "target_abundance_tier": 1,
+    "target_abundance_tier_label": "中(近激活阈)",
+    "mutation_type": "missense",
+    "mutation_type_label": "错义",
+    "aa_change": "R248Q",
+    "premature_stop_codon": null,
+    "orf_wt_protein_aa": 393,
+    "orf_mut_protein_aa": 393,
+    "orf_length_change_aa": 0
    },
    "dr_dna": "AACTTCTACTGTTGTAGAT",
    "dr_desc": "U3C",

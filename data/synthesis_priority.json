@@ -81,8 +81,8 @@
     "cross_spacer.t0_R248Qg9": 6,
     "cross_spacer.t1_MYCg1": 8
    },
-   "mean_score": -0.3407,
-   "min_score": -0.4391,
+   "mean_score": -0.335,
+   "min_score": -0.422,
    "ddG_dr": -2.0,
    "construct_dna_main_target": "AATTTCTGCTGTTGCAGATGTTCATGCCGCCCATGCAGGAACT",
    "v16_cross_filtered_in": [
@@ -136,8 +136,8 @@
     "cross_spacer.t0_R248Qg9": 5,
     "cross_spacer.t1_MYCg1": 25
    },
-   "mean_score": -0.5105,
-   "min_score": -0.6993,
+   "mean_score": -0.5048,
+   "min_score": -0.6822,
    "ddG_dr": -2.2,
    "construct_dna_main_target": "AATTTCTCCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT",
    "v16_cross_filtered_in": [
@@ -181,7 +181,7 @@
     "cross_spacer.t0_R248Qg9": 28,
     "cross_spacer.t1_MYCg1": 15
    },
-   "mean_score": -0.924,
+   "mean_score": -0.9183,
    "min_score": -1.1572,
    "ddG_dr": 0.1,
    "construct_dna_main_target": "AATTTCTACTGTTGTAGACGTTCATGCCGCCCATGCAGGAACT"
@@ -264,7 +264,7 @@
    "desc": "U4C",
    "worst_rank": 55,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 48,
+    "tp53_r248q_zengdr.v6": 47,
     "cross_spacer.t0_R248Qg9": 36,
     "cross_spacer.t1_MYCg1": 55
    },
@@ -277,7 +277,7 @@
    "desc": "A2U+U3C",
    "worst_rank": 57,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 52,
+    "tp53_r248q_zengdr.v6": 50,
     "cross_spacer.t0_R248Qg9": 39,
     "cross_spacer.t1_MYCg1": 57
    },
@@ -294,7 +294,7 @@
     "cross_spacer.t0_R248Qg9": 45,
     "cross_spacer.t1_MYCg1": 66
    },
-   "mean_score": -1.4383,
+   "mean_score": -1.4326,
    "min_score": -1.5094,
    "ddG_dr": 0.2,
    "construct_dna_main_target": "AATTTCTTCTGTTGAAGATGTTCATGCCGCCCATGCAGGAACT"
@@ -349,7 +349,7 @@
     "cross_spacer.t0_R248Qg9": 56,
     "cross_spacer.t1_MYCg1": 10
    },
-   "mean_score": -1.107,
+   "mean_score": -1.1013,
    "min_score": -1.5068,
    "ddG_dr": 4.7,
    "construct_dna_main_target": "AATTTCTACTGTTGAAGATGTTCATGCCGCCCATGCAGGAACT"
@@ -362,46 +362,20 @@
     "cross_spacer.t0_R248Qg9": 60,
     "cross_spacer.t1_MYCg1": 40
    },
-   "mean_score": -1.3949,
+   "mean_score": -1.3892,
    "min_score": -1.6138,
    "ddG_dr": 4.6,
    "construct_dna_main_target": "AATTTCTACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT"
   },
   {
-   "desc": "G14A",
-   "worst_rank": 88,
-   "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 88,
-    "cross_spacer.t0_R248Qg9": 62,
-    "cross_spacer.t1_MYCg1": 59
-   },
-   "mean_score": -1.5233,
-   "min_score": -1.6502,
-   "ddG_dr": 4.0,
-   "construct_dna_main_target": "AATTTCTACTGTTATAGATGTTCATGCCGCCCATGCAGGAACT"
-  },
-  {
-   "desc": "A1U+G14A",
-   "worst_rank": 90,
-   "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 90,
-    "cross_spacer.t0_R248Qg9": 63,
-    "cross_spacer.t1_MYCg1": 60
-   },
-   "mean_score": -1.5305,
-   "min_score": -1.6627,
-   "ddG_dr": 4.0,
-   "construct_dna_main_target": "TATTTCTACTGTTATAGATGTTCATGCCGCCCATGCAGGAACT"
-  },
-  {
    "desc": "U7G+A16C",
    "worst_rank": 92,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 24,
+    "tp53_r248q_zengdr.v6": 19,
     "cross_spacer.t0_R248Qg9": 19,
     "cross_spacer.t1_MYCg1": 92
    },
-   "mean_score": -1.1729,
+   "mean_score": -1.1672,
    "min_score": -2.2396,
    "ddG_dr": -1.4,
    "construct_dna_main_target": "AATTTCGACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT",
@@ -411,26 +385,52 @@
   },
   {
    "desc": "U3C+U19C",
-   "worst_rank": 98,
+   "worst_rank": 95,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 98,
+    "tp53_r248q_zengdr.v6": 95,
     "cross_spacer.t0_R248Qg9": 66,
     "cross_spacer.t1_MYCg1": 43
    },
-   "mean_score": -1.4815,
+   "mean_score": -1.4758,
    "min_score": -1.714,
    "ddG_dr": 0.1,
    "construct_dna_main_target": "AACTTCTACTGTTGTAGACGTTCATGCCGCCCATGCAGGAACT"
   },
   {
+   "desc": "G14A",
+   "worst_rank": 96,
+   "ranks_per_context": {
+    "tp53_r248q_zengdr.v6": 96,
+    "cross_spacer.t0_R248Qg9": 62,
+    "cross_spacer.t1_MYCg1": 59
+   },
+   "mean_score": -1.5376,
+   "min_score": -1.6502,
+   "ddG_dr": 4.0,
+   "construct_dna_main_target": "AATTTCTACTGTTATAGATGTTCATGCCGCCCATGCAGGAACT"
+  },
+  {
+   "desc": "A1U+G14A",
+   "worst_rank": 97,
+   "ranks_per_context": {
+    "tp53_r248q_zengdr.v6": 97,
+    "cross_spacer.t0_R248Qg9": 63,
+    "cross_spacer.t1_MYCg1": 60
+   },
+   "mean_score": -1.5448,
+   "min_score": -1.6627,
+   "ddG_dr": 4.0,
+   "construct_dna_main_target": "TATTTCTACTGTTATAGATGTTCATGCCGCCCATGCAGGAACT"
+  },
+  {
    "desc": "U7G+A16U",
    "worst_rank": 100,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 97,
+    "tp53_r248q_zengdr.v6": 94,
     "cross_spacer.t0_R248Qg9": 61,
     "cross_spacer.t1_MYCg1": 100
    },
-   "mean_score": -1.932,
+   "mean_score": -1.9263,
    "min_score": -2.5263,
    "ddG_dr": 0.7,
    "construct_dna_main_target": "AATTTCGACTGTTGTTGATGTTCATGCCGCCCATGCAGGAACT",
@@ -442,25 +442,25 @@
    "desc": "U13A",
    "worst_rank": 101,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 49,
+    "tp53_r248q_zengdr.v6": 58,
     "cross_spacer.t0_R248Qg9": 37,
     "cross_spacer.t1_MYCg1": 101
    },
-   "mean_score": -1.6977,
+   "mean_score": -1.7119,
    "min_score": -2.5629,
    "ddG_dr": 1.1,
    "construct_dna_main_target": "AATTTCTACTGTAGTAGATGTTCATGCCGCCCATGCAGGAACT"
   },
   {
    "desc": "A8U+U15G",
-   "worst_rank": 148,
+   "worst_rank": 145,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 148,
+    "tp53_r248q_zengdr.v6": 145,
     "cross_spacer.t0_R248Qg9": 68,
     "cross_spacer.t1_MYCg1": 51
    },
-   "mean_score": -1.6728,
-   "min_score": -2.0733,
+   "mean_score": -1.6671,
+   "min_score": -2.0562,
    "ddG_dr": 0.7,
    "construct_dna_main_target": "AATTTCTTCTGTTGGAGATGTTCATGCCGCCCATGCAGGAACT",
    "v16_cross_filtered_in": [
@@ -469,22 +469,22 @@
   },
   {
    "desc": "U7A+A16C",
-   "worst_rank": 155,
+   "worst_rank": 153,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 155,
+    "tp53_r248q_zengdr.v6": 153,
     "cross_spacer.t0_R248Qg9": 99,
     "cross_spacer.t1_MYCg1": 67
    },
-   "mean_score": -1.9486,
+   "mean_score": -1.9428,
    "min_score": -2.1767,
    "ddG_dr": 4.6,
    "construct_dna_main_target": "AATTTCAACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT"
   },
   {
    "desc": "U4C+C6U",
-   "worst_rank": 163,
+   "worst_rank": 162,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 163,
+    "tp53_r248q_zengdr.v6": 162,
     "cross_spacer.t0_R248Qg9": 105,
     "cross_spacer.t1_MYCg1": 77
    },
@@ -495,13 +495,13 @@
   },
   {
    "desc": "A2C+G14A",
-   "worst_rank": 168,
+   "worst_rank": 171,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 168,
+    "tp53_r248q_zengdr.v6": 171,
     "cross_spacer.t0_R248Qg9": 108,
     "cross_spacer.t1_MYCg1": 85
    },
-   "mean_score": -2.2506,
+   "mean_score": -2.2649,
    "min_score": -2.3797,
    "ddG_dr": 4.0,
    "construct_dna_main_target": "ACTTTCTACTGTTATAGATGTTCATGCCGCCCATGCAGGAACT"
@@ -524,13 +524,13 @@
   },
   {
    "desc": "A2G+A16C",
-   "worst_rank": 180,
+   "worst_rank": 179,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 180,
+    "tp53_r248q_zengdr.v6": 179,
     "cross_spacer.t0_R248Qg9": 132,
     "cross_spacer.t1_MYCg1": 79
    },
-   "mean_score": -2.442,
+   "mean_score": -2.4363,
    "min_score": -2.9197,
    "ddG_dr": 4.6,
    "construct_dna_main_target": "AGTTTCTACTGTTGTCGATGTTCATGCCGCCCATGCAGGAACT",
@@ -540,14 +540,14 @@
   },
   {
    "desc": "U13G+G14U",
-   "worst_rank": 183,
+   "worst_rank": 186,
    "ranks_per_context": {
-    "tp53_r248q_zengdr.v6": 183,
+    "tp53_r248q_zengdr.v6": 186,
     "cross_spacer.t0_R248Qg9": 131,
     "cross_spacer.t1_MYCg1": 103
    },
-   "mean_score": -2.8047,
-   "min_score": -2.8607,
+   "mean_score": -2.8332,
+   "min_score": -2.8748,
    "ddG_dr": 3.9,
    "construct_dna_main_target": "AATTTCTACTGTGTTAGATGTTCATGCCGCCCATGCAGGAACT"
   }

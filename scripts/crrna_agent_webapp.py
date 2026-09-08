@@ -2,14 +2,36 @@
 
 单文件 Flask 应用:
   GET  /                 演示页(输入 spacer 或选 panel 靶标)
-  POST /api/design       {spacer: "..."} -> 骨架分型选择(实算, 秒级)
+  POST /api/design       {spacer: "...", target: 可选panel键} -> 骨架分型选择(实算, 秒级);
+                         提供 target 时附靶RNA丰度档位(模块一特征维)+门控判读
+                         + 界面特征差量(结构层选型特征维附加层, Chai-1 自模板
+                           口径, data/chai_interface_deltas.json, 与离线 agent
+                           同源; 可用时文献先验排序行附 Δprot-crRNA 列);
+                         响应均携带 degradation 块(阴性退化判据状态, 见下)
   GET  /api/panel        -> 四靶标 panel 预计算设计(data/agent/*.design.json)
+                         + 丰度档位(CCLE 18q3 实测, data/target_abundance_tiers.json)
+                         + 突变类型判定(最长 ORF 法, 模块一特征维, 与离线
+                           crrna_mutation_typing 同源; 证据取自 design.json
+                           mutation.typing 块)
+                         + 界面特征差量(任务⑫, 与离线同源; 矩阵未覆盖的靶标
+                           如实返回 available=False + 缺失原因)
+                         + degradation 块(与离线智能体同源的判据状态)
   POST /api/mut          {mut_fasta, wt_fasta} -> tilling 端到端(分钟级)
+
+阴性退化模式(策划案 V3 §5.3 末段/表5 风险1, 2026-09-06): 启动时按预登记
+go/no-go 判据(docs/preregistration.md §A)从分型产物重算"骨架最优解与靶标
+特征是否显著相关"(agent.interaction_assessment); 判据未通过(阴性)时
+/api/design 推荐从分型退化为通用型单骨架(agent.universal_scaffold 全场
+最优, 与离线智能体同源同口径), 页面以醒目横幅如实展示退化状态、判据数值
+与"科学结论依然完整可交付"的交付口径, 不掩饰。--clusters/--spacers 可指向
+其它分型产物复算判据(阴性场景演示)。
 
 启动(服务器): nohup python scripts/crrna_agent_webapp.py --port 8899 &
 访问(本机):   ssh -L 8899:localhost:8899 srv  然后打开 http://localhost:8899
 边界: 结构口径分型建议 + 文献先验活性排序(Han 2025 Fig1g 尺度, n=7 外部锚点,
-  非活性保证; 与 crrna_train_selector.py 同一模型同一定义)。
+  非活性保证; 特征表与 crrna_train_selector.py 同一定义, webapp 侧为 n=7
+  轻量重训, 正式先验排序以 data/selector_model.json 为准)。丰度分档阈值显式
+  声明于 scripts/crrna_target_abundance.py(Scholz 2026 EC50 95%CI 锚点)。
 """
 import argparse
 import json
@@ -28,18 +50,38 @@ from sklearn.tree import DecisionTreeRegressor  # noqa: E402
 
 import crrna_scaffold_design as core  # noqa: E402
 import crrna_design_agent as agent  # noqa: E402
+import crrna_target_abundance as tabund  # noqa: E402
+import crrna_mutation_typing as mtyping  # noqa: E402
+import crrna_chai_interface_features as chai_if  # noqa: E402
+from crrna_train_selector import (FEATURES, TARGET_FEATURES,  # noqa: E402
+                                  INTERFACE_DELTA_FEATURES)
 
 app = Flask(__name__)
 
 DATA = os.path.join(ROOT, "data")
 DR = core.to_rna(agent.get_scaffold("cas12a2_zeng2026"))
-MODEL = agent.load_type_models(
-    os.path.join(DATA, "context_typing", "typing.clusters.json"),
-    os.path.join(DATA, "context_typing", "spacers.txt"),
-    DR)
+CLUSTERS_JSON = os.path.join(DATA, "context_typing", "typing.clusters.json")
+SPACERS_TXT = os.path.join(DATA, "context_typing", "spacers.txt")
+MODEL = agent.load_type_models(CLUSTERS_JSON, SPACERS_TXT, DR)
 
-# ---- 模块三: 文献先验选择器(与 crrna_train_selector.py 同一配方) ----
-FEATURES = ["ddG_dr", "bp_dist", "cross_nt", "p_fold", "spacer_up"]
+# 阴性退化判据(策划案 V3 §5.3 末段/表5 风险1, 2026-09-06): 启动时按预登记
+# §A go/no-go 判据从分型产物重算一次, 全站共用; mode=degraded_universal 时
+# 推荐从分型退化为通用型单骨架(agent.universal_scaffold, 与离线智能体同源
+# 同口径), 页面如实展示退化状态与量化证据, 不掩饰。
+DEGRADATION = agent.interaction_assessment(CLUSTERS_JSON)
+
+# 模块一靶标解析特征向量的丰度维(panel 靶标 -> 丰度档位 + 门控判读)
+ABUNDANCE = tabund.load_abundance(os.path.join(DATA, "target_abundance_tiers.json"))
+
+# 结构层界面特征差量(任务⑫, 选型特征维附加层): 与离线 agent
+# (crrna_design_agent.target_context)读同一 JSON、走同一 target_block 函数,
+# 两端不得各自复制口径; 矩阵无该靶标列的 panel 键(如 APC 待增量折叠回填)
+# 如实返回 available=False + 缺失原因
+CHAI_IF = chai_if.load_deltas(os.path.join(DATA, "chai_interface_deltas.json"))
+
+# ---- 模块三: 文献先验选择器(FEATURES/TARGET_FEATURES 经 import 与
+#      crrna_train_selector.py 共用同一定义; webapp 侧为 n=7 工具箱锚点
+#      轻量重训, 仅作演示, 正式先验排序以 data/selector_model.json 为准) ----
 
 
 def _train_selector():
@@ -95,15 +137,14 @@ def lit_rank_scaffolds(spacer_rna):
                  round(p_fold, 5), round(sp_up, 3)]
         pred = float(SELECTOR.predict(np.array([feats]))[0])
         out.append({"scaffold": desc, "lit_pred_fig1g": round(pred, 4),
-                    "features": dict(zip(FEATURES, feats))})
+                    "features": dict(zip(FEATURES, feats)), "dr": dr})
     out.sort(key=lambda r: r["lit_pred_fig1g"])
     for i, r in enumerate(out, 1):
         r["rank"] = i
     return out
 
-PANEL = {"TP53-R248Q": "tp53_r248q", "KRAS-G12C": "kras_g12c",
-         "KRAS-G12D": "kras_g12d", "TP53-R273H": "tp53_r273h",
-         "APC-Q1312x": "apc_q1338x"}
+PANEL = {"TP53-R248Q": "tp53_r248q", "KRAS-G12D": "kras_g12d",
+         "TP53-R273H": "tp53_r273h", "APC-Q1328x": "apc_q1328x"}
 
 PAGE = """<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -215,6 +256,9 @@ margin-bottom:18px;border-top:1px solid var(--line)}
 .kv dt{color:var(--muted)}.kv dd{margin:0}
 .seq{font-family:var(--mono);font-size:13px;letter-spacing:.02em;
 word-break:break-all}
+.seq .dr{color:var(--muted)}
+.seq .sp{color:var(--accent-deep);font-weight:600;background:var(--accent-soft);
+border-radius:3px;padding:0 2px}
 .badge{display:inline-block;font-family:var(--mono);font-size:12px;
 background:var(--accent-soft);color:var(--accent-deep);border-radius:4px;
 border:1px solid rgba(15,95,82,.22);padding:2px 8px}
@@ -280,8 +324,8 @@ margin:0 auto;padding:44px 28px 40px;display:flex;flex-direction:column;flex:1}
 .entry-inner>.brand{animation:rise .6s ease both}
 .entry-mid{margin:auto 0;padding:7vh 0;animation:rise .6s ease .1s both}
 .masthead{animation:rise .6s ease .22s both}
-.entry-art{position:absolute;right:0;top:50%;transform:translateY(-50%);
-width:min(38vw,470px);color:var(--accent);pointer-events:none;
+.entry-art{position:absolute;right:0;top:44%;transform:translateY(-50%);
+width:min(33vw,400px);max-height:58vh;color:var(--accent);pointer-events:none;
 animation:fadein .9s ease .22s both}
 @keyframes fadein{from{opacity:0}}
 .display{font-family:var(--serif);font-size:clamp(40px,5.8vw,68px);font-weight:600;
@@ -384,7 +428,7 @@ border-color:var(--accent)}
 <circle class="pt" cx="600" cy="330" r="3.5" style="fill:var(--accent)" opacity="0"/><circle class="pt" cx="600" cy="330" r="3" style="fill:var(--accent)" opacity="0"/><circle class="pt" cx="600" cy="330" r="4" style="fill:var(--accent)" opacity="0"/><circle class="pt" cx="600" cy="330" r="3" style="fill:var(--accent)" opacity="0"/><circle class="pt" cx="600" cy="330" r="3.5" style="fill:var(--accent)" opacity="0"/><circle class="pt" cx="600" cy="330" r="3" style="fill:var(--accent)" opacity="0"/>
 </g>
 <g class="rnp"><g transform="translate(600 252)">
-<image class="protimg" href="/static/cas12a2_rnp.png" x="-67" y="-139" width="270" height="221"/>
+<image class="protimg" href="/static/cas12a2_rnp.png" x="-71" y="-143" width="270" height="228"/>
 </g></g>
 </svg>
 <div class="splash-cap"><b>Cas12a2 靶向杀伤机制</b><span id="capdetail"></span></div>
@@ -456,7 +500,7 @@ border-color:var(--accent)}
 <header>
 <h1>Cas12a2 crRNA 设计智能体</h1>
 <p class="sub">输入 spacer 序列或选择 panel 靶标，输出骨架分型建议与文献先验活性排序。</p>
-<div class="disclaimer">口径说明：结构口径分型建议 + 文献先验活性排序（Han 2025 Fig1g 尺度，n=7 外部锚点，非活性保证）</div>
+<div class="disclaimer">口径说明：结构口径分型建议 + 文献先验活性排序（Han 2025 Fig1g 尺度，n=7 外部锚点，非活性保证）；含阴性退化模式（策划案 §5.3/表5 风险1）：分型 go/no-go 判据未通过时退化为通用型单骨架推荐，页面如实标注并给量化证据</div>
 <div class="layers">
 <div class="layer"><b>蛋白预测层</b><span>Chai-1 三元共折叠，ipTM 0.874</span></div>
 <div class="layer"><b>AI 改造层</b><span>受约束生成 × 贝叶斯优化闭环</span></div>
@@ -492,15 +536,62 @@ function fail(el,h,msg){el.innerHTML='<div class="err">'+esc(msg)+'</div>';if(h)
 function rankTable(rows){
 if(!rows||!rows.length)return'';
 const vals=rows.map(r=>r.lit_pred_fig1g),lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
-let h='<table><thead><tr><th>#</th><th>骨架</th><th class="num">Fig1g 预测</th><th class="num">ddG</th><th class="num">bp_dist</th><th class="num">cross_nt</th><th class="num">p_fold</th><th class="num">spacer_up</th></tr></thead><tbody>';
+const hasIf=rows.some(r=>r.interface_delta&&r.interface_delta.delta_prot_crRNA!=null);
+let h='<table><thead><tr><th>#</th><th>骨架</th><th class="num">Fig1g 预测</th><th class="num">ddG</th><th class="num">bp_dist</th><th class="num">cross_nt</th><th class="num">p_fold</th><th class="num">spacer_up</th>'+(hasIf?'<th class="num">Δprot-crRNA</th>':'')+'</tr></thead><tbody>';
 for(const r of rows){const f=r.features||{};const w=hi>lo?((r.lit_pred_fig1g-lo)/(hi-lo)*100):50;
+const dpc=r.interface_delta?r.interface_delta.delta_prot_crRNA:null;
 h+='<tr><td class="num">'+r.rank+'</td><td>'+esc(r.scaffold)+'</td>'+
 '<td class="num">'+r.lit_pred_fig1g.toFixed(4)+'<div class="bar" style="width:'+w.toFixed(1)+'%"></div></td>'+
 '<td class="num">'+(f.ddG_dr!=null?f.ddG_dr:'')+'</td><td class="num">'+(f.bp_dist!=null?f.bp_dist:'')+'</td>'+
 '<td class="num">'+(f.cross_nt!=null?f.cross_nt:'')+'</td><td class="num">'+(f.p_fold!=null?f.p_fold:'')+'</td>'+
-'<td class="num">'+(f.spacer_up!=null?f.spacer_up:'')+'</td></tr>';}
-return h+'</tbody></table><div class="note">Fig1g 尺度：数值越低 = 预测抑制越强（Han 2025 文献先验，n=7 锚点）。</div>';}
+'<td class="num">'+(f.spacer_up!=null?f.spacer_up:'')+'</td>'+
+(hasIf?'<td class="num">'+(dpc!=null?((dpc>0?'+':'')+dpc.toFixed(4)):'—')+'</td>':'')+'</tr>';}
+return h+'</tbody></table><div class="note">Fig1g 尺度：数值越低 = 预测抑制越强（Han 2025 文献先验，n=7 锚点）。'+(hasIf?' Δprot-crRNA 列为 Chai-1 界面差量（自模板口径结构描述特征，主口径链对 ipTM 相对同靶 WT 差量，非界面可预测性证据）。':'')+'</div>';}
 function raw(d){return '<details><summary>查看原始 JSON</summary><pre>'+esc(JSON.stringify(d,null,1))+'</pre></details>';}
+function abBlock(ta){
+if(!ta||!ta.feature)return'';
+const f=ta.feature,g=ta.gate||{};
+let h='<label style="margin-top:14px">靶RNA丰度档位（模块一特征维 · CCLE 18q3 实测）</label><dl class="kv">'+
+'<dt>基因@细胞系</dt><dd>'+esc(f.gene)+'@'+esc(f.cell_line)+'</dd>'+
+'<dt>实测丰度</dt><dd>'+f.total_rpkm+' RPKM（杂合突变场景 '+f.mut_rpkm_het50+' RPKM）</dd>'+
+'<dt>丰度档位</dt><dd><span class="badge">tier '+f.target_abundance_tier+' · '+esc(f.target_abundance_tier_label)+'</span></dd></dl>';
+if(g.note)h+='<div class="note">'+esc(g.note)+'</div>';
+return h;}
+function mtBlock(mt){
+if(!mt)return'';
+const w=mt.wt_orf||{},m=mt.mut_orf_same_start||{},ps=mt.premature_stop;
+let h='<label style="margin-top:14px">突变类型判定（模块一特征维 · 最长 ORF 法）</label><dl class="kv">'+
+'<dt>类型</dt><dd><span class="badge">'+esc(mt.mutation_type)+' · '+esc(mt.mutation_type_label)+'</span>'+(mt.aa_change?' <span class="badge">'+esc(mt.aa_change)+'</span>':'')+'</dd>'+
+'<dt>WT 最长 ORF</dt><dd>转录本 '+w.start_1based+'..'+w.end_1based+'（'+w.protein_aa+' aa）</dd>';
+if(m)h+='<dt>MUT 同起点 ORF</dt><dd>转录本 '+m.start_1based+'..'+m.end_1based+'（'+m.protein_aa+' aa）'+(mt.orf_length_change_aa?'，变化 '+mt.orf_length_change_aa+' aa':'')+'</dd>';
+if(ps)h+='<dt>提前终止子</dt><dd>密码子 '+ps.codon_no+'（'+esc(ps.wt_codon)+'→'+esc(ps.mut_codon)+'，转录本 '+ps.transcript_pos_1based+' 位）'+(mt.truncated_fraction!=null?'，截短 '+(mt.truncated_fraction*100).toFixed(1)+'%':'')+'</dd>';
+h+='</dl>';
+if(mt.reading)h+='<div class="note">'+esc(mt.reading)+'</div>';
+return h;}
+function ifBlock(ib){
+if(!ib)return'';
+if(ib.available===false)return '<label style="margin-top:14px">界面特征差量（结构层选型特征维 · Chai-1 骨架-靶标组合）</label><div class="note">该靶标暂无 Chai 矩阵覆盖：'+esc(ib.missing_reason||'')+'</div>';
+const wt=ib.wt_reference||{};
+const sg=v=>(v==null?'':((v>0?'+':'')+Number(v).toFixed(4)));
+let h='<label style="margin-top:14px">界面特征差量 Δ vs 同靶 WT（结构层选型特征维 · Chai-1 自模板口径）</label><dl class="kv">'+
+'<dt>矩阵靶标</dt><dd>'+esc(ib.matrix_target||'')+'</dd>'+
+'<dt>WT 参照</dt><dd>agg ipTM '+wt.iptm_mean+' · prot-crRNA '+wt.prot_crRNA+' · crRNA-靶 '+wt.crRNA_target+' · clash '+(wt.clash_frac!=null?wt.clash_frac:'')+'</dd></dl>';
+h+='<table><thead><tr><th>骨架</th><th class="num">Δagg ipTM</th><th class="num">Δprot-crRNA</th><th class="num">ΔcrRNA-靶</th><th class="num">Δclash</th><th>判读</th></tr></thead><tbody>';
+for(const r of (ib.scaffolds||[])){const d=r.delta||{};
+h+='<tr><td>'+esc(r.scaffold)+'</td><td class="num">'+sg(d.delta_iptm_mean)+'</td><td class="num">'+sg(d.delta_prot_crRNA)+'</td><td class="num">'+sg(d.delta_crRNA_target)+'</td><td class="num">'+sg(d.delta_clash_frac)+'</td><td>'+esc(r.reading||'')+'</td></tr>';}
+h+='</tbody></table>';
+if(ib.limitation)h+='<div class="note">'+esc(ib.limitation)+'</div>';
+return h;}
+function dgrBlock(dg){
+if(!dg)return'';
+const rel=dg.n_common<=dg.threshold?'≤':'>';
+const nums='判据数值（预登记 §A go/no-go）：全型公共 TOP-'+dg.topk+' 子集 '+dg.n_common+' 条（'+rel+' 阈 '+dg.threshold+'），型间两两 Jaccard 均值 '+(dg.pairwise_jaccard_mean!=null?dg.pairwise_jaccard_mean:'n/a');
+if(dg.mode==='degraded_universal'){
+let h='<div class="disclaimer" style="margin-top:14px"><b>退化模式（阴性结果，如实标注）</b>：'+esc(dg.reading)+'<br>'+esc(nums);
+if(dg.robustness_evidence)h+='<br>'+esc(dg.robustness_evidence.reading);
+if(dg.deliverable_note)h+='<br>'+esc(dg.deliverable_note);
+return h+'</div>';}
+return '<div class="note">选型模式：分型推荐。'+esc(nums)+'</div>';}
 async function go(){
 const inp=$('sp');const sp=inp.value.trim().toUpperCase();
 if(!/^[ACGTU]{17,25}$/.test(sp)){inp.classList.add('invalid');
@@ -512,12 +603,23 @@ try{r=await fetch('/api/design',{method:'POST',headers:{'Content-Type':'applicat
 catch(e){fail($('r1'),$('hint1'),'网络请求失败，请检查服务是否在线。');return;}
 if(!r.ok||d.error){fail($('r1'),$('hint1'),d.error||('请求失败（HTTP '+r.status+'）'));return;}
 $('hint1').textContent='';
+const degraded=d.degradation&&d.degradation.mode==='degraded_universal';
 let h='<dl class="kv">'+
 '<dt>输入 spacer</dt><dd class="seq">'+esc(d.input_spacer)+'</dd>'+
-'<dt>骨架分型</dt><dd><span class="badge">'+esc(d.scaffold_type)+'</span> &nbsp;置信度 '+(d.confidence!=null?d.confidence:'n/a')+'</dd>'+
-(d.type_representative?'<dt>型代表</dt><dd class="seq">'+esc(d.type_representative)+'</dd>':'')+
+(degraded?
+'<dt>骨架选型</dt><dd><span class="badge" style="background:var(--warn-bg);color:var(--warn-tx);border-color:var(--warn-edge)">退化模式 · 通用型单骨架</span>（分型诊断：最近型 '+esc(String(d.typing_nearest_type))+'，置信度 '+(d.confidence!=null?d.confidence:'n/a')+'，不参与推荐）</dd>'
+:'<dt>骨架分型</dt><dd><span class="badge">'+esc(d.scaffold_type)+'</span> &nbsp;置信度 '+(d.confidence!=null?d.confidence:'n/a')+'</dd>')+
+(!degraded&&d.type_representative?'<dt>型代表</dt><dd class="seq">'+esc(d.type_representative)+'</dd>':'')+
 '</dl>';
+h+=dgrBlock(d.degradation);
+if(d.recommended){const c=d.recommended;
+h+='<label>完整 crRNA 构建（'+(degraded?'通用型单骨架 · 退化模式':'推荐骨架')+' '+esc(String(c.scaffold))+'）</label><dl class="kv">'+
+'<dt>crRNA 5′→3′</dt><dd class="seq"><span class="dr">'+esc(c.dr_rna)+'</span><span class="sp">'+esc(c.spacer_rna)+'</span></dd>'+
+'<dt>合成订购（DNA）</dt><dd class="seq"><span class="dr">'+esc(c.dr_rna.replace(/U/g,'T'))+'</span><span class="sp">'+esc(c.spacer_rna.replace(/U/g,'T'))+'</span></dd>'+
+'<dt>组成</dt><dd>DR 骨架 '+c.dr_len+' nt + spacer '+c.spacer_len+' nt ＝ '+(c.dr_len+c.spacer_len)+' nt</dd></dl>';}
 h+='<label>骨架文献先验活性排序</label>'+rankTable(d.scaffold_ranking_lit);
+if(d.target_abundance)h+=abBlock(d.target_abundance);
+h+=ifBlock(d.interface_deltas);
 if(d.note)h+='<div class="note">'+esc(d.note)+'</div>';
 h+=raw(d);$('r1').innerHTML=h;animateResult($('r1'));}
 async function panel(){loading($('r2'),null);
@@ -527,8 +629,13 @@ catch(e){fail($('r2'),null,'网络请求失败，请检查服务是否在线。'
 if(!r.ok||d.error){fail($('r2'),null,d.error||('请求失败（HTTP '+r.status+'）'));return;}
 let h='<dl class="kv"><dt>靶标</dt><dd><span class="badge">'+esc(d.target)+'</span></dd>';
 const dz=(d.design&&d.design.designs)||[];
-if(dz.length){h+='<dt>候选 spacer</dt><dd>'+dz.length+' 条，首位：</dd>';h+='<dt></dt><dd class="seq">'+esc(dz[0].spacer_dna)+'</dd>';}
+if(dz.length){h+='<dt>候选 spacer</dt><dd>'+dz.length+' 条，首位：</dd>';h+='<dt></dt><dd class="seq">'+esc(dz[0].spacer_dna)+'</dd>';
+if(dz[0].construct_dna){h+='<dt>完整 crRNA（DNA，'+esc(dz[0].dr_desc||'')+' 骨架）</dt><dd class="seq"><span class="dr">'+esc(dz[0].dr_dna||'')+'</span><span class="sp">'+esc(dz[0].spacer_dna)+'</span></dd>';}}
 h+='</dl>';
+h+=dgrBlock(d.degradation||(d.design&&d.design.degradation));
+h+=mtBlock(d.mutation_typing);
+h+=abBlock(d.target_abundance);
+h+=ifBlock(d.interface_deltas);
 if(d.scaffold_ranking_lit){h+='<label>骨架文献先验活性排序</label>'+rankTable(d.scaffold_ranking_lit);}
 const vc=d.virtual_cell;
 if(vc){const cal=vc.calibration||{};
@@ -735,19 +842,64 @@ def design():
     sp = sp.upper().replace("U", "T")
     if not 17 <= len(sp) <= 25 or set(sp) - set("ACGT"):
         return jsonify({"error": "spacer 须 17-25nt ACGT"}), 400
+    # 可选靶标上下文: 提供时附模块一丰度档维 + 模块三门控判读
+    # + 结构层界面特征差量附加层(任务⑫, 与离线 agent.target_context 同源)
+    tkey = (request.json or {}).get("target")
+    tctx = None
+    iblock = None
+    if tkey:
+        feat = tabund.target_feature(ABUNDANCE, tkey)
+        if feat is None:
+            return jsonify({"error": "未知 panel 靶标 %s" % tkey}), 400
+        tctx = {"feature": feat, "gate": tabund.activation_gate(feat)}
+        iblock = chai_if.target_block(CHAI_IF, tkey)
     try:
         sel = agent.select_scaffold_type(core.to_rna(sp), DR, MODEL)
         rep = MODEL["type_dr"].get(sel["nearest_type"], {})
+        sp_rna = core.to_rna(sp)
+        ranking = lit_rank_scaffolds(sp_rna)
+        if iblock and iblock.get("available"):
+            # 选型特征维附加入排序行: 库骨架名(+分隔)映射矩阵紧凑名,
+            # 矩阵未覆盖的骨架如实不带该字段(不补造)
+            dmap = {r["scaffold"]: r["delta"] for r in iblock["scaffolds"]}
+            for r in ranking:
+                dlt = dmap.get(chai_if.matrix_scaffold_of(r["scaffold"]))
+                if dlt is not None:
+                    r["interface_delta"] = dlt
+        degraded = DEGRADATION["mode"] == "degraded_universal"
+        if degraded:
+            # 退化模式: 推荐 = 通用型单骨架(分型产物全场最优, 与离线 agent 同源);
+            # 分型结果仅作诊断(typing_nearest_type), 文献先验排序仍附作证据
+            uni = agent.universal_scaffold(MODEL)
+            best = {"scaffold": uni["desc"], "dr": core.to_rna(uni["dr_dna"])}
+            payload_type = {"scaffold_type": None,
+                            "typing_nearest_type": sel["nearest_type"],
+                            "type_representative": None}
+        else:
+            best = ranking[0]
+            payload_type = {"scaffold_type": sel["nearest_type"],
+                            "type_representative": rep.get("representative_desc")}
+        cr_rna = best["dr"] + sp_rna
         return jsonify({"input_spacer": sp,
-                        "scaffold_type": sel["nearest_type"],
                         "confidence": sel["confidence"],
                         "features": sel["features"],
-                        "type_representative": rep.get("representative_desc"),
-                        "scaffold_ranking_lit": lit_rank_scaffolds(
-                            core.to_rna(sp)),
-                        "note": "结构分型建议 + 文献先验活性排序"
-                                "(Han 2025 Fig1g 尺度, n=7 锚点, 低=抑制强,"
-                                "非活性保证)"})
+                        "target_abundance": tctx,
+                        "interface_deltas": iblock,
+                        "degradation": DEGRADATION,
+                        **payload_type,
+                        "recommended": {"scaffold": best["scaffold"],
+                                        "dr_rna": best["dr"],
+                                        "spacer_rna": sp_rna,
+                                        "crrna_rna": cr_rna,
+                                        "crrna_dna": cr_rna.replace("U", "T"),
+                                        "dr_len": len(best["dr"]),
+                                        "spacer_len": len(sp_rna)},
+                        "scaffold_ranking_lit": ranking,
+                        "note": ("退化模式(阴性结果): 通用型单骨架推荐 + 文献先验"
+                                 "活性排序附作证据" if degraded else
+                                 "结构分型建议 + 文献先验活性排序"
+                                 "(Han 2025 Fig1g 尺度, n=7 锚点, 低=抑制强,"
+                                 "非活性保证)")})
     except Exception as e:
         return jsonify({"error": str(e)[:200]}), 500
 
@@ -764,28 +916,61 @@ def panel():
     if top_spacer:
         extra = {"scaffold_ranking_lit": lit_rank_scaffolds(
             core.to_rna(top_spacer))}
+    # 模块一丰度档维(CCLE 18q3 实测 + 显式分档, 与离线 agent 同源同口径)
+    feat = tabund.target_feature(ABUNDANCE, PANEL.get(key, ""))
+    if feat:
+        extra["target_abundance"] = {"feature": feat,
+                                     "gate": tabund.activation_gate(feat)}
+    # 结构层界面特征差量(任务⑫, 选型特征维附加层): 与离线 agent
+    # target_context 读同一 JSON、走同一 target_block; 矩阵未覆盖的靶标
+    # (APC 列待增量折叠回填)如实返回 available=False + 缺失原因
+    extra["interface_deltas"] = chai_if.target_block(CHAI_IF, PANEL.get(key, ""))
+    # 模块一突变类型维(最长 ORF 法, 2026-09-07 任务⑩): 判定与 ORF 证据在
+    # 预计算阶段由 crrna_mutation_typing 生成并随 design.json 归档, webapp
+    # 侧只读不重构(与离线同源的证据载体 = design.json mutation.typing 块)
+    mtp = (d.get("mutation") or {}).get("typing")
+    if mtp:
+        extra["mutation_typing"] = mtp
     # 模块四: 细胞层预测(实测标定虚拟细胞, Scholz 2026 剂量曲线口径)
     vc_path = os.path.join(DATA, "virtual_cell_prior.json")
     if os.path.isfile(vc_path):
         vc = json.load(open(vc_path, encoding="utf-8"))
-        gene = "TP53" if key.startswith("TP53") else "KRAS"
-        tag = "tp53" if gene == "TP53" else "kras"
-        lines = [{"cell_line": r["cell_line"], "rpkm": r["rpkm"].get(gene),
-                  "pred_survival_mid_pct": r.get("surv_%s_mid" % tag)}
-                 for r in vc.get("named_cell_lines", [])]
-        extra["virtual_cell"] = {
-            "calibration": vc.get("calibration"),
-            "status": vc.get("status"),
-            "named_lines": lines,
-            "note": "预测存活率基于 Scholz 2026 实测剂量曲线(RNP 体系移植边界"
-                    "见 status); 细胞系选系前须复核 DepMap 突变状态"}
+        # 虚拟细胞只标定了 TP53/KRAS 两条存活曲线; APC 靶标无对应预测,
+        # 如实不展示细胞系存活表(丰度信息见 target_abundance 块)
+        gene = feat["gene"] if feat else (
+            "TP53" if key.startswith("TP53") else "KRAS")
+        if gene in ("TP53", "KRAS"):
+            tag = "tp53" if gene == "TP53" else "kras"
+            lines = [{"cell_line": r["cell_line"], "rpkm": r["rpkm"].get(gene),
+                      "pred_survival_mid_pct": r.get("surv_%s_mid" % tag)}
+                     for r in vc.get("named_cell_lines", [])]
+            extra["virtual_cell"] = {
+                "calibration": vc.get("calibration"),
+                "status": vc.get("status"),
+                "named_lines": lines,
+                "note": "预测存活率基于 Scholz 2026 实测剂量曲线(RNP 体系移植边界"
+                        "见 status); 细胞系选系前须复核 DepMap 突变状态"}
+    # 阴性退化状态(与离线智能体同源的启动时评估): 无论 panel 预计算设计
+    # 是否含 degradation 块, 响应均携带当前判据状态, 页面如实展示
+    extra["degradation"] = DEGRADATION
     return jsonify({"target": key, "design": d, **extra})
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--port", type=int, default=8899)
+    ap.add_argument("--clusters", default=None,
+                    help="分型产物 clusters.json(默认 data/context_typing/"
+                         "typing.clusters.json); 指向其它产物可复算退化判据"
+                         "(阴性场景演示)")
+    ap.add_argument("--spacers", default=None,
+                    help="分型 spacer 表(默认 data/context_typing/spacers.txt)")
     args = ap.parse_args()
+    if args.clusters or args.spacers:
+        global MODEL, DEGRADATION
+        cj = args.clusters or CLUSTERS_JSON
+        MODEL = agent.load_type_models(cj, args.spacers or SPACERS_TXT, DR)
+        DEGRADATION = agent.interaction_assessment(cj)
     app.run(host="0.0.0.0", port=args.port)
 
 

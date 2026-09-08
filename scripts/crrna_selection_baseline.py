@@ -50,11 +50,13 @@ import crrna_scaffold_design as core  # noqa: E402
 from scaffold_registry import get_entry  # noqa: E402
 
 # 与 data/tp53_r248q_zengdr.v6.top.json params 完全一致的库生成/过滤配置
+# (cons3_window=7: 任务⑪起由同源 DR 保守性先验 data/dr_conservation.json 供给,
+#  见 crrna_scaffold_design.load_cons3_window_prior)
 LIB_PARAMS = dict(n_double=200, sa_steps=300, seed=0, cov_double=150,
                   max_bp_dist=4.0, spacer_unpaired_margin=0.10,
                   w_bp=0.3, w_ddg=0.1, w_contact=1.0, w_ens=0.05,
                   w_hbond=0.5, w_fold=0.2, w_seed=0.0, seed_len=7,
-                  w_stab=0.3, w_cons3=0.3, cons3_window=5, proc_window=4,
+                  w_stab=0.3, w_cons3=0.3, cons3_window=7, proc_window=4,
                   allow_cross_pairing=False, no_protect_processing=False,
                   stab_dr_only=False)
 
