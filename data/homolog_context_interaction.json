@@ -1,0 +1,280 @@
+{
+ "generated_by": "scripts/crrna_homolog_context_interaction.py",
+ "date": "2026-09-08",
+ "scope": "同源跨上下文 DR 效应交互检验(分型假说原理层统计判定); 判据登记 docs/preregistration.md §E, 登记先于本次评估运行; 判读文字全部由数值按显式阈值规则生成",
+ "prereg_ref": "docs/preregistration.md §E",
+ "runtime_sec": 10.05,
+ "deweirdt": {
+  "n_total": 35883,
+  "wt_dr_dna": "TAATTTCTACTCTTGTAGAT",
+  "wt_dr_fold": {
+   "dotbracket": ".....(((((....))))).",
+   "mfe_kcal": -4.8,
+   "n_paired_pos": 10,
+   "note": "ViennaRNA MFE 伪结外折叠, 区位分层仅描述用"
+  },
+  "e1": {
+   "n": 35682,
+   "cls": "test",
+   "rho_cross": 0.25690294886319415,
+   "p": 0.0,
+   "bootstrap_ci95": [
+    0.246836209483474,
+    0.2674069234646642
+   ],
+   "thresholds": {
+    "rho_pass": 0.4,
+    "ci_ub_pass": 0.5,
+    "rho_fail": 0.7
+   },
+   "verdict": "PASS",
+   "reading": "rho=0.257 < 0.4 且 bootstrap CI95 上界 0.267 < 0.5: 同批 DR 变体效应强烈依赖 spacer 上下文(交互显著), 分型假说获同源跨上下文大样本统计支持"
+  },
+  "e1_by_nmut": {
+   "1-3": {
+    "n": 3124,
+    "rho_cross": 0.3315979835913874,
+    "p": 4.606201194654236e-81
+   },
+   "4-6": {
+    "n": 28130,
+    "rho_cross": 0.2461829352803929,
+    "p": 0.0
+   },
+   "7+": {
+    "n": 4428,
+    "rho_cross": 0.21744093141619109,
+    "p": 1.5460382660071316e-48
+   }
+  },
+  "e1_by_cls": {
+   "intend-6T": {
+    "n": 100,
+    "rho_cross": 0.1615361536153615,
+    "p": 0.10835824830269479
+   },
+   "random": {
+    "n": 100,
+    "rho_cross": 0.29604138038632094,
+    "p": 0.0027849177293225065
+   }
+  },
+  "e2": {
+   "stem_major": {
+    "n": 4389,
+    "rho_cross": 0.2886909849807061,
+    "p": 5.255304162837393e-85
+   },
+   "loop_major": {
+    "n": 24462,
+    "rho_cross": 0.2492849060316354,
+    "p": 0.0
+   },
+   "mixed": {
+    "n": 6831,
+    "rho_cross": 0.279185809483403,
+    "p": 1.587619175805503e-122
+   },
+   "stem_vs_loop_fisher_z": {
+    "z": 2.591069641601777,
+    "p": 0.00956781273315932,
+    "rho_diff": 0.03940607894907072
+   },
+   "note": "区位=WT DR MFE 折叠配对位(茎)vs 非配对位(环/单链); 佐证不参与 PASS/FAIL"
+  }
+ },
+ "tian": {
+  "n_crna": 8,
+  "n_mutants_total": 12,
+  "n_mutants_complete": 12,
+  "kept_mut_tags": [
+   "1C",
+   "1G",
+   "1U",
+   "2C",
+   "2G",
+   "2U",
+   "3A",
+   "3C",
+   "3G",
+   "4A",
+   "4C",
+   "4G"
+  ],
+  "per_crna_n_valid": [
+   [
+    "crRNA1",
+    12
+   ],
+   [
+    "crRNA2",
+    12
+   ],
+   [
+    "crRNA3",
+    12
+   ],
+   [
+    "crRNA4",
+    12
+   ],
+   [
+    "crRNA5",
+    12
+   ],
+   [
+    "crRNA6",
+    12
+   ],
+   [
+    "crRNA7",
+    12
+   ],
+   [
+    "crRNA8",
+    12
+   ]
+  ],
+  "kendall_w": {
+   "W": 0.7687937062937062,
+   "n_judges": 8,
+   "n_objects": 12,
+   "col_rank_sums": [
+    83.0,
+    85.0,
+    87.0,
+    53.0,
+    58.0,
+    72.0,
+    21.0,
+    38.0,
+    21.0,
+    23.0,
+    33.0,
+    50.0
+   ]
+  },
+  "pairwise_spearman_median": 0.8181818181818183,
+  "pos1": {
+   "cols": [
+    "1C",
+    "1G",
+    "1U"
+   ],
+   "kendall_w": {
+    "W": 0.015625,
+    "n_judges": 8,
+    "n_objects": 3,
+    "col_rank_sums": [
+     17.0,
+     16.0,
+     15.0
+    ]
+   },
+   "best_base_distribution": {
+    "1U": 2,
+    "1C": 4,
+    "1G": 2
+   },
+   "per_crna_best": {
+    "crRNA1": {
+     "best": "1U",
+     "best_val": 0.8766
+    },
+    "crRNA2": {
+     "best": "1C",
+     "best_val": 0.2347
+    },
+    "crRNA3": {
+     "best": "1C",
+     "best_val": 0.4435
+    },
+    "crRNA4": {
+     "best": "1G",
+     "best_val": 0.3667
+    },
+    "crRNA5": {
+     "best": "1C",
+     "best_val": 0.5864
+    },
+    "crRNA6": {
+     "best": "1U",
+     "best_val": 0.5849
+    },
+    "crRNA7": {
+     "best": "1G",
+     "best_val": 0.9609
+    },
+    "crRNA8": {
+     "best": "1C",
+     "best_val": 0.7472
+    }
+   }
+  },
+  "pos2": {
+   "cols": [
+    "2C",
+    "2G",
+    "2U"
+   ],
+   "kendall_w": {
+    "W": 0.4375,
+    "n_judges": 8,
+    "n_objects": 3,
+    "col_rank_sums": [
+     12.0,
+     14.0,
+     22.0
+    ]
+   },
+   "best_base_distribution": {
+    "2U": 6,
+    "2G": 1,
+    "2C": 1
+   },
+   "per_crna_best": {
+    "crRNA1": {
+     "best": "2U",
+     "best_val": 0.3448
+    },
+    "crRNA2": {
+     "best": "2G",
+     "best_val": 0.05
+    },
+    "crRNA3": {
+     "best": "2U",
+     "best_val": 0.0641
+    },
+    "crRNA4": {
+     "best": "2U",
+     "best_val": 0.1577
+    },
+    "crRNA5": {
+     "best": "2U",
+     "best_val": 0.0543
+    },
+    "crRNA6": {
+     "best": "2U",
+     "best_val": 0.4044
+    },
+    "crRNA7": {
+     "best": "2C",
+     "best_val": 0.3927
+    },
+    "crRNA8": {
+     "best": "2U",
+     "best_val": 0.3633
+    }
+   }
+  },
+  "note": "Tian 2025 RRS 区(DR 5' 端 4nt)单点突变, 8 条 crRNA(spacer)共享同一批 12 突变。E3a 全量 W 由位置梯度驱动: 位置 3/4(假结核心)近乎全灭活、位置 1 最耐受, '哪一位敏感'跨 crRNA 稳定(通用层, 与 Cas12a2 本体系 §A 公共集 A1C/A1G/A1U 同为位置 1 惰性, 跨体系呼应); E3b 看同一耐受位点内 '哪个碱基最优'是否随 spacer 上下文翻转(交互层, E1 同向佐证)",
+  "reading": "位置 1 碱基偏好 Kendall W=0.016 < 0.3: 同一耐受位点上'哪个碱基最优'随 spacer 上下文翻转(最优碱基分布 {'1U': 2, '1C': 4, '1G': 2}), 交互佐证(E1 同向); E3a 全量 W=0.769 仅反映位置梯度通用层, 两层不矛盾"
+ },
+ "verdict": {
+  "overall": "homolog_interaction_supported",
+  "e1": "PASS",
+  "reading": "E1 PASS: 分型假说获同源跨上下文大样本统计支持(AsCas12a 35,883 变体 × 2 spacer 上下文)。与 §A 本体系计算弱证据阳性 并列, 分型主张形成「同源原理统计 + 本体系计算实例」双层证据。"
+ },
+ "interpretation": "E1 PASS: 分型假说获同源跨上下文大样本统计支持(AsCas12a 35,883 变体 × 2 spacer 上下文)。与 §A 本体系计算弱证据阳性 并列, 分型主张形成「同源原理统计 + 本体系计算实例」双层证据。",
+ "limitation": "DeWeirdt 仅 2 个 spacer 上下文(n=2 上下文, 回答'效应是否普遍一致'而非'型'的统计); 负筛 LFC 非动力学读数; AsCas12a 假结承载结构域 与 Cas12a2(成熟 crRNA 无假结)存在拓扑差异, 迁移引用须按 README 边界声明; Tian 12 变体集中 RRS 假结区。同源层证据不替代 Cas12a2 本体系验证(功能收益维持'待湿实验')。"
+}
