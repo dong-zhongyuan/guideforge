@@ -4,16 +4,16 @@
 
 | 路径 | 大小 | sha256 |
 |---|---|---|
-| `toolbox/OpenKnotAIDesignData/Data/OK7a_M2R_data.v4.5.1.csv` | 26534702 | 00d62f7d39b37e48… † |
-| `toolbox/OpenKnotAIDesignData/Data/OK7a_M2_data.v4.5.2.csv` | 30216667 | 33b353538c836ed2… † |
-| `toolbox/OpenKnotAIDesignData/Data/OpenKnotBench_data.v4.5.1.csv` | 139830358 | 22fa72df6d98f86f… † |
-| `toolbox/Struct2SeQ/Struct2SeQ.pt` | 119736901 | e30294b2bce589dd… † |
-| `toolbox/Struct2SeQ/Struct2SeQ_SHAPE.pt` | 119736901 | 63f6bfd12d4d4f7a… † |
-| `toolbox/geometric-rna-design/weights/gRNAde_drop3d@0.75_maxlen@500.h5` | 8726092 | d43454deaeec7736… † |
-| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-Deg.pt` | 45409198 | 8df072e9992cdff5… † |
-| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-Drop.pt` | 45417124 | 8e423126b5686a48… † |
-| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-SS.pt` | 45420400 | 626060952368affb… † |
-| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet.pt` | 45406126 | c2aa45c14367863ece52d528d6c353ef40b66f7cb41539c19a042e87c7d3f215 ✅ |
+| `toolbox/OpenKnotAIDesignData/Data/OK7a_M2R_data.v4.5.1.csv` | 26534702 | 00d62f7d39b37e48507ca5a949ec8358121b306b3d680b2976c4369b3038a31b… † |
+| `toolbox/OpenKnotAIDesignData/Data/OK7a_M2_data.v4.5.2.csv` | 30216667 | 33b353538c836ed28a366d3f5d5b2ddb10c378108505001ede3ba43781681a83… † |
+| `toolbox/OpenKnotAIDesignData/Data/OpenKnotBench_data.v4.5.1.csv` | 139830358 | 22fa72df6d98f86fbf37a57e679f717628a5d5db3737df3f5519901bc9777901… † |
+| `toolbox/Struct2SeQ/Struct2SeQ.pt` | 119736901 | e30294b2bce589dd6b1a5502d2c04fec96476e726f50ba6fa5807855ae791b80… † |
+| `toolbox/Struct2SeQ/Struct2SeQ_SHAPE.pt` | 119736901 | 63f6bfd12d4d4f7ac5d81a3c31c3afb9dff533dbcd404064296836951b5294ed… † |
+| `toolbox/geometric-rna-design/weights/gRNAde_drop3d@0.75_maxlen@500.h5` | 8726092 | d43454deaeec773644bfa52385b6fcc8264db256878fd9ca19ed8711ec62971c… † |
+| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-Deg.pt` | 45409198 | 8df072e9992cdff546f831095d8e518f7ba2421cbde371b0dad45a9f1476af37… † |
+| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-Drop.pt` | 45417124 | 8e423126b5686a48499d0a22d8b234e01092b757fe773ed4e6519dd8c1cf0bdb… † |
+| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet-SS.pt` | 45420400 | 626060952368affbf61b78b532d6166387094754b68bc0553da376f2d2b00d56… † |
+| `toolbox/rnet-inference/RibonanzaNet-Weights/RibonanzaNet.pt` | 45406126 | c2aa45c14367863ece52d528d6c353ef40b66f7cb41539c19a042e87c7d3f215ce52d528d6c353ef40b66f7cb41539c19a042e87c7d3f215 ✅ |
 
 ✅ = 本地原件实测: 2026-09-04 用 hashlib 对本机文件重算, 完整 64 位哈希与原截断前缀一致, 可直接用于下载后完整性校验。
 

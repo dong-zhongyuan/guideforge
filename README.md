@@ -143,7 +143,7 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 ```bash
 PY=/public/home/mengxl/dzy/envs/guideforge/bin/python   # 或你自己的 py3+viennarna 环境
 
-# 注册表契约测试 + 主管线黄金集回归(秒级)
+# 注册表契约测试 + 主管线黄金集回归(~10 秒级)
 PYTHONPATH=src $PY -m unittest discover -s tests
 
 # 最小运行(纯 ViennaRNA, CPU)

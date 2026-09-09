@@ -55,6 +55,11 @@ class TestHomologInteraction(unittest.TestCase):
         self.assertTrue(rule_pass, "数值应满足 PASS 条件")
         self.assertEqual(e1["verdict"], "PASS")
 
+    @unittest.skipIf(
+        not os.path.exists(os.path.join(ROOT, "data", "raw",
+                                        "deweirdt2020_dr_scan.json")),
+        "data/raw/ 不在 git(data/raw/ 被 .gitignore 排除, 需手动放置); "
+        "干净克隆上跳过确定性重跑, 其余 3 项契约仍全量守护")
     def test_rerun_deterministic(self):
         """--out 重跑与归档逐位一致(固定 seed, 确定性)。"""
         with tempfile.TemporaryDirectory() as td:
