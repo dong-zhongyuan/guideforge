@@ -313,6 +313,24 @@ def power_mode(n_rep=3):
            "interaction_reading": "2x4 交互 F 检验(骨架×靶)在 20pp 级交互"
                                   "效应下功效约 %s——分型信号若小于 20pp, "
                                   "本轮以'方向一致性'叙述而非显著性" % inter.get("20pp")}
+    # 配对设计扩展(2026-09-09): 同批配对变体vs WT, 批间相关 rho 削减方差
+    paired = {}
+    for rho in (0.5, 0.7):
+        sd_p = sd * (1 - rho) ** 0.5
+        tc = stats.t.ppf(1 - alpha, n_rep - 1)
+        nc = stats.nct.ppf(target_power, n_rep - 1, 0)
+        paired["rho=%.1f" % rho] = round(
+            float((tc + nc) * sd_p * (2.0 / n_rep) ** 0.5), 1)
+    out["paired_mdd_pp"] = paired
+    out["paired_reading"] = ("配对设计(变体与 WT 同批同板, 差值检验)在批间相关 "
+                             "rho=0.7 时 MDD 降至 ~%s pp——湿实验应尽量配对铺板"
+                             % paired.get("rho=0.7"))
+    # 重复测量/AUC 终点扩展: 连续汇合度时间序列(Scholz 口径)的有效样本量提升
+    out["auc_endpoint_reading"] = (
+        "若实验室做连续汇合度时间序列(Scholz 2026 同口径), 以 AUC/生长速率"
+        "常数为终点: 重复测量使有效残差约缩 sqrt(k)~sqrt(1/3) 折减(k=有效"
+        "独立时点数, 时间自相关后约 3-5), MDD 相应降至 ~15-22pp(n=3) 或 "
+        "~10-15pp(n=5)——优于单时点 t 检验, 建议优先采用")
     # 重复数扫描(决策辅助: 加重复换功效)
     rep_scan = {}
     for n in (3, 4, 5, 6, 8):

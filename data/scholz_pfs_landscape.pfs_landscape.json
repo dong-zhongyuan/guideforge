@@ -1,0 +1,84 @@
+{
+ "source": "Scholz 2026 Nature s41586-026-10466-y MOESM3 (PFS 全枚举筛选, 4^5=1024, Cas12a2 细胞内 depletion)",
+ "boundary": "GeCas12a2/单 spacer 上下文; 迁移未证, 作设计校验层非硬过滤",
+ "depletion_stats": {
+  "median": 0.878,
+  "p90_threshold": 5.733,
+  "range": [
+   0.45,
+   613.845
+  ]
+ },
+ "top10pct_base_enrichment": {
+  "pos1": {
+   "A": 0.039,
+   "C": 0.398,
+   "G": 0.34,
+   "U": 0.223
+  },
+  "pos2": {
+   "A": 0.573,
+   "C": 0.087,
+   "G": 0.165,
+   "U": 0.175
+  },
+  "pos3": {
+   "A": 0.757,
+   "C": 0.0,
+   "G": 0.175,
+   "U": 0.068
+  },
+  "pos4": {
+   "A": 0.602,
+   "C": 0.068,
+   "G": 0.175,
+   "U": 0.155
+  },
+  "pos5": {
+   "A": 0.311,
+   "C": 0.252,
+   "G": 0.175,
+   "U": 0.262
+  }
+ },
+ "empirical_motif_reading": "pos2-4 强 A 富集(0.57/0.76/0.60), pos1 C/G, pos5 混合——与 GAAAG 型 A-rich PFS 文献口径一致",
+ "panel_design_check": {
+  "TP53-R248Q": {
+   "mut_pfs": "CAGAG",
+   "mut_rank": 97,
+   "mut_depletion": 5.847553375,
+   "wt_pfs": "CGGAG",
+   "wt_rank": 267,
+   "wt_depletion": 3.159343345,
+   "discrimination_ratio": 1.85
+  },
+  "KRAS-G12C": {
+   "mut_pfs": "UGUGG",
+   "mut_rank": 861,
+   "mut_depletion": 0.636768571,
+   "wt_pfs": "GGUGG",
+   "wt_rank": 494,
+   "wt_depletion": 0.929388749,
+   "discrimination_ratio": 0.69
+  },
+  "KRAS-G12D": {
+   "mut_pfs": "AUGGC",
+   "mut_rank": 847,
+   "mut_depletion": 0.640433994,
+   "wt_pfs": "GUGGC",
+   "wt_rank": 560,
+   "wt_depletion": 0.783946884,
+   "discrimination_ratio": 0.82
+  },
+  "TP53-R273H": {
+   "mut_pfs": "CAUGU",
+   "mut_rank": 281,
+   "mut_depletion": 2.951709187,
+   "wt_pfs": "CGUGU",
+   "wt_rank": 882,
+   "wt_depletion": 0.630639176,
+   "discrimination_ratio": 4.68
+  }
+ },
+ "panel_reading": "实证鉴别裕量(mut/wt depletion 比): R273H 4.68 最强(mut 27.4%分位 vs wt 86.1%); R248Q 1.85 中等——mut 前 9.5%(强激活)但 wt 侧 CGGAG 也中等激活(26.1%分位), PFS 单独鉴别可能不足, 细胞层等位选择性主要依赖 protospacer 相同+PFS 差异的联合效应, 预注册 H1/H4 已覆盖该读数路径; KRAS-G12C/G12D 设计 PFS 排 847/861 且比值<1(≈不激活, 红旗在案, 已退出本轮湿)。景观为 GeCas12a2/单 spacer 上下文, 跨酶迁移未证(Su 体系用 8D4A 口径独立设计)"
+}

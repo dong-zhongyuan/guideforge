@@ -98,9 +98,101 @@ def scan_record(name, seq, target, pfs_rule, max_mm, pfs_tol=0):
     return sites
 
 
+def pfs_landscape_mode(out_prefix):
+    """Scholz 2026 PFS 全枚举筛选(MOESM3)的实证景观 + 设计 PFS 校验(2026-09-09)。
+
+    数据: 单 spacer x 全部 4^5=1024 种 5nt PFS 的 target/non-target depletion
+    (Cas12a2 原生, 细胞内, GeCas12a2 RNP 口径)。
+    输出: 位置碱基富集(top10% vs 全体) + 全量排序 + 四靶 panel 设计 PFS 的
+    实证分位与鉴别裕量(mut vs wt depletion 比)。
+    边界: 景观为 GeCas12a2/单一 spacer 上下文, 跨酶/跨 spacer 迁移未证;
+    用作设计校验层而非硬过滤。
+    """
+    import json as _json
+
+    import numpy as np
+    import openpyxl
+    src = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       '..', 'data', 'scholz2026_MOESM3.xlsx')
+    wb = openpyxl.load_workbook(src, read_only=True)
+    rows = list(wb[wb.sheetnames[0]].iter_rows(values_only=True))[1:]
+    data = [(str(r[2]), float(r[3])) for r in rows if r[2] and r[3] is not None]
+    if len(data) != 1024:
+        raise SystemExit('PFS 景观异常: 期望 1024 行, 实得 %d' % len(data))
+    dep = np.array([v for _, v in data])
+    top_thr = float(np.percentile(dep, 90))
+    top = [p for p, v in data if v >= top_thr]
+    logo = {}
+    for i in range(5):
+        bases = [p[i] for p in top]
+        logo['pos%d' % (i + 1)] = {b: round(bases.count(b) / len(bases), 3)
+                                   for b in 'ACGU'}
+    srt = sorted(data, key=lambda x: -x[1])
+    rank_of = {p: i + 1 for i, (p, _) in enumerate(srt)}
+    dep_of = dict(data)
+
+    # 四靶 panel 设计 PFS 的实证校验(序列取自 data/agent/*.design.json,
+    # R248Q 正典条目取 gRNA3_pick 口径)
+    panel = {}
+    agent_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             '..', 'data', 'agent')
+    mapping = {'TP53-R248Q': 'tp53_r248q.design.json',
+               'KRAS-G12C': 'kras_g12c.design.json',
+               'KRAS-G12D': 'kras_g12d.design.json',
+               'TP53-R273H': 'tp53_r273h.design.json'}
+    for tgt, fn in mapping.items():
+        d = _json.load(open(os.path.join(agent_dir, fn), encoding='utf-8'))
+        if tgt == 'TP53-R248Q':
+            best = next((x for x in d['designs']
+                         if x['spacer_dna'] == 'GTTCATGCCGCCCATGCAGGAACT'),
+                        d['designs'][0])
+        else:
+            best = d['designs'][0]
+        mut = best['pfs_mut'].replace('T', 'U')
+        wt = (best.get('pfs_wt') or '').replace('T', 'U')
+        entry = {'mut_pfs': mut, 'mut_rank': rank_of.get(mut),
+                 'mut_depletion': dep_of.get(mut)}
+        if wt and len(wt) == 5 and wt in rank_of:
+            entry.update({'wt_pfs': wt, 'wt_rank': rank_of[wt],
+                          'wt_depletion': dep_of[wt],
+                          'discrimination_ratio': round(
+                              dep_of[mut] / max(dep_of[wt], 1e-9), 2)})
+        panel[tgt] = entry
+        print('[%s] mut %s rank %s dep %s | wt %s rank %s dep %s | 比值 %s'
+              % (tgt, mut, entry.get('mut_rank'), entry.get('mut_depletion'),
+                 wt or '-', entry.get('wt_rank', '-'),
+                 entry.get('wt_depletion', '-'),
+                 entry.get('discrimination_ratio', '-')))
+    payload = {
+        'source': 'Scholz 2026 Nature s41586-026-10466-y MOESM3 '
+                  '(PFS 全枚举筛选, 4^5=1024, Cas12a2 细胞内 depletion)',
+        'boundary': 'GeCas12a2/单 spacer 上下文; 迁移未证, 作设计校验层非硬过滤',
+        'depletion_stats': {'median': round(float(np.median(dep)), 3),
+                            'p90_threshold': round(top_thr, 3),
+                            'range': [round(float(dep.min()), 3),
+                                      round(float(dep.max()), 3)]},
+        'top10pct_base_enrichment': logo,
+        'empirical_motif_reading': 'pos2-4 强 A 富集(0.57/0.76/0.60), '
+                                   'pos1 C/G, pos5 混合——与 GAAAG 型 A-rich '
+                                   'PFS 文献口径一致',
+        'panel_design_check': panel,
+        'panel_reading': '实证鉴别裕量(mut/wt depletion 比): R273H 4.68 最强'
+                         '(mut 27.4%分位 vs wt 86.1%); R248Q 1.85 中等——mut 前 '
+                         '9.5%(强激活)但 wt 侧 CGGAG 也中等激活(26.1%分位), '
+                         'PFS 单独鉴别可能不足, 细胞层等位选择性主要依赖 protospacer '
+                         '相同+PFS 差异的联合效应, 预注册 H1/H4 已覆盖该读数路径; '
+                         'KRAS-G12C/G12D 设计 PFS 排 847/861 且比值<1(≈不激活, '
+                         '红旗在案, 已退出本轮湿)。景观为 GeCas12a2/单 spacer 上下文, '
+                         '跨酶迁移未证(Su 体系用 8D4A 口径独立设计)'}
+    dst = out_prefix + '.pfs_landscape.json'
+    _json.dump(payload, open(dst, 'w', encoding='utf-8'),
+               ensure_ascii=False, indent=1)
+    print('PFS 实证景观 -> %s' % dst)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument('--spacer', required=True, help='固定 spacer(17-25nt ACGT/U)')
+    ap.add_argument('--spacer', default=None, help='固定 spacer(17-25nt ACGT/U)')
     ap.add_argument('--fasta', default=None, help='转录本 FASTA(可多条)')
     ap.add_argument('--gene', default=None, help='基因名(经 NCBI 拉 mRNA, 与 --fasta 二选一)')
     ap.add_argument('--effector', default='cas12a2',
@@ -110,9 +202,17 @@ def main():
     ap.add_argument('--pfs-tol', type=int, default=None,
                     help='PFS 容忍错配数(默认取注册表 pfs.tolerant_mismatches)')
     ap.add_argument('--max-mismatch', type=int, default=4)
+    ap.add_argument('--pfs-landscape', action='store_true',
+                    help='Scholz 2026 PFS 全枚举实证景观 + 四靶设计 PFS 校验')
     ap.add_argument('--out', default='crrna_specificity', help='输出前缀')
     args = ap.parse_args()
 
+    if args.pfs_landscape:
+        pfs_landscape_mode(args.out)
+        return
+
+    if not args.spacer:
+        ap.error('需要 --spacer 或 --pfs-landscape')
     spacer = normalize(args.spacer)
     if not 17 <= len(spacer) <= 25 or set(spacer) - set('ACGT'):
         ap.error('--spacer 必须为 17-25nt ACGT/U')
