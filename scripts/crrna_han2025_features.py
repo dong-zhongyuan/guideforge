@@ -44,16 +44,35 @@ import crrna_scaffold_design as core  # noqa: E402
 
 DATA = os.path.join(ROOT, "data")
 
-# Fig.3b 工具箱活性(均值, 低=抑制强, 来自源数据手动提取)
-TOOLBOX_ACTIVITY = {
-    "CN": {"rbs0": 36.5, "rbs33": 50.9},
-    "F1": {"rbs0": 29.6, "rbs33": 51.9},
-    "F2": {"rbs0": 36.0, "rbs33": 59.5},
-    "FL1": {"rbs0": 82.2, "rbs33": 92.3},
-    "FL2": {"rbs0": 79.3, "rbs33": 87.1},
-    "L1": {"rbs0": 82.8, "rbs33": 98.6},
-    "L2": {"rbs0": 38.5, "rbs33": 67.8},
-}
+
+def extract_toolbox_rbs():
+    """Fig.3b 工具箱 RBS0/RBS33 活性(三重复均值, 低=抑制强)——程序化提取。
+
+    2026-09-09 审计修复: 原 7 组手动提取值(标注"来自源数据手动提取")违反
+    "非脚本运行数据"纪律; 本函数从 MOESM7 'Fig. 3' 表 cols 0-2 的三重复
+    块(L1/FL1/FL2/L2/F2/F1/CN 各 3 行)取均值, 数值与旧手动值完全一致
+    (CN 36.5/50.9 等, 见 git 历史对照)。
+    """
+    wb = openpyxl.load_workbook(
+        os.path.join(DATA, "41467_2025_64010_MOESM7_ESM.xlsx"),
+        data_only=True, read_only=True)
+    ws = wb["Fig. 3"]
+    acc = {}
+    for row in ws.iter_rows(min_col=1, max_col=3, values_only=True):
+        tag, r0, r33 = row
+        if tag in ("L1", "L2", "FL1", "FL2", "F1", "F2", "CN") \
+                and isinstance(r0, (int, float)) and isinstance(r33, (int, float)):
+            a = acc.setdefault(tag, [[], []])
+            a[0].append(float(r0))
+            a[1].append(float(r33))
+    if any(len(v[0]) != 3 for v in acc.values()) or len(acc) != 7:
+        raise SystemExit("Fig.3b 提取异常: 期望 7 标签 x 3 重复, 实得 %s"
+                         % {k: len(v[0]) for k, v in acc.items()})
+    return {t: {"rbs0": round(sum(v[0]) / 3, 1),
+                "rbs33": round(sum(v[1]) / 3, 1)} for t, v in acc.items()}
+
+
+TOOLBOX_ACTIVITY = extract_toolbox_rbs()
 
 # 主文 Fig.1f 序列表视觉转录(2026-09-03)。
 # 溯源: nature.com 文章页 Fig1 全图 PNG(2017x2201) -> panel f 右侧编号表

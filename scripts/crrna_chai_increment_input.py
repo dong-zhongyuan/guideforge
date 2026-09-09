@@ -29,23 +29,41 @@ OUT = os.path.join(DATA, "chai_increment_inputs")
 
 COMP = str.maketrans("ACGTU", "TGCAA")
 
-TARGETS = {  # 靶标 -> (突变转录本 fasta, spacer DNA)
-    "TP53_R248Q": ("tp53_r248q_mrna_NM000546.fa", "GTTCATGCCGCCCATGCAGGAACT"),
-    "KRAS_G12D": ("agent/kras_g12d.fa", "CAGCTCCAACTACCACAAGTTTAT"),
-    "TP53_R273H": ("agent/tp53_r273h.fa", "CACCTCAAAGCTGTTCCGTCCCAG"),
-    "APC_Q1328x": ("agent/apc_q1328x.fa", "TGACACTGCTGGAACTTCGCTCAC"),
+TARGET_FASTA = {  # 靶标 -> 突变转录本 fasta(文件位置为配置, 序列不经手抄)
+    "TP53_R248Q": "tp53_r248q_mrna_NM000546.fa",
+    "KRAS_G12D": "agent/kras_g12d.fa",
+    "TP53_R273H": "agent/tp53_r273h.fa",
+    "APC_Q1328x": "agent/apc_q1328x.fa",
 }
 
-SCAFFOLDS = {  # 8 员族 DR (DNA)
-    "WT": "AATTTCTACTGTTGTAGAT",
-    "A8C_U15G": "AATTTCTCCTGTTGGAGAT",
-    "A1G_U3A_A8G_U15C": "GAATTCTGCTGTTGCAGAT",
-    "A1C": "CATTTCTACTGTTGTAGAT",
-    "A1U": "TATTTCTACTGTTGTAGAT",
-    "U5G_A18C": "AATTGCTACTGTTGTAGCT",
-    "A1U_A2C": "TCTTTCTACTGTTGTAGAT",
-    "B_break_compensate": "AATTTCTACAGGTGTAGAG",
-}
+
+def _nrm(s):
+    return s.replace("+", "").replace("-", "_").replace("_", "")
+
+
+def load_targets_scaffolds():
+    """2026-09-09 审计修复: spacer 与 DR 一律从 data/ivt_round1_order_sheet.csv
+    加载(单一事实源), 替换原硬编码字典。键保持本脚本的下划线历史形式
+    (manifest/合并器依赖), 经 _nrm 归一化匹配。"""
+    import csv
+    targets, scaffolds = {}, {}
+    with open(os.path.join(DATA, "ivt_round1_order_sheet.csv"), newline="",
+              encoding="utf-8-sig") as f:
+        for r in csv.DictReader(f):
+            tgt_u = r["target"].replace("-", "_")
+            scaf_u = r["scaffold_desc"].replace("+", "_").replace("-", "_")
+            scaffolds.setdefault(scaf_u, r["sequence_5to3_RNA"]
+                                 .replace("U", "T")[:19])
+            if tgt_u in TARGET_FASTA:
+                targets.setdefault(
+                    tgt_u, (TARGET_FASTA[tgt_u], r["spacer_dna_ref"].strip()))
+    if len(scaffolds) != 8 or len(targets) != 4:
+        raise SystemExit("订单表加载异常: 骨架 %d(应 8) 靶标 %d(应 4)"
+                         % (len(scaffolds), len(targets)))
+    return targets, scaffolds
+
+
+TARGETS, SCAFFOLDS = load_targets_scaffolds()
 
 
 def to_rna(s):
