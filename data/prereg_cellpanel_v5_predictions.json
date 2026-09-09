@@ -1,0 +1,234 @@
+{
+ "sealed": "2026-09-09, 先于任何 v5 panel 实验结果",
+ "panel": "2 靶 x (WT+3 变体) = 8 条(wetlab_panel_cell8_*)",
+ "hypotheses": {
+  "H1_非劣性": "A1C 与 A1U+A2C 的杀伤不劣于 WT(界面中性+同源顶档;预期 |Δkill| < MDD)",
+  "H2_茎稳定化机制": "A8C+U15G 若茎稳定化转化为杀伤增强, Δkill(=WT存活-变体存活)>0; 若蛋白界面主导, Δ≈0 或为负",
+  "H3_等位一致性": "两靶上 4 构象排序方向一致(基因层同集假设); 不一致 = 等位水平分型信号(探索性, 不设显著性口径)",
+  "H4_虚拟细胞校验": "HCT116/R248Q 与 SW480/R273H 实测存活落点 vs Scholz 标定预测(HCT116 70.4%/SW480 45.0%, EC50 CI 场景带 + 20pp RNP→质粒移植边界)"
+ },
+ "decision_rules": {
+  "显著性": "靶内成对单侧 t(α=0.05), 重复数按实际; 差异 <MDD 一律方向性叙述不下显著性结论",
+  "MDD_pp": 37.6,
+  "rep_scan": {
+   "n=3": 37.6,
+   "n=4": 30.2,
+   "n=5": 26.1,
+   "n=6": 23.3,
+   "n=8": 19.7
+  },
+  "变体判优": "Δkill ≥ MDD 且两靶同向",
+  "等位选择性": "SI=突变株杀伤/WT株对照杀伤, 变体 SI ≥ WT 的 SI 判非劣",
+  "分析命令": "crrna_ivt_template.py --anova <结果CSV>(2x4 交互) 与 --twin-check <结果CSV> --cell-csv <SI表>(虚拟细胞校验); crrna_bayesopt.py --ingest-cell <结果CSV>(回流)"
+ },
+ "entries": [
+  {
+   "target": "TP53-R248Q",
+   "cell_line": "HCT116(内源 R248Q 杂合)",
+   "scaffold": "WT",
+   "predictions": {
+    "chai_iptm": 0.8912,
+    "chai_prot_crRNA": 0.5076,
+    "interface_delta_vs_wt": null,
+    "selector_fig1g_pred": 0.6094,
+    "homolog_trans_end": 39.248,
+    "tolerance_neighborhood": 0.385,
+    "virtual_cell_survival_mid_pct": 70.4,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R248Q",
+   "cell_line": "HCT116(内源 R248Q 杂合)",
+   "scaffold": "A1C",
+   "predictions": {
+    "chai_iptm": 0.8824,
+    "chai_prot_crRNA": 0.5076,
+    "interface_delta_vs_wt": 0.0,
+    "selector_fig1g_pred": 0.6094,
+    "homolog_trans_end": 39.248,
+    "tolerance_neighborhood": 0.385,
+    "virtual_cell_survival_mid_pct": 70.4,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R248Q",
+   "cell_line": "HCT116(内源 R248Q 杂合)",
+   "scaffold": "A1U+A2C",
+   "predictions": {
+    "chai_iptm": 0.8472,
+    "chai_prot_crRNA": 0.4744,
+    "interface_delta_vs_wt": -0.0332,
+    "selector_fig1g_pred": 0.6094,
+    "homolog_trans_end": 39.248,
+    "tolerance_neighborhood": 0.385,
+    "virtual_cell_survival_mid_pct": 70.4,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R248Q",
+   "cell_line": "HCT116(内源 R248Q 杂合)",
+   "scaffold": "A8C+U15G",
+   "predictions": {
+    "chai_iptm": 0.866,
+    "chai_prot_crRNA": 0.4888,
+    "interface_delta_vs_wt": -0.0188,
+    "selector_fig1g_pred": 0.6301,
+    "homolog_trans_end": 7.65,
+    "tolerance_neighborhood": 0.037,
+    "virtual_cell_survival_mid_pct": 70.4,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R273H",
+   "cell_line": "SW480(内源 R273H)",
+   "scaffold": "WT",
+   "predictions": {
+    "chai_iptm": 0.8802,
+    "chai_prot_crRNA": 0.4966,
+    "interface_delta_vs_wt": null,
+    "selector_fig1g_pred": 0.6094,
+    "homolog_trans_end": 39.248,
+    "tolerance_neighborhood": 0.385,
+    "virtual_cell_survival_mid_pct": 45.0,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R273H",
+   "cell_line": "SW480(内源 R273H)",
+   "scaffold": "A1C",
+   "predictions": {
+    "chai_iptm": 0.8686,
+    "chai_prot_crRNA": 0.4918,
+    "interface_delta_vs_wt": -0.0048,
+    "selector_fig1g_pred": 0.6094,
+    "homolog_trans_end": 39.248,
+    "tolerance_neighborhood": 0.385,
+    "virtual_cell_survival_mid_pct": 45.0,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R273H",
+   "cell_line": "SW480(内源 R273H)",
+   "scaffold": "A1U+A2C",
+   "predictions": {
+    "chai_iptm": 0.8262,
+    "chai_prot_crRNA": 0.4648,
+    "interface_delta_vs_wt": -0.0318,
+    "selector_fig1g_pred": 0.6094,
+    "homolog_trans_end": 39.248,
+    "tolerance_neighborhood": 0.385,
+    "virtual_cell_survival_mid_pct": 45.0,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  },
+  {
+   "target": "TP53-R273H",
+   "cell_line": "SW480(内源 R273H)",
+   "scaffold": "A8C+U15G",
+   "predictions": {
+    "chai_iptm": 0.859,
+    "chai_prot_crRNA": 0.4902,
+    "interface_delta_vs_wt": -0.0064,
+    "selector_fig1g_pred": 0.6301,
+    "homolog_trans_end": 7.65,
+    "tolerance_neighborhood": 0.037,
+    "virtual_cell_survival_mid_pct": 45.0,
+    "note": "虚拟细胞存活为靶基因x细胞系级预测(模型无骨架项), 骨架级差异由界面/选型器/trans 三列承载"
+   },
+   "preregistered_order_hypothesis": {
+    "kill_tier_1": [
+     "WT",
+     "A1C",
+     "A1U+A2C"
+    ],
+    "kill_tier_2": [
+     "A8C+U15G"
+    ],
+    "reading": "同源证据预测 WT/A1C/A1U+A2C 杀伤同档(trans 顶档+选型器顶档+界面中性), A8C+U15G 预测<=WT 档(trans 弱+界面轻降); 档内排序不做预测"
+   }
+  }
+ ]
+}

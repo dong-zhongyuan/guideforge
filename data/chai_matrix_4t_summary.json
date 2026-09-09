@@ -27,19 +27,19 @@
   "prot-crRNA 链对的 per-model sd 存盘"
  ],
  "wt_reference": {
-  "KRAS_G12C": 0.4858,
-  "KRAS_G12D": 0.4918,
-  "TP53_R248Q": 0.5076,
-  "TP53_R273H": 0.4966
+  "KRAS-G12C": 0.4858,
+  "KRAS-G12D": 0.4918,
+  "TP53-R248Q": 0.5076,
+  "TP53-R273H": 0.4966
  },
  "scaffold_deltas": [
   {
    "scaffold": "A1C",
    "delta_vs_wt": {
-    "KRAS_G12C": 0.0026,
-    "KRAS_G12D": -0.0092,
-    "TP53_R248Q": 0.0,
-    "TP53_R273H": -0.0048
+    "KRAS-G12C": 0.0026,
+    "KRAS-G12D": -0.0092,
+    "TP53-R248Q": 0.0,
+    "TP53-R273H": -0.0048
    },
    "cross_target_spread": 0.0118,
    "iptm_sd_max": 0.002,
@@ -49,12 +49,12 @@
    ]
   },
   {
-   "scaffold": "A1GU3AA8GU15C",
+   "scaffold": "A1G+U3A+A8G+U15C",
    "delta_vs_wt": {
-    "KRAS_G12C": -0.0412,
-    "KRAS_G12D": -0.0846,
-    "TP53_R248Q": -0.0452,
-    "TP53_R273H": -0.074
+    "KRAS-G12C": -0.0412,
+    "KRAS-G12D": -0.0846,
+    "TP53-R248Q": -0.0452,
+    "TP53-R273H": -0.074
    },
    "cross_target_spread": 0.0434,
    "iptm_sd_max": 0.0348,
@@ -63,10 +63,10 @@
   {
    "scaffold": "A1U",
    "delta_vs_wt": {
-    "KRAS_G12C": 0.0018,
-    "KRAS_G12D": -0.008,
-    "TP53_R248Q": 0.0054,
-    "TP53_R273H": -0.0016
+    "KRAS-G12C": 0.0018,
+    "KRAS-G12D": -0.008,
+    "TP53-R248Q": 0.0054,
+    "TP53-R273H": -0.0016
    },
    "cross_target_spread": 0.0134,
    "iptm_sd_max": 0.0015,
@@ -75,24 +75,24 @@
    ]
   },
   {
-   "scaffold": "A1UA2C",
+   "scaffold": "A1U+A2C",
    "delta_vs_wt": {
-    "KRAS_G12C": -0.0158,
-    "KRAS_G12D": -0.074,
-    "TP53_R248Q": -0.0332,
-    "TP53_R273H": -0.0318
+    "KRAS-G12C": -0.0158,
+    "KRAS-G12D": -0.074,
+    "TP53-R248Q": -0.0332,
+    "TP53-R273H": -0.0318
    },
    "cross_target_spread": 0.0582,
    "iptm_sd_max": 0.0054,
    "null_within_2sd": []
   },
   {
-   "scaffold": "A8CU15G",
+   "scaffold": "A8C+U15G",
    "delta_vs_wt": {
-    "KRAS_G12C": -0.0026,
-    "KRAS_G12D": -0.015,
-    "TP53_R248Q": -0.0188,
-    "TP53_R273H": -0.0064
+    "KRAS-G12C": -0.0026,
+    "KRAS-G12D": -0.015,
+    "TP53-R248Q": -0.0188,
+    "TP53-R273H": -0.0064
    },
    "cross_target_spread": 0.0162,
    "iptm_sd_max": 0.0017,
@@ -101,22 +101,22 @@
   {
    "scaffold": "B_break_compensate",
    "delta_vs_wt": {
-    "KRAS_G12C": -0.34,
-    "KRAS_G12D": -0.3766,
-    "TP53_R248Q": -0.2924,
-    "TP53_R273H": -0.4212
+    "KRAS-G12C": -0.34,
+    "KRAS-G12D": -0.3766,
+    "TP53-R248Q": -0.2924,
+    "TP53-R273H": -0.4212
    },
    "cross_target_spread": 0.1288,
    "iptm_sd_max": 0.0795,
    "null_within_2sd": []
   },
   {
-   "scaffold": "U5GA18C",
+   "scaffold": "U5G+A18C",
    "delta_vs_wt": {
-    "KRAS_G12C": -0.3252,
-    "KRAS_G12D": -0.2788,
-    "TP53_R248Q": -0.0948,
-    "TP53_R273H": -0.1184
+    "KRAS-G12C": -0.3252,
+    "KRAS-G12D": -0.2788,
+    "TP53-R248Q": -0.0948,
+    "TP53-R273H": -0.1184
    },
    "cross_target_spread": 0.2304,
    "iptm_sd_max": 0.0663,

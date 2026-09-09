@@ -4,7 +4,7 @@
  "design": "4靶 x 8骨架(含WT与B_break_compensate); 靶RNA=protospacer窗口24nt+PFS 5nt(8D4A同构)",
  "rows": [
   {
-   "target": "KRAS_G12C",
+   "target": "KRAS-G12C",
    "scaffold": "A1C",
    "n_models": 5,
    "iptm_mean": 0.8818,
@@ -14,8 +14,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
-   "scaffold": "A1GU3AA8GU15C",
+   "target": "KRAS-G12C",
+   "scaffold": "A1G+U3A+A8G+U15C",
    "n_models": 5,
    "iptm_mean": 0.821,
    "iptm_sd": 0.0015,
@@ -24,7 +24,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
+   "target": "KRAS-G12C",
    "scaffold": "A1U",
    "n_models": 5,
    "iptm_mean": 0.8842,
@@ -34,8 +34,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
-   "scaffold": "A1UA2C",
+   "target": "KRAS-G12C",
+   "scaffold": "A1U+A2C",
    "n_models": 5,
    "iptm_mean": 0.8462,
    "iptm_sd": 0.0013,
@@ -44,8 +44,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
-   "scaffold": "A8CU15G",
+   "target": "KRAS-G12C",
+   "scaffold": "A8C+U15G",
    "n_models": 5,
    "iptm_mean": 0.852,
    "iptm_sd": 0.0011,
@@ -54,7 +54,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
+   "target": "KRAS-G12C",
    "scaffold": "B_break_compensate",
    "n_models": 5,
    "iptm_mean": 0.4528,
@@ -64,8 +64,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
-   "scaffold": "U5GA18C",
+   "target": "KRAS-G12C",
+   "scaffold": "U5G+A18C",
    "n_models": 5,
    "iptm_mean": 0.4796,
    "iptm_sd": 0.0663,
@@ -74,7 +74,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12C",
+   "target": "KRAS-G12C",
    "scaffold": "WT",
    "n_models": 5,
    "iptm_mean": 0.8904,
@@ -84,7 +84,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
+   "target": "KRAS-G12D",
    "scaffold": "A1C",
    "n_models": 5,
    "iptm_mean": 0.8664,
@@ -94,8 +94,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
-   "scaffold": "A1GU3AA8GU15C",
+   "target": "KRAS-G12D",
+   "scaffold": "A1G+U3A+A8G+U15C",
    "n_models": 5,
    "iptm_mean": 0.7588,
    "iptm_sd": 0.007,
@@ -104,7 +104,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
+   "target": "KRAS-G12D",
    "scaffold": "A1U",
    "n_models": 5,
    "iptm_mean": 0.8704,
@@ -114,8 +114,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
-   "scaffold": "A1UA2C",
+   "target": "KRAS-G12D",
+   "scaffold": "A1U+A2C",
    "n_models": 5,
    "iptm_mean": 0.7814,
    "iptm_sd": 0.0054,
@@ -124,8 +124,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
-   "scaffold": "A8CU15G",
+   "target": "KRAS-G12D",
+   "scaffold": "A8C+U15G",
    "n_models": 5,
    "iptm_mean": 0.8402,
    "iptm_sd": 0.0017,
@@ -134,7 +134,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
+   "target": "KRAS-G12D",
    "scaffold": "B_break_compensate",
    "n_models": 5,
    "iptm_mean": 0.4202,
@@ -144,8 +144,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
-   "scaffold": "U5GA18C",
+   "target": "KRAS-G12D",
+   "scaffold": "U5G+A18C",
    "n_models": 5,
    "iptm_mean": 0.5336,
    "iptm_sd": 0.0374,
@@ -154,7 +154,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "KRAS_G12D",
+   "target": "KRAS-G12D",
    "scaffold": "WT",
    "n_models": 5,
    "iptm_mean": 0.8824,
@@ -164,7 +164,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
+   "target": "TP53-R248Q",
    "scaffold": "A1C",
    "n_models": 5,
    "iptm_mean": 0.8824,
@@ -174,8 +174,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
-   "scaffold": "A1GU3AA8GU15C",
+   "target": "TP53-R248Q",
+   "scaffold": "A1G+U3A+A8G+U15C",
    "n_models": 5,
    "iptm_mean": 0.8346,
    "iptm_sd": 0.001,
@@ -184,7 +184,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
+   "target": "TP53-R248Q",
    "scaffold": "A1U",
    "n_models": 5,
    "iptm_mean": 0.8896,
@@ -194,8 +194,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
-   "scaffold": "A1UA2C",
+   "target": "TP53-R248Q",
+   "scaffold": "A1U+A2C",
    "n_models": 5,
    "iptm_mean": 0.8472,
    "iptm_sd": 0.002,
@@ -204,8 +204,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
-   "scaffold": "A8CU15G",
+   "target": "TP53-R248Q",
+   "scaffold": "A8C+U15G",
    "n_models": 5,
    "iptm_mean": 0.866,
    "iptm_sd": 0.0015,
@@ -214,7 +214,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
+   "target": "TP53-R248Q",
    "scaffold": "B_break_compensate",
    "n_models": 5,
    "iptm_mean": 0.6134,
@@ -224,8 +224,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
-   "scaffold": "U5GA18C",
+   "target": "TP53-R248Q",
+   "scaffold": "U5G+A18C",
    "n_models": 5,
    "iptm_mean": 0.7974,
    "iptm_sd": 0.0062,
@@ -234,7 +234,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R248Q",
+   "target": "TP53-R248Q",
    "scaffold": "WT",
    "n_models": 5,
    "iptm_mean": 0.8912,
@@ -244,7 +244,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
+   "target": "TP53-R273H",
    "scaffold": "A1C",
    "n_models": 5,
    "iptm_mean": 0.8686,
@@ -254,8 +254,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
-   "scaffold": "A1GU3AA8GU15C",
+   "target": "TP53-R273H",
+   "scaffold": "A1G+U3A+A8G+U15C",
    "n_models": 5,
    "iptm_mean": 0.7868,
    "iptm_sd": 0.0348,
@@ -264,7 +264,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
+   "target": "TP53-R273H",
    "scaffold": "A1U",
    "n_models": 5,
    "iptm_mean": 0.8732,
@@ -274,8 +274,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
-   "scaffold": "A1UA2C",
+   "target": "TP53-R273H",
+   "scaffold": "A1U+A2C",
    "n_models": 5,
    "iptm_mean": 0.8262,
    "iptm_sd": 0.001,
@@ -284,8 +284,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
-   "scaffold": "A8CU15G",
+   "target": "TP53-R273H",
+   "scaffold": "A8C+U15G",
    "n_models": 5,
    "iptm_mean": 0.859,
    "iptm_sd": 0.0011,
@@ -294,7 +294,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
+   "target": "TP53-R273H",
    "scaffold": "B_break_compensate",
    "n_models": 5,
    "iptm_mean": 0.361,
@@ -304,8 +304,8 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
-   "scaffold": "U5GA18C",
+   "target": "TP53-R273H",
+   "scaffold": "U5G+A18C",
    "n_models": 5,
    "iptm_mean": 0.7048,
    "iptm_sd": 0.0056,
@@ -314,7 +314,7 @@
    "clash_frac": 0.0
   },
   {
-   "target": "TP53_R273H",
+   "target": "TP53-R273H",
    "scaffold": "WT",
    "n_models": 5,
    "iptm_mean": 0.8802,

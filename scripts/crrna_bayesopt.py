@@ -101,10 +101,85 @@ def prior_han_mode(batch):
     print("输出 -> data/bayesopt_proposals_priorhan.json")
 
 
+def ingest_cell_mode(path, batch):
+    """细胞终点回流模式(2026-09-09: 湿实验只做细胞实验的配套回流通道)。
+
+    输入 CSV 列: target,scaffold_desc,survival_1..3(存活率%或 SI, 三重复;
+    亦可单列 survival_mean)。观测 y = 逐靶 z(-survival)(杀伤越强越大),
+    与同源先验同特征空间(FEATS), GP 重拟合并按 EI 提下一批。
+    边界: 观测数最多 2靶x3变体=6(变体; WT 只作靶内基线不作观测)。
+    """
+    import crrna_train_selector as sel
+    lib = load_library()
+    by_desc = {r["desc"]: r for r in lib}
+    rows = list(csv.DictReader(open(path, newline="", encoding="utf-8")))
+    obs = []
+    wt_base = {}
+    for r in rows:
+        reps = [float(r[k]) for k in ("survival_1", "survival_2", "survival_3")
+                if r.get(k) not in (None, "")]
+        if not reps and r.get("survival_mean"):
+            reps = [float(r["survival_mean"])]
+        if not reps:
+            continue
+        mean = sum(reps) / len(reps)
+        if r["scaffold_desc"] == "WT":
+            wt_base[r["target"]] = mean
+        else:
+            obs.append({"target": r["target"], "desc": r["scaffold_desc"],
+                        "survival": mean})
+    # 靶内相对 WT 的杀伤差(去靶间基线), 再逐靶 z
+    for o in obs:
+        base = wt_base.get(o["target"])
+        o["delta_kill"] = (base - o["survival"]) if base is not None else -o["survival"]
+    X, y, meta = [], [], []
+    for tgt in sorted({o["target"] for o in obs}):
+        sub = [o for o in obs if o["target"] == tgt]
+        ys = np.array([o["delta_kill"] for o in sub])
+        z = (ys - ys.mean()) / max(ys.std(ddof=0), 1e-9)
+        for o, zi in zip(sub, z):
+            row = by_desc.get(o["desc"])
+            if row is None:
+                print("  跳过(库中无特征): %s" % o["desc"])
+                continue
+            X.append([float(row[k]) for k in FEATS])
+            y.append(float(zi))
+            meta.append({"target": tgt, "desc": o["desc"],
+                         "delta_kill_pp": round(o["delta_kill"], 2)})
+    if len(y) < 3:
+        raise SystemExit("有效观测 %d < 3, 不足以拟合 GP(每靶至少 2 变体+WT)" % len(y))
+    gp = fit_gp(np.array(X), np.array(y))
+    ei = expected_improvement(gp, X_of(lib))
+    order = np.argsort(-ei)
+    seen, prop = set(), []
+    for i in order:
+        d = lib[i]["desc"]
+        if d in seen or d in {m["desc"] for m in meta}:
+            continue
+        seen.add(d)
+        prop.append({"desc": d, "ei": round(float(ei[i]), 4),
+                     **{k: lib[i][k] for k in FEATS}})
+        if len(prop) >= batch:
+            break
+    print("[细胞终点回流(n=%d 观测: %s)] 提案 %d 条:" % (
+        len(y), meta, len(prop)))
+    for p in prop:
+        print("  %-18s EI=%.4f" % (p["desc"], p["ei"]))
+    json.dump({"mode": "细胞终点回流(自有数据; y=靶内 z(delta_kill), 特征空间与库一致)",
+               "observations": meta, "proposals": prop,
+               "n_library": len(lib), "features": FEATS},
+              open(os.path.join(DATA, "bayesopt_proposals_cell.json"), "w",
+                   encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("输出 -> data/bayesopt_proposals_cell.json")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--cold-start", action="store_true")
     ap.add_argument("--ingest", default=None, help="IVT 矩阵 CSV(desc,Vmax,EC50)")
+    ap.add_argument("--ingest-cell", default=None,
+                    help="细胞终点 CSV(target,scaffold_desc,survival_1..3[或"
+                         "survival_mean]; WT 行作靶内基线)")
     ap.add_argument("--prior-han", action="store_true",
                     help="同源先验: Han 2025 工具箱 7 条作 GP 观测"
                          "(LbCas12a CRISPRi 抑制终点, 非 Cas12a2 杀伤)")
@@ -113,6 +188,9 @@ def main():
 
     if args.prior_han:
         prior_han_mode(args.batch)
+        return
+    if args.ingest_cell:
+        ingest_cell_mode(args.ingest_cell, args.batch)
         return
 
     lib = load_library()

@@ -271,6 +271,69 @@ def twin_check(path, cell_csv=None):
               "--cell-csv 出 Spearman/RMSE)")
 
 
+def power_mode(n_rep=3):
+    """细胞 panel v5(2 靶 × 4 骨架 × n 重复)统计功效预分析(2026-09-09)。
+
+    效应量假设(文献锚定):
+      - 变体间存活差的可分辨量级取自 Scholz 2026 标定曲线在 panel 预测区
+        (存活 45-85%)的构间距(~10-30 个百分点);
+      - 残差 SD 取 Scholz 15 点拟合残差的细胞系间离散(~15 个百分点, 保守)。
+    输出: 成对 t 检验(单侧, 靶内变体 vs WT 与 变体 vs 变体)的最小可检出差
+    (MDD), 与 2×4 交互 F 检验在代表效应量下的功效近似。
+    """
+    from scipy import stats
+
+    sd = 15.0          # 残差 SD(pp, Scholz 残差离散的保守取值)
+    alpha = 0.05       # 单侧
+    target_power = 0.8
+    # 成对 t: n=n_rep vs n_rep, 单侧
+    df = 2 * n_rep - 2
+    t_crit = stats.t.ppf(1 - alpha, df)
+    ncp80 = stats.nct.ppf(target_power, df, 0)  # 非中心 t 的 ncp 近似
+    mdd = (t_crit + ncp80) * sd * (2.0 / n_rep) ** 0.5
+    # 交互 F 检验近似: 骨架主效应/交互用部分 eta^2 -> 功效曲线
+    inter = {}
+    for eff_pp in (10, 15, 20, 30):
+        d = eff_pp / sd
+        # 2x4 交互 df1=3, df2=2*4*(n-1)=16(n=3); lambda ~ N*sum(effect^2)/sd^2
+        lam = 2 * 4 * n_rep * (eff_pp ** 2) / (sd ** 2) * (3 / 4) / 4
+        pw = 1 - stats.ncf.cdf(stats.f.ppf(1 - alpha, 3, 2 * 4 * (n_rep - 1)),
+                               3, 2 * 4 * (n_rep - 1), lam)
+        inter["%dpp" % eff_pp] = round(float(pw), 3)
+    out = {"design": "2靶 x 4骨架(含WT) x %d 重复" % n_rep,
+           "assumptions": {
+               "residual_sd_pp": sd,
+               "basis": "Scholz 2026 标定曲线残差离散(细胞系间); 效应量取"
+                        "panel 预测区(存活45-85%)的构间距",
+               "alpha": "0.05 单侧(变体应优于/异于 WT 为定向假设)"},
+           "pairwise_mdd_pp": round(float(mdd), 1),
+           "pairwise_reading": "靶内两构象(各%d重复)存活差 >= %.0f pp 才有 "
+                               "80%% 单侧功效; 小于此差异的排序结论只作探索性" % (n_rep, mdd),
+           "interaction_power": inter,
+           "interaction_reading": "2x4 交互 F 检验(骨架×靶)在 20pp 级交互"
+                                  "效应下功效约 %s——分型信号若小于 20pp, "
+                                  "本轮以'方向一致性'叙述而非显著性" % inter.get("20pp")}
+    # 重复数扫描(决策辅助: 加重复换功效)
+    rep_scan = {}
+    for n in (3, 4, 5, 6, 8):
+        dfn = 2 * n - 2
+        tc = stats.t.ppf(1 - alpha, dfn)
+        nc = stats.nct.ppf(target_power, dfn, 0)
+        rep_scan["n=%d" % n] = round(float((tc + nc) * sd * (2.0 / n) ** 0.5), 1)
+    out["rep_scan_mdd_pp"] = rep_scan
+    out["rep_scan_reading"] = ("预测构象差量级 10-30pp; 若要按 20pp 差异下"
+                               "显著性结论需 %s" % [k for k, v in rep_scan.items()
+                                                 if v <= 20][:1] or "n>=8")
+    p = os.path.join(DATA, "power_analysis_cellpanel.json")
+    json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("功效预分析 -> %s" % p)
+    print("  成对 MDD(80%%功效, n=%d vs %d): %.1f pp" % (n_rep, n_rep, mdd))
+    print("  交互 F 功效(10/15/20/30pp): %s" % inter)
+    print("  重复数扫描 MDD: %s" % rep_scan)
+    print("  结论: >=MDD 的骨架差异可下显著性结论; 更小差异按方向性/一致性叙述"
+          "; 预测差 10-30pp 需按扫描表考虑加重复")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", default=None, help="已填 CSV 路径")
@@ -281,6 +344,10 @@ def main():
                     help="已填 CSV -> 数字孪生预测(+可选 --cell-csi 对比)")
     ap.add_argument("--cell-csv", default=None,
                     help="细胞 SI 实测(scaffold_desc,target,SI_measured)")
+    ap.add_argument("--power", action="store_true",
+                    help="细胞 panel v5 功效预分析(实验前)")
+    ap.add_argument("--n-rep", type=int, default=3,
+                    help="每构象生物学重复数(功效分析用, 默认 3)")
     ap.add_argument("--out", default=os.path.join(DATA, "ivt_round1_template.csv"))
     ap.add_argument("--out-order-sheet", default=os.path.join(
         DATA, "ivt_round1_order_sheet.csv"),
@@ -292,6 +359,8 @@ def main():
         two_way_anova(args.anova)
     elif args.twin_check:
         twin_check(args.twin_check, args.cell_csv)
+    elif args.power:
+        power_mode(args.n_rep)
     else:
         gen_template(args.out, args.out_order_sheet or None)
 
