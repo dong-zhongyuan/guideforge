@@ -181,7 +181,7 @@ $PY scripts/crrna_protenix_input.py           # Protenix(AF3 开源替代)输入
 $PY scripts/crrna_compensatory_design.py      # 补偿臂去混杂版面板重生成
 $PY scripts/crrna_bayesopt.py --cold-start    # 冷启动 EI; --prior-han 同源先验版
 $PY scripts/crrna_virtual_cell.py --prior-lit # 文献标定场景表
-$PY scripts/crrna_homolog_context_interaction.py  # 同源跨上下文交互检验(prereg §E, E1 PASS rho=0.257; 判据先登记后评估)
+$PY scripts/crrna_homolog_context_interaction.py  # 同源跨上下文交互检验(E1 PASS rho=0.257[CI 0.247,0.267]; 判据=项目设定常数(与评估同提交, 2026-09-09 审计后如实改标))
 $PY scripts/crrna_homolog_interaction_audit.py    # 上述结果的独立复算审计(不 import 被测脚本)
 $PY scripts/crrna_ivt_template.py --anova data/ivt_round1.csv   # 矩阵交互项判定【数据待补: ivt_round1.csv 尚不存在, 为占位标记】
 ```
