@@ -1,0 +1,9 @@
+target,scaffold_desc,survival_1,survival_2,survival_3,note
+TP53-R248Q,WT,,,,"HCT116(内源 R248Q 杂合) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R248Q,A1C,,,,"HCT116(内源 R248Q 杂合) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R248Q,A1U+A2C,,,,"HCT116(内源 R248Q 杂合) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R248Q,A8C+U15G,,,,"HCT116(内源 R248Q 杂合) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R273H,WT,,,,"SW480(内源 R273H) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R273H,A1C,,,,"SW480(内源 R273H) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R273H,A1U+A2C,,,,"SW480(内源 R273H) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"
+TP53-R273H,A8C+U15G,,,,"SW480(内源 R273H) | 存活率%(或相对蛋白量%, 100=无杀伤); 填满后: --ingest-cell / --anova / --twin-check"

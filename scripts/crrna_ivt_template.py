@@ -138,39 +138,50 @@ def check_filled(path, out):
 def two_way_anova(path):
     """骨架×靶标 两因素方差分析(含交互项)——V3 §5.3 答辩口径"交互项显著性"。
 
-    平衡设计(每格 n=技术重复), 经典 SS 分解; 输入 = --check 通过的已填 CSV。
+    平衡设计(每格 n=技术重复), 经典 SS 分解。列自动探测(2026-09-09 细胞-only
+    口径): Vmax/EC50 列(IVT 历史格式)或 survival_1..3 列(细胞 panel v5 格式)
+    均可, 有哪组算哪组。
     """
     from scipy.stats import f as fdist
 
     if not os.path.isfile(path):
         raise SystemExit(
-            "[data-pending] %s 不存在: IVT 32 组合实测数据尚未回填; "
+            "[data-pending] %s 不存在: 实测数据尚未回填; "
             "数据就位后重跑: python scripts/crrna_ivt_template.py --anova %s"
             % (path, path))
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    cells = {}  # (scaffold, target) -> [Vmax reps], [EC50 reps]
+    metric_groups = [("Vmax", ("Vmax_1", "Vmax_2", "Vmax_3")),
+                     ("EC50", ("EC50_1", "EC50_2", "EC50_3")),
+                     ("survival", ("survival_1", "survival_2", "survival_3"))]
+    cells = {}  # (scaffold, target) -> {metric: reps}
     for r in rows:
-        vs = [float(r[k]) for k in ("Vmax_1", "Vmax_2", "Vmax_3") if r[k]]
-        es = [float(r[k]) for k in ("EC50_1", "EC50_2", "EC50_3") if r[k]]
-        if vs and es:
-            cells.setdefault((r["scaffold_desc"], r["target"]), [[], []])
-            cells[(r["scaffold_desc"], r["target"])][0] += vs
-            cells[(r["scaffold_desc"], r["target"])][1] += es
-    if len(cells) < 8:
-        raise SystemExit("数据不足: 需要至少 8 个(骨架,靶标)组合有重复测量, "
+        key = (r.get("scaffold_desc") or r.get("scaffold"),
+               r.get("target"))
+        entry = cells.setdefault(key, {m: [] for m, _ in metric_groups})
+        for m, cols in metric_groups:
+            entry[m] += [float(r[k]) for k in cols if r.get(k)]
+    active = [m for m, _ in metric_groups
+              if any(cells[k][m] for k in cells)]
+    if not active:
+        raise SystemExit("无可分析指标列(期望 Vmax_*/EC50_*/survival_*)")
+    if len(cells) < 4:
+        raise SystemExit("数据不足: 需要至少 4 个(骨架,靶标)组合有重复测量, "
                          "当前 %d" % len(cells))
     scafs = sorted({k[0] for k in cells})
     tgts = sorted({k[1] for k in cells})
     a, b = len(scafs), len(tgts)
     out = {}
-    for mi, metric in enumerate(("Vmax", "EC50")):
-        ns = [len(cells.get((s, t), [[], []])[mi]) for s in scafs for t in tgts]
-        n = min(ns)
-        if n == 0 or set(ns) != {n}:
-            print("[%s] 跳过: 组合重复数不平衡 %s" % (metric, ns))
+    for metric in active:
+        mi = metric
+        ns = [len(cells.get((s, t), {}).get(mi, []))
+              for s in scafs for t in tgts if (s, t) in cells]
+        n = min(ns) if ns else 0
+        full = {(s, t) for s in scafs for t in tgts} <= set(cells)
+        if n == 0 or not full or len(set(ns)) != 1:
+            print("[%s] 跳过: 组合覆盖/重复数不平衡 %s" % (metric, ns))
             continue
-        y = np.array([[cells[(s, t)][mi] for t in tgts] for s in scafs])  # a×b×n
+        y = np.array([[cells[(s, t)][mi] for t in tgts] for s in scafs])
         gm = y.mean()
         ss_t = ((y - gm) ** 2).sum()
         ss_a = b * n * ((y.mean(axis=(1, 2)) - gm) ** 2).sum()
@@ -208,13 +219,51 @@ def two_way_anova(path):
 def twin_check(path, cell_csv=None):
     """数字孪生预测 vs 实测校验(V3 §4.3: 实验前预测/实验后校验)。
 
-    用已填 IVT 的 (Vmax, EC50) + CCLE 丰度 + Hill 阈值模型出各骨架杀伤预测;
-    若给 --cell-csv(scaffold_desc,target,SI_measured) 则报 Spearman/RMSE。
+    两口径自动探测(2026-09-09 细胞-only 对齐):
+      A. survival_1..3 列(细胞 panel v5 格式) -> 直接对 Scholz 标定预测
+         (H4: 靶基因×细胞系级存活, 按 WT 行逐靶对比实测 vs 预测偏差);
+      B. Vmax/EC50 列(IVT 历史格式) -> 原参数化 SI 预测路径。
     """
     prm = json.load(open(os.path.join(DATA, "virtual_cell_params.json"),
                          encoding="utf-8"))
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
+    surv = {}
+    for r in rows:
+        ss = [float(r[k]) for k in ("survival_1", "survival_2", "survival_3")
+              if r.get(k)]
+        if ss:
+            key = (r.get("scaffold_desc") or r.get("scaffold"), r["target"])
+            surv[key] = mean(ss)
+    if surv:  # 口径 A: 细胞存活直接对 H4 预测
+        vc = json.load(open(os.path.join(DATA, "virtual_cell_prior.json"),
+                            encoding="utf-8"))
+        pred_line = {r["cell_line"].split("_")[0]: r
+                     for r in vc.get("named_cell_lines", [])}
+        gene_of = {"TP53-R248Q": ("HCT116", "surv_tp53_mid"),
+                   "TP53-R273H": ("SW480", "surv_tp53_mid")}
+        print("H4 校验(实测存活 vs Scholz 标定预测, WT 行逐靶):")
+        h4 = {}
+        for (sc, tg), s in sorted(surv.items()):
+            if sc != "WT" or tg not in gene_of:
+                continue
+            cl, k = gene_of[tg]
+            p = pred_line.get(cl, {}).get(k)
+            if p is None:
+                continue
+            h4[tg] = {"measured": round(s, 1), "predicted_mid": p,
+                      "deviation_pp": round(s - p, 1)}
+            print("  %-12s WT 实测 %5.1f%% vs 预测 %5.1f%% (偏差 %+5.1f pp; "
+                  "标定移植边界 20pp)" % (tg, s, p, s - p))
+        if cell_csv:
+            print("(--cell-csv 的 SI 对比属 IVT 口径, 细胞-only 下忽略)")
+        if h4:
+            json.dump({"check": "H4_scholz_calibration", "by_target": h4,
+                       "boundary_pp": 20},
+                      open(os.path.join(DATA, "virtual_cell_check.json"), "w",
+                           encoding="utf-8"), ensure_ascii=False, indent=1)
+            print("结果 -> data/virtual_cell_check.json")
+        return
     meas = {}
     for r in rows:
         vs = [float(r[k]) for k in ("Vmax_1", "Vmax_2", "Vmax_3") if r[k]]
@@ -222,7 +271,7 @@ def twin_check(path, cell_csv=None):
         if vs and es:
             meas[(r["scaffold_desc"], r["target"])] = (mean(vs), mean(es))
     if not meas:
-        raise SystemExit("已填 CSV 无可用 (Vmax, EC50) 行")
+        raise SystemExit("已填 CSV 无可用列(survival_* 或 Vmax/EC50)")
     if prm.get("ec50_tpm") is None or prm.get("vmax") is None:
         print("虚拟细胞参数 UN-CALIBRATED(ec50_tpm/vmax 为 null):")
         print("  回填 data/virtual_cell_params.json 后本命令输出杀伤预测;")
