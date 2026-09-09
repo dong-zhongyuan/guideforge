@@ -65,6 +65,11 @@ PROVENANCE_NOTE = (
     "(np.std ddof=0); 旧复用行 sd 原始口径未入库不可考, 混用时保持知情。")
 
 
+def _nrm(s):
+    """命名归一(2026-09-09): 兼容 +/-/_ 三种历史形式的键比较与去重。"""
+    return s.replace("+", "").replace("-", "_").replace("_", "") if False else         s.replace("+", "").replace("-", "_").replace("_", "")
+
+
 def canonical_scaffold(name):
     """增量 fasta 的下划线骨架名 -> 旧矩阵的紧凑名(B_break_compensate 除外)。"""
     return name if name == REPLACE_SCAFFOLD else name.replace("_", "")
@@ -95,9 +100,9 @@ def parse_fold(fold_dir):
 def merge(matrix_path, runs_dir, manifest_path):
     old = json.load(open(matrix_path, encoding="utf-8"))["rows"]
     reused = [dict(r) for r in old
-              if r["target"] != DROP_TARGET and r["scaffold"] != REPLACE_SCAFFOLD]
+              if _nrm(r["target"]) != _nrm(DROP_TARGET) and _nrm(r["scaffold"]) != _nrm(REPLACE_SCAFFOLD)]
     if len(reused) != 21:
-        raise ValueError("旧矩阵复用行应为 21, 实得 %d" % len(reused))
+        raise ValueError("旧矩阵复用行应为 21(3 保留靶 x 7 非补偿骨架; 命名归一化匹配), 实得 %d" % len(reused))
 
     jobs = json.load(open(manifest_path, encoding="utf-8"))["jobs"]
     new_rows = []
@@ -111,7 +116,7 @@ def merge(matrix_path, runs_dir, manifest_path):
     rows = reused + new_rows
     targets = sorted({r["target"] for r in rows})
     scaffolds = sorted({r["scaffold"] for r in rows})
-    key = lambda r: (r["target"], r["scaffold"])
+    key = lambda r: (_nrm(r["target"]), _nrm(r["scaffold"]))
     if len(rows) != 32 or len({key(r) for r in rows}) != 32:
         raise ValueError("合并后应为 4靶x8骨架=32 不重复行, 实得 %d 行" % len(rows))
     rows.sort(key=lambda r: (scaffolds.index(r["scaffold"]),
@@ -186,9 +191,9 @@ def selftest():
     payload, reused, new_rows = merge(matrix_path, tmp, manifest_path)
     rows = payload["rows"]
     assert len(rows) == 32, len(rows)
-    assert sorted({r["target"] for r in rows}) == [
-        "APC_Q1328x", "KRAS_G12D", "TP53_R248Q", "TP53_R273H"]
-    assert all(len([r for r in rows if r["target"] == t]) == 8
+    assert sorted({_nrm(r["target"]) for r in rows}) == sorted(map(_nrm, [
+        "APC_Q1328x", "KRAS_G12D", "TP53_R248Q", "TP53_R273H"]))
+    assert all(len([r for r in rows if _nrm(r["target"]) == _nrm(t)]) == 8
                for t in {r["target"] for r in rows})
     # 新行数值与合成输入一致(以 job0 = TP53_R248Q x B_break_compensate 为例)
     r0 = next(r for r in rows
@@ -197,18 +202,18 @@ def selftest():
     assert abs(r0["prot_crRNA"] - 0.50) < 1e-4 and abs(r0["crRNA_target"] - 0.60) < 1e-4
     assert abs(r0["clash_frac"] - 0.2) < 1e-4
     # 骨架名映射: 下划线名 -> 紧凑名
-    apc = {r["scaffold"] for r in rows if r["target"] == NEW_TARGET}
+    apc = {r["scaffold"] for r in rows if _nrm(r["target"]) == _nrm(NEW_TARGET)}
     assert "A1GU3AA8GU15C" in apc and "A1G_U3A_A8G_U15C" not in apc, apc
     # 复用 21 行与旧矩阵逐值一致; 旧 B 臂行与 G12C 列不带入
-    old = {(r["target"], r["scaffold"]): r
+    old = {(_nrm(r["target"]), _nrm(r["scaffold"])): r
            for r in json.load(open(matrix_path, encoding="utf-8"))["rows"]}
     for r in reused:
-        o = old[(r["target"], r["scaffold"])]
+        o = old[(_nrm(r["target"]), _nrm(r["scaffold"]))]
         assert all(r[f] == o[f] for f in
                    ("n_models", "iptm_mean", "iptm_sd", "prot_crRNA",
                     "crRNA_target", "clash_frac")), (r, o)
-    assert not any(r["target"] == DROP_TARGET for r in rows)
-    old_b = old[("TP53_R248Q", REPLACE_SCAFFOLD)]["prot_crRNA"]
+    assert not any(_nrm(r["target"]) == _nrm(DROP_TARGET) for r in rows)
+    old_b = old[(_nrm("TP53_R248Q"), _nrm(REPLACE_SCAFFOLD))]["prot_crRNA"]
     assert abs(r0["prot_crRNA"] - old_b) > 1e-9, "替换行不应等于退役臂旧值"
     print("[selftest] 合成 11 折合并校验全部通过 (32 行, 4靶x8骨架)")
     return 0
