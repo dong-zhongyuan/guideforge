@@ -31,3 +31,6 @@ data/raw/
 
 # 本地工作区(scratch日志/备份/临时扫描, 不入库)
 tmp/
+# Protenix/AF3 结果(机时产物, 大文件不入库; 汇总json入库)
+data/protenix_results/
+data/af3_results/

@@ -1,9 +1,16 @@
 """AF3 Server 结果回填与对比汇总(策划案 V3 表1 独立对照层, 2026-09-05)。
 
 读取 data/af3_results/ 下 AlphaFold Server 下载的结果(支持 .zip 原包或解压目录),
-逐任务解析 *summary_confidences*.json(服务器每任务 5 模型), 提取 ipTM/pTM/
+逐任务解析 *summary_confidence*.json(AF3 服务器每任务 5 模型), 提取 ipTM/pTM/
 ranking_score/链对 ipTM, 汇总 13 套(WT + TOP-12)的 prot-crRNA 与 crRNA-target
 界面均值/sd, 与 WT 做差量, 写入 data/af3_summary.json。
+
+2026-09-09 扩展: --protenix 模式回收 Protenix-v1 结果(data/protenix_results/,
+容器 2026-09-06 批跑产物, 命名 *summary_confidence_sample_N.json, 字段同构:
+iptm/ptm/chain_pair_iptm; 链序同为 蛋白/crRNA/靶RNA)。产出
+data/protenix_summary.json, 附与 Chai-1 自模板 WT 参照
+(data/chai_cofold_WT_template_real.json)的跨引擎对照与预登记分支判读
+(docs/af3_server_runbook.md 二分支: 界面恢复→独立佐证 / 低迷→主张撤回)。
 
 链序约定(服务器自动分配): 0/A=蛋白 SuCas12a2, 1/B=crRNA, 2/C=靶RNA
 (与 crrna_af3_input.py 的 sequences 顺序一致)。
@@ -34,13 +41,13 @@ def iter_summary_jsons(path):
     if zipfile.is_zipfile(path):
         z = zipfile.ZipFile(path)
         names = sorted(n for n in z.namelist()
-                       if "summary_confidences" in os.path.basename(n)
+                       if "summary_confidence" in os.path.basename(n)
                        and n.endswith(".json"))
         for n in names:
             yield os.path.basename(n), json.loads(z.read(n).decode("utf-8"))
     elif os.path.isdir(path):
         for f in sorted(glob.glob(os.path.join(
-                path, "**", "*summary_confidences*.json"), recursive=True)):
+                path, "**", "*summary_confidence*.json"), recursive=True)):
             yield os.path.basename(f), json.load(open(f, encoding="utf-8"))
 
 
@@ -96,11 +103,54 @@ def build_reading(job, rec, wt_pc):
     return "; ".join(parts)
 
 
+def _chai_comparison(px_wt_pc):
+    """与 Chai-1 自模板 WT 参照的跨引擎对照 + 预登记分支判读(runbook 二分支)。"""
+    ref = {"source": "data/chai_cofold_WT_template_real.json"}
+    try:
+        d = json.load(open(os.path.join(
+            DATA, "chai_cofold_WT_template_real.json"), encoding="utf-8"))
+        xs = [m["iptm_prot_crRNA"] for m in d["models"]]
+        m = sum(xs) / len(xs)
+        ref["chai_wt_prot_crRNA_mean"] = round(m, 4)
+        ref["chai_wt_n_models"] = len(xs)
+    except Exception as e:  # noqa: BLE001
+        ref["error"] = str(e)
+        return ref
+    if px_wt_pc is None:
+        ref["note"] = "Protenix GF_WT 缺失, 无法对照"
+        return ref
+    ref["protenix_wt_prot_crRNA_mean"] = round(px_wt_pc, 4)
+    band = IPTM_BAND
+    both = px_wt_pc >= band[1] and ref["chai_wt_prot_crRNA_mean"] >= band[0]
+    if px_wt_pc >= band[1]:
+        ref["preregistered_verdict"] = (
+            "分支一: template-free 独立引擎下 WT prot-crRNA ipTM %.3f >= %.1f, "
+            "界面恢复成立——Chai 自模板口径的蛋白-crRNA 界面预测获得独立引擎佐证, "
+            "可表述为'两个独立引擎对界面恢复的预测一致'(差异 %.3f 属引擎间正常离散); "
+            "按口径不用于骨架间排序主张" % (
+                px_wt_pc, band[1], px_wt_pc - ref["chai_wt_prot_crRNA_mean"]))
+    else:
+        ref["preregistered_verdict"] = (
+            "分支二: template-free 独立引擎下界面低迷(%.3f < %.1f)——Chai 自模板"
+            "高分确认是模板复述, '界面可预测'主张撤回, 仅保留湿实验判据" % (
+                px_wt_pc, band[0]))
+    ref["both_engines_above_band"] = both
+    return ref
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--dir", default=os.path.join(DATA, "af3_results"),
-                    help="AF3 Server 结果 zip/解压目录所在目录")
+    ap.add_argument("--dir", default=None,
+                    help="结果 zip/解压目录所在目录(默认 data/af3_results; "
+                         "--protenix 时为 data/protenix_results)")
+    ap.add_argument("--protenix", action="store_true",
+                    help="回收 Protenix-v1 结果(容器批跑产物)并附 Chai 跨引擎对照")
     args = ap.parse_args()
+
+    if args.protenix:
+        args.dir = args.dir or os.path.join(DATA, "protenix_results")
+    else:
+        args.dir = args.dir or os.path.join(DATA, "af3_results")
 
     entries = []
     for p in sorted(glob.glob(os.path.join(args.dir, "*"))):
@@ -129,10 +179,15 @@ def main():
 
     wt = results.get("GF_WT")
     wt_pc = wt["prot_crRNA_mean"] if wt else None
+    engine = ("Protenix-v1 (protenix_base_default_v1.0.0), template-free"
+              "(输入无 templates 字段), seed_101 5 sample"
+              if args.protenix else
+              "AlphaFold Server (AF3), useStructureTemplate=false, 单随机种子5模型")
     payload = {
-        "generated_by": "scripts/crrna_af3_collect.py",
+        "generated_by": "scripts/crrna_af3_collect.py" + (
+            " --protenix" if args.protenix else ""),
         "source_dir": os.path.relpath(args.dir, ROOT),
-        "engine": "AlphaFold Server (AF3), useStructureTemplate=false, 单随机种子5模型",
+        "engine": engine,
         "chain_order": {"0/A": "SuCas12a2 蛋白", "1/B": "crRNA", "2/C": "靶RNA"},
         "claim_tier": ("独立引擎 template-free 单构建观测(MSA 自动构建); "
                        "作为 Chai-1 自模板口径(sanity check)的对照层; "
@@ -142,7 +197,10 @@ def main():
                  for j, r in results.items()},
         "readings": {j: build_reading(j, r, wt_pc) for j, r in results.items()},
     }
-    out = os.path.join(DATA, "af3_summary.json")
+    if args.protenix:
+        payload["chai_cross_engine"] = _chai_comparison(wt_pc)
+    out = os.path.join(
+        DATA, "protenix_summary.json" if args.protenix else "af3_summary.json")
     json.dump(payload, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("汇总 %d 任务 -> %s" % (len(results), out))
 

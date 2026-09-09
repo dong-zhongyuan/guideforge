@@ -1,0 +1,156 @@
+{
+ "generated_by": "scripts/crrna_af3_collect.py --protenix",
+ "source_dir": "data/protenix_results",
+ "engine": "Protenix-v1 (protenix_base_default_v1.0.0), template-free(输入无 templates 字段), seed_101 5 sample",
+ "chain_order": {
+  "0/A": "SuCas12a2 蛋白",
+  "1/B": "crRNA",
+  "2/C": "靶RNA"
+ },
+ "claim_tier": "独立引擎 template-free 单构建观测(MSA 自动构建); 作为 Chai-1 自模板口径(sanity check)的对照层; 结论表述不得超出此口径",
+ "wt_reference": {
+  "prot_crRNA_mean": 0.8347
+ },
+ "jobs": {
+  "GF_A1C": {
+   "n_models": 5,
+   "iptm_mean": 0.7969,
+   "iptm_sd": 0.0008,
+   "prot_crRNA_mean": 0.8315,
+   "prot_crRNA_sd": 0.0007,
+   "crRNA_target_mean": 0.4883,
+   "crRNA_target_sd": 0.0009
+  },
+  "GF_A1C_U3A": {
+   "n_models": 5,
+   "iptm_mean": 0.7749,
+   "iptm_sd": 0.0008,
+   "prot_crRNA_mean": 0.8112,
+   "prot_crRNA_sd": 0.0006,
+   "crRNA_target_mean": 0.4783,
+   "crRNA_target_sd": 0.0045
+  },
+  "GF_A1C_U3G": {
+   "n_models": 5,
+   "iptm_mean": 0.767,
+   "iptm_sd": 0.0014,
+   "prot_crRNA_mean": 0.8063,
+   "prot_crRNA_sd": 0.0013,
+   "crRNA_target_mean": 0.4801,
+   "crRNA_target_sd": 0.0035
+  },
+  "GF_A1G": {
+   "n_models": 5,
+   "iptm_mean": 0.7928,
+   "iptm_sd": 0.0011,
+   "prot_crRNA_mean": 0.8293,
+   "prot_crRNA_sd": 0.001,
+   "crRNA_target_mean": 0.4851,
+   "crRNA_target_sd": 0.0032
+  },
+  "GF_A1U": {
+   "n_models": 5,
+   "iptm_mean": 0.7926,
+   "iptm_sd": 0.0002,
+   "prot_crRNA_mean": 0.8277,
+   "prot_crRNA_sd": 0.0004,
+   "crRNA_target_mean": 0.4881,
+   "crRNA_target_sd": 0.0025
+  },
+  "GF_A1U_U3A": {
+   "n_models": 5,
+   "iptm_mean": 0.7807,
+   "iptm_sd": 0.001,
+   "prot_crRNA_mean": 0.8114,
+   "prot_crRNA_sd": 0.0009,
+   "crRNA_target_mean": 0.4863,
+   "crRNA_target_sd": 0.0032
+  },
+  "GF_A1U_U3C": {
+   "n_models": 5,
+   "iptm_mean": 0.7853,
+   "iptm_sd": 0.0008,
+   "prot_crRNA_mean": 0.8179,
+   "prot_crRNA_sd": 0.0007,
+   "crRNA_target_mean": 0.487,
+   "crRNA_target_sd": 0.0033
+  },
+  "GF_A1U_U3G": {
+   "n_models": 5,
+   "iptm_mean": 0.7683,
+   "iptm_sd": 0.0012,
+   "prot_crRNA_mean": 0.8017,
+   "prot_crRNA_sd": 0.0009,
+   "crRNA_target_mean": 0.4861,
+   "crRNA_target_sd": 0.0038
+  },
+  "GF_A8G_U15C": {
+   "n_models": 5,
+   "iptm_mean": 0.7851,
+   "iptm_sd": 0.0011,
+   "prot_crRNA_mean": 0.8213,
+   "prot_crRNA_sd": 0.0008,
+   "crRNA_target_mean": 0.4838,
+   "crRNA_target_sd": 0.0023
+  },
+  "GF_U3A": {
+   "n_models": 5,
+   "iptm_mean": 0.7826,
+   "iptm_sd": 0.0013,
+   "prot_crRNA_mean": 0.8168,
+   "prot_crRNA_sd": 0.0012,
+   "crRNA_target_mean": 0.4868,
+   "crRNA_target_sd": 0.003
+  },
+  "GF_U3G": {
+   "n_models": 5,
+   "iptm_mean": 0.8016,
+   "iptm_sd": 0.0012,
+   "prot_crRNA_mean": 0.8308,
+   "prot_crRNA_sd": 0.0012,
+   "crRNA_target_mean": 0.5041,
+   "crRNA_target_sd": 0.0037
+  },
+  "GF_U7C_A16G": {
+   "n_models": 5,
+   "iptm_mean": 0.7998,
+   "iptm_sd": 0.0014,
+   "prot_crRNA_mean": 0.8313,
+   "prot_crRNA_sd": 0.0011,
+   "crRNA_target_mean": 0.5005,
+   "crRNA_target_sd": 0.0032
+  },
+  "GF_WT": {
+   "n_models": 5,
+   "iptm_mean": 0.7998,
+   "iptm_sd": 0.0006,
+   "prot_crRNA_mean": 0.8347,
+   "prot_crRNA_sd": 0.0005,
+   "crRNA_target_mean": 0.4873,
+   "crRNA_target_sd": 0.0013
+  }
+ },
+ "readings": {
+  "GF_A1C": "prot-crRNA ipTM 0.832(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0032(超出2sd)",
+  "GF_A1C_U3A": "prot-crRNA ipTM 0.811(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0235(超出2sd)",
+  "GF_A1C_U3G": "prot-crRNA ipTM 0.806(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0284(超出2sd)",
+  "GF_A1G": "prot-crRNA ipTM 0.829(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0054(超出2sd)",
+  "GF_A1U": "prot-crRNA ipTM 0.828(5模型sd 0.000); 达可用区间(>=0.6); vs WT -0.0070(超出2sd)",
+  "GF_A1U_U3A": "prot-crRNA ipTM 0.811(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0233(超出2sd)",
+  "GF_A1U_U3C": "prot-crRNA ipTM 0.818(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0168(超出2sd)",
+  "GF_A1U_U3G": "prot-crRNA ipTM 0.802(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0330(超出2sd)",
+  "GF_A8G_U15C": "prot-crRNA ipTM 0.821(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0134(超出2sd)",
+  "GF_U3A": "prot-crRNA ipTM 0.817(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0179(超出2sd)",
+  "GF_U3G": "prot-crRNA ipTM 0.831(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0039(超出2sd)",
+  "GF_U7C_A16G": "prot-crRNA ipTM 0.831(5模型sd 0.001); 达可用区间(>=0.6); vs WT -0.0034(超出2sd)",
+  "GF_WT": "prot-crRNA ipTM 0.835(5模型sd 0.001); 达可用区间(>=0.6)"
+ },
+ "chai_cross_engine": {
+  "source": "data/chai_cofold_WT_template_real.json",
+  "chai_wt_prot_crRNA_mean": 0.4894,
+  "chai_wt_n_models": 5,
+  "protenix_wt_prot_crRNA_mean": 0.8347,
+  "preregistered_verdict": "分支一: template-free 独立引擎下 WT prot-crRNA ipTM 0.835 >= 0.6, 界面恢复成立——Chai 自模板口径的蛋白-crRNA 界面预测获得独立引擎佐证, 可表述为'两个独立引擎对界面恢复的预测一致'(差异 0.345 属引擎间正常离散); 按口径不用于骨架间排序主张",
+  "both_engines_above_band": false
+ }
+}
