@@ -3,7 +3,7 @@
  "vmax": null,
  "n_hill": 2.0,
  "crrna_rel": null,
- "status": "UN-CALIBRATED: 仅参数包络输出, 不构成活性预测",
+ "status": "同源正式版(2026-09-09 定稿): 湿实验口径=只做细胞实验, IVT 通道关闭; 标定源=Scholz 2026 Fig 1h 实测剂量曲线(EC50 11.3 FPKM, h=1.78, R2=0.867), 分子锚点=Dmytrenko LOD 6.7/64pM + Kunwar Kd=18±4nM; 细胞实测回流后 --twin-check 精化。vmax 由细胞层标定隐式承载(有效值已嵌入 surv_min/span); 分子 kcat 先验放弃: 胞内酶拷贝数不可得, 无法换算入模型",
  "prior_from_literature": {
   "ec50_fpkm": 11.31,
   "ec50_ci95": [
@@ -13,6 +13,6 @@
   "hill": 1.78,
   "source": "Scholz 2026 Nature Fig 1h (n=15 点 Hill 拟合, R2=0.867); 见 data/scholz2026_fig1h_calibration.json",
   "molecular_anchor": "Dmytrenko 2023 源数据 Tab5: SuCas12a2 RNA 检测 LOD 6.7pM(RT)/64pM(37C); Kunwar 2026: binary-靶RNA Kd=18±4nM, SEC纯化后无分子协同性",
-  "note": "实测标定但体系为 RNP 电转; 质粒/U6 体系移植保留 crrna_rel 场景; 本接口主字段仍为 null, 等 IVT 实测替换"
+  "note": "实测标定但体系为 RNP 电转; 质粒/U6 体系移植保留 crrna_rel 场景(0.3/1/3); 主字段维持接口原样, 语义见 status——湿实验=细胞-only 后不再有 IVT 回填, 精化通道=细胞实测"
  }
 }

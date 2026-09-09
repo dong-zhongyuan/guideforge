@@ -1,70 +1,40 @@
 {
- "mode": "同源先验池化(Han 5 终点 x7 + Teng 序数对; 非 Cas12a2 杀伤, 等待 IVT --ingest 替换)",
+ "mode": "同源先验池化(Han 5 终点 x7 + Teng 序数对; 非 Cas12a2 杀伤; 湿实验=细胞-only 后为正式先验, 细胞实测经 --ingest-cell 回流)",
  "proposals": [
   {
-   "desc": "G11C+U13G",
-   "ei": 0.3867,
-   "score": -1.9013,
-   "ddG_dr": 1.1,
+   "desc": "WT",
+   "ei": 126.1566,
+   "score": 0.0,
+   "ddG_dr": 0.0,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.82551,
+   "p_fold": 0.86603,
    "spacer_up": 0.427
   },
   {
-   "desc": "A1G+U13A",
-   "ei": 0.3867,
-   "score": -1.2725,
-   "ddG_dr": 1.1,
-   "bp_dist": 0,
-   "cross_nt": 0,
-   "p_fold": 0.83276,
-   "spacer_up": 0.429
-  },
-  {
-   "desc": "U13A",
-   "ei": 0.3867,
-   "score": -1.26,
-   "ddG_dr": 1.1,
-   "bp_dist": 0,
-   "cross_nt": 0,
-   "p_fold": 0.8334,
-   "spacer_up": 0.427
-  },
-  {
-   "desc": "A1G",
-   "ei": 0.3867,
-   "score": -0.012,
+   "desc": "A1C",
+   "ei": 126.1566,
+   "score": -0.0001,
    "ddG_dr": 0.0,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.86681,
-   "spacer_up": 0.429
+   "p_fold": 0.86558,
+   "spacer_up": 0.426
   },
   {
-   "desc": "A1U+U3C",
-   "ei": 0.3867,
-   "score": -0.5672,
+   "desc": "A1U",
+   "ei": 126.1566,
+   "score": -0.0001,
    "ddG_dr": 0.0,
    "bp_dist": 0,
    "cross_nt": 0,
-   "p_fold": 0.86108,
-   "spacer_up": 0.431
-  },
-  {
-   "desc": "A1C+U3C",
-   "ei": 0.3867,
-   "score": -0.5685,
-   "ddG_dr": 0.0,
-   "bp_dist": 0,
-   "cross_nt": 0,
-   "p_fold": 0.86834,
-   "spacer_up": 0.432
+   "p_fold": 0.86574,
+   "spacer_up": 0.426
   }
  ],
- "n_observations": 37,
+ "n_observations": 46,
  "endpoint_counts": {
-  "fig1g": 7,
+  "fig1g": 16,
   "cis_end": 7,
   "trans_end": 7,
   "rbs0": 7,

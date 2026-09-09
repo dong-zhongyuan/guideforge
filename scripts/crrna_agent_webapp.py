@@ -80,8 +80,9 @@ ABUNDANCE = tabund.load_abundance(os.path.join(DATA, "target_abundance_tiers.jso
 CHAI_IF = chai_if.load_deltas(os.path.join(DATA, "chai_interface_deltas.json"))
 
 # ---- 模块三: 文献先验选择器(FEATURES/TARGET_FEATURES 经 import 与
-#      crrna_train_selector.py 共用同一定义; webapp 侧为 n=7 工具箱锚点
-#      轻量重训, 仅作演示, 正式先验排序以 data/selector_model.json 为准) ----
+#      crrna_train_selector.py 共用同一定义; webapp 侧为 16 监督对
+#      (工具箱 7 + Fig1f 转录 9)轻量重训, 与主脚本训练集同源同量;
+#      正式先验排序以 data/selector_model.json 为准) ----
 
 
 def _train_selector():
@@ -93,6 +94,13 @@ def _train_selector():
             continue
         X.append([float(r[f]) for f in FEATURES])
         y.append(float(r["fig1g"]))
+    for r in d.get("fig1f_pairs") or []:
+        feats = r.get("features") or r
+        try:
+            X.append([float(feats[f]) for f in FEATURES])
+            y.append(float(r["fig1g"]))
+        except (KeyError, TypeError, ValueError):
+            continue  # 置信度低的行缺特征时跳过, 与主脚本口径一致
     dt = DecisionTreeRegressor(max_leaf_nodes=4, min_samples_leaf=1,
                                random_state=42)
     dt.fit(np.array(X), np.array(y))

@@ -92,7 +92,7 @@ def prior_han_mode(batch):
     for p in prop:
         print("  %-18s EI=%.4f  ddG_dr=%s" % (p["desc"], p["ei"], p["ddG_dr"]))
     json.dump({"mode": "同源先验池化(Han 5 终点 x7 + Teng 序数对; "
-                       "非 Cas12a2 杀伤, 等待 IVT --ingest 替换)",
+                       "非 Cas12a2 杀伤; 湿实验=细胞-only 后为正式先验, 细胞实测经 --ingest-cell 回流)",
                "proposals": prop, "n_observations": len(y_h),
                "endpoint_counts": eps,
                "n_library": len(cands), "features": sel.FEATURES},
