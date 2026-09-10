@@ -144,5 +144,13 @@
   "GF_U3G": "prot-crRNA ipTM 0.316(5模型sd 0.037); 低于可用界面预测区间(~0.5-0.6); vs WT +0.0640(噪声内(|Δ|<=2*sd合成))",
   "GF_U7C_A16G": "prot-crRNA ipTM 0.334(5模型sd 0.054); 低于可用界面预测区间(~0.5-0.6); vs WT +0.0820(噪声内(|Δ|<=2*sd合成))",
   "GF_WT": "prot-crRNA ipTM 0.252(5模型sd 0.040); 低于可用界面预测区间(~0.5-0.6)"
+ },
+ "protenix_cross_engine": {
+  "source": "data/protenix_summary.json",
+  "protenix_wt_prot_crRNA_mean": 0.8347,
+  "protenix_verdict": "分支一: template-free 独立引擎下 WT prot-crRNA ipTM 0.835 >= 0.6, 界面恢复成立——Chai 自模板口径的蛋白-crRNA 界面预测获得独立引擎佐证, 可表述为'两个独立引擎对界面恢复的预测一致'(差异 0.345 属引擎间正常离散); 按口径不用于骨架间排序主张",
+  "af3_local_wt_prot_crRNA_mean": 0.252,
+  "engines_agree": false,
+  "reading": "同无 MSA 协议下两引擎对 WT prot-crRNA 界面置信度分歧: Protenix 0.835 vs 本地官方 AF3 0.252(可用区间分界 0.6)。Protenix 分支一判读维持登记不变; 本地 AF3 为分歧观测, 归因候选含引擎间 ipTM 标定差异与无 MSA 下官方 AF3 界面置信退化; 终裁以 AlphaFold Server(自动 MSA)或带 MSA 本地复跑为准。"
  }
 }

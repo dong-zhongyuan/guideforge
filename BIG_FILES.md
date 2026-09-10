@@ -32,3 +32,20 @@ Gitee 单附件上限 100MB, 下列 3 件按 95MB 分片(part00/part01)附于 Gi
 
 拼回后 sha256 已验证与原件一致(22fa72df…/e30294b2…/63f6bfd1…, 均为截断前缀, 见上表 † 说明)。
 至此 10 件资产 GitHub(全量单件) 与 Gitee(7 单件 + 3 分片) 双源齐备。
+
+## Release data-v2 (2026-09-10): Protenix-v1 13 折共折叠原始结果归档
+
+| 路径 | 打包文件 | 大小(bytes) | sha256 |
+|---|---|---|---|
+| `data/protenix_results/` (13 折目录, 原 136MB) | `protenix_results_13fold.tar.gz` | 28950476 | 3b4eb0f7c6ea7b5c03639a3cf4c9b6ed55153cb6219a18651de120f60993ffba ✅ |
+
+✅ = 完整 64 位哈希三重验证: (1)上传前在服务器对原件 tar.gz 实测; (2)与
+GitHub Release 资产 API 返回的服务端 `digest` 字段逐字节一致; (3)从 Gitee
+Release 下载回读再算一次, 逐字节一致(2026-09-10, Release data-v2 双源)。
+下载后直接 `sha256sum` 对照即可。
+
+内容: Protenix-v1 (protenix_base_default_v1.0.0) 13 折(WT + 12 变体)
+共折叠原始输出, 每折含 `seed_101/`(5 样本结构+置信度) 与 `msa/` 目录;
+汇总层为 `data/protenix_summary.json`(commit 48d7796, 已入 git)。
+解包: `tar xzf protenix_results_13fold.tar.gz -C data/protenix_results/`。
+生成链: 容器 2026-09-06 批跑 → 2026-09-09 回收汇总 → 2026-09-10 归档双源上传。

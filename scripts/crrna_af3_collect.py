@@ -140,6 +140,40 @@ def _chai_comparison(px_wt_pc):
     return ref
 
 
+def _protenix_comparison(af3_wt_pc):
+    """本地 AF3 无 MSA 层与 Protenix-v1 层(同无 MSA 协议)的 WT 对照与分歧标记。
+
+    Protenix 层判读已在 data/protenix_summary.json 固化(2026-09-09, 分支一);
+    本函数只并排列出两引擎 WT 数值并标记是否一致, 不改写已登记判读。
+    """
+    ref = {"source": "data/protenix_summary.json"}
+    try:
+        d = json.load(open(os.path.join(
+            DATA, "protenix_summary.json"), encoding="utf-8"))
+        ref["protenix_wt_prot_crRNA_mean"] = d["wt_reference"][
+            "prot_crRNA_mean"]
+        ref["protenix_verdict"] = d.get("chai_cross_engine", {}).get(
+            "preregistered_verdict", "")
+    except Exception as e:  # noqa: BLE001
+        ref["error"] = str(e)
+        return ref
+    if af3_wt_pc is None:
+        ref["note"] = "本地 AF3 GF_WT 缺失, 无法对照"
+        return ref
+    ref["af3_local_wt_prot_crRNA_mean"] = round(af3_wt_pc, 4)
+    band = IPTM_BAND
+    ref["engines_agree"] = (
+        (af3_wt_pc >= band[1]) == (ref["protenix_wt_prot_crRNA_mean"] >= band[1]))
+    ref["reading"] = (
+        "同无 MSA 协议下两引擎对 WT prot-crRNA 界面置信度%s: Protenix %.3f vs "
+        "本地官方 AF3 %.3f(可用区间分界 %.1f)。Protenix 分支一判读维持登记不变; "
+        "本地 AF3 为分歧观测, 归因候选含引擎间 ipTM 标定差异与无 MSA 下官方 AF3 "
+        "界面置信退化; 终裁以 AlphaFold Server(自动 MSA)或带 MSA 本地复跑为准。"
+        % ("一致" if ref["engines_agree"] else "分歧",
+           ref["protenix_wt_prot_crRNA_mean"], af3_wt_pc, band[1]))
+    return ref
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--dir", default=None,
@@ -218,6 +252,8 @@ def main():
     }
     if args.protenix:
         payload["chai_cross_engine"] = _chai_comparison(wt_pc)
+    if args.local:
+        payload["protenix_cross_engine"] = _protenix_comparison(wt_pc)
     if args.local:
         out = os.path.join(DATA, "af3_local_summary.json")
     else:

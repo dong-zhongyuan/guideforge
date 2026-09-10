@@ -72,9 +72,17 @@ alphafoldserver.com 谷歌托管网络不通（本机/A6000 均被阻断，无�
 - 产物：`data/af3_local_summary.json`（`scripts/crrna_af3_collect.py --local`
   生成），结构快照 `data/af3_local_results/structures/`（每任务最佳样本 cif）；
 - 结果：WT prot-crRNA ipTM 0.252（5 模型），全部 13 任务落在 0.23–0.33，
-  低于可用区间（<0.5）——与 Protenix 分支二判读一致：无模板独立引擎下
-  界面低迷，Chai 自模板高分属模板复述，维持"界面可预测"主张撤回、
-  以湿实验判据为准的预登记结论；
+  低于可用区间（<0.5）。**与 Protenix 层判读为分歧而非一致**：Protenix-v1
+  （同无 MSA 协议）WT 为 0.835，触发预登记分支一（界面恢复获独立引擎佐证，
+  2026-09-09 已登记），该判读维持不变；本地官方 AF3 为分歧观测（数值固化于
+  `data/af3_local_summary.json` 的 `protenix_cross_engine` 字段，分歧标记
+  `engines_agree=false`）。归因候选：引擎间 ipTM 标定差异（Protenix 普遍
+  偏高）、无 MSA 输入下官方 AF3 界面置信退化。终裁以 AlphaFold Server
+  （自动 MSA）或带 MSA 的本地复跑为准，在此之前"界面可预测"主张按
+  Protenix 分支一登记口径表述，并附本地 AF3 分歧观测作边界说明；
+- 本层更正记录（2026-09-10 晚）：本节初版曾误写"与 Protenix 分支二判读
+  一致、维持主张撤回"，系对已登记判读方向的转述错误，Protenix 实际触发
+  分支一；本段为如实的更正留痕，不删除原错误描述的痕迹由 git 历史承载；
 - 服务器版（自动构建 MSA）与本地无 MSA 版是**不同口径**：前者仍是
   AlphaFold Server 恢复访问后的目标项，额度与流程见上文；
 - 本地复跑：容器 `~/dzy/envs/af3/bin/python /dawn/af3_src/run_alphafold.py
