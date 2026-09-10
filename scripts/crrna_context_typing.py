@@ -57,6 +57,68 @@ def spacer_features(dr, name, seq):
     return [gc, self_mfe, spacer_up, junction, internal]
 
 
+FEAT_V2_EXTRA = ['seed5_up', 'cross_stem', 'cross_loop', 'junction_maxrun',
+                 'coupling_dG']
+
+
+def _dr_loop_positions(dr):
+    """flanked-by-paired loop 分区(与 crrna_dmytrenko_validate 同口径):
+    连续未配对 run 且左右紧邻位均配对 = loop; 端点悬垂不算。"""
+    ss = core.fold(dr)[0]
+    n = len(dr)
+    runs, run = [], []
+    for i, ch in enumerate(ss):
+        if ch == '.':
+            run.append(i)
+        elif run:
+            runs.append(run)
+            run = []
+    if run:
+        runs.append(run)
+    flanked = [r for r in runs
+               if r[0] > 0 and r[-1] < n - 1
+               and ss[r[0] - 1] in '()' and ss[r[-1] + 1] in '()']
+    return set(max(flanked, key=len)) if flanked else set()
+
+
+def spacer_features_v2(dr, name, seq):
+    """§A3a 增强特征(10 维): 原 5 维 + seed5_up(spacer 5' 端 5nt 系综游离度)
+    / cross_stem / cross_loop(交叉配对的 DR 茎/loop 位对数) / junction_maxrun
+    (跨交界最长连续配对) / coupling_dG(耦合力学项 = MFE(full)-MFE(dr)-MFE(spacer))。
+    全部伪结外、同一 DR。"""
+    base = spacer_features(dr, name, seq)
+    full = dr + seq
+    dl = len(dr)
+    ss_full, mfe_full = core.fold(full)
+    _, mfe_dr = core.fold(dr)
+    _, mfe_sp = core.fold(seq)
+    coupling_dG = mfe_full - mfe_dr - mfe_sp
+    fc = core.RNA.fold_compound(full)
+    fc.pf()
+    n = len(full)
+    P = np.array([list(r) for r in fc.bpp()])[:n + 1, :n + 1]
+    paired = P.sum(axis=0) + P.sum(axis=1)
+    unpaired = 1.0 - paired[1:]
+    seed5_up = float(unpaired[dl:dl + 5].mean()) if n > dl else 1.0
+    stack, pairs = [], []
+    for i, ch in enumerate(ss_full):
+        if ch == '(':
+            stack.append(i)
+        elif ch == ')':
+            pairs.append((stack.pop(), i))
+    cross = [i for i, j in pairs if i < dl <= j]
+    loop_pos = _dr_loop_positions(dr)
+    cross_loop = sum(1 for i in cross if i in loop_pos)
+    cross_stem = len(cross) - cross_loop
+    run_max, cur, prev = 0, 0, None
+    for i in sorted(cross):
+        cur = cur + 1 if prev is not None and i == prev + 1 else 1
+        run_max = max(run_max, cur)
+        prev = i
+    return base + [seed5_up, float(cross_stem), float(cross_loop),
+                   float(run_max), coupling_dG]
+
+
 def kmeans(X, k, seeds):
     """手写 KMeans(多起点), 返回 (labels, centers, inertia)。"""
     best = None

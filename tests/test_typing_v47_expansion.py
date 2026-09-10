@@ -59,6 +59,27 @@ class TestV47Expansion(unittest.TestCase):
         elif not pos_c:
             self.assertIn("阴性", self.d["reading"])
 
+    def test_a3_enriched_rule_consistency(self):
+        """§A3 特征增强块: 结构与 §A3c 判读规则锁定。"""
+        a3 = self.d["a3_enriched"]
+        self.assertEqual(len(a3["feature_names"]), 10)
+        self.assertEqual(a3["clustering"]["k_fixed"], 3)
+        self.assertEqual(sum(a3["clustering"]["cluster_sizes"]),
+                         self.d["cohort"]["n_total"])
+        for layer in ("a3b_with_pos1", "a3c_no_pos1"):
+            blk = a3[layer]
+            self.assertEqual(blk["positive"], blk["p_obs"] < 0.05)
+        pos_a3 = a3["a3c_no_pos1"]["positive"]
+        pos_a2 = self.d["a2c_no_pos1"]["positive"]
+        if pos_a3 and not pos_a2:
+            self.assertIn("归因成立", a3["reading"])
+        elif not pos_a3 and not pos_a2:
+            self.assertIn("计算层不支持", a3["reading"])
+        elif pos_a3 and pos_a2:
+            self.assertIn("稳健", a3["reading"])
+        else:
+            self.assertIn("如实并列", a3["reading"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1478,6 +1478,75 @@
   "n_partitions": 280
  },
  "reading": "扩库队列 n=312(k=3 预登记固定): A2b(含 pos-1) 公共集 6 条 P=0.3857 >= 0.05;A2c(去 pos-1, 主结论口径) 公共集 5 条 P=0.0571 >= 0.05 → 主结论口径 A2c 阴性",
+ "a3_enriched": {
+  "registered": "docs/preregistration.md §A3(2026-09-10, 登记先于运行)",
+  "feature_names": [
+   "GC",
+   "self_mfe",
+   "spacer_up",
+   "junction_pairs",
+   "internal_pairs",
+   "seed5_up",
+   "cross_stem",
+   "cross_loop",
+   "junction_maxrun",
+   "coupling_dG"
+  ],
+  "clustering": {
+   "k_fixed": 3,
+   "cluster_sizes": [
+    137,
+    56,
+    119
+   ],
+   "inertia": 1190.1,
+   "silhouette_diagnostic_only": 0.3615
+  },
+  "representatives": {
+   "0": [
+    "R280K gRNA11",
+    "v47-bg-ENST00000762416-151",
+    "v47-AR-ENST00000396043-1304"
+   ],
+   "1": [
+    "v47-STK11-ENST00000585748-137",
+    "v47-MLH1-ENST00000673673-915",
+    "v47-FBXW7-ENST00000393956-526"
+   ],
+   "2": [
+    "v47-AR-ENST00000396043-1693",
+    "v47-KRAS-ENST00000690406-2082",
+    "v47-bg-ENST00000782395-693"
+   ]
+  },
+  "a3b_with_pos1": {
+   "obs_common": 4,
+   "common": [
+    "A1C",
+    "A1G",
+    "A1U",
+    "U3A"
+   ],
+   "p_obs": 0.1857,
+   "threshold_p": 0.05,
+   "positive": false,
+   "null_median": 6.0
+  },
+  "a3c_no_pos1": {
+   "obs_common": 4,
+   "common": [
+    "A8G",
+    "U3A",
+    "U3C",
+    "U3G"
+   ],
+   "p_obs": 0.0429,
+   "threshold_p": 0.05,
+   "positive": true,
+   "null_median": 8.0
+  },
+  "reading": "A3 主口径阳性(P=0.0429)而 A2(v47) 阴性(P=0.0571) → 「特征分辨率不足」归因成立, 计算层分型证据升级"
+ },
  "comparison_literature_cohort": {
   "n": 85,
   "a2b_p": 0.0357,
@@ -1485,5 +1554,5 @@
   "a2c_p": 0.0357,
   "source": "data/context_typing/typing.robustness.json a2_prereg"
  },
- "runtime_sec": 25.8
+ "runtime_sec": 18.3
 }

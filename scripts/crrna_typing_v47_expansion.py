@@ -207,6 +207,69 @@ def main():
                         else "主结论口径 A2c 阴性")))
     print("[§A2-v47]", reading)
 
+    # ---- §A3 特征增强版(2026-09-10 预登记, docs/preregistration.md §A3) ----
+    print("[v47] §A3: 计算 10 维增强特征矩阵 ...")
+    F2 = np.array([typing_mod.spacer_features_v2(dr, n, s)
+                   for n, s in zip(names, seqs)], dtype=float)
+    Z2 = (F2 - F2.mean(0)) / F2.std(0)
+    lab2, _, inertia2 = typing_mod.kmeans(Z2, K_FIXED, SEEDS)
+    sizes2 = [int((lab2 == c).sum()) for c in range(K_FIXED)]
+    sil2 = float(typing_mod.silhouette(Z2, lab2, K_FIXED))
+    reps2 = rb.reps_from_clusters(lab2, Z2, names, seqs, K_FIXED, REPS_PER_TYPE)
+    n_fresh2 = 0
+    for c, rl in reps2.items():
+        for nm, dna in rl:
+            prefixes[nm], fresh = rb.run_pipeline(nm, dna)
+            n_fresh2 += fresh
+    print("[v47] §A3 九代表管线重跑: 新跑 %d" % n_fresh2)
+    types2 = sorted(reps2.keys())
+    obs2 = rb.criterion({t: [rb.top_descs(prefixes[nm], rb.CRIT_TOPK)
+                             for nm, _ in reps2[t]] for t in types2},
+                        rb.CRIT_TOPK)
+    obs2_np = rb.criterion({t: [rb.top_descs_no_pos1(prefixes[nm], rb.CRIT_TOPK)
+                                for nm, _ in reps2[t]] for t in types2},
+                           rb.CRIT_TOPK)
+    flat2 = [rb.top_descs(prefixes[nm], rb.CRIT_TOPK)
+             for t in types2 for nm, _ in reps2[t]]
+    flat2np = [rb.top_descs_no_pos1(prefixes[nm], rb.CRIT_TOPK)
+               for t in types2 for nm, _ in reps2[t]]
+    null2 = perm_null(flat2, idx, rb.CRIT_TOPK)
+    null2np = perm_null(flat2np, idx, rb.CRIT_TOPK)
+    p2_b = float((null2 <= obs2["n_common"]).mean())
+    p2_c = float((null2np <= obs2_np["n_common"]).mean())
+    pos2_b, pos2_c = bool(p2_b < P_THRESH), bool(p2_c < P_THRESH)
+    # §A3c 判读规则(登记先于数值)
+    if pos2_c and not pos_c:
+        a3_read = ("A3 主口径阳性(P=%.4f)而 A2(v47) 阴性(P=%.4f) → 「特征分辨率"
+                   "不足」归因成立, 计算层分型证据升级" % (p2_c, p_c))
+    elif not pos2_c and not pos_c:
+        a3_read = ("A3 主口径亦阴性(P=%.4f) → 计算层不支持分型, 主张转交 §E "
+                   "同源层(E1 已 PASS)与 §F 湿实验交互轴裁决" % p2_c)
+    elif pos2_c and pos_c:
+        a3_read = ("A3 与 A2(v47) 均阳性(P=%.4f/%.4f) → 分型信号对特征增强稳健"
+                   % (p2_c, p_c))
+    else:
+        a3_read = ("A3 阴性(P=%.4f)而 A2(v47) 阳性(P=%.4f) → 特征增强未带来"
+                   "一致信号, 如实并列" % (p2_c, p_c))
+    print("[§A3]", a3_read)
+    a3 = {
+        "registered": "docs/preregistration.md §A3(2026-09-10, 登记先于运行)",
+        "feature_names": rb.FEAT_NAMES + typing_mod.FEAT_V2_EXTRA,
+        "clustering": {"k_fixed": K_FIXED, "cluster_sizes": sizes2,
+                       "inertia": round(float(inertia2), 1),
+                       "silhouette_diagnostic_only": round(sil2, 4)},
+        "representatives": {t: [nm for nm, _ in reps2[t]] for t in types2},
+        "a3b_with_pos1": {"obs_common": obs2["n_common"],
+                          "common": obs2["common"], "p_obs": round(p2_b, 4),
+                          "threshold_p": P_THRESH, "positive": pos2_b,
+                          "null_median": float(np.median(null2))},
+        "a3c_no_pos1": {"obs_common": obs2_np["n_common"],
+                        "common": obs2_np["common"], "p_obs": round(p2_c, 4),
+                        "threshold_p": P_THRESH, "positive": pos2_c,
+                        "null_median": float(np.median(null2np))},
+        "reading": a3_read,
+    }
+
     report = {
         "generated_by": "scripts/crrna_typing_v47_expansion.py",
         "date": time.strftime("%Y-%m-%d"),
@@ -236,6 +299,7 @@ def main():
                         "null_median": float(np.median(null_np_)),
                         "n_partitions": int(len(null_np_))},
         "reading": reading,
+        "a3_enriched": a3,
         "comparison_literature_cohort": {
             "n": 85,
             "a2b_p": 0.0357, "a2c_common": 2, "a2c_p": 0.0357,
