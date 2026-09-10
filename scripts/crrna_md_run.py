@@ -58,36 +58,45 @@ def main():
     print("[npt] %g ps" % args.npt_ps, flush=True)
     integ2.step(int(round(args.npt_ps / DT_PS)))
 
-    # production
+    # production(OpenMM 官方 Simulation API: 报告器由 Simulation 托管初始化
+    # 与按间隔触发; 手写 report 循环绕过初始化会在 8.4 抛 _out AttributeError,
+    # 2026-09-10 重写)。注意: 生产段只建 integrator, Context 由 Simulation
+    # 自建——integrator 一旦绑定 Context 不可复用(8.4 抛 already bound)。
     prod_steps = int(round(args.ns * 1000 / DT_PS))
-    ctx3, integ3 = context_for(system, args.device)
     st2 = ctx2.getState(getPositions=True, getVelocities=True, enforcePeriodicBox=True)
-    ctx3.setPositions(st2.getPositions())
-    ctx3.setVelocities(st2.getVelocities())
-    ctx3.setPeriodicBoxVectors(*st2.getPeriodicBoxVectors())
 
-    dcd = DCDReporter(os.path.join(d, "production.dcd"), 10000, append=True)  # 20 ps/帧
-    rep = StateDataReporter(open(os.path.join(d, "md.log"), "a"), 50000, step=True,
-                            time=True, speed=True, progress=True,
-                            totalSteps=prod_steps, remainingTime=True,
-                            potentialEnergy=True, temperature=True, separator=" | ")
-    chk = CheckpointReporter(os.path.join(d, "production.chk"), 250000)
+    integ3 = LangevinMiddleIntegrator(300 * unit.kelvin, 1 / unit.picosecond,
+                                      DT_PS * unit.picoseconds)
+    sim = app.Simulation(pdb.topology, system, integ3,
+                         Platform.getPlatformByName("CUDA"),
+                         {"DeviceIndex": str(args.device)})
+    sim.context.setPositions(st2.getPositions())
+    # DCDReporter(append=True) 以 r+b 打开, 文件不存在直接 FileNotFoundError
+    # (2026-09-10 根因; 此前的 _out AttributeError 只是该主错误的 __del__ 次生噪音)
+    dcd_path = os.path.join(d, "production.dcd")
+    sim.reporters.append(
+        DCDReporter(dcd_path, 10000, append=os.path.isfile(dcd_path)))  # 20 ps/帧
+    sim.reporters.append(
+        StateDataReporter(open(os.path.join(d, "md.log"), "a"), 50000, step=True,
+                          time=True, speed=True, progress=True,
+                          totalSteps=prod_steps, remainingTime=True,
+                          potentialEnergy=True, temperature=True,
+                          separator=" | "))
+    sim.reporters.append(
+        CheckpointReporter(os.path.join(d, "production.chk"), 250000))
 
     chk_file = os.path.join(d, "production.chk")
     start_step = 0
     if os.path.isfile(chk_file):
-        with open(chk_file, "rb") as f:
-            ctx3.loadCheckpoint(f.read())
-        start_step = integ3.getStep()
+        sim.loadCheckpoint(chk_file)
+        start_step = sim.currentStep
         print("[resume] from step %d / %d" % (start_step, prod_steps), flush=True)
+    else:
+        sim.context.setVelocities(st2.getVelocities())
+        sim.context.setPeriodicBoxVectors(*st2.getPeriodicBoxVectors())
 
     t0 = time.time()
-    chunk = 50000
-    while integ3.getStep() < prod_steps:
-        integ3.step(min(chunk, prod_steps - integ3.getStep()))
-        dcd.report(ctx3, integ3)
-        rep.report(ctx3, integ3)
-        chk.report(ctx3, integ3)
+    sim.step(prod_steps - start_step)
     dt_h = (time.time() - t0) / 3600
     done = {"sys_dir": d, "ns": args.ns, "steps": prod_steps, "device": args.device,
             "wall_hours_fresh": round(dt_h, 2) if start_step == 0 else None,
