@@ -14,7 +14,7 @@
   "per_crna_n_undefined_all_tied": 1,
   "method": "scipy.stats.spearmanr(tie-aware midranks), 逐 crRNA 在子集内重取秩; 2026-09-04 round-3 统一",
   "design": "池化模型训练集不含任何 Tian 2025 数据(独立外部验证)",
-  "interpretation": "RRS 区(DR 5' 端 4nt)活性由假结配对承载(Tian 2025 Fig.1: U+3/U+4 与茎环互作), 伪结外特征按构造不可表示——Spearman≈0 为预期盲端, 与 Creutzburg Sp8 盲区同源; 结论: 选型器排序不适用于 DR 5' 端 RRS 位点变体, 该位点区候选须按位置规则另行排除"
+  "interpretation": "RRS 区(DR 5' 端 4nt)活性由假结配对承载(Tian 2025 Fig.1: U+3/U+4 与茎环互作), 伪结外特征按构造不可表示——Spearman≈0 为预期盲端, 与 Creutzburg Sp8 盲区同源; 结论: 结构选型器排序不适用于 DR 5' 端 RRS 位点变体; 该区候选自 G6(2026-09-11, 预登记 §G6)起由位置感知模型打分(data/rrs_position_model.json, LOCO +0.714, 仅 Tian 同族 RRS 区、仅相对排序)"
  },
  "deweirdt2020_external_check": {
   "design": "池化模型训练集不含任何 DeWeirdt 2020 数据(独立外部验证, 全量无剔除)",
@@ -46,6 +46,92 @@
   "rbs0": 0.667,
   "rbs33": 0.889,
   "trans_end": 0.433
+ },
+ "rank_stability_g2": {
+  "design": "池化训练集 bootstrap B=500 行重抽样重训决策树(max_leaf=6,min_leaf=2,seed=b); Borda=决策树+Ridge 秩和",
+  "criterion": "§G2(2026-09-11 登记先于运行): TOP1 入选频率>=50% -> 首位稳定; <50% -> 弱稳定并列报告; Borda 首位与单模型首位不一致 -> 以 Borda 为报告口径",
+  "top1_selection_frequency": {
+   "A1C": 0.408,
+   "A1G+U3A+A8G+U15C": 0.156,
+   "A1U": 0.0,
+   "A1U+A2C": 0.0,
+   "A8C+U15G": 0.0,
+   "B_break_compensate": 0.062,
+   "U5G+A18C": 0.368,
+   "WT": 0.006
+  },
+  "rank_ci95_median_rank": {
+   "A1C": {
+    "median_rank": 3.5,
+    "ci95": [
+     2.5,
+     6.5
+    ]
+   },
+   "A1G+U3A+A8G+U15C": {
+    "median_rank": 5.5,
+    "ci95": [
+     1.5,
+     7.5
+    ]
+   },
+   "A1U": {
+    "median_rank": 3.5,
+    "ci95": [
+     2.5,
+     6.5
+    ]
+   },
+   "A1U+A2C": {
+    "median_rank": 3.5,
+    "ci95": [
+     2.5,
+     6.5
+    ]
+   },
+   "A8C+U15G": {
+    "median_rank": 5.5,
+    "ci95": [
+     1.5,
+     7.5
+    ]
+   },
+   "B_break_compensate": {
+    "median_rank": 6.0,
+    "ci95": [
+     1.0,
+     8.0
+    ]
+   },
+   "U5G+A18C": {
+    "median_rank": 3.0,
+    "ci95": [
+     1.0,
+     8.0
+    ]
+   },
+   "WT": {
+    "median_rank": 3.5,
+    "ci95": [
+     2.5,
+     6.5
+    ]
+   }
+  },
+  "top1_single_tree": "A1C",
+  "top1_bootstrap_mode": "A1C",
+  "top1_borda": "A1U+A2C",
+  "borda_order": [
+   "A1U+A2C",
+   "B_break_compensate",
+   "A1C",
+   "A8C+U15G",
+   "A1U",
+   "WT",
+   "A1G+U3A+A8G+U15C",
+   "U5G+A18C"
+  ],
+  "reading": "首位弱稳定(bootstrap 频率 0.408<0.5); Borda 首位 A1U+A2C 与单模型首位 A1C 不一致, 以 Borda 为报告口径"
  },
  "spearman_method": "scipy.stats.spearmanr(tie-aware midranks); 2026-09-04 round-3 统一: LOEO/Tian2025/DeWeirdt 各 ρ 弃用手搓 argsort-of-argsort(并列不取平均秩), 与旧 tie-blind 口径的数值差异为并列秩处理所致",
  "rejected_endpoints": {

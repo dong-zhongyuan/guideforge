@@ -68,6 +68,41 @@ def partial_spearman_gc(vals, acts, gc):
     return float(np.corrcoef(resid(vals, gc), resid(acts, gc))[0, 1])
 
 
+def partial_spearman_multi(vals, acts, covars):
+    """G1a 双协变量偏 Spearman(2026-09-11, 判据 docs/preregistration.md §G1):
+    秩残差同时控制多个组成协变量(GC 含量 + A 含量)。对各变量取 tie-aware
+    midranks 后对协变量秩矩阵做多元线性回归, 残差间 Pearson 即偏 Spearman。"""
+    from scipy.stats import rankdata
+
+    def resid(v, C):
+        rv = rankdata(np.asarray(v, float))
+        A = np.column_stack([np.ones(len(rv))] +
+                            [rankdata(np.asarray(c, float)) for c in C])
+        beta, *_ = np.linalg.lstsq(A, rv, rcond=None)
+        return rv - A @ beta
+    return float(np.corrcoef(resid(vals, covars), resid(acts, covars))[0, 1])
+
+
+def stratified_perm_p(vals, acts, strata, n_perm=20000, seed=0):
+    """G1b GC 分层置换(§G1): 按分层标签层内置换活性, 保持层边际分布。
+    双侧: |rho_perm| >= |rho_obs|。rho 为 tie-aware Spearman。"""
+    from scipy.stats import spearmanr
+    vals = np.asarray(vals, float)
+    acts = np.asarray(acts, float)
+    strata = np.asarray(strata)
+    obs = float(spearmanr(vals, acts).statistic)
+    rng = np.random.default_rng(seed)
+    hits = 0
+    for _ in range(n_perm):
+        pa = acts.copy()
+        for s in set(strata.tolist()):
+            idx = np.where(strata == s)[0]
+            pa[idx] = acts[idx][rng.permutation(len(idx))]
+        if abs(float(spearmanr(vals, pa).statistic)) >= abs(obs):
+            hits += 1
+    return obs, (hits + 1) / (n_perm + 1)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--dataset", default=os.path.join(ROOT, "data", "creutzburg_2020_dataset.json"))
@@ -84,6 +119,9 @@ def main():
     acts = np.array([act[n] for n in names], float)
     gcs = np.array([(core.to_rna(spacers[n]).count("G") + core.to_rna(spacers[n]).count("C")) / 21
                     for n in names])
+    # G1: 混杂第二条腿「A 富集」协变量 + GC 分层标签(中位数两层)
+    afs = np.array([core.to_rna(spacers[n]).count("A") / 21 for n in names])
+    gc_strata = (gcs > np.median(gcs)).astype(int)
 
     contexts = {
         "pre25": (pre5 + dr18, (0, 7), (7, 25)),
@@ -119,11 +157,25 @@ def main():
             rho = spearman(vals, acts)
             lo, hi, stable = loo_sign_stability(vals, acts)
             p_gc = partial_spearman_gc(vals, acts, gcs)
-            feats[feat] = {"spearman": round(rho, 3), "loo_min": round(lo, 3),
-                           "loo_max": round(hi, 3), "loo_stable": stable,
-                           "partial_given_GC": round(p_gc, 3)}
-            print("%-11s rho=%+.3f  LOO[%+.3f,%+.3f] 稳定=%s  GC偏相关=%+.3f" % (
-                feat, rho, lo, hi, stable, p_gc))
+            if float(np.std(vals)) == 0.0:
+                # 常数列(如 mature18 口径无 flank, 全零): 相关与置换均无定义
+                p_dual, p_strat = None, None
+            else:
+                p_dual = round(partial_spearman_multi(vals, acts, [gcs, afs]), 3)
+                _rs, p_strat = stratified_perm_p(vals, acts, gc_strata)
+                p_strat = round(float(p_strat), 4)
+            feats[feat] = {"spearman": round(rho, 3) if rho == rho else None,
+                           "loo_min": round(lo, 3) if lo == lo else None,
+                           "loo_max": round(hi, 3) if hi == hi else None,
+                           "loo_stable": stable,
+                           "partial_given_GC": round(p_gc, 3),
+                           "partial_given_GC_A": p_dual,
+                           "stratified_perm_p_GC": p_strat}
+            print("%-11s rho=%+.3f  LOO[%+.3f,%+.3f] 稳定=%s  GC偏相关=%+.3f  "
+                  "GC+A双控=%s  GC分层置换p=%s" % (
+                      feat, rho, lo, hi, stable, p_gc,
+                      "%+.3f" % p_dual if p_dual is not None else "n/a(常数列)",
+                      "%.4f" % p_strat if p_strat is not None else "n/a(常数列)"))
         report["contexts"][ctx] = {"rows": rows, "features": feats}
 
     zc = report["contexts"]["mature18"]["features"]["z_coreDR"]
@@ -135,8 +187,27 @@ def main():
                            np.sign(report["contexts"]["pre25"]["features"]["raw_flank"]["spearman"]) !=
                            np.sign(report["contexts"]["pre25"]["features"]["raw_coreDR"]["spearman"])
                            else "方向一致, 拆分仍必要(flank 属加工模块)")}
+    # G1c 判读规则(2026-09-11 预登记 §G1c, 登记先于运行; 主口径 raw_coreDR@mature18):
+    # 双控 |rho|<0.3 且分层置换 p>=0.05 -> 成分混杂归因成立并强化;
+    # 双控 |rho|>=0.3 且分层 p<0.05 -> 归因不完整, 修订为残留信号待 §F 裁决;
+    # 其余组合 -> 部分支持(显著性/强度仅一项满足), 如实记录。
+    main_f = report["contexts"]["mature18"]["features"]["raw_coreDR"]
+    dual, pstrat = main_f["partial_given_GC_A"], main_f["stratified_perm_p_GC"]
+    if abs(dual) < 0.3 and pstrat >= 0.05:
+        g1c = "成分混杂归因成立并强化(双控后 |rho|<0.3 且分层置换不显著)"
+    elif abs(dual) >= 0.3 and pstrat < 0.05:
+        g1c = "归因不完整: 双控后残留信号 %+.3f 且分层置换 p=%.4f 显著, 移交 §F 湿数据裁决"
+    else:
+        g1c = "部分支持(强度/显著性仅一项满足阈值), 如实记录"
+    report["verdict"]["G1c_preregistered"] = {
+        "criterion": "§G1c(2026-09-11 登记先于运行): 双控|rho|<0.3 且 GC分层置换 p>=0.05 "
+                     "-> 混杂归因强化; 双控|rho|>=0.3 且 p<0.05 -> 归因不完整",
+        "main_caliber": "raw_coreDR @ mature18",
+        "partial_given_GC_A": dual, "stratified_perm_p_GC": pstrat,
+        "reading": g1c}
     print("\n判据: R1 %s | R2 %s" % (report["verdict"]["R1_raw_cross_pp_attribution_composition"],
                                     report["verdict"]["R2_stage_split"]))
+    print("G1c(预登记): %s" % g1c)
     json.dump(report, open(args.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("输出 -> %s" % args.out)
 

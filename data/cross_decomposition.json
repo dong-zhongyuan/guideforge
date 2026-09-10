@@ -1,5 +1,5 @@
 {
- "dataset": "/public/home/mengxl/dzy/guideforge/data/creutzburg_2020_dataset.json",
+ "dataset": "C:\\Users\\zhangdanjing\\guideforge\\data\\creutzburg_2020_dataset.json",
  "n_shuffle": 200,
  "shuffle_scope": "单碱基组成匹配(二核苷酸未保持, 诚实边界)",
  "contexts": {
@@ -120,32 +120,40 @@
    ],
    "features": {
     "raw_flank": {
-     "spearman": 0.138,
-     "loo_min": -0.038,
-     "loo_max": 0.319,
+     "spearman": 0.128,
+     "loo_min": -0.05,
+     "loo_max": 0.308,
      "loo_stable": false,
-     "partial_given_GC": 0.047
+     "partial_given_GC": -0.023,
+     "partial_given_GC_A": -0.023,
+     "stratified_perm_p_GC": 0.6787
     },
     "z_flank": {
-     "spearman": 0.002,
-     "loo_min": -0.247,
-     "loo_max": 0.132,
+     "spearman": 0.0,
+     "loo_min": -0.25,
+     "loo_max": 0.129,
      "loo_stable": false,
-     "partial_given_GC": 0.02
+     "partial_given_GC": -0.035,
+     "partial_given_GC_A": -0.055,
+     "stratified_perm_p_GC": 1.0
     },
     "raw_coreDR": {
-     "spearman": 0.547,
-     "loo_min": 0.434,
-     "loo_max": 0.692,
+     "spearman": 0.537,
+     "loo_min": 0.448,
+     "loo_max": 0.68,
      "loo_stable": true,
-     "partial_given_GC": 0.471
+     "partial_given_GC": 0.463,
+     "partial_given_GC_A": 0.458,
+     "stratified_perm_p_GC": 0.1674
     },
     "z_coreDR": {
-     "spearman": 0.213,
-     "loo_min": 0.016,
-     "loo_max": 0.374,
-     "loo_stable": true,
-     "partial_given_GC": 0.18
+     "spearman": 0.189,
+     "loo_min": -0.014,
+     "loo_max": 0.344,
+     "loo_stable": false,
+     "partial_given_GC": 0.175,
+     "partial_given_GC_A": 0.16,
+     "stratified_perm_p_GC": 0.5203
     }
    }
   },
@@ -266,32 +274,40 @@
    ],
    "features": {
     "raw_flank": {
-     "spearman": -0.349,
-     "loo_min": -0.544,
-     "loo_max": -0.181,
-     "loo_stable": true,
-     "partial_given_GC": -0.194
+     "spearman": null,
+     "loo_min": null,
+     "loo_max": null,
+     "loo_stable": false,
+     "partial_given_GC": 0.007,
+     "partial_given_GC_A": null,
+     "stratified_perm_p_GC": null
     },
     "z_flank": {
-     "spearman": -0.349,
-     "loo_min": -0.544,
-     "loo_max": -0.181,
-     "loo_stable": true,
-     "partial_given_GC": -0.194
+     "spearman": null,
+     "loo_min": null,
+     "loo_max": null,
+     "loo_stable": false,
+     "partial_given_GC": 0.007,
+     "partial_given_GC_A": null,
+     "stratified_perm_p_GC": null
     },
     "raw_coreDR": {
-     "spearman": 0.552,
-     "loo_min": 0.451,
-     "loo_max": 0.698,
+     "spearman": 0.546,
+     "loo_min": 0.459,
+     "loo_max": 0.691,
      "loo_stable": true,
-     "partial_given_GC": 0.478
+     "partial_given_GC": 0.475,
+     "partial_given_GC_A": 0.475,
+     "stratified_perm_p_GC": 0.1587
     },
     "z_coreDR": {
-     "spearman": 0.169,
-     "loo_min": 0.038,
-     "loo_max": 0.385,
-     "loo_stable": true,
-     "partial_given_GC": 0.084
+     "spearman": 0.174,
+     "loo_min": -0.006,
+     "loo_max": 0.366,
+     "loo_stable": false,
+     "partial_given_GC": 0.119,
+     "partial_given_GC_A": 0.099,
+     "stratified_perm_p_GC": 0.539
     }
    }
   }
@@ -299,12 +315,21 @@
  "verdict": {
   "R1_raw_cross_pp_attribution_composition": "支持退出主评分",
   "R1_detail": {
-   "spearman": 0.169,
-   "loo_min": 0.038,
-   "loo_max": 0.385,
-   "loo_stable": true,
-   "partial_given_GC": 0.084
+   "spearman": 0.174,
+   "loo_min": -0.006,
+   "loo_max": 0.366,
+   "loo_stable": false,
+   "partial_given_GC": 0.119,
+   "partial_given_GC_A": 0.099,
+   "stratified_perm_p_GC": 0.539
   },
-  "R2_stage_split": "方向一致, 拆分仍必要(flank 属加工模块)"
+  "R2_stage_split": "方向一致, 拆分仍必要(flank 属加工模块)",
+  "G1c_preregistered": {
+   "criterion": "§G1c(2026-09-11 登记先于运行): 双控|rho|<0.3 且 GC分层置换 p>=0.05 -> 混杂归因强化; 双控|rho|>=0.3 且 p<0.05 -> 归因不完整",
+   "main_caliber": "raw_coreDR @ mature18",
+   "partial_given_GC_A": 0.475,
+   "stratified_perm_p_GC": 0.1587,
+   "reading": "部分支持(强度/显著性仅一项满足阈值), 如实记录"
+  }
  }
 }

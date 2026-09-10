@@ -108,7 +108,12 @@ def conservation_partition(dr, cons3_window=5):
 
 
 def check_conservation_correlation(variants_csv, effector, cons3_window=5, cons3_weight=0.3):
-    """检验B: 位点耐受度 × 保守性分区 Spearman + 置换检验。"""
+    """检验B: 位点耐受度 × 保守性分区 Spearman + 置换检验。
+
+    G3(2026-09-11, 判据 docs/preregistration.md §G3, 登记先于运行):
+    置换校准 Fisher 合并——三口径共享同一组同步置换, 每口径的经验零分布
+    既给边际 p, 也把每次置换的 rho 折算成同分布内经验 p 后合并 Fisher 统计量,
+    零分布由同步置换的合并统计量给出(正确处理三口径间相关性, 不假设独立)。"""
     dr = core.to_rna(get_scaffold(effector))
     part, loop_idx = conservation_partition(dr, cons3_window)
 
@@ -143,6 +148,44 @@ def check_conservation_correlation(variants_csv, effector, cons3_window=5, cons3
     p_tol = _perm_p(cons, tol, rho_tol)
     p_msc = _perm_p(cons, msc, rho_msc)
     p_adj = _perm_p(cons, madj, rho_adj)
+
+    # --- G3 置换校准 Fisher 合并 ---
+    B = 20000
+    rng = np.random.default_rng(0)
+    ys = {"tolerance": tol, "meanscore": msc, "scoreadj": madj}
+    nulls = {k: np.empty(B) for k in ys}
+    for b in range(B):
+        pc = rng.permutation(cons)
+        for k, y in ys.items():
+            nulls[k][b] = _spearman(pc, y)
+    obs = {"tolerance": rho_tol, "meanscore": rho_msc, "scoreadj": rho_adj}
+    sorted_null = {k: np.sort(np.abs(nulls[k])) for k in ys}
+    # 边际经验 p = (1 + #{|null| >= |obs|}) / (B+1), 与 _perm_p 同口径(共享零分布)
+    marg_p = {k: (1 + (B - int(np.searchsorted(sorted_null[k], abs(obs[k]),
+                                               side='left')))) / (B + 1)
+              for k in ys}
+    x2_obs = float(-2 * sum(np.log(marg_p[k]) for k in ys))
+    x2_null = np.empty(B)
+    for k in ys:
+        # 每次置换的 rho 折算为其自身零分布内的经验 p(右侧尾部, 含 +1 平滑)
+        tail = (B - np.searchsorted(sorted_null[k], np.abs(nulls[k]),
+                                    side='left')) + 1
+        x2_null += -2 * np.log(tail / (B + 1))
+    comb_p = float((1 + int((x2_null >= x2_obs).sum())) / (B + 1))
+    direction_consistent = all(obs[k] < 0 for k in ys)
+    g3_reading = ("合并检验显著(置换校准 Fisher p=%.4f<0.05)且三口径方向一致为负 "
+                  "-> 「与天然进化数据一致」升级为合并口径显著"
+                  % comb_p) if (comb_p < 0.05 and direction_consistent) else \
+                 ("合并 p=%.4f 或方向不齐 -> 维持「方向一致、单口径不显著」表述"
+                  % comb_p)
+    combined = {"statistic": "Fisher X2 = -2*sum(ln p_i), 置换校准(同步置换, "
+                             "正确处理三口径相关性)",
+                "criterion": "§G3b(2026-09-11 登记先于运行): 合并 p<0.05 且三口径"
+                             "方向一致为负 -> 升级; 否则维持原表述",
+                "x2_obs": round(x2_obs, 3), "combined_perm_p": round(comb_p, 4),
+                "n_perm": B, "direction_all_negative": direction_consistent,
+                "reading": g3_reading}
+
     return {'rows': rows, 'loop_positions_1based': [i + 1 for i in loop_idx],
             'cons_partition': {str(k): v for k, v in part.items()},
             'partition_rule': 'flanked_by_paired',
@@ -152,6 +195,7 @@ def check_conservation_correlation(variants_csv, effector, cons3_window=5, cons3
             'spearman_cons_vs_scoreadj': {'rho': round(rho_adj, 3), 'perm_p': round(p_adj, 4),
                                            'note': 'score_adj 剔除 w_cons3 惩罚项, '
                                                    '为非循环的相关口径(仅 ddG/bp_dist/contact/hbond/ens 分量)'},
+            'combined_fisher_g3': combined,
             'note': '预期方向为负(保守度高→耐受低); rho<0 且 p<0.05 即与天然进化数据一致; '
                     'n=19 位点, 置换检验功效有限, 未达显著时如实报告方向'}
 
@@ -244,6 +288,10 @@ def main():
     print('[检验B] 保守性 vs 耐受度:', corr['spearman_cons_vs_tolerance'])
     print('[检验B] 保守性 vs 平均分:', corr['spearman_cons_vs_meanscore'])
     print('[检验B] 保守性 vs 去惩罚分:', corr['spearman_cons_vs_scoreadj'])
+    print('[检验B/G3] 置换校准合并 Fisher: X2=%.3f, p=%.4f -> %s' % (
+        corr['combined_fisher_g3']['x2_obs'],
+        corr['combined_fisher_g3']['combined_perm_p'],
+        corr['combined_fisher_g3']['reading']))
 
     payload = {'date': '2026-08-31', 'source': 'Dmytrenko et al. 2023 Nature (10.1038/s41586-022-05559-3)',
                'A_dr_swap': swap, 'B_conservation_corr': corr,

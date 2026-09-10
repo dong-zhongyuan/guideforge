@@ -1,0 +1,136 @@
+{
+ "generated_by": "scripts/crrna_rrs_position_model.py (G6, 2026-09-11)",
+ "criterion": "§G6a(2026-09-11 登记先于运行): LOCO Spearman>=+0.3 -> 升级; 否则维持排除",
+ "precedent": "CRISPRpred (Liu 2020, Bioinformatics 36:1454) 位置特异性特征; Tian 2025 自身结论以位置为主导(RRS 3/4 位近乎灭活)",
+ "data": "han2025_dataset.json:tian2025_rrs_pairs (8 crRNA x 12, n=96)",
+ "features": {
+  "position_onehot_x_base": 12,
+  "structure": [
+   "ddG_dr",
+   "bp_dist",
+   "cross_nt",
+   "p_fold",
+   "spacer_up"
+  ]
+ },
+ "model": "Ridge(alpha=1.0), StandardScaler 仅训练折拟合; LOCO 8 折组间独立",
+ "endpoint": "rrs_rel = 同 crRNA 内 mut/WT trans 切割比值",
+ "results": {
+  "position_only": {
+   "loco_spearman": 0.677,
+   "per_fold": [
+    {
+     "heldout_crRNA": 1,
+     "spearman": 0.923
+    },
+    {
+     "heldout_crRNA": 2,
+     "spearman": 0.825
+    },
+    {
+     "heldout_crRNA": 3,
+     "spearman": 0.951
+    },
+    {
+     "heldout_crRNA": 4,
+     "spearman": 0.427
+    },
+    {
+     "heldout_crRNA": 5,
+     "spearman": 0.923
+    },
+    {
+     "heldout_crRNA": 6,
+     "spearman": 0.874
+    },
+    {
+     "heldout_crRNA": 7,
+     "spearman": 0.797
+    },
+    {
+     "heldout_crRNA": 8,
+     "spearman": 0.874
+    }
+   ],
+   "n_features": 12
+  },
+  "structure_only": {
+   "loco_spearman": 0.121,
+   "per_fold": [
+    {
+     "heldout_crRNA": 1,
+     "spearman": -0.35
+    },
+    {
+     "heldout_crRNA": 2,
+     "spearman": 0.133
+    },
+    {
+     "heldout_crRNA": 3,
+     "spearman": 0.154
+    },
+    {
+     "heldout_crRNA": 4,
+     "spearman": 0.678
+    },
+    {
+     "heldout_crRNA": 5,
+     "spearman": 0.462
+    },
+    {
+     "heldout_crRNA": 6,
+     "spearman": -0.035
+    },
+    {
+     "heldout_crRNA": 7,
+     "spearman": -0.091
+    },
+    {
+     "heldout_crRNA": 8,
+     "spearman": 0.273
+    }
+   ],
+   "n_features": 5
+  },
+  "position_plus_structure": {
+   "loco_spearman": 0.714,
+   "per_fold": [
+    {
+     "heldout_crRNA": 1,
+     "spearman": 0.797
+    },
+    {
+     "heldout_crRNA": 2,
+     "spearman": 0.888
+    },
+    {
+     "heldout_crRNA": 3,
+     "spearman": 0.958
+    },
+    {
+     "heldout_crRNA": 4,
+     "spearman": 0.552
+    },
+    {
+     "heldout_crRNA": 5,
+     "spearman": 0.86
+    },
+    {
+     "heldout_crRNA": 6,
+     "spearman": 0.832
+    },
+    {
+     "heldout_crRNA": 7,
+     "spearman": 0.769
+    },
+    {
+     "heldout_crRNA": 8,
+     "spearman": 0.762
+    }
+   ],
+   "n_features": 17
+  }
+ },
+ "reading": "LOCO Spearman=+0.714>=+0.3 -> RRS 区候选从「按位置规则排除」升级为「位置感知模型打分(仅 Tian 同族 RRS 区、仅相对排序)」",
+ "scope_limit": "升级仅在 Tian 同族 RRS 区(DR 5' 端 4nt)且仅相对排序; 不外推到其他 DR 区或绝对活性"
+}

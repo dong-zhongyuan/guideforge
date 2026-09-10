@@ -1,0 +1,237 @@
+{
+ "date": "2026-08-31",
+ "source": "Dmytrenko et al. 2023 Nature (10.1038/s41586-022-05559-3)",
+ "A_dr_swap": {
+  "swap_effector": "cas12a",
+  "swap_dr_rna": "UAAUUUCUACUAAGUGUAGAU",
+  "swap_dr_only_struct": ".....(((((.....))))).",
+  "swap_dr_only_mfe": -4.699999809265137,
+  "full_mfe_kcal": -10.5,
+  "checks": {
+   "stem_pairs_kept": {
+    "wt_pairs": 10,
+    "swap_pairs": 10,
+    "ok": true
+   },
+   "spacer_unpaired": {
+    "wt": 0.427,
+    "swap": 0.427,
+    "ok": true
+   },
+   "sequence_discipline": {
+    "ok": true
+   }
+  },
+  "verdict": "PASS(未误杀)",
+  "note": "两 DR 长度不同(21 vs 19 nt), 与 WT 的 bp_distance 不可定义; 改用茎完整性(配对数 >= WT-2)+spacer 游离+序列纪律三项, 口径如实注明"
+ },
+ "B_conservation_corr": {
+  "rows": [
+   {
+    "pos": 1,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -0.0041,
+    "mean_score_adj": -0.0041,
+    "n_alt": 3
+   },
+   {
+    "pos": 2,
+    "cons_class": 1,
+    "tolerance_pass": 0.667,
+    "mean_score": -0.7277,
+    "mean_score_adj": -0.7277,
+    "n_alt": 3
+   },
+   {
+    "pos": 3,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -0.5701,
+    "mean_score_adj": -0.5701,
+    "n_alt": 3
+   },
+   {
+    "pos": 4,
+    "cons_class": 1,
+    "tolerance_pass": 0.333,
+    "mean_score": -1.4312,
+    "mean_score_adj": -1.4312,
+    "n_alt": 3
+   },
+   {
+    "pos": 5,
+    "cons_class": 1,
+    "tolerance_pass": 0.0,
+    "mean_score": -1.2548,
+    "mean_score_adj": -1.2548,
+    "n_alt": 3
+   },
+   {
+    "pos": 6,
+    "cons_class": 1,
+    "tolerance_pass": 0.0,
+    "mean_score": -2.2895,
+    "mean_score_adj": -2.2895,
+    "n_alt": 3
+   },
+   {
+    "pos": 7,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.6863,
+    "mean_score_adj": -1.6863,
+    "n_alt": 3
+   },
+   {
+    "pos": 8,
+    "cons_class": 1,
+    "tolerance_pass": 0.667,
+    "mean_score": -3.5953,
+    "mean_score_adj": -3.5953,
+    "n_alt": 3
+   },
+   {
+    "pos": 9,
+    "cons_class": 1,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.7906,
+    "mean_score_adj": -1.7906,
+    "n_alt": 3
+   },
+   {
+    "pos": 10,
+    "cons_class": 0,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.2264,
+    "mean_score_adj": -1.2264,
+    "n_alt": 3
+   },
+   {
+    "pos": 11,
+    "cons_class": 0,
+    "tolerance_pass": 0.667,
+    "mean_score": -0.6375,
+    "mean_score_adj": -0.6375,
+    "n_alt": 3
+   },
+   {
+    "pos": 12,
+    "cons_class": 0,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.4114,
+    "mean_score_adj": -1.4114,
+    "n_alt": 3
+   },
+   {
+    "pos": 13,
+    "cons_class": 0,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.4279,
+    "mean_score_adj": -1.385,
+    "n_alt": 3
+   },
+   {
+    "pos": 14,
+    "cons_class": 1,
+    "tolerance_pass": 0.667,
+    "mean_score": -1.6414,
+    "mean_score_adj": -1.5985,
+    "n_alt": 3
+   },
+   {
+    "pos": 15,
+    "cons_class": 2,
+    "tolerance_pass": 0.667,
+    "mean_score": -2.4443,
+    "mean_score_adj": -2.4014,
+    "n_alt": 3
+   },
+   {
+    "pos": 16,
+    "cons_class": 2,
+    "tolerance_pass": 1.0,
+    "mean_score": -1.4384,
+    "mean_score_adj": -1.3955,
+    "n_alt": 3
+   },
+   {
+    "pos": 17,
+    "cons_class": 2,
+    "tolerance_pass": 0.0,
+    "mean_score": -2.1839,
+    "mean_score_adj": -2.141,
+    "n_alt": 3
+   },
+   {
+    "pos": 18,
+    "cons_class": 2,
+    "tolerance_pass": 0.333,
+    "mean_score": -1.8406,
+    "mean_score_adj": -1.7977,
+    "n_alt": 3
+   },
+   {
+    "pos": 19,
+    "cons_class": 2,
+    "tolerance_pass": 0.333,
+    "mean_score": -1.1605,
+    "mean_score_adj": -1.1176,
+    "n_alt": 3
+   }
+  ],
+  "loop_positions_1based": [
+   10,
+   11,
+   12,
+   13
+  ],
+  "cons_partition": {
+   "1": 1,
+   "2": 1,
+   "3": 1,
+   "4": 1,
+   "5": 1,
+   "6": 1,
+   "7": 1,
+   "8": 1,
+   "9": 1,
+   "10": 0,
+   "11": 0,
+   "12": 0,
+   "13": 0,
+   "14": 1,
+   "15": 2,
+   "16": 2,
+   "17": 2,
+   "18": 2,
+   "19": 2
+  },
+  "partition_rule": "flanked_by_paired",
+  "spearman": "tie-aware midranks (scipy.stats.spearmanr)",
+  "spearman_cons_vs_tolerance": {
+   "rho": -0.426,
+   "perm_p": 0.0792
+  },
+  "spearman_cons_vs_meanscore": {
+   "rho": -0.406,
+   "perm_p": 0.0881
+  },
+  "spearman_cons_vs_scoreadj": {
+   "rho": -0.363,
+   "perm_p": 0.1313,
+   "note": "score_adj 剔除 w_cons3 惩罚项, 为非循环的相关口径(仅 ddG/bp_dist/contact/hbond/ens 分量)"
+  },
+  "combined_fisher_g3": {
+   "statistic": "Fisher X2 = -2*sum(ln p_i), 置换校准(同步置换, 正确处理三口径相关性)",
+   "criterion": "§G3b(2026-09-11 登记先于运行): 合并 p<0.05 且三口径方向一致为负 -> 升级; 否则维持原表述",
+   "x2_obs": 13.988,
+   "combined_perm_p": 0.0677,
+   "n_perm": 20000,
+   "direction_all_negative": true,
+   "reading": "合并 p=0.0677 或方向不齐 -> 维持「方向一致、单口径不显著」表述"
+  },
+  "note": "预期方向为负(保守度高→耐受低); rho<0 且 p<0.05 即与天然进化数据一致; n=19 位点, 置换检验功效有限, 未达显著时如实报告方向"
+ },
+ "disclaimer": "检验A为过滤器不误杀检验(非活性预测); 检验B为计算内部一致性验证; 均不替代湿实验"
+}

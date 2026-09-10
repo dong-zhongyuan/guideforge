@@ -1,0 +1,196 @@
+{
+ "generated_by": "scripts/crrna_deweirdt_position_sensitivity.py (G4, 2026-09-11)",
+ "criterion": "§G4b(2026-09-11 登记先于运行): 两方向均 rho<0 且 p<0.05 -> 大库独立证据支持; 否则如实报告",
+ "data": {
+  "scan": "data/raw/deweirdt2020_dr_scan.json (n_mut==1 子集)",
+  "conservation": "data/dr_conservation.json",
+  "as_entry": "AsCas12a_Zetsche2015",
+  "coordinate_offset": 1,
+  "offset_rule": "DeWeirdt WT 5' 端多 1 nt flank(T), 位点坐标偏移 +1; 尾部一致性已断言"
+ },
+ "n_single_mutants_used": 32,
+ "n_positions": 14,
+ "sensitivity_definition": "mean(-LFC): -LFC 大 = 突变失活强 = 位点敏感",
+ "spearman": "tie-aware midranks (scipy.stats.spearmanr)",
+ "n_perm": 20000,
+ "positions": [
+  {
+   "pos_lib_0based": 2,
+   "pos_deweirdt_1based": 4,
+   "column": 1,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 1.073,
+   "sens_neglfc128": 0.2683,
+   "n_variants_127": 3,
+   "n_variants_128": 3
+  },
+  {
+   "pos_lib_0based": 3,
+   "pos_deweirdt_1based": 5,
+   "column": 2,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 1.0757,
+   "sens_neglfc128": 0.3415,
+   "n_variants_127": 3,
+   "n_variants_128": 3
+  },
+  {
+   "pos_lib_0based": 4,
+   "pos_deweirdt_1based": 6,
+   "column": 3,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.7195,
+   "sens_neglfc128": 0.2397,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 5,
+   "pos_deweirdt_1based": 7,
+   "column": 4,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.5473,
+   "sens_neglfc128": 0.3768,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 7,
+   "pos_deweirdt_1based": 9,
+   "column": 6,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.9152,
+   "sens_neglfc128": 0.2882,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 8,
+   "pos_deweirdt_1based": 10,
+   "column": 7,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.6177,
+   "sens_neglfc128": 0.23,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 9,
+   "pos_deweirdt_1based": 11,
+   "column": 8,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.8508,
+   "sens_neglfc128": 0.3058,
+   "n_variants_127": 3,
+   "n_variants_128": 3
+  },
+  {
+   "pos_lib_0based": 10,
+   "pos_deweirdt_1based": 12,
+   "column": 10,
+   "identity": 0.455,
+   "class": "variable",
+   "sens_neglfc127": 2.9633,
+   "sens_neglfc128": 3.021,
+   "n_variants_127": 3,
+   "n_variants_128": 3
+  },
+  {
+   "pos_lib_0based": 11,
+   "pos_deweirdt_1based": 13,
+   "column": 12,
+   "identity": 0.909,
+   "class": "conserved",
+   "sens_neglfc127": 2.8545,
+   "sens_neglfc128": 2.301,
+   "n_variants_127": 3,
+   "n_variants_128": 3
+  },
+  {
+   "pos_lib_0based": 12,
+   "pos_deweirdt_1based": 14,
+   "column": 13,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 3.7058,
+   "sens_neglfc128": 3.6097,
+   "n_variants_127": 3,
+   "n_variants_128": 3
+  },
+  {
+   "pos_lib_0based": 13,
+   "pos_deweirdt_1based": 15,
+   "column": 14,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.8515,
+   "sens_neglfc128": 0.2665,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 14,
+   "pos_deweirdt_1based": 16,
+   "column": 15,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.8454,
+   "sens_neglfc128": -0.0241,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 16,
+   "pos_deweirdt_1based": 18,
+   "column": 17,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.8423,
+   "sens_neglfc128": 0.2538,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  },
+  {
+   "pos_lib_0based": 17,
+   "pos_deweirdt_1based": 19,
+   "column": 18,
+   "identity": 1.0,
+   "class": "strictly_conserved",
+   "sens_neglfc127": 0.7701,
+   "sens_neglfc128": 0.2297,
+   "n_variants_127": 1,
+   "n_variants_128": 1
+  }
+ ],
+ "results": {
+  "sens_neglfc127": {
+   "vs_identity": {
+    "rho": -0.508,
+    "perm_p": 0.0659
+   },
+   "vs_class3": {
+    "rho": -0.508,
+    "perm_p": 0.0659
+   }
+  },
+  "sens_neglfc128": {
+   "vs_identity": {
+    "rho": -0.508,
+    "perm_p": 0.0653
+   },
+   "vs_class3": {
+    "rho": -0.508,
+    "perm_p": 0.0653
+   }
+  }
+ },
+ "reading": "两方向方向一致为负但置换 p 未达 0.05(边缘) -> 方向与 G3 一致, 显著性不足, 如实报告; 不改动 G3 结论",
+ "limitation": "DeWeirdt 库为组合设计库, n_mut==1 子集稀疏(每位 1-3 条, 仅 14/18 比对位有覆盖), 位点敏感性估计精度低于预期; 功效仍高于本管线单点扫描的 3-alt/位, 但非饱和扫描"
+}

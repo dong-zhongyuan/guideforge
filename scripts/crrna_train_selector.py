@@ -598,6 +598,71 @@ def main():
     for r in sorted(fam_rows, key=lambda x: -x["pred_pooled_z"]):
         print("%-22s %10.3f %12s" % (r["scaffold"], r["pred_pooled_z"],
                                      r["tolerance_neighborhood"]))
+    # === G2 排序稳定性量化(2026-09-11, 判据 docs/preregistration.md §G2,
+    #     登记先于运行): 池化训练集 bootstrap B=500 重训同超参决策树, 统计
+    #     8 员族每条的 TOP1 入选频率与秩 95% CI; Borda 聚合决策树+Ridge 两模型 ===
+    fam_feat = {r["scaffold"]: [r["features"][f] for f in FEATURES]
+                for r in fam_rows}
+    fam_names = sorted(fam_feat)
+    X_fam = np.array([fam_feat[n] for n in fam_names])
+    B_BOOT = 500
+    rng_b = np.random.default_rng(20260911)
+    top1_hits = {n: 0 for n in fam_names}
+    boot_ranks = {n: [] for n in fam_names}
+    n_pool = len(yp)
+    for b in range(B_BOOT):
+        bidx = rng_b.integers(0, n_pool, n_pool)
+        mb = DecisionTreeRegressor(max_leaf_nodes=6, min_samples_leaf=2,
+                                   random_state=b)
+        mb.fit(Xp[bidx], yp[bidx])
+        pb = mb.predict(X_fam)
+        rk = rankdata(-pb)  # z 高=优 -> 秩1=最优
+        top1_hits[fam_names[int(np.argmax(pb))]] += 1
+        for n, r_ in zip(fam_names, rk):
+            boot_ranks[n].append(float(r_))
+    # Borda 跨模型聚合: 决策树(池化) + Ridge(池化, 标准化仅训练集拟合)
+    sc_p = StandardScaler().fit(Xp)
+    rid_p = Ridge(alpha=1.0).fit(sc_p.transform(Xp), yp)
+    pred_tree = pooled.predict(X_fam)
+    pred_ridge = rid_p.predict(sc_p.transform(X_fam))
+    borda = {n: 0.0 for n in fam_names}
+    for pred in (pred_tree, pred_ridge):
+        for n, r_ in zip(fam_names, rankdata(-pred)):
+            borda[n] += float(r_)
+    borda_order = sorted(fam_names, key=lambda n: borda[n])
+    top1_freq = {n: round(top1_hits[n] / B_BOOT, 3) for n in fam_names}
+    best_single = fam_names[int(np.argmax(pred_tree))]
+    best_boot = max(top1_freq, key=top1_freq.get)
+    best_borda = borda_order[0]
+    top1_stable = top1_freq[best_boot] >= 0.5
+    rank_stability = {
+        "design": "池化训练集 bootstrap B=%d 行重抽样重训决策树"
+                  "(max_leaf=6,min_leaf=2,seed=b); Borda=决策树+Ridge 秩和" % B_BOOT,
+        "criterion": "§G2(2026-09-11 登记先于运行): TOP1 入选频率>=50% -> 首位稳定; "
+                     "<50% -> 弱稳定并列报告; Borda 首位与单模型首位不一致 -> "
+                     "以 Borda 为报告口径",
+        "top1_selection_frequency": top1_freq,
+        "rank_ci95_median_rank": {
+            n: {"median_rank": round(float(np.median(boot_ranks[n])), 1),
+                "ci95": [round(float(np.percentile(boot_ranks[n], 2.5)), 1),
+                         round(float(np.percentile(boot_ranks[n], 97.5)), 1)]}
+            for n in fam_names},
+        "top1_single_tree": best_single,
+        "top1_bootstrap_mode": best_boot,
+        "top1_borda": best_borda,
+        "borda_order": borda_order,
+        "reading": ("首位稳定" if top1_stable else
+                    "首位弱稳定(bootstrap 频率 %.3f<0.5)" % top1_freq[best_boot])
+                   + ("; Borda 首位与单模型一致(%s)" % best_borda
+                      if best_borda == best_single else
+                      "; Borda 首位 %s 与单模型首位 %s 不一致, 以 Borda 为报告口径"
+                      % (best_borda, best_single))}
+    print("\n=== G2 排序稳定性(bootstrap B=%d) ===" % B_BOOT)
+    for n in sorted(top1_freq, key=lambda x: -top1_freq[x]):
+        rkst = rank_stability["rank_ci95_median_rank"][n]
+        print("  %-22s TOP1频率 %.3f  中位秩 %.1f CI95 %s" % (
+            n, top1_freq[n], rkst["median_rank"], rkst["ci95"]))
+    print("G2 判读: %s" % rank_stability["reading"])
     print("\n=== 8 员跨型候选族逐终点预测(fig1g/cis 低=抑制强; trans 高=切割强) ===")
     print("%-22s %10s %10s %10s" % ("scaffold", "fig1g", "cis_end", "trans_end"))
     for r in fam_rows:
@@ -640,8 +705,10 @@ def main():
             "interpretation": "RRS 区(DR 5' 端 4nt)活性由假结配对承载(Tian 2025 "
                               "Fig.1: U+3/U+4 与茎环互作), 伪结外特征按构造不可表示"
                               "——Spearman≈0 为预期盲端, 与 Creutzburg Sp8 盲区同源; "
-                              "结论: 选型器排序不适用于 DR 5' 端 RRS 位点变体, "
-                              "该位点区候选须按位置规则另行排除"}
+                              "结论: 结构选型器排序不适用于 DR 5' 端 RRS 位点变体; "
+                              "该区候选自 G6(2026-09-11, 预登记 §G6)起由位置感知模型"
+                              "打分(data/rrs_position_model.json, LOCO +0.714, "
+                              "仅 Tian 同族 RRS 区、仅相对排序)"}
         print("\n=== Tian2025 RRS 外部验证(n=%d) ===" % len(rrs))
         print("整体 Spearman = %+.3f; 逐 crRNA 中位 = %+.3f (有效 %d, 全并列剔除 %d)"
               % (rho_all, rrs_check["per_crna_spearman_median"] or float("nan"),
@@ -784,6 +851,7 @@ def main():
                        "摆动(+0.587/-0.493/-0.872 同源伪影), 不构成两排序系统"
                        "真实反向分歧的证据; 以 tie-aware 值为准"},
            "top12_overlap_pipeline_vs_selector": top12_overlap,
+           "rank_stability_g2": rank_stability,
            "ranking_authority": "pipeline_score",
            "ranking_authority_reason":
                "合成候选排序以管线打分(score_variant, 同一 Cas12a2 zeng2026 构建的 "
@@ -835,6 +903,7 @@ def main():
         "pooled_feature_importance": {f: float(imp) for f, imp in
                                       zip(FEATURES, pooled.feature_importances_)},
         "loeo_spearman": loeo,
+        "rank_stability_g2": rank_stability,
         "spearman_method": "scipy.stats.spearmanr(tie-aware midranks); "
                            "2026-09-04 round-3 统一: LOEO/Tian2025/DeWeirdt 各 ρ "
                            "弃用手搓 argsort-of-argsort(并列不取平均秩), "

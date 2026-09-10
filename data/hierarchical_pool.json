@@ -1,0 +1,54 @@
+{
+ "generated_by": "scripts/crrna_hierarchical_pool.py (G7, 2026-09-11)",
+ "criterion": "§G7a(2026-09-11 登记先于运行): 入池后其余 5 终点 LOEO 正值数>=3 -> 修订为层级部分池化入池; 否则维持拒入",
+ "model": "组随机截距+共享 Ridge 斜率, 交替最小二乘, LAM=10 收缩常数, X 全局标准化; LOEO 留出组截距收缩至 0",
+ "deweirdt_subsample": "全量按 -LFC127 z 标准化后按 LFC127 秩等距抽 120 条(确定性秩分层, 无种子)",
+ "n_observations": 166,
+ "groups": {
+  "cis_end": 7,
+  "deweirdt_lfc127": 120,
+  "fig1g": 16,
+  "ordinal_4n96": 2,
+  "rbs0": 7,
+  "rbs33": 7,
+  "trans_end": 7
+ },
+ "loeo_hierarchical_without_deweirdt": {
+  "cis_end": -0.714,
+  "fig1g": -0.059,
+  "rbs0": -0.25,
+  "rbs33": -0.357,
+  "trans_end": -0.536
+ },
+ "loeo_hierarchical_with_deweirdt": {
+  "cis_end": -0.429,
+  "deweirdt_lfc127": -0.065,
+  "fig1g": 0.068,
+  "rbs0": -0.429,
+  "rbs33": -0.214,
+  "trans_end": -0.143
+ },
+ "loeo_tree_pooled_reference": {
+  "cis_end": -0.692
+ },
+ "n_main5_positive_with_dw": 1,
+ "intercepts_full_fit": {
+  "cis_end": -0.017,
+  "deweirdt_lfc127": 0.1148,
+  "fig1g": -0.032,
+  "ordinal_4n96": -0.0149,
+  "rbs0": -0.017,
+  "rbs33": -0.017,
+  "trans_end": -0.017
+ },
+ "shared_slopes_standardized": {
+  "ddG_dr": 0.0851,
+  "bp_dist": -0.256,
+  "cross_nt": 0.077,
+  "p_fold": -0.0301,
+  "spacer_up": -0.0262
+ },
+ "reading": "DeWeirdt 入池后其余 5 终点 LOEO 正值数=1<3 -> 维持拒入, 层级口径数值如实报告",
+ "cis_note": "cis 层级 LOEO=-0.429 vs 决策树池化现值 -0.692: 改善",
+ "scope": "层级模型仅作终点整合第二口径, 与决策树池化版并存, 分歧并列报告"
+}

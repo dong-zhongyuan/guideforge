@@ -1,0 +1,180 @@
+{
+ "generated_by": "scripts/crrna_creutzburg_pk_caliber.py (G5, 2026-09-11)",
+ "criterion": "§G5a(2026-09-11 登记先于运行): rho>0 且 perm p<0.05 -> 口径不齐归因获支持; 否则维持现表述",
+ "paper_caliber": "Creutzburg 2020 自报口径 = pre-crRNA 上下文 + 茎定义含手工假结 P1 配对(U(-10):A(-18) 反 Hoogsteen); n≈25",
+ "computable_approximation": "hc_add_bp 强制 P1 的约束配分下 5 对经典茎 WC 配对联合概率; 不等于真含假结配分(NUPACK 口径见 crrna_nupack_pk_weight.py)",
+ "p1_pair": {
+  "dr18_0based": [
+   1,
+   9
+  ],
+  "full_0based": [
+   8,
+   16
+  ],
+  "bases": "A:U",
+  "coord_reference": "结构文献坐标(AsCas12a 5' 手柄假结解剖: WO2019135816A2 说明书 [0174]; Swarts 2017)"
+ },
+ "stem_wc_pairs_dr18_0based": [
+  [
+   8,
+   13
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   6,
+   15
+  ],
+  [
+   5,
+   16
+  ],
+  [
+   4,
+   17
+  ]
+ ],
+ "context": "pre25 = 5' 残留 repeat(7nt) + DR18 + spacer21",
+ "good_threshold_pct": 60,
+ "rows": [
+  {
+   "name": "Sp1",
+   "activity": 71,
+   "stem_prob_unconstrained": 0.963777,
+   "dG_pk_cost": 5.377,
+   "w_P1_state": 0.000163,
+   "p_stem_paper": 0.96394
+  },
+  {
+   "name": "Sp2",
+   "activity": 73,
+   "stem_prob_unconstrained": 0.975703,
+   "dG_pk_cost": 5.643,
+   "w_P1_state": 0.000106,
+   "p_stem_paper": 0.975809
+  },
+  {
+   "name": "Sp3",
+   "activity": 69,
+   "stem_prob_unconstrained": 0.989404,
+   "dG_pk_cost": 7.342,
+   "w_P1_state": 7e-06,
+   "p_stem_paper": 0.989411
+  },
+  {
+   "name": "Sp4",
+   "activity": 72,
+   "stem_prob_unconstrained": 0.669176,
+   "dG_pk_cost": 3.258,
+   "w_P1_state": 0.005059,
+   "p_stem_paper": 0.674235
+  },
+  {
+   "name": "Sp5",
+   "activity": 75,
+   "stem_prob_unconstrained": 0.963039,
+   "dG_pk_cost": 5.75,
+   "w_P1_state": 8.9e-05,
+   "p_stem_paper": 0.963127
+  },
+  {
+   "name": "Sp6",
+   "activity": 78,
+   "stem_prob_unconstrained": 0.839647,
+   "dG_pk_cost": 3.273,
+   "w_P1_state": 0.004938,
+   "p_stem_paper": 0.844585
+  },
+  {
+   "name": "Sp7",
+   "activity": 62,
+   "stem_prob_unconstrained": 0.939557,
+   "dG_pk_cost": 5.129,
+   "w_P1_state": 0.000243,
+   "p_stem_paper": 0.939801
+  },
+  {
+   "name": "Sp8",
+   "activity": 0,
+   "stem_prob_unconstrained": 0.933536,
+   "dG_pk_cost": 4.883,
+   "w_P1_state": 0.000362,
+   "p_stem_paper": 0.933898
+  },
+  {
+   "name": "Sp9",
+   "activity": 83,
+   "stem_prob_unconstrained": 0.960886,
+   "dG_pk_cost": 6.202,
+   "w_P1_state": 4.3e-05,
+   "p_stem_paper": 0.960928
+  },
+  {
+   "name": "Sp10",
+   "activity": 69,
+   "stem_prob_unconstrained": 0.950334,
+   "dG_pk_cost": 4.409,
+   "w_P1_state": 0.000781,
+   "p_stem_paper": 0.951115
+  },
+  {
+   "name": "Sp11",
+   "activity": 57,
+   "stem_prob_unconstrained": 0.946573,
+   "dG_pk_cost": 4.392,
+   "w_P1_state": 0.000803,
+   "p_stem_paper": 0.947377
+  },
+  {
+   "name": "Sp12",
+   "activity": 79,
+   "stem_prob_unconstrained": 0.929497,
+   "dG_pk_cost": 3.645,
+   "w_P1_state": 0.002699,
+   "p_stem_paper": 0.932196
+  },
+  {
+   "name": "Sp13",
+   "activity": 34,
+   "stem_prob_unconstrained": 0.959066,
+   "dG_pk_cost": 4.577,
+   "w_P1_state": 0.000596,
+   "p_stem_paper": 0.959661
+  },
+  {
+   "name": "Sp14",
+   "activity": 29,
+   "stem_prob_unconstrained": 0.958357,
+   "dG_pk_cost": 4.446,
+   "w_P1_state": 0.000737,
+   "p_stem_paper": 0.959093
+  }
+ ],
+ "stats": {
+  "p_stem_paper": {
+   "spearman": 0.018,
+   "perm_p": 0.9542,
+   "auc_good_bad": 0.575
+  },
+  "component_stem_unconstrained": {
+   "spearman": 0.018,
+   "perm_p": 0.9542
+  },
+  "component_w_P1_state": {
+   "spearman": -0.062,
+   "perm_p": 0.8367
+  },
+  "component_dG_pk_cost": {
+   "spearman": 0.062,
+   "perm_p": 0.8367,
+   "expected_direction": "neg"
+  }
+ },
+ "metric_revision": "2026-09-11 同日修订(修订先于新指标评估): 原定义 P(WC 茎 | P1 强制) 构造性恒零(P1 与茎配对交叉, 硬约束互斥, 首跑 14/14 全零证实); 修订为两系综分解 p_stem_paper = P(WC 茎完整, 无约束) + exp(-dG_pk/RT), 仓内先例 crrna_state_competition.py 单一能量标尺约束配分",
+ "n": 14,
+ "limitation": "n=14(论文 n≈25 的可核验子集), 活性为 Fig1D 读图近似值",
+ "reading": "p_stem_paper rho=+0.018, 置换 p=0.9542 -> P1 对齐口径亦未达预登记阳性阈, 维持「游离态指标不构成跨体系活性预测器」表述, 该口径阴性如实追加记录"
+}
