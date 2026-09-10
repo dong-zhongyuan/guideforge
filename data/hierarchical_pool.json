@@ -50,5 +50,33 @@
  },
  "reading": "DeWeirdt 入池后其余 5 终点 LOEO 正值数=1<3 -> 维持拒入, 层级口径数值如实报告",
  "cis_note": "cis 层级 LOEO=-0.429 vs 决策树池化现值 -0.692: 改善",
+ "h1_random_slopes": {
+  "criterion": "§H1a(2026-09-11 登记先于运行): cis 随机斜率 LOEO>0 -> 转正; >-0.429 且<=0 -> 改善仍负并列; <=-0.429 -> 维持",
+  "model": "随机截距+随机斜率: y=a[g]+(beta+b[g])'x; b[g] 收缩常数 LAM_SLOPE=10; 方向门控: 组内 Ridge 斜率与共享斜率 cos<0 的终点 shrink_s 减半并记录",
+  "loeo_random_slope_without_deweirdt": {
+   "cis_end": -0.643,
+   "fig1g": -0.103,
+   "rbs0": -0.179,
+   "rbs33": -0.214,
+   "trans_end": -0.464
+  },
+  "loeo_random_slope_with_deweirdt": {
+   "cis_end": -0.429,
+   "deweirdt_lfc127": -0.106,
+   "fig1g": 0.044,
+   "rbs0": -0.429,
+   "rbs33": -0.214,
+   "trans_end": -0.143
+  },
+  "direction_conflicts_cos_neg": {
+   "cis_end": -0.238,
+   "deweirdt_lfc127": -0.334,
+   "rbs0": -0.151,
+   "rbs33": -0.204
+  },
+  "cis_loeo_random_slope": -0.429,
+  "cis_reference_random_intercept": -0.429,
+  "reading": "cis 随机斜率层级 LOEO=-0.429, 未较随机截距口径 -0.429 改善 -> 维持原值(§H1a)"
+ },
  "scope": "层级模型仅作终点整合第二口径, 与决策树池化版并存, 分歧并列报告"
 }

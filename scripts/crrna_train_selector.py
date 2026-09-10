@@ -635,6 +635,38 @@ def main():
     best_boot = max(top1_freq, key=top1_freq.get)
     best_borda = borda_order[0]
     top1_stable = top1_freq[best_boot] >= 0.5
+    # === H2 逐对胜率矩阵+稳定性选择判读(§H2, 2026-09-11 登记先于运行) ===
+    R = np.array([boot_ranks[n] for n in fam_names])  # (8, B) 逐 bootstrap 秩
+    pairs, n_robust, n_lean, n_tie = [], 0, 0, 0
+    for i in range(len(fam_names)):
+        for j in range(i + 1, len(fam_names)):
+            wins = float(np.mean(R[i] < R[j])) + 0.5 * float(np.mean(R[i] == R[j]))
+            if wins >= 0.5:
+                a, b_, p = fam_names[i], fam_names[j], wins
+            else:
+                a, b_, p = fam_names[j], fam_names[i], 1.0 - wins
+            band = ("robust" if p >= 0.9 else
+                    "lean" if p >= 0.6 else "indistinguishable")
+            n_robust += band == "robust"
+            n_lean += band == "lean"
+            n_tie += band == "indistinguishable"
+            pairs.append({"before": a, "after": b_, "P": round(p, 3), "band": band})
+    n_pairs = len(pairs)
+    q_sel = n_robust + n_lean  # 稳定性选择阈 pi=0.6 选出对数
+    ss_bound = round(q_sel ** 2 / ((2 * 0.6 - 1) * n_pairs), 2)  # Shah-Samworth
+    h2_upgraded = n_robust >= int(np.ceil(0.75 * n_pairs))
+    h2_reading = ("稳健序(P>=0.9)对数 %d/%d>=75%% -> 排序口径从「弱稳定」升级为"
+                  "「逐对多数稳健」(§H2a)" % (n_robust, n_pairs)) if h2_upgraded else \
+                 ("稳健序(P>=0.9)对数 %d/%d<75%% -> 维持弱稳定表述, 逐对矩阵与 "
+                  "Shah-Samworth 误差界(E[FP]<=%.2f)并列报告(§H2a)"
+                  % (n_robust, n_pairs, ss_bound))
+    print("\n=== H2 逐对胜率(28 对): 稳健 %d / 倾向 %d / 不可分辨 %d; SS界 E[FP]<=%.2f"
+          % (n_robust, n_lean, n_tie, ss_bound))
+    for pr_ in pairs:
+        if pr_["band"] != "indistinguishable":
+            print("  %-22s > %-22s P=%.3f [%s]" % (
+                pr_["before"], pr_["after"], pr_["P"], pr_["band"]))
+    print("H2 判读: %s" % h2_reading)
     rank_stability = {
         "design": "池化训练集 bootstrap B=%d 行重抽样重训决策树"
                   "(max_leaf=6,min_leaf=2,seed=b); Borda=决策树+Ridge 秩和" % B_BOOT,
@@ -656,7 +688,20 @@ def main():
                    + ("; Borda 首位与单模型一致(%s)" % best_borda
                       if best_borda == best_single else
                       "; Borda 首位 %s 与单模型首位 %s 不一致, 以 Borda 为报告口径"
-                      % (best_borda, best_single))}
+                      % (best_borda, best_single)),
+        "h2_pairwise": {
+            "criterion": "§H2a(2026-09-11 登记先于运行): 稳健序(P>=0.9)对数>=75% "
+                         "-> 升级为逐对多数稳健; 否则维持弱稳定并列报告",
+            "design": "bootstrap 秩向量逐对胜率 P(前>后), 并列计 0.5; 判读阈 "
+                      "P>=0.9 稳健序 / 0.6<=P<0.9 倾向序 / 0.4<P<0.6 不可分辨; "
+                      "Shah-Samworth 误差界 pi=0.6: E[FP]<=q^2/((2pi-1)*p)",
+            "n_pairs": n_pairs,
+            "n_robust": n_robust, "n_lean": n_lean,
+            "n_indistinguishable": n_tie,
+            "shah_samworth_fp_bound_pi06": ss_bound,
+            "pairs": pairs,
+            "reading": h2_reading,
+        }}
     print("\n=== G2 排序稳定性(bootstrap B=%d) ===" % B_BOOT)
     for n in sorted(top1_freq, key=lambda x: -top1_freq[x]):
         rkst = rank_stability["rank_ci95_median_rank"][n]

@@ -22,6 +22,12 @@ rbs0/rbs33)LOEO 保持正值的终点数 >=3 -> 池化口径从「拒入」修�
 池化入池」; 否则维持拒入并报告层级口径数值。cis 终点层级 LOEO 与现值 -0.692
 并列报告。层级模型仅作终点整合第二口径, 与决策树池化版并存。
 
+H1(§H1, 2026-09-11 登记先于运行): 上述模型升级为随机截距+随机斜率
+(b[g] 收缩常数 LAM_SLOPE=10)并加方向一致性门控(组内斜率与共享斜率 cos<0
+的终点权重减半并列名); 先例 DeepCRISTL(PMID 35758815)/Charlier 2025。
+判读规则(§H1a, 先于数值): cis 随机斜率 LOEO>0 -> 转正; >-0.429 且 <=0 ->
+改善仍负并列报告; <=-0.429 -> 维持原值。
+
 运行: python scripts/crrna_hierarchical_pool.py
 输出: data/hierarchical_pool.json
 """
@@ -43,6 +49,7 @@ from crrna_train_selector import FEATURES, load_pooled  # noqa: E402
 SCAN = os.path.join(ROOT, "data", "raw", "deweirdt2020_dr_scan.json")
 OUT = os.path.join(ROOT, "data", "hierarchical_pool.json")
 LAM = 10.0          # 部分池化收缩常数(显式)
+LAM_SLOPE = 10.0    # H1 随机斜率收缩常数(显式, 与截距同量级, 先于数值固定)
 N_DW = 120          # DeWeirdt 子样规模(与 2026-09-03 拒入实验同)
 MAIN5 = ["fig1g", "cis_end", "trans_end", "rbs0", "rbs33"]
 
@@ -86,6 +93,67 @@ def fit_hierarchical(X, y, groups, lam=LAM, n_iter=100):
             break
         a = a_new
     return sc, model, a, gid
+
+
+def fit_hierarchical_slopes(X, y, groups, lam=LAM, lam_slope=LAM_SLOPE,
+                            n_iter=100):
+    """H1(§H1, 2026-09-11 登记先于运行): 随机截距+随机斜率层级模型。
+    y_i = a[g] + (beta + b[g])'x_i。b[g] 向共享斜率收缩,
+    shrink_s = n_g/(n_g+lam_slope); 方向一致性门控: 组内自拟合 Ridge 斜率与
+    共享斜率余弦 cos_g<0 的终点判为方向冲突, shrink_s 再乘 0.5 并记录。
+    返回 (sc, beta 模型, a, b, gid, conflicts)。"""
+    sc = StandardScaler().fit(X)
+    Xs = sc.transform(X)
+    a = np.zeros(len(y))
+    b = np.zeros((len(y), X.shape[1]))   # 每观测所属组的斜率偏移(按行存)
+    gid = {g: np.where(groups == g)[0] for g in sorted(set(groups))}
+    model = Ridge(alpha=1.0)
+    conflicts = {}
+    for _ in range(n_iter):
+        # 1) 给定 a,b 拟合共享斜率
+        resid_shared = y - a - np.einsum("ij,ij->i", Xs, b)
+        model = Ridge(alpha=1.0).fit(Xs, resid_shared)
+        beta = model.coef_
+        # 2) 给定 beta 更新截距与斜率偏移
+        a_new, b_new = a.copy(), b.copy()
+        base_pred = Xs @ beta
+        for g, idx in gid.items():
+            n_g = len(idx)
+            shrink = n_g / (n_g + lam)
+            shrink_s = n_g / (n_g + lam_slope)
+            resid_g = y[idx] - a[idx] - base_pred[idx]
+            gm = Ridge(alpha=1.0).fit(Xs[idx], resid_g)
+            b_hat = gm.coef_
+            nrm = float(np.linalg.norm(b_hat) * np.linalg.norm(beta))
+            cos_g = float(b_hat @ beta / nrm) if nrm > 1e-12 else 1.0
+            if cos_g < 0:
+                shrink_s *= 0.5
+                conflicts[g] = round(cos_g, 3)
+            b_g = shrink_s * b_hat
+            b_new[idx] = b_g
+            resid_a = y[idx] - (base_pred[idx] + Xs[idx] @ b_g)
+            a_new[idx] = shrink * float(resid_a.mean())
+        delta = max(float(np.max(np.abs(a_new - a))),
+                    float(np.max(np.abs(b_new - b))))
+        a, b = a_new, b_new
+        if delta < 1e-10:
+            break
+    return sc, model, a, b, gid, conflicts
+
+
+def loeo_slopes(X, y, groups):
+    """H1 LOEO: 留出整组训练, 留出组 a=0 且 b=0(收缩至先验)。"""
+    out = {}
+    for g in sorted(set(groups)):
+        te = np.where(groups == g)[0]
+        tr = np.where(groups != g)[0]
+        if len(te) < 5:
+            continue
+        sc, model, _a, _b, _gid, _c = fit_hierarchical_slopes(
+            X[tr], y[tr], groups[tr])
+        pr = model.predict(sc.transform(X[te]))
+        out[g] = round(float(spearmanr(pr, y[te]).statistic), 3)
+    return out
 
 
 def loeo(X, y, groups):
@@ -142,6 +210,32 @@ def main():
     print("判读(§G7a): %s" % reading)
     print("cis: %s" % cis_note)
 
+    # === H1 随机斜率+方向一致性门控(§H1, 2026-09-11 登记先于运行) ===
+    los_wo = loeo_slopes(Xp, yp, groups)
+    los_w = loeo_slopes(Xall, yall, gall)
+    _sc, _m, _a, _b, _gid, conflicts_full = fit_hierarchical_slopes(
+        Xall, yall, gall)
+    print("\n终点            随机斜率LOEO(无DW)  随机斜率LOEO(含DW)")
+    for g in sorted(set(list(los_wo) + list(los_w))):
+        print("  %-16s %10s %10s" % (
+            g, "%+.3f" % los_wo[g] if g in los_wo else "n/a(<%d)" % 5,
+            "%+.3f" % los_w[g] if g in los_w else "n/a"))
+    print("方向冲突终点(组内斜率与共享斜率 cos<0, 权重减半):", conflicts_full)
+    cis_slope = los_w.get("cis_end")
+    cis_ref = -0.429  # §G7 随机截距口径现值
+    if cis_slope is not None and cis_slope > 0:
+        h1_reading = ("cis 随机斜率层级 LOEO=%+.3f>0 -> 「cis 反预测」更新为"
+                      "「随机斜率口径下转正」(§H1a)" % cis_slope)
+    elif cis_slope is not None and cis_slope > cis_ref:
+        h1_reading = ("cis 随机斜率层级 LOEO=%+.3f, 较随机截距口径 %+.3f 改善但仍负"
+                      " -> 两值并列报告(§H1a)" % (cis_slope, cis_ref))
+    else:
+        h1_reading = ("cis 随机斜率层级 LOEO=%s, 未较随机截距口径 %+.3f 改善"
+                      " -> 维持原值(§H1a)" % (
+                          ("%+.3f" % cis_slope) if cis_slope is not None else "n/a",
+                          cis_ref))
+    print("判读(§H1a): %s" % h1_reading)
+
     payload = {
         "generated_by": "scripts/crrna_hierarchical_pool.py (G7, 2026-09-11)",
         "criterion": "§G7a(2026-09-11 登记先于运行): 入池后其余 5 终点 LOEO 正值"
@@ -160,6 +254,19 @@ def main():
         "shared_slopes_standardized": coefs,
         "reading": reading,
         "cis_note": cis_note,
+        "h1_random_slopes": {
+            "criterion": "§H1a(2026-09-11 登记先于运行): cis 随机斜率 LOEO>0 -> "
+                         "转正; >-0.429 且<=0 -> 改善仍负并列; <=-0.429 -> 维持",
+            "model": "随机截距+随机斜率: y=a[g]+(beta+b[g])'x; b[g] 收缩常数 "
+                     "LAM_SLOPE=%g; 方向门控: 组内 Ridge 斜率与共享斜率 cos<0 "
+                     "的终点 shrink_s 减半并记录" % LAM_SLOPE,
+            "loeo_random_slope_without_deweirdt": los_wo,
+            "loeo_random_slope_with_deweirdt": los_w,
+            "direction_conflicts_cos_neg": conflicts_full,
+            "cis_loeo_random_slope": cis_slope,
+            "cis_reference_random_intercept": cis_ref,
+            "reading": h1_reading,
+        },
         "scope": "层级模型仅作终点整合第二口径, 与决策树池化版并存, 分歧并列报告",
     }
     json.dump(payload, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

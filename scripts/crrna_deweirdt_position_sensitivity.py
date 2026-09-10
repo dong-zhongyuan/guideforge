@@ -14,6 +14,11 @@ LFC128 并列; Spearman(tie-aware) × 连续 identity(主口径) 与三档分区
 判读规则(§G4b, 先于数值): 两方向均 rho<0 且 p<0.05 -> 大库独立证据支持
 「敏感位点富集于保守位点」; 方向分裂或均不显著 -> 如实报告。
 
+H3(§H3, 2026-09-11 登记先于运行): G4 单点子集稀疏(每位 1-3 条)是边缘不显著
+的结构性原因; 追加全量库(含多变体)加性潜表型口径——Ridge 位置×替代碱基
+one-hot -> 加性效应, 位点敏感性 = alt |效应| 均值。判读规则(§H3a, 先于数值):
+两方向均 rho<0 且 p<0.05 -> G3/G4 从「边缘」升级; 否则维持并并列报告。
+
 运行: python scripts/crrna_deweirdt_position_sensitivity.py
 输出: data/deweirdt_position_sensitivity.json
 """
@@ -159,6 +164,84 @@ def main():
             r["sens_neglfc127"], r["sens_neglfc128"],
             r["n_variants_127"], r["n_variants_128"]))
 
+    # === H3 全量库加性潜表型口径(§H3, 2026-09-11 登记先于运行) ===
+    # 废弃「仅 n_mut==1 子集」: 全量多变体库 Ridge(位置×替代碱基 one-hot) ->
+    # 加性效应, 位点敏感性 = 该位 3 alt |效应| 均值(与 G4 定义对齐)。
+    # 先例: jbloomlab/dms_variants 全局上位性; Haddox 2023 (PMC10418112)。
+    from sklearn.linear_model import Ridge
+
+    def full_library_sens(lfc_key):
+        entries = []
+        for r in scan["rows"]:
+            if r.get(lfc_key) is None:
+                continue
+            dr_dna = r["dr_rna"].replace("U", "T")
+            if len(dr_dna) != len(wt_dna):
+                continue
+            diffs = [(d - offset, dr_dna[d]) for d in range(len(wt_dna))
+                     if dr_dna[d] != wt_dna[d] and d - offset >= 0]
+            if not diffs:
+                continue
+            entries.append((diffs, -float(r[lfc_key])))
+        col_keys = sorted({k for diffs, _ in entries for k in diffs})
+        cidx = {k: i for i, k in enumerate(col_keys)}
+        Xa = np.zeros((len(entries), len(col_keys)))
+        ya = np.zeros(len(entries))
+        for i, (diffs, yv) in enumerate(entries):
+            for k in diffs:
+                Xa[i, cidx[k]] = 1.0
+            ya[i] = yv
+        coef = Ridge(alpha=1.0).fit(Xa, ya).coef_
+        pos_eff = {}
+        for (lp, _alt), ci in cidx.items():
+            pos_eff.setdefault(lp, []).append(abs(float(coef[ci])))
+        out_rows = []
+        for lp in sorted(pos_eff):
+            m = pos_map.get(lp)
+            if m is None:
+                continue
+            out_rows.append({"pos_lib_0based": lp,
+                             "pos_deweirdt_1based": lp + offset + 1,
+                             "identity": m["identity"], "class": m["class"],
+                             "sens_additive": round(float(np.mean(pos_eff[lp])), 4),
+                             "n_alt": len(pos_eff[lp])})
+        return out_rows, len(ya)
+
+    h3_result, h3_rows_meta = {}, {}
+    for lfc_key, tag in (("lfc127", "additive_neg_lfc127"),
+                         ("lfc128", "additive_neg_lfc128")):
+        hrows, n_lib = full_library_sens(lfc_key)
+        ident_h = np.array([r["identity"] for r in hrows])
+        cls_h = np.array([{"strictly_conserved": 2, "conserved": 1,
+                           "variable": 0}[r["class"]] for r in hrows])
+        s_h = np.array([r["sens_additive"] for r in hrows])
+        rho_i = spearman(ident_h, s_h)
+        p_i = perm_p(ident_h, s_h, rho_i)
+        rho_c = spearman(cls_h, s_h)
+        p_c = perm_p(cls_h, s_h, rho_c)
+        h3_result[tag] = {"n_library_rows": n_lib, "n_positions": len(hrows),
+                          "vs_identity": {"rho": round(rho_i, 3),
+                                          "perm_p": round(p_i, 4)},
+                          "vs_class3": {"rho": round(rho_c, 3),
+                                        "perm_p": round(p_c, 4)}}
+        h3_rows_meta[tag] = hrows
+        print("H3 %s: identity rho=%+.3f (p=%.4f) | class3 rho=%+.3f (p=%.4f) "
+              "[全量库 n=%d, 位点 %d]" % (
+                  tag, rho_i, p_i, rho_c, p_c, n_lib, len(hrows)))
+
+    ok3 = all(h3_result[k]["vs_identity"]["rho"] < 0 and
+              h3_result[k]["vs_identity"]["perm_p"] < 0.05 for k in h3_result)
+    neg3 = all(h3_result[k]["vs_identity"]["rho"] < 0 for k in h3_result)
+    if ok3:
+        h3_reading = ("全量库加性口径两方向均 rho<0 且 p<0.05 -> 「敏感位点富集于"
+                      "保守位点」获全量库支持, G3/G4 从「边缘」升级(§H3a)")
+    elif neg3:
+        h3_reading = ("全量库加性口径方向一致为负但 p 未达 0.05 -> 维持边缘表述, "
+                      "新口径数值并列报告(§H3a)")
+    else:
+        h3_reading = "全量库加性口径方向分裂 -> 如实报告(§H3a)"
+    print("判读(§H3a): %s" % h3_reading)
+
     payload = {
         "generated_by": "scripts/crrna_deweirdt_position_sensitivity.py (G4, 2026-09-11)",
         "criterion": "§G4b(2026-09-11 登记先于运行): 两方向均 rho<0 且 p<0.05 -> "
@@ -177,6 +260,17 @@ def main():
         "positions": rows,
         "results": result,
         "reading": reading,
+        "h3_full_library_additive": {
+            "criterion": "§H3a(2026-09-11 登记先于运行): 两方向均 rho<0 且 "
+                         "p<0.05 -> G3/G4 从「边缘」升级; 方向一致为负未达阈 "
+                         "-> 维持边缘并列; 分裂 -> 如实报告",
+            "method": "全量库(含多变体) Ridge(alpha=1.0) 位置×替代碱基 one-hot "
+                      "-> 加性效应; 位点敏感性 = 该位 alt |效应| 均值; "
+                      "先例 jbloomlab/dms_variants, Haddox 2023 (PMC10418112)",
+            "results": h3_result,
+            "positions": h3_rows_meta,
+            "reading": h3_reading,
+        },
         "limitation": "DeWeirdt 库为组合设计库, n_mut==1 子集稀疏(每位 1-3 条, "
                       "仅 14/18 比对位有覆盖), 位点敏感性估计精度低于预期; "
                       "功效仍高于本管线单点扫描的 3-alt/位, 但非饱和扫描",

@@ -192,5 +192,298 @@
   }
  },
  "reading": "两方向方向一致为负但置换 p 未达 0.05(边缘) -> 方向与 G3 一致, 显著性不足, 如实报告; 不改动 G3 结论",
+ "h3_full_library_additive": {
+  "criterion": "§H3a(2026-09-11 登记先于运行): 两方向均 rho<0 且 p<0.05 -> G3/G4 从「边缘」升级; 方向一致为负未达阈 -> 维持边缘并列; 分裂 -> 如实报告",
+  "method": "全量库(含多变体) Ridge(alpha=1.0) 位置×替代碱基 one-hot -> 加性效应; 位点敏感性 = 该位 alt |效应| 均值; 先例 jbloomlab/dms_variants, Haddox 2023 (PMC10418112)",
+  "results": {
+   "additive_neg_lfc127": {
+    "n_library_rows": 35879,
+    "n_positions": 16,
+    "vs_identity": {
+     "rho": -0.107,
+     "perm_p": 0.6957
+    },
+    "vs_class3": {
+     "rho": -0.107,
+     "perm_p": 0.6957
+    }
+   },
+   "additive_neg_lfc128": {
+    "n_library_rows": 35879,
+    "n_positions": 16,
+    "vs_identity": {
+     "rho": 0.313,
+     "perm_p": 0.2572
+    },
+    "vs_class3": {
+     "rho": 0.313,
+     "perm_p": 0.2572
+    }
+   }
+  },
+  "positions": {
+   "additive_neg_lfc127": [
+    {
+     "pos_lib_0based": 2,
+     "pos_deweirdt_1based": 4,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.1124,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 3,
+     "pos_deweirdt_1based": 5,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.2313,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 4,
+     "pos_deweirdt_1based": 6,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.1105,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 5,
+     "pos_deweirdt_1based": 7,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.1646,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 6,
+     "pos_deweirdt_1based": 8,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.1257,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 7,
+     "pos_deweirdt_1based": 9,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0666,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 8,
+     "pos_deweirdt_1based": 10,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.2045,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 9,
+     "pos_deweirdt_1based": 11,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.1377,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 10,
+     "pos_deweirdt_1based": 12,
+     "identity": 0.455,
+     "class": "variable",
+     "sens_additive": 0.1075,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 11,
+     "pos_deweirdt_1based": 13,
+     "identity": 0.909,
+     "class": "conserved",
+     "sens_additive": 0.1448,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 12,
+     "pos_deweirdt_1based": 14,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.131,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 13,
+     "pos_deweirdt_1based": 15,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0562,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 14,
+     "pos_deweirdt_1based": 16,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0755,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 15,
+     "pos_deweirdt_1based": 17,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0491,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 16,
+     "pos_deweirdt_1based": 18,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0685,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 17,
+     "pos_deweirdt_1based": 19,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0583,
+     "n_alt": 3
+    }
+   ],
+   "additive_neg_lfc128": [
+    {
+     "pos_lib_0based": 2,
+     "pos_deweirdt_1based": 4,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0376,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 3,
+     "pos_deweirdt_1based": 5,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.063,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 4,
+     "pos_deweirdt_1based": 6,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0228,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 5,
+     "pos_deweirdt_1based": 7,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0399,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 6,
+     "pos_deweirdt_1based": 8,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.1013,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 7,
+     "pos_deweirdt_1based": 9,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0273,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 8,
+     "pos_deweirdt_1based": 10,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0289,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 9,
+     "pos_deweirdt_1based": 11,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0435,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 10,
+     "pos_deweirdt_1based": 12,
+     "identity": 0.455,
+     "class": "variable",
+     "sens_additive": 0.0228,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 11,
+     "pos_deweirdt_1based": 13,
+     "identity": 0.909,
+     "class": "conserved",
+     "sens_additive": 0.0286,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 12,
+     "pos_deweirdt_1based": 14,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0302,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 13,
+     "pos_deweirdt_1based": 15,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0226,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 14,
+     "pos_deweirdt_1based": 16,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0802,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 15,
+     "pos_deweirdt_1based": 17,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0782,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 16,
+     "pos_deweirdt_1based": 18,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0356,
+     "n_alt": 3
+    },
+    {
+     "pos_lib_0based": 17,
+     "pos_deweirdt_1based": 19,
+     "identity": 1.0,
+     "class": "strictly_conserved",
+     "sens_additive": 0.0171,
+     "n_alt": 3
+    }
+   ]
+  },
+  "reading": "全量库加性口径方向分裂 -> 如实报告(§H3a)"
+ },
  "limitation": "DeWeirdt 库为组合设计库, n_mut==1 子集稀疏(每位 1-3 条, 仅 14/18 比对位有覆盖), 位点敏感性估计精度低于预期; 功效仍高于本管线单点扫描的 3-alt/位, 但非饱和扫描"
 }

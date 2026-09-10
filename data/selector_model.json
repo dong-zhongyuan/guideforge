@@ -300,7 +300,187 @@
    "A1G+U3A+A8G+U15C",
    "U5G+A18C"
   ],
-  "reading": "首位弱稳定(bootstrap 频率 0.408<0.5); Borda 首位 A1U+A2C 与单模型首位 A1C 不一致, 以 Borda 为报告口径"
+  "reading": "首位弱稳定(bootstrap 频率 0.408<0.5); Borda 首位 A1U+A2C 与单模型首位 A1C 不一致, 以 Borda 为报告口径",
+  "h2_pairwise": {
+   "criterion": "§H2a(2026-09-11 登记先于运行): 稳健序(P>=0.9)对数>=75% -> 升级为逐对多数稳健; 否则维持弱稳定并列报告",
+   "design": "bootstrap 秩向量逐对胜率 P(前>后), 并列计 0.5; 判读阈 P>=0.9 稳健序 / 0.6<=P<0.9 倾向序 / 0.4<P<0.6 不可分辨; Shah-Samworth 误差界 pi=0.6: E[FP]<=q^2/((2pi-1)*p)",
+   "n_pairs": 28,
+   "n_robust": 0,
+   "n_lean": 9,
+   "n_indistinguishable": 19,
+   "shah_samworth_fp_bound_pi06": 14.46,
+   "pairs": [
+    {
+     "before": "A1C",
+     "after": "A1G+U3A+A8G+U15C",
+     "P": 0.578,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1C",
+     "after": "A1U",
+     "P": 0.5,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1C",
+     "after": "A1U+A2C",
+     "P": 0.5,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1C",
+     "after": "A8C+U15G",
+     "P": 0.578,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1C",
+     "after": "B_break_compensate",
+     "P": 0.689,
+     "band": "lean"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "A1C",
+     "P": 0.523,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "WT",
+     "after": "A1C",
+     "P": 0.514,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U",
+     "after": "A1G+U3A+A8G+U15C",
+     "P": 0.578,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U+A2C",
+     "after": "A1G+U3A+A8G+U15C",
+     "P": 0.578,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A8C+U15G",
+     "after": "A1G+U3A+A8G+U15C",
+     "P": 0.501,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1G+U3A+A8G+U15C",
+     "after": "B_break_compensate",
+     "P": 0.619,
+     "band": "lean"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "A1G+U3A+A8G+U15C",
+     "P": 0.624,
+     "band": "lean"
+    },
+    {
+     "before": "WT",
+     "after": "A1G+U3A+A8G+U15C",
+     "P": 0.592,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U",
+     "after": "A1U+A2C",
+     "P": 0.5,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U",
+     "after": "A8C+U15G",
+     "P": 0.578,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U",
+     "after": "B_break_compensate",
+     "P": 0.689,
+     "band": "lean"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "A1U",
+     "P": 0.523,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "WT",
+     "after": "A1U",
+     "P": 0.514,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U+A2C",
+     "after": "A8C+U15G",
+     "P": 0.578,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A1U+A2C",
+     "after": "B_break_compensate",
+     "P": 0.689,
+     "band": "lean"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "A1U+A2C",
+     "P": 0.523,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "WT",
+     "after": "A1U+A2C",
+     "P": 0.514,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "A8C+U15G",
+     "after": "B_break_compensate",
+     "P": 0.619,
+     "band": "lean"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "A8C+U15G",
+     "P": 0.624,
+     "band": "lean"
+    },
+    {
+     "before": "WT",
+     "after": "A8C+U15G",
+     "P": 0.592,
+     "band": "indistinguishable"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "B_break_compensate",
+     "P": 0.672,
+     "band": "lean"
+    },
+    {
+     "before": "WT",
+     "after": "B_break_compensate",
+     "P": 0.71,
+     "band": "lean"
+    },
+    {
+     "before": "U5G+A18C",
+     "after": "WT",
+     "P": 0.517,
+     "band": "indistinguishable"
+    }
+   ],
+   "reading": "稳健序(P>=0.9)对数 0/28<75% -> 维持弱稳定表述, 逐对矩阵与 Shah-Samworth 误差界(E[FP]<=14.46)并列报告(§H2a)"
+  }
  },
  "ranking_authority": "pipeline_score",
  "ranking_authority_reason": "合成候选排序以管线打分(score_variant, 同一 Cas12a2 zeng2026 构建的 ViennaRNA 结构口径)为准。(1) 本选型器是 n=16 LbCas12a CRISPRi 终点训练的文献先验, fig1f 留出 MAE 超训练折可用阈、LOEO 在 cis 端点反预测(-0.692, 本运行计算值), 按 usage_scope 仅供先验排序参考; (2) 决策树在本候选库仅输出个位数 distinct 预测值, 对多数保守变体无区分力; (3) 管线打分经 filter+random 基线检验(data/selection_baseline.cas12a2_zeng2026.json)确认相对'硬过滤+随机'有大效应排序信息量。",
