@@ -29,6 +29,8 @@ import sys
 import numpy as np
 from scipy.stats import rankdata
 from sklearn.tree import DecisionTreeRegressor, export_text
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import StandardScaler
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
@@ -413,6 +415,65 @@ def main():
                   thr, y_tr.min(), y_tr.max()))
         print("外推归因: %d/%d 条检验标签高于训练上界 %.3f" % (
             n_out, n_ho, y_tr.max()))
+
+        # === 线性第二口径(2026-09-08): 决策树按构造不可外推(预测恒在训练 y
+        # 值域内), 全部检验标签超上界时 MAE 必超阈; 线性模型可外推, 作并列
+        # 第二口径重评同一留出。先例: STMT(github funatsu-lab, 理化数据单调
+        # 外推)/M5' 模型树; n=7 训练折尺度下岭回归为最简可外推选择。
+        # 标准化仅用训练折拟合(无泄漏); 判读全部由数值按显式规则生成。
+        sc = StandardScaler().fit(X[idx_tb])
+        rid = Ridge(alpha=1.0)
+        rid.fit(sc.transform(X[idx_tb]), y[idx_tb])
+        pr_lin = rid.predict(sc.transform(X[idx_f1f]))
+        rk_lin = rankdata(pr_lin)
+        rho_lin = float(np.corrcoef(rk_lin, ry)[0, 1])
+        mae_lin = float(np.mean(np.abs(pr_lin - y[idx_f1f])))
+        boot_rho_l, boot_mae_l, boot_nan_l = [], [], 0
+        rng_l = np.random.default_rng(42)
+        for _ in range(10000):
+            b = rng_l.integers(0, n_ho, n_ho)
+            if len(set(b.tolist())) < 3:
+                continue
+            c = float(np.corrcoef(rk_lin[b], ry[b])[0, 1])
+            if np.isnan(c):
+                boot_nan_l += 1
+                continue
+            boot_rho_l.append(c)
+            boot_mae_l.append(float(np.mean(np.abs(pr_lin[b] - y[idx_f1f][b]))))
+        rho_ci_l = [round(float(np.percentile(boot_rho_l, q)), 3)
+                    for q in (2.5, 97.5)]
+        mae_ci_l = [round(float(np.percentile(boot_mae_l, q)), 4)
+                    for q in (2.5, 97.5)]
+        n_pred_extrap = int(np.sum((pr_lin > y_tr.max()) | (pr_lin < y_tr.min())))
+        lin_pass = bool(mae_lin < thr)
+        fig1f_holdout["linear_second_caliber"] = {
+            "model": "Ridge(alpha=1.0) + StandardScaler(仅训练折拟合)",
+            "rationale": "决策树按构造不可外推(预测恒在训练 y 值域内), 全部检验"
+                "标签超训练上界时 MAE 超阈含构造性成分; 线性模型可外推, 作并列"
+                "第二口径。先例: STMT(github funatsu-lab, 理化数据单调外推)/"
+                "M5' 模型树(叶节点线性)",
+            "spearman": round(rho_lin, 3),
+            "spearman_boot_ci95": rho_ci_l,
+            "spearman_boot_excluded_zero_variance": boot_nan_l,
+            "mae": round(mae_lin, 4),
+            "mae_boot_ci95": mae_ci_l,
+            "mae_threshold_trainfold": round(thr, 4),
+            "mae_within_threshold": lin_pass,
+            "pred_range": [round(float(pr_lin.min()), 4),
+                           round(float(pr_lin.max()), 4)],
+            "n_pred_outside_train_range": n_pred_extrap,
+            "coef_standardized": {f: round(float(c_), 4)
+                                  for f, c_ in zip(FEATURES, rid.coef_)},
+            "reading": ("线性第二口径 MAE=%.4f %s 训练折可用阈 %.4f → fig1f 绝对"
+                "水平%s(线性外推口径); 秩一致性 Spearman=%+.3f 与决策树口径并列"
+                "报告"
+                % (mae_lin, "<" if lin_pass else ">=", thr,
+                   "可采用" if lin_pass else "仍不采用", rho_lin))}
+        print("线性第二口径(Ridge): Spearman = %+.3f [CI95 %+.3f, %+.3f], "
+              "MAE = %.4f [CI95 %.4f, %.4f] (%s阈 %.4f; 预测越训练域 %d/%d 条)" % (
+                  rho_lin, rho_ci_l[0], rho_ci_l[1], mae_lin, mae_ci_l[0],
+                  mae_ci_l[1], "在" if lin_pass else "超", thr,
+                  n_pred_extrap, n_ho))
 
     # 特征重要性
     print("\n=== 特征重要性 ===")
