@@ -1,9 +1,9 @@
 {
  "generated_by": "scripts/crrna_typing_robustness.py",
- "date": "2026-09-06",
+ "date": "2026-09-10",
  "scope": "post-hoc 敏感性分析, 非预登记; 与 docs/preregistration.md §A 判据并列阅读, 不替代原判据; 判读文字全部由数值按显式阈值规则生成",
  "effector": "cas12a2_zeng2026",
- "runtime_sec": 6.0,
+ "runtime_sec": 7.3,
  "pipeline_reruns": {
   "topk": 16,
   "distinct_representatives": 30,
@@ -467,5 +467,33 @@
   ],
   "n_flags": 1,
   "reading": "综合判定: 证据不变(原\"弱证据阳性\"评级维持, 脆弱项如实并列) —— 触发项: 判据随 k 翻动"
+ },
+ "a2_prereg": {
+  "registered": "docs/preregistration.md §A2(2026-09-10, 登记先于本轮运行)",
+  "a2a_k_fixed": {
+   "k": 3,
+   "note": "k 预登记固定为 3(V3 先验 3-4 型); 轮廓谱仅诊断(见 clustering_spectrum), 不参与选型"
+  },
+  "a2b_permutation_primary": {
+   "p_obs": 0.0357,
+   "threshold_p": 0.05,
+   "positive": true,
+   "obs_common": 4,
+   "null_median": 8.0,
+   "criterion_null_pass_rate": 0.0357
+  },
+  "a2c_no_pos1_primary": {
+   "p_obs": 0.0357,
+   "threshold_p": 0.05,
+   "positive": true,
+   "obs_common": 2,
+   "common": [
+    "U3A",
+    "U3C"
+   ],
+   "null_median": 8.0,
+   "criterion_null_pass_rate": 0.0357
+  },
+  "reading": "§A2 预登记口径: A2b(含 pos-1) P=0.0357 < 0.05; A2c(去 pos-1, 主结论口径) 公共集 2 条 P=0.0357 < 0.05 → 预登记口径下阳性"
  }
 }

@@ -521,6 +521,49 @@ def main():
     verdict = read_verdict(perm, topk_sens, de_pos1, sil, crit_k, small)
     print('[综合]', verdict['reading'])
 
+    # ---- §A2 预登记评估(2026-09-10 登记于 docs/preregistration.md §A2,
+    # 登记载体提交先于本轮运行): A2a k=3 预登记固定(轮廓谱仅诊断);
+    # A2b 置换检验 P 升主判据; A2c 去 position-1 惰性位点版为主结论口径 ----
+    lists_flat_np = [top_descs_no_pos1(prefixes[nm], CRIT_TOPK) for nm in reps9]
+    obs_np = criterion(lt_np, CRIT_TOPK)
+    null_np = []
+    for rest_a in itertools.combinations(idx[1:], 2):
+        ga = (0,) + rest_a
+        rem = [i for i in idx if i not in ga]
+        for gb in itertools.combinations(rem, 3):
+            gc = tuple(i for i in rem if i not in gb)
+            if gb[0] > gc[0]:
+                continue
+            unions = [set().union(*(lists_flat_np[i] for i in g))
+                      for g in (ga, gb, gc)]
+            null_np.append(len(set.intersection(*unions)))
+    null_np = np.array(null_np)
+    p_np = float((null_np <= obs_np['n_common']).mean())
+    p_np_crit = float((null_np <= obs_np['threshold']).mean())
+    a2b_pos = bool(p_obs < 0.05)
+    a2c_pos = bool(p_np < 0.05)
+    a2 = {
+        'registered': 'docs/preregistration.md §A2(2026-09-10, 登记先于本轮运行)',
+        'a2a_k_fixed': {'k': 3, 'note': 'k 预登记固定为 3(V3 先验 3-4 型); '
+                        '轮廓谱仅诊断(见 clustering_spectrum), 不参与选型'},
+        'a2b_permutation_primary': {
+            'p_obs': round(p_obs, 4), 'threshold_p': 0.05, 'positive': a2b_pos,
+            'obs_common': obs['n_common'], 'null_median': float(np.median(null)),
+            'criterion_null_pass_rate': round(p_crit, 4)},
+        'a2c_no_pos1_primary': {
+            'p_obs': round(p_np, 4), 'threshold_p': 0.05, 'positive': a2c_pos,
+            'obs_common': obs_np['n_common'], 'common': obs_np['common'],
+            'null_median': float(np.median(null_np)),
+            'criterion_null_pass_rate': round(p_np_crit, 4)},
+        'reading': ('§A2 预登记口径: A2b(含 pos-1) P=%.4f %s 0.05; A2c(去 pos-1, '
+                    '主结论口径) 公共集 %d 条 P=%.4f %s 0.05 → %s'
+                    % (p_obs, '<' if a2b_pos else '>=', obs_np['n_common'], p_np,
+                       '<' if a2c_pos else '>=',
+                       '预登记口径下阳性' if (a2b_pos and a2c_pos)
+                       else ('主结论口径 A2c 阳性' if a2c_pos
+                             else '主结论口径 A2c 阴性')))}
+    print('[§A2]', a2['reading'])
+
     report = {
         'generated_by': 'scripts/crrna_typing_robustness.py',
         'date': time.strftime('%Y-%m-%d'),
@@ -540,6 +583,7 @@ def main():
         'criterion_vs_k': crit_k,
         'small_cluster_audit': small,
         'verdict': verdict,
+        'a2_prereg': a2,
     }
     with open(args.out, 'w', encoding='utf-8') as fh:
         json.dump(report, fh, ensure_ascii=False, indent=1)

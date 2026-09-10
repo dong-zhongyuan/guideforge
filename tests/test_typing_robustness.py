@@ -97,6 +97,25 @@ class TestTypingRobustness(unittest.TestCase):
         else:
             self.assertIn("证据变强", v["reading"])
 
+    def test_a2_prereg_rule_consistency(self):
+        """§A2 预登记评估块(2026-09-10): 结构与判读方向锁定。"""
+        d = _load()
+        self.assertIn("a2_prereg", d)
+        a2 = d["a2_prereg"]
+        self.assertEqual(a2["a2a_k_fixed"]["k"], 3)  # k 预登记固定
+        for layer in ("a2b_permutation_primary", "a2c_no_pos1_primary"):
+            blk = a2[layer]
+            self.assertTrue(0.0 <= blk["p_obs"] <= 1.0)
+            self.assertEqual(blk["threshold_p"], 0.05)
+            self.assertEqual(blk["positive"], blk["p_obs"] < 0.05)
+        # 判读方向与两层阳性标记一致(不手写)
+        both = (a2["a2b_permutation_primary"]["positive"]
+                and a2["a2c_no_pos1_primary"]["positive"])
+        self.assertEqual("预登记口径下阳性" in a2["reading"], both)
+        # A2c 公共集与 de_pos1 敏感性同源一致
+        self.assertEqual(a2["a2c_no_pos1_primary"]["obs_common"],
+                         d["de_pos1_sensitivity"]["criterion"]["n_common"])
+
 
 if __name__ == "__main__":
     unittest.main()
