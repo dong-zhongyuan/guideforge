@@ -34,3 +34,4 @@ tmp/
 # Protenix/AF3 结果(机时产物, 大文件不入库; 汇总json入库)
 data/protenix_results/
 data/af3_results/
+!docs/defense_prep.md
