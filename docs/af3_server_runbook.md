@@ -57,3 +57,28 @@ prot-crRNA ipTM <0.5 低于可用区间，0.5–0.6 下沿弱参考，≥0.6 达
 - 额度用完：分两天提交即可，任务相互独立。
 - 结果 zip 内 `<job>_job_request.json` 记录了服务器实际使用的随机种子，
   需要复跑同一条件时以它为准。
+
+
+## 本地 AF3 无 MSA 层（2026-09-10 补充，网络受阻期间的替代完成项）
+
+alphafoldserver.com 谷歌托管网络不通（本机/A6000 均被阻断，无可用代理），
+服务器提交暂缓。已用官方开源 alphafold3-3.0.4 + 官方 af3.bin.zst 权重
+（storage.googleapis.com 直连公开可下，无需表单审批）在 A6000 容器完成
+同一 13 套输入的本地推理：
+
+- 口径：template-free 且**无 MSA**（蛋白/RNA 均单序列自比对输入，
+  `--norun_data_pipeline`），seed 0 × 5 diffusion samples，triton 注意力，
+  与 Protenix-v1 层同协议；
+- 产物：`data/af3_local_summary.json`（`scripts/crrna_af3_collect.py --local`
+  生成），结构快照 `data/af3_local_results/structures/`（每任务最佳样本 cif）；
+- 结果：WT prot-crRNA ipTM 0.252（5 模型），全部 13 任务落在 0.23–0.33，
+  低于可用区间（<0.5）——与 Protenix 分支二判读一致：无模板独立引擎下
+  界面低迷，Chai 自模板高分属模板复述，维持"界面可预测"主张撤回、
+  以湿实验判据为准的预登记结论；
+- 服务器版（自动构建 MSA）与本地无 MSA 版是**不同口径**：前者仍是
+  AlphaFold Server 恢复访问后的目标项，额度与流程见上文；
+- 本地复跑：容器 `~/dzy/envs/af3/bin/python /dawn/af3_src/run_alphafold.py
+  --json_path=/dawn/af3_jobs/<job>.json --model_dir=/dawn/af3_params
+  --output_dir=<dir> --norun_data_pipeline`（输入 JSON 为 alphafold3 方言，
+  含单序列自比对 MSA 字段；CCD pickle 已生成于该 env 的 site-packages，
+  FetchContent 依赖经 ghfast.top git 代理拉取）。

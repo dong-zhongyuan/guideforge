@@ -21,6 +21,8 @@ template-free 预测, 是 Chai-1 自模板口径(降级为 sanity check)的独�
 template-free 单构建观测"。
 
 运行: python scripts/crrna_af3_collect.py [--dir data/af3_results]
+      python scripts/crrna_af3_collect.py --protenix   # Protenix-v1 回收
+      python scripts/crrna_af3_collect.py --local      # 本地 AF3 无 MSA 口径回收
 """
 import argparse
 import glob
@@ -145,10 +147,16 @@ def main():
                          "--protenix 时为 data/protenix_results)")
     ap.add_argument("--protenix", action="store_true",
                     help="回收 Protenix-v1 结果(容器批跑产物)并附 Chai 跨引擎对照")
+    ap.add_argument("--local", action="store_true",
+                    help="回收本地 AF3 开源推理结果(容器 af3 env 批跑产物, "
+                         "无 MSA 单序列口径; 默认目录 data/af3_local_results, "
+                         "输出 data/af3_local_summary.json)")
     args = ap.parse_args()
 
     if args.protenix:
         args.dir = args.dir or os.path.join(DATA, "protenix_results")
+    elif args.local:
+        args.dir = args.dir or os.path.join(DATA, "af3_local_results")
     else:
         args.dir = args.dir or os.path.join(DATA, "af3_results")
 
@@ -179,19 +187,30 @@ def main():
 
     wt = results.get("GF_WT")
     wt_pc = wt["prot_crRNA_mean"] if wt else None
-    engine = ("Protenix-v1 (protenix_base_default_v1.0.0), template-free"
-              "(输入无 templates 字段), seed_101 5 sample"
-              if args.protenix else
-              "AlphaFold Server (AF3), useStructureTemplate=false, 单随机种子5模型")
+    if args.protenix:
+        engine = ("Protenix-v1 (protenix_base_default_v1.0.0), template-free"
+                  "(输入无 templates 字段), seed_101 5 sample")
+    elif args.local:
+        engine = ("本地 AF3 开源推理 (alphafold3-3.0.4, 官方 af3.bin.zst 权重), "
+                  "template-free 且无 MSA(蛋白/RNA 均单序列自比对输入), "
+                  "seed 0 x 5 diffusion samples, triton 注意力, A6000")
+    else:
+        engine = ("AlphaFold Server (AF3), useStructureTemplate=false, 单随机种子5模型")
     payload = {
         "generated_by": "scripts/crrna_af3_collect.py" + (
-            " --protenix" if args.protenix else ""),
+            " --protenix" if args.protenix else
+            " --local" if args.local else ""),
         "source_dir": os.path.relpath(args.dir, ROOT),
         "engine": engine,
         "chain_order": {"0/A": "SuCas12a2 蛋白", "1/B": "crRNA", "2/C": "靶RNA"},
-        "claim_tier": ("独立引擎 template-free 单构建观测(MSA 自动构建); "
-                       "作为 Chai-1 自模板口径(sanity check)的对照层; "
-                       "结论表述不得超出此口径"),
+        "claim_tier": (
+            "本地 AF3 无 MSA 单序列口径: 独立引擎 template-free 单构建观测, "
+            "与 Protenix-v1 同协议(无 MSA), 弱于 AlphaFold Server 口径(服务器自动"
+            "构建 MSA); 结论表述不得超出此口径"
+            if args.local else
+            "独立引擎 template-free 单构建观测(MSA 自动构建); "
+            "作为 Chai-1 自模板口径(sanity check)的对照层; "
+            "结论表述不得超出此口径"),
         "wt_reference": {"prot_crRNA_mean": wt_pc} if wt else "GF_WT 缺失",
         "jobs": {j: {k: v for k, v in r.items() if k != "models"}
                  for j, r in results.items()},
@@ -199,8 +218,11 @@ def main():
     }
     if args.protenix:
         payload["chai_cross_engine"] = _chai_comparison(wt_pc)
-    out = os.path.join(
-        DATA, "protenix_summary.json" if args.protenix else "af3_summary.json")
+    if args.local:
+        out = os.path.join(DATA, "af3_local_summary.json")
+    else:
+        out = os.path.join(
+            DATA, "protenix_summary.json" if args.protenix else "af3_summary.json")
     json.dump(payload, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("汇总 %d 任务 -> %s" % (len(results), out))
 
