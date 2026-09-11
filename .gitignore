@@ -26,7 +26,12 @@ toolbox/OpenKnotAIDesignData/.gitattributes
 
 # 转录组参考数据(GENCODE 自行下载)
 data/transcriptome/
-data/md/*
+data/md/*/*
+# MD 轨迹/系统文件大, 走本地; 小型分析产物 JSON 入库
+!data/md/*/analysis.json
+!data/md/*/analysis_input.json
+!data/md/*/prep.json
+!data/md/*/done.json
 data/raw/
 
 # 本地工作区(scratch日志/备份/临时扫描, 不入库)

@@ -1,0 +1,49 @@
+{
+ "generated_by": "scripts/crrna_md_verdict.py (2026-09-11)",
+ "criteria": "data/md_analysis_plan.json(2026-09-01 先于轨迹固定): M1 候选茎RMSD中位<=WT+0.5A; M2 接触存活>=WT-10pp; M3 次要",
+ "engine": "OpenMM(amber14/tip3p) 10ns x4 体系, 2-10ns 窗口; 轨迹分析 MDAnalysis 2.10.0 官方原语; crRNA 按链 ID(B)定位(system.pdb 各链 resid 独立编号, 裸 resid 选择会串链, 2026-09-11 审计修正)",
+ "wt_reference": {
+  "M1_stem_rmsd_median_A": 1.838,
+  "M1_stem_rmsd_p90_A": 1.949,
+  "M2_contact_survival": 0.679,
+  "M3_hbond_mean": 0.0
+ },
+ "candidates": [
+  {
+   "system": "A7C_U14G",
+   "M1_stem_rmsd_median_A": 1.693,
+   "M1_vs_WT_delta_A": -0.145,
+   "M1_pass": true,
+   "M2_contact_survival": 0.669,
+   "M2_vs_WT_delta_pp": -1.0,
+   "M2_pass": true,
+   "M3_hbond_mean": 0.1,
+   "verdict": "不劣于WT"
+  },
+  {
+   "system": "A7G_U14C",
+   "M1_stem_rmsd_median_A": 1.752,
+   "M1_vs_WT_delta_A": -0.086,
+   "M1_pass": true,
+   "M2_contact_survival": 0.67,
+   "M2_vs_WT_delta_pp": -0.9,
+   "M2_pass": true,
+   "M3_hbond_mean": 0.6,
+   "verdict": "不劣于WT"
+  },
+  {
+   "system": "U6C_A15G",
+   "M1_stem_rmsd_median_A": 1.851,
+   "M1_vs_WT_delta_A": 0.013,
+   "M1_pass": true,
+   "M2_contact_survival": 0.74,
+   "M2_vs_WT_delta_pp": 6.1,
+   "M2_pass": true,
+   "M3_hbond_mean": 0.7,
+   "verdict": "不劣于WT"
+  }
+ ],
+ "n_pass": 3,
+ "reading": "3/3 候选双主判据(M1/M2)不劣于 WT -> MD 层支持「双突变骨架在结合态保持天然构象与界面接触」, 为结构保持过滤提供动力学必要条件证据",
+ "scope": "MD 阳性仅为必要条件(结合态结构保持可行), 非活性预测; 最终确认须体外/细胞实验"
+}

@@ -1,0 +1,39 @@
+{
+ "run_dir": "data/md/A7G_U14C",
+ "analysis_input": "data/md/A7G_U14C/analysis_input.json",
+ "n_frames_scored": 401,
+ "window_ns": [
+  2.0,
+  10.0
+ ],
+ "M1_stem_c1p_rmsd_A_median": 1.752,
+ "M1_stem_c1p_rmsd_A_p90": 1.847,
+ "M2_contact_survival_frac": 0.67,
+ "M3_dr_donor_hbond_mean": 0.6,
+ "contact_sites_1based": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18
+ ],
+ "criteria_pass_thresholds": {
+  "M1_candidate_leq_WT_plus_A": 0.5,
+  "M2_candidate_geq_WT_minus_pp": 10.0
+ },
+ "preregistered": "2026-09-01, 先于轨迹产出固定指标与判据; 阴性结果同样报告",
+ "note": "M1/M2 主判据, M3 次要; 阴性结果同样报告; 全部指标官方库实现"
+}

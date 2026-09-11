@@ -62,8 +62,14 @@ def main():
     ap.add_argument("--run-dir", required=True)
     ap.add_argument("--analysis-input", required=True)
     ap.add_argument("--contact-json", required=True)
-    ap.add_argument("--dr-first-resid", type=int, default=None)
+    ap.add_argument("--dr-first-resid", type=int, default=None,
+                    help="(已废弃) 旧 resid 定位; 现按链 ID 定位, 此参数忽略")
+    ap.add_argument("--crna-chain", default=None,
+                    help="crRNA 链 ID(默认取接触表 crna_chain 字段)")
     ap.add_argument("--gmx", default="gmx")
+    ap.add_argument("--openmm", action="store_true",
+                    help="OpenMM 模式: system.pdb+production.dcd, 参考 min.pdb; "
+                         "坐标未按周期盒回卷(分子天然完整), 无需 trjconv")
     args = ap.parse_args()
     d = args.run_dir
 
@@ -71,26 +77,53 @@ def main():
     stem_pairs = [tuple(p) for p in inp["dr_stem_pairs_0based"]]
     criteria = inp["criteria"]
 
-    xtc = trjconv_whole(d, args.gmx)
-    # 参考构型: sys.gro 拓扑(全局残基编号) + em.gro 坐标(gro 重排编号, 原子序一致)
-    u = mda.Universe(os.path.join(d, "sys.gro"), xtc)
-    ref = mda.Universe(os.path.join(d, "sys.gro"), os.path.join(d, "em_whole.gro"))
+    if args.openmm:
+        u = mda.Universe(os.path.join(d, "system.pdb"),
+                         os.path.join(d, "production.dcd"))
+        ref = mda.Universe(os.path.join(d, "system.pdb"),
+                           os.path.join(d, "min.pdb"))
+    else:
+        xtc = trjconv_whole(d, args.gmx)
+        # 参考构型: sys.gro 拓扑(全局残基编号) + em.gro 坐标(gro 重排编号, 原子序一致)
+        u = mda.Universe(os.path.join(d, "sys.gro"), xtc)
+        ref = mda.Universe(os.path.join(d, "sys.gro"),
+                           os.path.join(d, "em_whole.gro"))
+    dt_ps = u.trajectory.dt
+    if not dt_ps or dt_ps <= 0:
+        dt_ps = 20.0  # OpenMM DCDReporter 10000 步 x 2fs(scripts/crrna_md_run.py)
 
-    first_resid = args.dr_first_resid or find_crna_first_resid(u)
-    print("crRNA 首残基 resid=%d, DR %dnt" % (first_resid, inp["dr_len"]))
+    cj = json.load(open(args.contact_json, encoding="utf-8"))
+
+    # crRNA 定位: 按链 ID(接触表 crna_chain 字段, 8D4A=B)。system.pdb 各链
+    # resid 独立编号且蛋白 1-1232 与 crRNA 重叠, 任何裸 resid 选择都会串链
+    # (2026-09-11 审计发现: resid 4-21 命中 292 个蛋白原子), 必须链内定位
+    crna_chain = args.crna_chain or cj.get("crna_chain")
+    crna_res = [r for r in u.residues if r.atoms[0].chainID == crna_chain]
+    if len(crna_res) < inp["dr_len"]:
+        raise SystemExit("链 %s 残基数 %d < DR %d" % (
+            crna_chain, len(crna_res), inp["dr_len"]))
+    dr_res = crna_res[:inp["dr_len"]]  # DR = crRNA 5' 端前 dr_len 残基
+    print("crRNA 链 %s, 共 %d 残基, DR resid %d-%d(%dnt)" % (
+        crna_chain, len(crna_res), dr_res[0].resid, dr_res[-1].resid,
+        inp["dr_len"]))
 
     C1P = "C1" + chr(39)  # C1 撇号原子名, 避免引号嵌套问题
-    stem_sel = " or ".join('(resid %d and name %s)' % (first_resid + i, C1P)
-                           for pair in stem_pairs for i in pair)
-    cj = json.load(open(args.contact_json, encoding="utf-8"))
+    stem_idx = []
+    for pair in stem_pairs:
+        for i in pair:
+            a = dr_res[i].atoms.select_atoms("name " + C1P)
+            assert len(a) == 1, (i, len(a))
+            stem_idx.append(str(a[0].index + 1))
+    stem_sel = "bynum " + " ".join(stem_idx)  # 全局原子号, 天然免串链
     sites = sorted(int(k) for k, v in cj["contacts"].items()
                    if v.get("n_contact_residues", 0) > 0)
-    contact_sel = " or ".join("(resid %d and not name H*)" % (first_resid + s - 1)
-                              for s in sites)
-    contact_atoms = u.select_atoms(contact_sel)
+    contact_atoms = u.atoms[[]]
+    for s in sites:
+        contact_atoms |= dr_res[s - 1].atoms.select_atoms("not name H*")
     prot_heavy = u.select_atoms("protein and not name H*")
+    dr_resid_lo, dr_resid_hi = dr_res[0].resid, dr_res[-1].resid
 
-    start_frame = int(START_NS * 1000 / u.trajectory.dt)
+    start_frame = int(START_NS * 1000 / dt_ps)
 
     # M1: 官方 RMSD, 蛋白 CA 拟合, 茎 C1' 为量测组
     rms = RMSD(u, reference=ref, select="protein and name CA",
@@ -99,7 +132,7 @@ def main():
     rmsd_vals = rms.results["rmsd"][:, 2]
 
     # M2: 逐 100 ps 接触存活
-    step = max(1, int(round(100.0 / u.trajectory.dt)))
+    step = max(1, int(round(100.0 / dt_ps)))
     surv = []
     last_t_ns = START_NS
     for ts in u.trajectory[start_frame::step]:
@@ -111,10 +144,10 @@ def main():
     # M3: 官方氢键分析(DR 供体氢 vs 蛋白受体 N/O)
     hb = HydrogenBondAnalysis(
         u,
-        donors_sel="resid %d-%d and (name N6 N4 N2 N1)" % (
-            first_resid, first_resid + inp["dr_len"] - 1),
-        hydrogens_sel="resid %d-%d and name %s" % (
-            first_resid, first_resid + inp["dr_len"] - 1, RNA_DONOR_H),
+        donors_sel="chainID %s and resid %d-%d and (name N6 N4 N2 N1)" % (
+            crna_chain, dr_resid_lo, dr_resid_hi),
+        hydrogens_sel="chainID %s and resid %d-%d and name %s" % (
+            crna_chain, dr_resid_lo, dr_resid_hi, RNA_DONOR_H),
         acceptors_sel="protein and name O* N*",
         d_h_cutoff=1.2, d_a_cutoff=3.5, d_h_a_angle_cutoff=130.0)
     hb.run(start=start_frame)

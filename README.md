@@ -68,6 +68,10 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 `scripts/crrna_active_template.py` -> `data/cas12a2_active_template.json`: 8D4A 链 B(成熟 crRNA, DR18+spacer23) 三维几何判据(N1-N3<4.0A + C1-C1<12.5A)提取——**结合态活性模板无假结**: DR 区仅 5 对标准茎(1基 4-17/5-16/6-15/7-14/8-13) + 3 个近距摆动接触, DR-spacer 交界零配对。含义: Cas12a2 成熟 crRNA 的活性态在 ViennaRNA 伪结外空间内完整可表示(茎即为活性模板), **假结模型缺口只存在于 Creutzburg/FnCas12a 前体回验侧**(其失活态涉及前体 5prime repeat 侧翼, 论文自述活性态含 canonical pseudoknot)。两体系的模型域边界因此不同, 引用时须分开陈述。
 
+### 结合态 MD 预登记分析(8D4A, 2026-09-11; 判据 2026-09-01 先于轨迹固定于 data/md_analysis_plan.json)
+
+`scripts/crrna_md_run.py`(OpenMM amber14/tip3p, 10ns×4 体系) + `scripts/crrna_md_analysis.py`(MDAnalysis 2.10.0 官方原语) + `scripts/crrna_md_verdict.py` -> `data/md_analysis_summary.json`: WT 与 3 条双突变骨架(A7C_U14G/A7G_U14C/U6C_A15G)在 8D4A 结合态的 2–10ns 窗口——**3/3 候选双主判据不劣于 WT**: M1 茎 C1' RMSD 中位 1.693/1.752/1.851 Å(WT 1.838, 阈 ≤WT+0.5Å, 两条实际更稳), M2 DR-蛋白接触存活 0.669/0.670/0.740(WT 0.679, 阈 ≥WT−10pp); M3 氢键计数次要并列。**判读: MD 层支持「双突变骨架在结合态保持天然构象与界面接触」, 为结构保持过滤提供动力学必要条件证据**(非活性预测, 最终确认须实验)。**分析审计修正(2026-09-11)**: 初版按裸 resid 定位 crRNA, 审计发现 system.pdb 各链 resid 独立编号(蛋白 1–1232 与 crRNA 4–21 重叠, resid 4-21 误选 292 蛋白原子), 已重做改为链 ID(B 链)定位+全局原子号选择, 修正前后 M2 由 0.585 变为 0.679——修正留痕, 四体系全部按修正版口径产出。
+
 ### Chai-1 共折叠: 模板注入打通蛋白-RNA 界面(蛋白预测层正式口径, 2026-09-02)
 
 `scripts/crrna_chai_input.py` + `scripts/crrna_chai_collect.py` + 容器 runner(~/dzy/envs/chai, 权重经 hf-mirror): SuCas12a2(1207aa)+crRNA(DR+固定 spacer)+靶RNA 三元共折叠。能力递进三步:
