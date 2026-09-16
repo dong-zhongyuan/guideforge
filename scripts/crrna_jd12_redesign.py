@@ -178,17 +178,26 @@ def main():
                   "激活, 选择性弱于 canonical PFS 设计(R273H 4.68x)",
         "constructs": build_constructs(user["JD12_sp2"], "sp2")}
 
-    # JD12 正式下单表(2026-09-16 用户拍板: 两条都要): 双 spacer x 4 骨架 = 8 条
+    # JD12 正式下单表(2026-09-16 二次修正: 按"每条 spacer 自己的管线 TOP 榜"选骨架,
+    # 替换此前误沿用 canonical 面板套装; 依据 data/jd12_sp1_direct.top.json 与
+    # data/jd12_direct.top.json(crRNA-2)):
+    #   crRNA-1 榜: WT0/A1C1/A1U2/A1G3/A8C+U15G4(最强通过稳定化 -2.2)
+    #   crRNA-2 榜: WT0/A1C1/A1U2/A1G3.., 通过过滤者无稳定化项(A8C+U15G 不过滤)
     import csv as _csv
-    DRS4 = dict(DRS)
-    DRS4["stemmax"] = "AAUUUCUGCCUGUGGCGAU"  # data/stemmax_design.json 产物
+    JD12_PICK = {
+        "crRNA1": ["WT", "A1C", "A8C+U15G"],
+        "crRNA2": ["WT", "A1C", "A1U"],
+    }
+    DR_ALL = dict(DRS)
+    DR_ALL["A1U"] = "UAUUUCUACUGUUGUAGAU"
     jd_order = []
     for tag, sp in (("crRNA1", user["JD12_sp1"]), ("crRNA2", user["JD12_sp2"])):
         pfs = report["spacers"]["JD12_sp" + tag[-1]]["pfs_scholz"]
-        note = ("crRNA-1: PFS CCUGG 弱(dep 0.628, 如实标注继续做)"
+        note = ("crRNA-1: PFS CCUGG 弱(dep 0.628, 如实标注继续做); 骨架=自身榜单 0/1/4 名"
                 if tag == "crRNA1" else
-                "crRNA-2: PFS GGGAG 良好(dep 3.90)")
-        for dr_name, dr in DRS4.items():
+                "crRNA-2: PFS GGGAG 良好(dep 3.90); 骨架=自身榜单 0/1/2 名(无稳定化项通过)")
+        for dr_name in JD12_PICK[tag]:
+            dr = DR_ALL[dr_name]
             rna = dr + sp.replace("T", "U")
             dna = rna.replace("U", "T")
             jd_order.append({
@@ -205,9 +214,14 @@ def main():
         w.writeheader()
         w.writerows(jd_order)
     report["designs"]["JD12_full_order"] = {
-        "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验",
+        "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验; 骨架按各自管线 TOP 榜",
         "rows": len(jd_order), "csv": "data/wetlab_jd12_order.csv",
-        "scaffolds": list(DRS4)}
+        "picks": JD12_PICK,
+        "basis": {"crRNA1": "data/jd12_sp1_direct.top.json",
+                  "crRNA2": "data/jd12_direct.top.json"},
+        "note": "A8C+U15G 仅入 crRNA-1 组(其自身榜第4+唯一通过稳定化); "
+                "crRNA-2 组稳定化位空缺(无通过项), stemmax 见 "
+                "data/stemmax_design.json(探索, 未入单)"}
 
     # R248W(HT29) 两学派枚举(c.742C=T 在 s883 0-based)
     sch1 = []

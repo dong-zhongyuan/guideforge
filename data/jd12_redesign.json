@@ -111,15 +111,26 @@
    ]
   },
   "JD12_full_order": {
-   "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验",
-   "rows": 8,
+   "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验; 骨架按各自管线 TOP 榜",
+   "rows": 6,
    "csv": "data/wetlab_jd12_order.csv",
-   "scaffolds": [
-    "WT",
-    "A1C",
-    "A8C+U15G",
-    "stemmax"
-   ]
+   "picks": {
+    "crRNA1": [
+     "WT",
+     "A1C",
+     "A8C+U15G"
+    ],
+    "crRNA2": [
+     "WT",
+     "A1C",
+     "A1U"
+    ]
+   },
+   "basis": {
+    "crRNA1": "data/jd12_sp1_direct.top.json",
+    "crRNA2": "data/jd12_direct.top.json"
+   },
+   "note": "A8C+U15G 仅入 crRNA-1 组(其自身榜第4+唯一通过稳定化); crRNA-2 组稳定化位空缺(无通过项), stemmax 见 data/stemmax_design.json(探索, 未入单)"
   },
   "R248W_HT29_options": {
    "for": "若细胞系确为 HT29(R248W); JD12 序列实为 R273H 靶向",
