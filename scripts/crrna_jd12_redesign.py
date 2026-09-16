@@ -184,18 +184,22 @@ def main():
     #   crRNA-1 榜: WT0/A1C1/A1U2/A1G3/A8C+U15G4(最强通过稳定化 -2.2)
     #   crRNA-2 榜: WT0/A1C1/A1U2/A1G3.., 通过过滤者无稳定化项(A8C+U15G 不过滤)
     import csv as _csv
+    # 2026-09-16 审计收敛后三层合成(分型/管线榜/§J 文献先验):
+    #   crRNA-2: A1U -> U15G(§J 核心规则 OR 9.0 + 自身语境过滤通过 +
+    #             --w-lit 0.3 榜第 1; 三层支持强于 A1U 的单层榜第 2)
     JD12_PICK = {
         "crRNA1": ["WT", "A1C", "A8C+U15G"],
-        "crRNA2": ["WT", "A1C", "A1U"],
+        "crRNA2": ["WT", "A1C", "U15G"],
     }
     DR_ALL = dict(DRS)
     DR_ALL["A1U"] = "UAUUUCUACUGUUGUAGAU"
+    DR_ALL["U15G"] = DRS["WT"][:14] + "G" + DRS["WT"][15:]  # 15U->G 程序化派生
     jd_order = []
     for tag, sp in (("crRNA1", user["JD12_sp1"]), ("crRNA2", user["JD12_sp2"])):
         pfs = report["spacers"]["JD12_sp" + tag[-1]]["pfs_scholz"]
         note = ("crRNA-1: PFS CCUGG 弱(dep 0.628, 如实标注继续做); 骨架=自身榜单 0/1/4 名"
                 if tag == "crRNA1" else
-                "crRNA-2: PFS GGGAG 良好(dep 3.90); 骨架=自身榜单 0/1/2 名(无稳定化项通过)")
+                "crRNA-2: PFS GGGAG 良好(dep 3.90); 骨架=三层合成: A1C(榜1)+U15G(§J OR9.0+过滤通过+先验榜1)")
         for dr_name in JD12_PICK[tag]:
             dr = DR_ALL[dr_name]
             rna = dr + sp.replace("T", "U")
