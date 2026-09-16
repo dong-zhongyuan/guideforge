@@ -1,0 +1,38 @@
+[
+ {
+  "name": "JD_crRNA1_WT",
+  "scaffold": "WT",
+  "spacer_group": "crRNA1",
+  "fasta": "/public/home/mengxl/openclaw/dawn/chai_jd12/JD_crRNA1_WT.fasta"
+ },
+ {
+  "name": "JD_crRNA1_A1C",
+  "scaffold": "A1C",
+  "spacer_group": "crRNA1",
+  "fasta": "/public/home/mengxl/openclaw/dawn/chai_jd12/JD_crRNA1_A1C.fasta"
+ },
+ {
+  "name": "JD_crRNA1_A8CU15G",
+  "scaffold": "A8C+U15G",
+  "spacer_group": "crRNA1",
+  "fasta": "/public/home/mengxl/openclaw/dawn/chai_jd12/JD_crRNA1_A8CU15G.fasta"
+ },
+ {
+  "name": "JD_crRNA2_WT",
+  "scaffold": "WT",
+  "spacer_group": "crRNA2",
+  "fasta": "/public/home/mengxl/openclaw/dawn/chai_jd12/JD_crRNA2_WT.fasta"
+ },
+ {
+  "name": "JD_crRNA2_A1C",
+  "scaffold": "A1C",
+  "spacer_group": "crRNA2",
+  "fasta": "/public/home/mengxl/openclaw/dawn/chai_jd12/JD_crRNA2_A1C.fasta"
+ },
+ {
+  "name": "JD_crRNA2_U15G",
+  "scaffold": "U15G",
+  "spacer_group": "crRNA2",
+  "fasta": "/public/home/mengxl/openclaw/dawn/chai_jd12/JD_crRNA2_U15G.fasta"
+ }
+]

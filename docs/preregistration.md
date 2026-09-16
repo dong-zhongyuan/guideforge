@@ -485,3 +485,7 @@ L1 文献锚点（Dmytrenko 2023 ED Fig.2c DR 互换）/ L2 结构层（Protenix
   = 预测 Han 16 点 fig1g(期望负 Spearman, lfc 低=抑制强); 判读: 外迁移
   rho<=0 视为迁移失败, 不替换现行选型器, 只作 As 库内工具与边界记录;
   显著负相关才进入替换讨论。载体 scripts/crrna_selector_deweirdt_train.py。
+- 2026-09-16: 新增 §J-ext 赢家规则外部一致性检查(Han 工具箱 7 骨架, 方向参考,
+  低功效声明, 不构成替换/否决依据)与 §L BayesOpt 二轮提议协议预登记
+  (GP/EI 参数与提前停止条款固化, 登记先于任何湿实验数据回填; 载体
+  scripts/crrna_j_external_validation.py L_PROTOCOL 与 data/j_rule_external_validation.json)。

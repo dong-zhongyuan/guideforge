@@ -1,0 +1,15 @@
+{
+ "generated_by": "scripts/crrna_sim_rehearsal.py",
+ "SIMULATED": true,
+ "scenario": "H1+H2-positive, sd=8, n=5, seed=42",
+ "baselines": {
+  "TP53-R248Q_WT": 70.4,
+  "TP53-R273H_WT": 45.0
+ },
+ "runs": {
+  "anova": 0,
+  "twin": 0,
+  "power": 0,
+  "bayes": 0
+ }
+}

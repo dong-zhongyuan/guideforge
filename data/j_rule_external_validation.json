@@ -1,0 +1,134 @@
+{
+ "generated_by": "scripts/crrna_j_external_validation.py",
+ "protocol": "§J-ext(方向一致性检查, n=7 功效极低, 不构成替换/否决依据)",
+ "alignment_note": "Han DR(20-21nt)对 Su-WT19 最优偏移对齐; 规则匹配容忍注册表 from 差异(只要求目标碱基落位)",
+ "rows": [
+  {
+   "tag": "CN",
+   "aligned": "AAUUUCUACUAAGUGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 10,
+   "rule_matches": [
+    "15G",
+    "11A",
+    "18G"
+   ],
+   "n_matches": 3,
+   "fig1g": 0.47773
+  },
+  {
+   "tag": "F1",
+   "aligned": "AAUGUCUACUAAGUGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 9,
+   "rule_matches": [
+    "15G",
+    "11A",
+    "18G"
+   ],
+   "n_matches": 3,
+   "fig1g": 0.50089
+  },
+  {
+   "tag": "F2",
+   "aligned": "AAUGUCUACUAAGUGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 9,
+   "rule_matches": [
+    "15G",
+    "11A",
+    "18G"
+   ],
+   "n_matches": 3,
+   "fig1g": 0.58202
+  },
+  {
+   "tag": "FL1",
+   "aligned": "AAUGUCUACUCAGCGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 9,
+   "rule_matches": [
+    "15G",
+    "18G"
+   ],
+   "n_matches": 2,
+   "fig1g": 0.49728
+  },
+  {
+   "tag": "FL2",
+   "aligned": "AAUGUCUACUCAGCGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 9,
+   "rule_matches": [
+    "15G",
+    "18G"
+   ],
+   "n_matches": 2,
+   "fig1g": 0.58295
+  },
+  {
+   "tag": "L1",
+   "aligned": "AAUUUCUACAAAACGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 9,
+   "rule_matches": [
+    "15G",
+    "11A",
+    "18G",
+    "13A"
+   ],
+   "n_matches": 4,
+   "fig1g": 0.53019
+  },
+  {
+   "tag": "L2",
+   "aligned": "AAUUUCUACUCAGCGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 10,
+   "rule_matches": [
+    "15G",
+    "18G"
+   ],
+   "n_matches": 2,
+   "fig1g": 0.44295
+  },
+  {
+   "tag": "L3",
+   "aligned": "AAUUUCUACUAGGAGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 10,
+   "rule_matches": [
+    "15G",
+    "11A",
+    "18G"
+   ],
+   "n_matches": 3,
+   "fig1g": null
+  },
+  {
+   "tag": "L4",
+   "aligned": "AAUUUCUACUUAGAGUAGA",
+   "offset": 1,
+   "identity_to_su_wt": 10,
+   "rule_matches": [
+    "15G",
+    "18G"
+   ],
+   "n_matches": 2,
+   "fig1g": null
+  }
+ ],
+ "spearman_nmatches_vs_fig1g": {
+  "rho": 0.193,
+  "p": 0.6786147892437788
+ },
+ "reading": "期望方向: 规则匹配多 -> fig1g 低(抑制强) -> 负 rho; n=7 仅作方向参考, 已在 §J-ext 口径中声明低功效",
+ "L_protocol_prereg": {
+  "trigger": "v6 panel 6 条构建的 n>=5 细胞存活数据经 --ingest-cell 回填后",
+  "gp": "RBF 核, alpha=1e-2, normalize_input=True(与 crrna_bayesopt.py 现实现一致)",
+  "y": "每构建 z(delta_kill) = z(WT存活 - 变体存活), 每靶内标准化",
+  "acquisition": "EI(xi=0.01), 在全变体枚举空间(硬过滤通过者)上取 top3",
+  "proposal_rules": "top3 中排除已测构建; 若 EI top3 全部低于已测最优的 EI, 停止二轮(提前停止条款)",
+  "reporting": "二轮提议与理由落盘 data/bayesopt_round2_proposals.json, 提议先于二轮实验登记"
+ }
+}

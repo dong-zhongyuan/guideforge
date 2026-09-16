@@ -126,7 +126,29 @@ def _load_library_drs():
 LIBRARY = _load_library_drs()
 
 
-def lit_rank_scaffolds(spacer_rna):
+def _load_winner_rules():
+    """§J 文献赢家规律(DeWeirdt 64 赢家 Fisher 富集, 2026-09-16)。"""
+    p = os.path.join(DATA, "winner_rule_engineering.json")
+    if not os.path.isfile(p):
+        return {"available": False}
+    d = json.load(open(p, encoding="utf-8"))
+    n_win, n_bg = d["n_winners"], d["n_background"]
+    import math as _m
+    lod = {}
+    for r in d.get("rules_sig", []):
+        lod["%d%s%s" % (r["su_pos"], r["from"], r["to"])] = round(
+            _m.log((r["n_winners"] + 1) / (n_win - r["n_winners"] + 1))
+            - _m.log((r["n_background"] + 1) / (n_bg - r["n_background"] + 1)), 3)
+    return {"available": True, "n_winners": n_win, "n_background": n_bg,
+            "log_odds": lod,
+            "rules": d.get("rules_sig", []),
+            "boundary": "富集先验非活性预测器(全局 rho=0.081); 只叠加于装配过滤"}
+
+
+WINNER_RULES = _load_winner_rules()
+
+
+def lit_rank_scaffolds(spacer_rna, w_lit=0.0):
     """对 7 成员骨架逐个算特征并给文献模型预测(Fig1g 尺度, 低=抑制强)"""
     import RNA
     wt_full_ss, _ = core.fold(DR + spacer_rna)
@@ -144,9 +166,17 @@ def lit_rank_scaffolds(spacer_rna):
                  RNA.bp_distance(wt_full_ss, ss), cross_nt,
                  round(p_fold, 5), round(sp_up, 3)]
         pred = float(SELECTOR.predict(np.array([feats]))[0])
+        bonus = 0.0
+        if w_lit and WINNER_RULES.get("available"):
+            for p_ in range(1, len(DR) + 1):
+                if DR[p_ - 1] != dr[p_ - 1]:
+                    bonus += WINNER_RULES["log_odds"].get(
+                        "%d%s%s" % (p_, DR[p_ - 1], dr[p_ - 1]), 0.0)
         out.append({"scaffold": desc, "lit_pred_fig1g": round(pred, 4),
+                    "prior_bonus_j": round(bonus, 3),
+                    "adj_score": round(pred - w_lit * bonus, 4),
                     "features": dict(zip(FEATURES, feats)), "dr": dr})
-    out.sort(key=lambda r: r["lit_pred_fig1g"])
+    out.sort(key=lambda r: r.get("adj_score", r["lit_pred_fig1g"]))
     for i, r in enumerate(out, 1):
         r["rank"] = i
     return out
@@ -521,6 +551,7 @@ border-color:var(--accent)}
 <div class="card-head"><span class="tag">模式一</span><h2>spacer 设计</h2><span class="meta">实算 · 秒级</span></div>
 <label for="sp">spacer 序列（17-25 nt，ACGT）</label>
 <input id="sp" value="GTTCATGCCGCCCATGCAGGAACT" spellcheck="false" autocomplete="off">
+<label>§J 文献先验 w_lit <input id='wl' type='range' min='0' max='1' step='0.1' value='0' oninput='this.nextElementSibling.textContent=this.value'> <b>0</b></label>
 <div class="row"><button onclick="go()">运行设计</button><span class="hint" id="hint1"></span></div>
 <div class="result" id="r1"></div>
 </section>
@@ -607,7 +638,7 @@ fail($('r1'),$('hint1'),'spacer 须为 17-25 nt 的 ACGT(U) 序列，请检查�
 inp.classList.remove('invalid');inp.value=sp;
 loading($('r1'),$('hint1'));
 let r,d;
-try{r=await fetch('/api/design',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spacer:sp})});d=await r.json();}
+try{r=await fetch('/api/design',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spacer:sp,w_lit:parseFloat((document.getElementById('wl')||{value:0}).value)})});d=await r.json();}
 catch(e){fail($('r1'),$('hint1'),'网络请求失败，请检查服务是否在线。');return;}
 if(!r.ok||d.error){fail($('r1'),$('hint1'),d.error||('请求失败（HTTP '+r.status+'）'));return;}
 $('hint1').textContent='';
@@ -838,6 +869,34 @@ else{startScene();}});
 </script></body></html>"""
 
 
+@app.get("/api/rules")
+def rules():
+    """§J 文献赢家规律表(DeWeirdt 64 赢家 Fisher 富集)。"""
+    if not WINNER_RULES.get("available"):
+        return jsonify({"available": False}), 200
+    return jsonify(WINNER_RULES)
+
+
+@app.get("/api/demo/jd12")
+def demo_jd12():
+    """JD12 案例页数据: 输入两条 spacer -> 核验/分型/配套 DR/下单表(全取自入库产物)。"""
+    rd = json.load(open(os.path.join(DATA, "jd12_redesign.json"),
+                        encoding="utf-8"))
+    order = list(csv.DictReader(open(
+        os.path.join(DATA, "wetlab_jd12_order.csv"), encoding="utf-8")))
+    return jsonify({
+        "case": "JD12-Tp53(2026-09-16): 输入两条 23nt spacer -> 核验(R273H 等位)"
+                "-> 分型(型0/型1) -> 三层合成配套 DR -> 6 条下单",
+        "spacer_verification": {k: {
+            "verdict": v.get("verdict"), "pfs": v.get("pfs_scholz")}
+            for k, v in rd["spacers"].items()},
+        "order": [{k: r[k] for k in ("oligo_name", "scaffold",
+                                     "rna_crRNA_42nt", "note")}
+                  for r in order],
+        "evidence": "自身管线榜单 + §J 文献先验(OR 9.0 共识对 A8C/U15G) + 分型推荐",
+    })
+
+
 @app.get("/")
 def index():
     opts = "".join("<option>%s</option>" % k for k in PANEL)
@@ -848,6 +907,11 @@ def index():
 def design():
     sp = (request.json or {}).get("spacer", "")
     sp = sp.upper().replace("U", "T")
+    try:
+        w_lit = float((request.json or {}).get("w_lit", 0.0))
+    except (TypeError, ValueError):
+        w_lit = 0.0
+    w_lit = max(0.0, min(1.0, w_lit))
     if not 17 <= len(sp) <= 25 or set(sp) - set("ACGT"):
         return jsonify({"error": "spacer 须 17-25nt ACGT"}), 400
     # 可选靶标上下文: 提供时附模块一丰度档维 + 模块三门控判读
@@ -865,7 +929,7 @@ def design():
         sel = agent.select_scaffold_type(core.to_rna(sp), DR, MODEL)
         rep = MODEL["type_dr"].get(sel["nearest_type"], {})
         sp_rna = core.to_rna(sp)
-        ranking = lit_rank_scaffolds(sp_rna)
+        ranking = lit_rank_scaffolds(sp_rna, w_lit=w_lit)
         if iblock and iblock.get("available"):
             # 选型特征维附加入排序行: 库骨架名(+分隔)映射矩阵紧凑名,
             # 矩阵未覆盖的骨架如实不带该字段(不补造)
@@ -888,7 +952,8 @@ def design():
             payload_type = {"scaffold_type": sel["nearest_type"],
                             "type_representative": rep.get("representative_desc")}
         cr_rna = best["dr"] + sp_rna
-        return jsonify({"input_spacer": sp,
+        return jsonify({"input_spacer": sp, "w_lit": w_lit,
+                        "winner_rules_available": WINNER_RULES.get("available"),
                         "confidence": sel["confidence"],
                         "features": sel["features"],
                         "target_abundance": tctx,

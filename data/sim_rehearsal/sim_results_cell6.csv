@@ -1,0 +1,7 @@
+target,scaffold_desc,survival_1,survival_2,survival_3,survival_4,survival_5,note
+TP53-R248Q,WT,69.2,69.0,69.5,76.0,69.4,"SIMULATED-REHEARSAL | HCT116(内源 R248Q 杂合) | 情景: H1成立+H2阳性(+12pp), sd=8, seed=42"
+TP53-R248Q,A1C,57.0,71.7,66.9,67.3,69.9,"SIMULATED-REHEARSAL | HCT116(内源 R248Q 杂合) | 情景: H1成立+H2阳性(+12pp), sd=8, seed=42"
+TP53-R248Q,A8C+U15G,59.9,67.3,63.3,58.9,52.1,"SIMULATED-REHEARSAL | HCT116(内源 R248Q 杂合) | 情景: H1成立+H2阳性(+12pp), sd=8, seed=42"
+TP53-R273H,WT,36.9,47.0,55.5,45.3,44.1,"SIMULATED-REHEARSAL | SW480(内源 R273H) | 情景: H1成立+H2阳性(+12pp), sd=8, seed=42"
+TP53-R273H,A1C,48.3,32.4,41.5,47.9,51.0,"SIMULATED-REHEARSAL | SW480(内源 R273H) | 情景: H1成立+H2阳性(+12pp), sd=8, seed=42"
+TP53-R273H,A8C+U15G,31.1,36.0,35.0,39.3,24.1,"SIMULATED-REHEARSAL | SW480(内源 R273H) | 情景: H1成立+H2阳性(+12pp), sd=8, seed=42"
