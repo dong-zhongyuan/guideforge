@@ -1,0 +1,243 @@
+{
+ "generated_by": "scripts/crrna_jd12_redesign.py",
+ "input": {
+  "JD12_sp1": "ACAGGCACAAACATGCACCTCAA",
+  "JD12_sp2": "AGGACAGGCACAAACATGCACCT"
+ },
+ "transcript": "ENST00000269305.9 (TP53-201)",
+ "frame_verification": {
+  "cds_start_0based": 142,
+  "n_term_check": "MEEPQSDPSV",
+  "codon248": "s[883..885] CGG (c.742C/c.743G/c.744G)",
+  "codon273": "s[958..960] CGT (c.817C/c.818G/c.819T)",
+  "canonical_audit_note": "R248Q 设计 PFS CAGAG/CGGAG 差在 c.743G(s884, PFS 第2位)、R273H 设计 CATGT/CGTGT 差在 c.818G(s959, PFS 第2位)——canonical 设计与基因组一致; 早版误锚 s873 的怀疑已撤销(本行即更正留痕)"
+ },
+ "spacers": {
+  "JD12_sp1": {
+   "mRNA_window": "TTGAGGTGCGTGTTTGTGCCTGT",
+   "mRNA_pos_1based": 951,
+   "mismatch_mRNA_1based": [
+    960
+   ],
+   "mismatch_spacer_pos_5p": [
+    14
+   ],
+   "pfs_dna": "CCTGG",
+   "pfs_scholz": {
+    "pfs": "CCUGG",
+    "depletion": 0.628,
+    "rank": 891,
+    "pct": 87.0
+   },
+   "allele_hit": [
+    {
+     "variant": "c.818G",
+     "desc": "R273H: G>A"
+    }
+   ],
+   "verdict": [
+    "PFS 弱(dep 0.63 < 中位 0.88, 红旗区, 同 KRAS 被否区间)",
+    "等位特异: c.818G R273H: G>A",
+    "等位碱基在 spacer 第 14 位(远端; Cas12a 种子区在 PFS 近端约 1-8 位, 远端错配鉴别弱, 文献共识定性)"
+   ],
+   "offtarget": {
+    "exact_0mm": 0,
+    "tp53_isoforms_1mm": 29,
+    "non_tp53_min_mismatch": 4,
+    "n_non_tp53_sites": 14
+   }
+  },
+  "JD12_sp2": {
+   "mRNA_window": "AGGTGCGTGTTTGTGCCTGTCCT",
+   "mRNA_pos_1based": 954,
+   "mismatch_mRNA_1based": [
+    960
+   ],
+   "mismatch_spacer_pos_5p": [
+    17
+   ],
+   "pfs_dna": "GGGAG",
+   "pfs_scholz": {
+    "pfs": "GGGAG",
+    "depletion": 3.902,
+    "rank": 219,
+    "pct": 21.4
+   },
+   "allele_hit": [
+    {
+     "variant": "c.818G",
+     "desc": "R273H: G>A"
+    }
+   ],
+   "verdict": [
+    "PFS 强(dep 3.90, 分位前 21.4%)",
+    "等位特异: c.818G R273H: G>A",
+    "等位碱基在 spacer 第 17 位(远端; Cas12a 种子区在 PFS 近端约 1-8 位, 远端错配鉴别弱, 文献共识定性)"
+   ],
+   "offtarget": {
+    "exact_0mm": 0,
+    "tp53_isoforms_1mm": 29,
+    "non_tp53_min_mismatch": 3,
+    "n_non_tp53_sites": 14
+   }
+  }
+ },
+ "designs": {
+  "JD12_sp2_variants": {
+   "basis": "JD12 第2条(R273H 等位, PFS GGGAG 良好, 全转录组 0 完全脱靶)",
+   "caveat": "等位碱基在 spacer 第17位(远端), WT 细胞内单错配+强 PFS 仍可能激活, 选择性弱于 canonical PFS 设计(R273H 4.68x)",
+   "constructs": [
+    {
+     "oligo_name": "JD12_sp2_WT",
+     "scaffold": "WT",
+     "dr_rna": "AAUUUCUACUGUUGUAGAU",
+     "spacer_dna": "AGGACAGGCACAAACATGCACCT",
+     "spacer_len": 23,
+     "rna_crRNA": "AAUUUCUACUGUUGUAGAUAGGACAGGCACAAACAUGCACCU",
+     "dna_core": "AATTTCTACTGTTGTAGATAGGACAGGCACAAACATGCACCT",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTACTGTTGTAGATAGGACAGGCACAAACATGCACCT",
+     "note": "模板=T7(19)+DR(19)+spacer(23); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    },
+    {
+     "oligo_name": "JD12_sp2_A1C",
+     "scaffold": "A1C",
+     "dr_rna": "CAUUUCUACUGUUGUAGAU",
+     "spacer_dna": "AGGACAGGCACAAACATGCACCT",
+     "spacer_len": 23,
+     "rna_crRNA": "CAUUUCUACUGUUGUAGAUAGGACAGGCACAAACAUGCACCU",
+     "dna_core": "CATTTCTACTGTTGTAGATAGGACAGGCACAAACATGCACCT",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGCATTTCTACTGTTGTAGATAGGACAGGCACAAACATGCACCT",
+     "note": "模板=T7(19)+DR(19)+spacer(23); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    },
+    {
+     "oligo_name": "JD12_sp2_A8C+U15G",
+     "scaffold": "A8C+U15G",
+     "dr_rna": "AAUUUCUCCUGUUGGAGAU",
+     "spacer_dna": "AGGACAGGCACAAACATGCACCT",
+     "spacer_len": 23,
+     "rna_crRNA": "AAUUUCUCCUGUUGGAGAUAGGACAGGCACAAACAUGCACCU",
+     "dna_core": "AATTTCTCCTGTTGGAGATAGGACAGGCACAAACATGCACCT",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTCCTGTTGGAGATAGGACAGGCACAAACATGCACCT",
+     "note": "模板=T7(19)+DR(19)+spacer(23); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    }
+   ]
+  },
+  "R248W_HT29_options": {
+   "for": "若细胞系确为 HT29(R248W); JD12 序列实为 R273H 靶向",
+   "same_window_problem": "沿用 R248Q 窗口时 mut PFS UGGAG dep 2.36 vs wt CGGAG 3.16, 比值 0.75 反向, 不可沿用",
+   "school1_pfs_enum_top3": [
+    {
+     "allele_at_pfs_pos": 5,
+     "pfs_mut": "GAACT",
+     "pfs_wt": "GAACC",
+     "mut_depletion": 5.513,
+     "wt_depletion": 4.481,
+     "ratio": 1.23,
+     "mut_rank": 121,
+     "spacer_dna": "ATGCCGCCCATGCAGGAACTGTTA"
+    },
+    {
+     "allele_at_pfs_pos": 3,
+     "pfs_mut": "ACTGG",
+     "pfs_wt": "ACCGG",
+     "mut_depletion": 0.6,
+     "wt_depletion": 0.576,
+     "ratio": 1.04,
+     "mut_rank": 967,
+     "spacer_dna": "TCATGCCGCCCATGCAGGAACTGT"
+    },
+    {
+     "allele_at_pfs_pos": 2,
+     "pfs_mut": "CTGGA",
+     "pfs_wt": "CCGGA",
+     "mut_depletion": 0.951,
+     "wt_depletion": 0.962,
+     "ratio": 0.99,
+     "mut_rank": 486,
+     "spacer_dna": "TTCATGCCGCCCATGCAGGAACTG"
+    }
+   ],
+   "school2_seed_enum_top3": [
+    {
+     "allele_at_spacer_pos": 8,
+     "pfs": "CATCC",
+     "pfs_depletion": 1.905,
+     "pfs_rank": 350,
+     "spacer_dna_mut": "GGCCTCCAGTTCATGCCGCCCATG"
+    }
+   ]
+  },
+  "R248W_HT29_constructs": {
+   "school1_recommend(sch1[0])": [
+    {
+     "oligo_name": "JD12_R248W_pfs_WT",
+     "scaffold": "WT",
+     "dr_rna": "AAUUUCUACUGUUGUAGAU",
+     "spacer_dna": "ATGCCGCCCATGCAGGAACTGTTA",
+     "spacer_len": 24,
+     "rna_crRNA": "AAUUUCUACUGUUGUAGAUAUGCCGCCCAUGCAGGAACUGUUA",
+     "dna_core": "AATTTCTACTGTTGTAGATATGCCGCCCATGCAGGAACTGTTA",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTACTGTTGTAGATATGCCGCCCATGCAGGAACTGTTA",
+     "note": "模板=T7(19)+DR(19)+spacer(24); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    },
+    {
+     "oligo_name": "JD12_R248W_pfs_A1C",
+     "scaffold": "A1C",
+     "dr_rna": "CAUUUCUACUGUUGUAGAU",
+     "spacer_dna": "ATGCCGCCCATGCAGGAACTGTTA",
+     "spacer_len": 24,
+     "rna_crRNA": "CAUUUCUACUGUUGUAGAUAUGCCGCCCAUGCAGGAACUGUUA",
+     "dna_core": "CATTTCTACTGTTGTAGATATGCCGCCCATGCAGGAACTGTTA",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGCATTTCTACTGTTGTAGATATGCCGCCCATGCAGGAACTGTTA",
+     "note": "模板=T7(19)+DR(19)+spacer(24); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    },
+    {
+     "oligo_name": "JD12_R248W_pfs_A8C+U15G",
+     "scaffold": "A8C+U15G",
+     "dr_rna": "AAUUUCUCCUGUUGGAGAU",
+     "spacer_dna": "ATGCCGCCCATGCAGGAACTGTTA",
+     "spacer_len": 24,
+     "rna_crRNA": "AAUUUCUCCUGUUGGAGAUAUGCCGCCCAUGCAGGAACUGUUA",
+     "dna_core": "AATTTCTCCTGTTGGAGATATGCCGCCCATGCAGGAACTGTTA",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTCCTGTTGGAGATATGCCGCCCATGCAGGAACTGTTA",
+     "note": "模板=T7(19)+DR(19)+spacer(24); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    }
+   ],
+   "school2_recommend(sch2[0])": [
+    {
+     "oligo_name": "JD12_R248W_seed_WT",
+     "scaffold": "WT",
+     "dr_rna": "AAUUUCUACUGUUGUAGAU",
+     "spacer_dna": "GGCCTCCAGTTCATGCCGCCCATG",
+     "spacer_len": 24,
+     "rna_crRNA": "AAUUUCUACUGUUGUAGAUGGCCUCCAGUUCAUGCCGCCCAUG",
+     "dna_core": "AATTTCTACTGTTGTAGATGGCCTCCAGTTCATGCCGCCCATG",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTACTGTTGTAGATGGCCTCCAGTTCATGCCGCCCATG",
+     "note": "模板=T7(19)+DR(19)+spacer(24); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    },
+    {
+     "oligo_name": "JD12_R248W_seed_A1C",
+     "scaffold": "A1C",
+     "dr_rna": "CAUUUCUACUGUUGUAGAU",
+     "spacer_dna": "GGCCTCCAGTTCATGCCGCCCATG",
+     "spacer_len": 24,
+     "rna_crRNA": "CAUUUCUACUGUUGUAGAUGGCCUCCAGUUCAUGCCGCCCAUG",
+     "dna_core": "CATTTCTACTGTTGTAGATGGCCTCCAGTTCATGCCGCCCATG",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGCATTTCTACTGTTGTAGATGGCCTCCAGTTCATGCCGCCCATG",
+     "note": "模板=T7(19)+DR(19)+spacer(24); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    },
+    {
+     "oligo_name": "JD12_R248W_seed_A8C+U15G",
+     "scaffold": "A8C+U15G",
+     "dr_rna": "AAUUUCUCCUGUUGGAGAU",
+     "spacer_dna": "GGCCTCCAGTTCATGCCGCCCATG",
+     "spacer_len": 24,
+     "rna_crRNA": "AAUUUCUCCUGUUGGAGAUGGCCUCCAGUUCAUGCCGCCCAUG",
+     "dna_core": "AATTTCTCCTGTTGGAGATGGCCTCCAGTTCATGCCGCCCATG",
+     "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTCCTGTTGGAGATGGCCTCCAGTTCATGCCGCCCATG",
+     "note": "模板=T7(19)+DR(19)+spacer(24); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
+    }
+   ]
+  }
+ }
+}
