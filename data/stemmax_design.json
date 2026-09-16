@@ -1,0 +1,166 @@
+{
+ "generated_by": "scripts/crrna_stemmax_design.py",
+ "wt_dr": "AAUUUCUACUGUUGUAGAU",
+ "stem_pairs": [
+  [
+   9,
+   14
+  ],
+  [
+   8,
+   15
+  ],
+  [
+   7,
+   16
+  ],
+  [
+   6,
+   17
+  ],
+  [
+   5,
+   18
+  ]
+ ],
+ "safe_contact_max": 6,
+ "contact_counts": {
+  "1": 0,
+  "2": 8,
+  "3": 6,
+  "4": 11,
+  "5": 7,
+  "6": 5,
+  "7": 6,
+  "8": 6,
+  "9": 7,
+  "10": 7,
+  "11": 7,
+  "12": 10,
+  "13": 7,
+  "14": 7,
+  "15": 3,
+  "16": 5,
+  "17": 9,
+  "18": 7,
+  "19": 6
+ },
+ "stemmax_edits": [
+  {
+   "pair": [
+    7,
+    16
+   ],
+   "from": "UA",
+   "to": "GC"
+  },
+  {
+   "pair": [
+    8,
+    15
+   ],
+   "from": "AU",
+   "to": "CG"
+  }
+ ],
+ "candidates": {
+  "WT": {
+   "dr_rna": "AAUUUCUACUGUUGUAGAU",
+   "n_mut": 0,
+   "mut_positions": [],
+   "mut_contact_sum": 0,
+   "R248Q": {
+    "ddG_dr": 0.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.86603,
+    "spacer_up": 0.427,
+    "pred_fig1g": 0.6094
+   },
+   "R273H": {
+    "ddG_dr": 0.0,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.84556,
+    "spacer_up": 0.872,
+    "pred_fig1g": 0.6094
+   }
+  },
+  "stemmax": {
+   "dr_rna": "AAUUUCGCCUGUUGGCGAU",
+   "n_mut": 4,
+   "mut_positions": [
+    7,
+    8,
+    15,
+    16
+   ],
+   "mut_contact_sum": 20,
+   "R248Q": {
+    "ddG_dr": -3.5,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.4629,
+    "spacer_up": 0.44,
+    "pred_fig1g": 0.6301
+   },
+   "R273H": {
+    "ddG_dr": -3.5,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.85605,
+    "spacer_up": 0.872,
+    "pred_fig1g": 0.6301
+   }
+  },
+  "A8C+U15G": {
+   "dr_rna": "AAUUUCUCCUGUUGGAGAU",
+   "n_mut": 2,
+   "mut_positions": [
+    8,
+    15
+   ],
+   "mut_contact_sum": 9,
+   "R248Q": {
+    "ddG_dr": -2.2,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.27749,
+    "spacer_up": 0.431,
+    "pred_fig1g": 0.6301
+   },
+   "R273H": {
+    "ddG_dr": -2.2,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.82143,
+    "spacer_up": 0.87,
+    "pred_fig1g": 0.6301
+   }
+  },
+  "U13C": {
+   "dr_rna": "AAUUUCUACUGUCGUAGAU",
+   "n_mut": 1,
+   "mut_positions": [
+    13
+   ],
+   "mut_contact_sum": 7,
+   "R248Q": {
+    "ddG_dr": 0.7,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.85791,
+    "spacer_up": 0.427,
+    "pred_fig1g": 0.6094
+   },
+   "R273H": {
+    "ddG_dr": 0.7,
+    "bp_dist": 0,
+    "cross_nt": 0,
+    "p_fold": 0.8038,
+    "spacer_up": 0.869,
+    "pred_fig1g": 0.6094
+   }
+  }
+ }
+}
