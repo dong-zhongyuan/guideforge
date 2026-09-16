@@ -169,6 +169,14 @@ AI 辅助优化 **Cas12a2 crRNA 的骨架（direct-repeat 茎环）**，用于�
 
 > 引用层级声明: 机制前提的证据链为 **Cas12a 同家族(Creutzburg 2020)→ Cas12a2(本体系, 暂无直接折叠研究)**, 而非跨体系的 SpCas9→Cas12a2; 硬过滤"结构保持/spacer 游离"两项由此获得同家族文献锚定而非纯启发式。 路径A反向复算为阴性(见上行): 游离态全局指标不构成跨体系活性预测器, 打分体系定位=结构口径相对排序+文献机制锚定。
 
+## §J 文献赢家先验层(2026-09-16)
+
+- DeWeirdt 2020 大库(35,883 条)64 条实测活性增强 DR 的突变富集规律(Fisher, OR 2.5-9.0);
+  核心: A8C/U15G 各被 34% 赢家携带——本项目 H2 变体 A8C+U15G 获文献大库独立支持。
+- 管线新增 --w-lit 先验权重(默认 0 行为不变; 规则文件 data/winner_rule_engineering.json);
+  边界: 富集先验非活性预测器(全局 rho=0.081), 只叠加于装配过滤之上。详见
+  docs/preregistration.md §J 与 tests/test_lit_prior.py。
+
 ## 快速开始
 
 **环境前置(重要)**: 主管线需要 **Python ≥3.8 + ViennaRNA ≥2.6**(开发验证环境: `/public/home/mengxl/dzy/envs/guideforge`, py3.10.20 + ViennaRNA 2.7.2)。宿主机裸 `python` 是 2.7, 直接跑会报编码错误——请用上述环境解释器或任何满足前置的 py3 环境。路径类默认值(如 rnet 引擎)全部可用 CLI 参数覆盖; 仓库内少数数据 JSON 的绝对路径为溯源记录, 换机重跑时按需替换。

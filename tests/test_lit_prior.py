@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""§H 文献赢家先验契约测试(2026-09-16).
+"""§J 文献赢家先验契约测试(2026-09-16).
 
 覆盖:
 1) 规则文件存在且含核心规则(A8C/U15G, DeWeirdt 64 赢家共识对);
@@ -38,15 +38,42 @@ class TestLitPrior(unittest.TestCase):
         for v in rules.values():
             self.assertGreater(v, 0.0)
 
-    def test_default_w_lit_zero_no_effect(self):
-        """默认权重 0: lit_s 恒 0 -> 打分表达式与旧版一致(构造性检查)。"""
-        import argparse
+    def test_w_lit_behavioral_delta(self):
+        """行为级契约: --w-lit 1.0 时 A8C+U15G 的分数增量 = 1.0 x (规则 log-odds 和)。
+
+        基线取仓库既有无先验产物 data/jd12_sp1_direct.top.json(确定性管线);
+        权重线性 => 增量在 w=0 处恰为 0, 覆盖默认行为不变的回归口径。
+        运行成本 ~25s(枚举主导), 已接受。
+        """
+        import json
+        import math
+        import subprocess
+        import sys
 
         import crrna_scaffold_design as core
-        ap = argparse.Namespace(w_lit=0.0)
-        lit_s = 0.0 if not getattr(ap, 'w_lit', 0.0) else 1.0
-        self.assertEqual(lit_s, 0.0)
-        self.assertEqual(getattr(ap, 'w_lit', 0.0) * lit_s, 0.0)
+        rules = core.load_lit_rules(RULES_JSON)
+        expect = rules['8AC'] + rules['15UG']
+        out = os.path.join(ROOT, 'data', 'tmp_test_lit.top')
+        r = subprocess.run(
+            [sys.executable, os.path.join(ROOT, 'scripts',
+                                          'crrna_scaffold_design.py'),
+             '--effector', 'cas12a2_zeng2026',
+             '--spacer', 'ACAGGCACAAACATGCACCTCAA', '--topk', '8',
+             '--use-covariation', '--w-lit', '1.0',
+             '--out-prefix', out[:-4]],
+            capture_output=True, text=True, timeout=600)
+        self.assertEqual(r.returncode, 0, r.stderr[-300:])
+        lit = json.load(open(out + '.json', encoding='utf-8'))['top']
+        base = json.load(open(os.path.join(
+            ROOT, 'data', 'jd12_sp1_direct.top.json'),
+            encoding='utf-8'))['top']
+        lv = next(x for x in lit if x['desc'] == 'A8C+U15G')
+        bv = next(x for x in base if x['desc'] == 'A8C+U15G')
+        self.assertAlmostEqual(lv['score'] - bv['score'], expect, places=3,
+                               msg='先验增量不等于规则 log-odds 和')
+        for f in (out + '.json', out + '.variants.csv', out + '.fasta'):
+            if os.path.exists(f):
+                os.remove(f)
 
     def test_predictive_power_boundary_recorded(self):
         d = json.load(open(RULES_JSON, encoding='utf-8'))

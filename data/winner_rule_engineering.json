@@ -1,17 +1,40 @@
 {
  "generated_by": "scripts/crrna_winner_rule.py",
+ "winner_threshold_robustness": {
+  "thr_0.05": {
+   "n_winners": 69,
+   "A8C_winners": 24,
+   "U15G_winners": 24,
+   "A8C_frac": 0.348,
+   "U15G_frac": 0.348
+  },
+  "thr_0.10": {
+   "n_winners": 64,
+   "A8C_winners": 22,
+   "U15G_winners": 22,
+   "A8C_frac": 0.344,
+   "U15G_frac": 0.344
+  },
+  "thr_0.20": {
+   "n_winners": 55,
+   "A8C_winners": 18,
+   "U15G_winners": 18,
+   "A8C_frac": 0.327,
+   "U15G_frac": 0.327
+  }
+ },
  "n_winners": 64,
- "n_background": 35682,
+ "n_background": 35618,
  "rules_sig": [
   {
    "su_pos": 8,
    "from": "A",
    "to": "C",
    "n_winners": 22,
-   "n_background": 1982,
+   "n_background": 1960,
    "win_frac": 0.344,
-   "bg_frac": 0.0555,
-   "odds_ratio": 8.9,
+   "bg_frac": 0.055,
+   "odds_ratio": 9.0,
    "fisher_p": 0.0
   },
   {
@@ -19,10 +42,10 @@
    "from": "U",
    "to": "G",
    "n_winners": 22,
-   "n_background": 1982,
+   "n_background": 1960,
    "win_frac": 0.344,
-   "bg_frac": 0.0555,
-   "odds_ratio": 8.9,
+   "bg_frac": 0.055,
+   "odds_ratio": 9.0,
    "fisher_p": 0.0
   },
   {
@@ -30,10 +53,10 @@
    "from": "U",
    "to": "C",
    "n_winners": 18,
-   "n_background": 4447,
+   "n_background": 4429,
    "win_frac": 0.281,
-   "bg_frac": 0.1246,
-   "odds_ratio": 2.7,
+   "bg_frac": 0.1243,
+   "odds_ratio": 2.8,
    "fisher_p": 0.0008
   },
   {
@@ -41,21 +64,21 @@
    "from": "C",
    "to": "A",
    "n_winners": 17,
-   "n_background": 4447,
+   "n_background": 4430,
    "win_frac": 0.266,
-   "bg_frac": 0.1246,
+   "bg_frac": 0.1244,
    "odds_ratio": 2.5,
-   "fisher_p": 0.002
+   "fisher_p": 0.0019
   },
   {
    "su_pos": 5,
    "from": "U",
    "to": "C",
    "n_winners": 16,
-   "n_background": 1490,
+   "n_background": 1474,
    "win_frac": 0.25,
-   "bg_frac": 0.0418,
-   "odds_ratio": 7.6,
+   "bg_frac": 0.0414,
+   "odds_ratio": 7.7,
    "fisher_p": 0.0
   },
   {
@@ -63,10 +86,10 @@
    "from": "A",
    "to": "G",
    "n_winners": 16,
-   "n_background": 1490,
+   "n_background": 1474,
    "win_frac": 0.25,
-   "bg_frac": 0.0418,
-   "odds_ratio": 7.6,
+   "bg_frac": 0.0414,
+   "odds_ratio": 7.7,
    "fisher_p": 0.0
   },
   {
@@ -74,11 +97,11 @@
    "from": "U",
    "to": "A",
    "n_winners": 14,
-   "n_background": 4447,
+   "n_background": 4433,
    "win_frac": 0.219,
-   "bg_frac": 0.1246,
+   "bg_frac": 0.1245,
    "odds_ratio": 2.0,
-   "fisher_p": 0.0345
+   "fisher_p": 0.0344
   }
  ],
  "rules_all_freq10plus": [
@@ -87,10 +110,10 @@
    "from": "A",
    "to": "C",
    "n_winners": 22,
-   "n_background": 1982,
+   "n_background": 1960,
    "win_frac": 0.344,
-   "bg_frac": 0.0555,
-   "odds_ratio": 8.9,
+   "bg_frac": 0.055,
+   "odds_ratio": 9.0,
    "fisher_p": 0.0
   },
   {
@@ -98,10 +121,10 @@
    "from": "U",
    "to": "G",
    "n_winners": 22,
-   "n_background": 1982,
+   "n_background": 1960,
    "win_frac": 0.344,
-   "bg_frac": 0.0555,
-   "odds_ratio": 8.9,
+   "bg_frac": 0.055,
+   "odds_ratio": 9.0,
    "fisher_p": 0.0
   },
   {
@@ -109,10 +132,10 @@
    "from": "U",
    "to": "C",
    "n_winners": 18,
-   "n_background": 4447,
+   "n_background": 4429,
    "win_frac": 0.281,
-   "bg_frac": 0.1246,
-   "odds_ratio": 2.7,
+   "bg_frac": 0.1243,
+   "odds_ratio": 2.8,
    "fisher_p": 0.0008
   },
   {
@@ -120,21 +143,21 @@
    "from": "C",
    "to": "A",
    "n_winners": 17,
-   "n_background": 4447,
+   "n_background": 4430,
    "win_frac": 0.266,
-   "bg_frac": 0.1246,
+   "bg_frac": 0.1244,
    "odds_ratio": 2.5,
-   "fisher_p": 0.002
+   "fisher_p": 0.0019
   },
   {
    "su_pos": 5,
    "from": "U",
    "to": "C",
    "n_winners": 16,
-   "n_background": 1490,
+   "n_background": 1474,
    "win_frac": 0.25,
-   "bg_frac": 0.0418,
-   "odds_ratio": 7.6,
+   "bg_frac": 0.0414,
+   "odds_ratio": 7.7,
    "fisher_p": 0.0
   },
   {
@@ -142,10 +165,10 @@
    "from": "A",
    "to": "G",
    "n_winners": 16,
-   "n_background": 1490,
+   "n_background": 1474,
    "win_frac": 0.25,
-   "bg_frac": 0.0418,
-   "odds_ratio": 7.6,
+   "bg_frac": 0.0414,
+   "odds_ratio": 7.7,
    "fisher_p": 0.0
   },
   {
@@ -153,22 +176,22 @@
    "from": "U",
    "to": "A",
    "n_winners": 14,
-   "n_background": 4447,
+   "n_background": 4433,
    "win_frac": 0.219,
-   "bg_frac": 0.1246,
+   "bg_frac": 0.1245,
    "odds_ratio": 2.0,
-   "fisher_p": 0.0345
+   "fisher_p": 0.0344
   },
   {
    "su_pos": 13,
    "from": "U",
    "to": "G",
    "n_winners": 10,
-   "n_background": 4447,
+   "n_background": 4437,
    "win_frac": 0.156,
    "bg_frac": 0.1246,
    "odds_ratio": 1.3,
-   "fisher_p": 0.4467
+   "fisher_p": 0.4465
   }
  ],
  "core_A8CU15G_validation": {
@@ -177,10 +200,10 @@
    "from": "A",
    "to": "C",
    "n_winners": 22,
-   "n_background": 1982,
+   "n_background": 1960,
    "win_frac": 0.344,
-   "bg_frac": 0.0555,
-   "odds_ratio": 8.9,
+   "bg_frac": 0.055,
+   "odds_ratio": 9.0,
    "fisher_p": 0.0
   },
   "U15G_rule": {
@@ -188,10 +211,10 @@
    "from": "U",
    "to": "G",
    "n_winners": 22,
-   "n_background": 1982,
+   "n_background": 1960,
    "win_frac": 0.344,
-   "bg_frac": 0.0555,
-   "odds_ratio": 8.9,
+   "bg_frac": 0.055,
+   "odds_ratio": 9.0,
    "fisher_p": 0.0
   },
   "reading": "DeWeirdt 赢家最高频突变对(As9 A->C / As16 U->G)映射到 Su 注册表即 A8C+U15G, 与本项目已选变体重合——文献大库对现有选择的独立支持(统计强度见上各行 fisher_p)"
@@ -366,8 +389,8 @@
   }
  },
  "rule_predictive_power": {
-  "spearman_rho_vs_lfc127": 0.077,
-  "p_value": 7.328586395716747e-48,
-  "reading": "规则分(log-odds 和)与全库实测 lfc 的秩相关; 负 rho = 规则分高(赢家模式多)对应更深敲低"
+  "spearman_rho_vs_lfc127": 0.081,
+  "p_value": 6.478306875680277e-53,
+  "reading": "全局秩相关为正的弱值(规则分高全局倾向 lfc 略高): 全库主信号是\"突变越多越死\", 规则是条件富集标记; 其正确用法是叠加在装配过滤之上的先验(管线 --w-lit), 不是独立活性预测器"
  }
 }

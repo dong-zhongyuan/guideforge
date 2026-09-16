@@ -90,7 +90,7 @@ CONSERVATION_JSON = os.path.join(ROOT, 'data', 'dr_conservation.json')
 CONS3_WINDOW_FALLBACK = 5
 WINNER_RULES_JSON = os.path.join(ROOT, 'data', 'winner_rule_engineering.json')
 
-# 文献赢家先验(§H, 2026-09-16 预登记): DeWeirdt 2020 大库 64 条活性增强 DR 的
+# 文献赢家先验(§J, 2026-09-16 登记, docs/preregistration.md): DeWeirdt 2020 大库 64 条活性增强 DR 的
 # 突变方向富集规则(Fisher, 载体 data/winner_rule_engineering.json rules_sig),
 # 以 log-odds 和作为打分加成项; 预测力检验 rho=0.077(弱, 仅富集标记非活性
 # 预测器), 故只作先验叠加在既有过滤/打分之上, 默认权重 0 行为不变。
@@ -923,7 +923,7 @@ def main():
     ap.add_argument('--stab-dr-only', action='store_true',
                     help='w_stab 改用 DR 单独折叠 ddG_dr(茎稳定化语义更干净; 默认否, 保持 v1.4 全长口径)')
     ap.add_argument('--w-lit', type=float, default=0.0,
-                    help='文献赢家先验权重(§H, DeWeirdt 64 赢家富集规则 log-odds 加成, '
+                    help='文献赢家先验权重(§J, DeWeirdt 64 赢家富集规则 log-odds 加成, '
                          '规则文件 data/winner_rule_engineering.json; 默认 0 行为不变)')
     ap.add_argument('--out-prefix', default='crrna_scaffold_run')
     args = ap.parse_args()

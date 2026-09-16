@@ -53,7 +53,9 @@ def main():
     wt20 = wt['dr_rna']
     winners = [r for r in rows
                if r['lfc127'] is not None and r['lfc127'] < wt['lfc127'] - 0.1]
-    bg = [r for r in rows if r['lfc127'] is not None and r['cls'] == 'test']
+    # A1(审计修复): 背景须剔除赢家自身, 避免重复计数
+    bg = [r for r in rows if r['lfc127'] is not None and r['cls'] == 'test'
+          and r['lfc127'] >= wt['lfc127'] - 0.1]
 
     # ---- 1) 规律: Su 编号(As pos-1)下 每位突变方向的富集 ----
     def muts(r):
@@ -73,9 +75,7 @@ def main():
     rules = []
     for key, w in win_muts.most_common(20):
         b = bg_muts.get(key, 0)
-        # 富集: 赢家中含该突变的比例 vs 背景比例
-        table = [[w, n_win - w], [b * n_win / max(n_bg, 1), n_bg - b]]
-        # Fisher 用整数化近似: 直接比较 赢家频率 vs 全库频率
+        # 富集: 赢家中含该突变的比例 vs 背景(已剔赢家)比例, Fisher 精确
         orv, p = fisher_exact([[w, n_win - w],
                                [b, n_bg - b]])
         rules.append({'su_pos': key[0], 'from': key[1], 'to': key[2],
@@ -143,7 +143,25 @@ def main():
         ys.append(r['lfc127'])
     rho, pval = spearmanr(xs, ys)
 
+    # A3(审计修复): 赢家阈值敏感性
+    robust = {}
+    for thr in (0.05, 0.1, 0.2):
+        wn_thr = [r for r in rows if r['lfc127'] is not None
+                  and r['lfc127'] < wt['lfc127'] - thr]
+        bg_thr = [r for r in rows if r['lfc127'] is not None
+                  and r['cls'] == 'test' and r['lfc127'] >= wt['lfc127'] - thr]
+        wcnt = Counter()
+        for r in wn_thr:
+            wcnt.update(muts(r))
+        a8 = wcnt.get((8, 'A', 'C'), 0)
+        u15 = wcnt.get((15, 'U', 'G'), 0)
+        robust['thr_%.2f' % thr] = {
+            'n_winners': len(wn_thr),
+            'A8C_winners': a8, 'U15G_winners': u15,
+            'A8C_frac': round(a8 / max(len(wn_thr), 1), 3),
+            'U15G_frac': round(u15 / max(len(wn_thr), 1), 3)}
     out = {'generated_by': 'scripts/crrna_winner_rule.py',
+           'winner_threshold_robustness': robust,
            'n_winners': n_win, 'n_background': n_bg,
            'rules_sig': [r for r in rules if r['fisher_p'] < 0.05],
            'rules_all_freq10plus': rules,
@@ -153,8 +171,10 @@ def main():
            'rule_predictive_power': {
                'spearman_rho_vs_lfc127': round(float(rho), 3),
                'p_value': float(pval),
-               'reading': '规则分(log-odds 和)与全库实测 lfc 的秩相关; '
-                          '负 rho = 规则分高(赢家模式多)对应更深敲低'}}
+               'reading': '全局秩相关为正的弱值(规则分高全局倾向 lfc 略高): '
+                          '全库主信号是"突变越多越死", 规则是条件富集标记; '
+                          '其正确用法是叠加在装配过滤之上的先验(管线 --w-lit), '
+                          '不是独立活性预测器'}}
     dst = os.path.join(DATA, 'winner_rule_engineering.json')
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('rules>=10winners:', len(rules), '| sig(p<0.05):', len(sig))
