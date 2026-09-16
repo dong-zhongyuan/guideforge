@@ -248,3 +248,16 @@ panel（§2bis），不再有体外裁决前置——候选直接按干实验排
 ## 执行记录
 
 （待填）
+
+## v6 口径（2026-09-16，用户收窄 + JD12 事件）
+
+- 面板收窄为 2 靶 ×（WT + A1C + A8C+U15G）= 6 条；下单表/回填模板(n=5)/预登记
+  见 wetlab_panel_cell6_*、wetlab_results_template_cell6.csv、
+  prereg_cellpanel_v6_predictions.json（判读逻辑承 v5，H1 收窄为 A1C 非劣）。
+- 用户提交 JD12 两条 spacer 经核验为 R273H 等位（SW480），非 HT29（R248W）；
+  crRNA-1 PFS 红旗弃用，crRNA-2 为可选附表（wetlab_jd12_sp2_order.csv，
+  不入预登记口径）。核验与 HT29(R248W) 双学派重设计见 data/jd12_redesign.json。
+- 分型学说核验（data/panel_retyping.json）：canonical R248Q→型0 / R273H→型2 /
+  JD12-sp2→型1；A1C 在两个 canonical 上下文 3/3 代表进 TOP16，
+  A8C+U15G 型0 3/3、型2 仅 1/3（弱支持，如实标注）；JD12(型1) 上下文两变体
+  均非常选——启用附表需按型1 TOP 谱另行登记。

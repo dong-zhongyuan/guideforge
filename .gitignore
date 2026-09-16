@@ -16,6 +16,8 @@ docs/*
 !docs/preregistration.md
 !docs/wetlab_plan.md
 !docs/af3_server_runbook.md
+!docs/preregistration_cellpanel_v5.md
+!docs/preregistration_cellpanel_v6.md
 scripts/tmp/
 # 大文件走 Release data-v1 (清单见 BIG_FILES.md)
 toolbox/rnet-inference/RibonanzaNet-Weights/
