@@ -9,7 +9,7 @@
 输出: <run-prefix>.sensitivity.json / .png(柱状图) / 控制台摘要。
 
 用法:
-  python weight_sensitivity.py --run-prefix ../data/tp53_r248q_zengdr_v2
+  python weight_sensitivity.py --run-prefix ../data/tp53_r248q_zengdr.v6
 """
 import argparse
 import csv
