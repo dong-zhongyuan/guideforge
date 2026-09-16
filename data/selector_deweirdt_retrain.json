@@ -1,0 +1,55 @@
+{
+ "generated_by": "scripts/crrna_selector_deweirdt_train.py",
+ "protocol": "§K(2026-09-16 登记, 登记先于运行; 见脚本头与 docs/preregistration.md)",
+ "n_train": 71766,
+ "features": [
+  "ddG_dr",
+  "bp_dist",
+  "cross_nt",
+  "p_fold",
+  "spacer_up"
+ ],
+ "internal_cv": {
+  "ridge": {
+   "fold_rhos": [
+    -0.0866,
+    -0.0535
+   ],
+   "mean_rho": -0.0701
+  },
+  "gbdt": {
+   "fold_rhos": [
+    0.0074,
+    0.0521
+   ],
+   "mean_rho": 0.0297
+  }
+ },
+ "external_transfer": {
+  "baseline_dt16_train_rho": 0.501,
+  "ridge": {
+   "spearman_vs_fig1g": -0.0206,
+   "p_value": 0.9396737397890448,
+   "direction_ok": true
+  },
+  "gbdt": {
+   "spearman_vs_fig1g": -0.04,
+   "p_value": 0.8831532101667188,
+   "direction_ok": true
+  }
+ },
+ "models": {
+  "ridge": "fitted on n=71766",
+  "gbdt": "fitted on n=71766"
+ },
+ "panel_implication": {
+  "JD12-sp1": {
+   "n_passed": 100,
+   "note": "若外迁移通过再做全空间重排(协议步骤5)"
+  },
+  "JD12-sp2": {
+   "n_passed": 214,
+   "note": "若外迁移通过再做全空间重排(协议步骤5)"
+  }
+ }
+}
