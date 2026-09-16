@@ -1,0 +1,92 @@
+{
+ "generated_by": "scripts/crrna_activity_context_search.py",
+ "direction": "fig1g 低=抑制强; hit = pred < 该语境 WT pred",
+ "model": "DecisionTree(max_leaf=4, rs=42) 复刻自 crrna_train_selector(16 对同源)",
+ "contexts": {
+  "JD12_sp2": {
+   "spacer_dna": "AGGACAGGCACAAACATGCACCT",
+   "n_variants": 208,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "canonical_R248Q": {
+   "spacer_dna": "GTTCATGCCGCCCATGCAGGAACT",
+   "n_variants": 185,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "canonical_R273H": {
+   "spacer_dna": "CACCTCAAAGCTGTTCCGTCCCAG",
+   "n_variants": 62,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t0_R280K_gRNA11": {
+   "spacer_dna": "CGGUCUUUCCCAGGACAGGCACAA",
+   "n_variants": 104,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t0_v47-AR-ENST00000396043-1304": {
+   "spacer_dna": "AGCAGCAGCAGCAGCAGCAGCAG",
+   "n_variants": 99,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t0_v47-bg-ENST00000762416-151": {
+   "spacer_dna": "GCCTCAGGGTCTGAGAAGCCTGC",
+   "n_variants": 92,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t1_v47-FBXW7-ENST00000393956-526": {
+   "spacer_dna": "GAATTACATCTGTCCAGCCACCT",
+   "n_variants": 109,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t1_v47-MLH1-ENST00000673673-915": {
+   "spacer_dna": "AGAGACAGTAGCTGATGTTAGGA",
+   "n_variants": 160,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t1_v47-STK11-ENST00000585748-137": {
+   "spacer_dna": "TTTCACGAGGGAGGAAACTGAGG",
+   "n_variants": 69,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t2_v47-AR-ENST00000396043-1693": {
+   "spacer_dna": "ACCATGCAACTCCTTCAGCAACA",
+   "n_variants": 90,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t2_v47-KRAS-ENST00000690406-2082": {
+   "spacer_dna": "ACACCATCTTCAGTGCCAGTCTT",
+   "n_variants": 84,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  },
+  "t2_v47-bg-ENST00000782395-693": {
+   "spacer_dna": "TTTCCACAAGGCTGAGTCAAATC",
+   "n_variants": 75,
+   "wt_pred": 0.6094,
+   "n_hits": 0,
+   "hits": []
+  }
+ },
+ "any_context_has_hit": false
+}
