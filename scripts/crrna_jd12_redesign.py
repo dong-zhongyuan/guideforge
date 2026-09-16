@@ -159,7 +159,7 @@ def main():
             "allele_hit": allele, "verdict": verdict}
 
     for tag in user:
-        fn = os.path.join(DATA, "%s.scan.summary.json" % tag.lower())
+        fn = os.path.join(DATA, "jd12_%s.scan.summary.json" % tag.lower())
         if os.path.exists(fn):
             d = json.load(open(fn, encoding="utf-8"))
             t1 = sum(1 for x in d["sites"]
@@ -177,6 +177,37 @@ def main():
         "caveat": "等位碱基在 spacer 第17位(远端), WT 细胞内单错配+强 PFS 仍可能"
                   "激活, 选择性弱于 canonical PFS 设计(R273H 4.68x)",
         "constructs": build_constructs(user["JD12_sp2"], "sp2")}
+
+    # JD12 正式下单表(2026-09-16 用户拍板: 两条都要): 双 spacer x 4 骨架 = 8 条
+    import csv as _csv
+    DRS4 = dict(DRS)
+    DRS4["stemmax"] = "AAUUUCUGCCUGUGGCGAU"  # data/stemmax_design.json 产物
+    jd_order = []
+    for tag, sp in (("crRNA1", user["JD12_sp1"]), ("crRNA2", user["JD12_sp2"])):
+        pfs = report["spacers"]["JD12_sp" + tag[-1]]["pfs_scholz"]
+        note = ("crRNA-1: PFS CCUGG 弱(dep 0.628, 如实标注继续做)"
+                if tag == "crRNA1" else
+                "crRNA-2: PFS GGGAG 良好(dep 3.90)")
+        for dr_name, dr in DRS4.items():
+            rna = dr + sp.replace("T", "U")
+            dna = rna.replace("U", "T")
+            jd_order.append({
+                "oligo_name": "JD12_%s_%s" % (tag, dr_name.replace("+", "")),
+                "target": "TP53-R273H(SW480, JD12 双窗口)",
+                "scaffold": dr_name, "dr_rna": dr,
+                "spacer_dna_23nt": sp, "rna_crRNA_42nt": rna,
+                "dna_core_42nt": dna,
+                "synthesis_template_61nt": T7 + dna,
+                "note": note + "; 模板=T7(19)+DR(19)+spacer(23), IVT 后核验 5' 端"})
+    dst_csv = os.path.join(DATA, "wetlab_jd12_order.csv")
+    with open(dst_csv, "w", newline="", encoding="utf-8") as f:
+        w = _csv.DictWriter(f, fieldnames=list(jd_order[0].keys()))
+        w.writeheader()
+        w.writerows(jd_order)
+    report["designs"]["JD12_full_order"] = {
+        "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验",
+        "rows": len(jd_order), "csv": "data/wetlab_jd12_order.csv",
+        "scaffolds": list(DRS4)}
 
     # R248W(HT29) 两学派枚举(c.742C=T 在 s883 0-based)
     sch1 = []

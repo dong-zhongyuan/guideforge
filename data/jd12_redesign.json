@@ -39,13 +39,7 @@
     "PFS 弱(dep 0.63 < 中位 0.88, 红旗区, 同 KRAS 被否区间)",
     "等位特异: c.818G R273H: G>A",
     "等位碱基在 spacer 第 14 位(远端; Cas12a 种子区在 PFS 近端约 1-8 位, 远端错配鉴别弱, 文献共识定性)"
-   ],
-   "offtarget": {
-    "exact_0mm": 0,
-    "tp53_isoforms_1mm": 29,
-    "non_tp53_min_mismatch": 4,
-    "n_non_tp53_sites": 14
-   }
+   ]
   },
   "JD12_sp2": {
    "mRNA_window": "AGGTGCGTGTTTGTGCCTGTCCT",
@@ -73,13 +67,7 @@
     "PFS 强(dep 3.90, 分位前 21.4%)",
     "等位特异: c.818G R273H: G>A",
     "等位碱基在 spacer 第 17 位(远端; Cas12a 种子区在 PFS 近端约 1-8 位, 远端错配鉴别弱, 文献共识定性)"
-   ],
-   "offtarget": {
-    "exact_0mm": 0,
-    "tp53_isoforms_1mm": 29,
-    "non_tp53_min_mismatch": 3,
-    "n_non_tp53_sites": 14
-   }
+   ]
   }
  },
  "designs": {
@@ -120,6 +108,17 @@
      "synthesis_template_T7": "TAATACGACTCACTATAGGAATTTCTCCTGTTGGAGATAGGACAGGCACAAACATGCACCT",
      "note": "模板=T7(19)+DR(19)+spacer(23); T7 启动子尾 G 为转录起点, IVT 后需核验/修剪 5' 端"
     }
+   ]
+  },
+  "JD12_full_order": {
+   "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验",
+   "rows": 8,
+   "csv": "data/wetlab_jd12_order.csv",
+   "scaffolds": [
+    "WT",
+    "A1C",
+    "A8C+U15G",
+    "stemmax"
    ]
   },
   "R248W_HT29_options": {
