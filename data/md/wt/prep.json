@@ -1,0 +1,16 @@
+{
+ "mut": "WT",
+ "mutations": [],
+ "wt_dr_rna": "AUUUCUACUAUUGUAGAU",
+ "internal_gaps_not_built": [],
+ "missing_atoms_rebuilt": 1,
+ "n_atoms_total": 218985,
+ "n_residues": 67046,
+ "padding_nm": 1.0,
+ "forcefields": [
+  "amber14-all.xml",
+  "amber14/tip3p.xml"
+ ],
+ "prep_seconds": 43.8,
+ "cif_source": "data/8D4A.cif (SuCas12a2-crRNA-靶RNA 复合物, 结合态口径)"
+}
