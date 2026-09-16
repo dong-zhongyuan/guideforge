@@ -1,0 +1,123 @@
+{
+ "mode": "spacer-input(骨架分型选择)",
+ "effector": "cas12a2_zeng2026",
+ "target_context": null,
+ "degradation": {
+  "criterion_id": "preregistration §A go/no-go",
+  "criterion_rule": "各型代表管线 TOP-8 DR desc 型内并集的全型公共子集 <= 4(topk//2) 且型数>1 -> 阳性(分型推荐); 否则阴性 -> 退化通用型单骨架推荐",
+  "topk": 8,
+  "threshold": 4,
+  "n_types": 3,
+  "evaluable": true,
+  "per_type_union": {
+   "0": [
+    "A16G",
+    "A1C",
+    "A1C+U3A",
+    "A1C+U3C",
+    "A1G",
+    "A1U",
+    "A1U+U3C",
+    "A8G",
+    "G11A",
+    "U3A",
+    "U3C",
+    "U3G"
+   ],
+   "1": [
+    "A16G",
+    "A1C",
+    "A1C+A16G",
+    "A1C+C6A",
+    "A1C+C6G",
+    "A1C+U15C",
+    "A1G",
+    "A1G+U15C",
+    "A1U",
+    "A1U+U15C",
+    "C6A",
+    "C6G",
+    "U15A",
+    "U15C"
+   ],
+   "2": [
+    "A1C",
+    "A1C+U3A",
+    "A1G",
+    "A1G+U3G",
+    "A1U",
+    "A1U+A8G",
+    "A8G",
+    "U3A",
+    "U3C",
+    "U3G"
+   ]
+  },
+  "per_type_union_sizes": {
+   "0": 12,
+   "1": 14,
+   "2": 10
+  },
+  "common": [
+   "A1C",
+   "A1G",
+   "A1U"
+  ],
+  "n_common": 3,
+  "pairwise_jaccard_mean": 0.299,
+  "significant": true,
+  "forced": null,
+  "robustness_evidence": {
+   "source": "typing.robustness.json(post-hoc, 非预登记, 不作触发判据)",
+   "permutation_observed_common": 4,
+   "permutation_p_observed": 0.0357,
+   "reading": "事后置换检验(post-hoc): P(零分布公共集<=观测 4 条)=0.0357 < 0.05, 观测公共集在随机分组下罕见, 支持分型判据具判别力"
+  },
+  "archive_crosscheck": {
+   "archived_common": [
+    "A1C",
+    "A1G",
+    "A1U"
+   ],
+   "recomputed_common": [
+    "A1C",
+    "A1G",
+    "A1U"
+   ],
+   "matches": true
+  },
+  "reading": "各型代表管线 TOP-8 最优骨架的全型公共子集 3 条 <= 阈 4(topk//2, 预登记判据 §A): 骨架最优解随靶标(spacer 上下文)特征变化, 分型判据通过(阳性), 维持分型推荐",
+  "mode": "typed"
+ },
+ "designs": [
+  {
+   "spacer_dna": "AGGACAGGCACAAACATGCACCT",
+   "mut_in": "input",
+   "proto_mm": null,
+   "pfs_mut": "",
+   "pfs_wt": "",
+   "tier": null,
+   "self_mfe": -1.6,
+   "scaffold_type": 1,
+   "confidence": "boundary",
+   "type_features": {
+    "GC": 0.522,
+    "self_mfe": -1.6,
+    "spacer_up": 0.602,
+    "junction_pairs": 5.0,
+    "internal_pairs": 3.0
+   },
+   "distances": {
+    "0": 2.17,
+    "1": 2.071,
+    "2": 3.558
+   },
+   "target_features": null,
+   "dr_dna": "AATTTCTACTGTTGCAGAT",
+   "dr_desc": "U15C",
+   "construct_dna": "AATTTCTACTGTTGCAGATAGGACAGGCACAAACATGCACCT",
+   "wt_dr_construct_dna": "AATTTCTACTGTTGTAGATAGGACAGGCACAAACATGCACCT"
+  }
+ ],
+ "disclaimer": "选择器为最近邻规则, 分型功能差异未实验验证"
+}

@@ -88,6 +88,29 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 CONTACTS_JSON_LEGACY = os.path.join(ROOT, 'data', '8D4A_dr_contacts.json')
 CONSERVATION_JSON = os.path.join(ROOT, 'data', 'dr_conservation.json')
 CONS3_WINDOW_FALLBACK = 5
+WINNER_RULES_JSON = os.path.join(ROOT, 'data', 'winner_rule_engineering.json')
+
+# 文献赢家先验(§H, 2026-09-16 预登记): DeWeirdt 2020 大库 64 条活性增强 DR 的
+# 突变方向富集规则(Fisher, 载体 data/winner_rule_engineering.json rules_sig),
+# 以 log-odds 和作为打分加成项; 预测力检验 rho=0.077(弱, 仅富集标记非活性
+# 预测器), 故只作先验叠加在既有过滤/打分之上, 默认权重 0 行为不变。
+LIT_RULES = {}
+
+
+def load_lit_rules(path=WINNER_RULES_JSON):
+    """载入赢家规则 -> {'<pos><from><to>': log_odds}; 文件缺失返回空。"""
+    global LIT_RULES
+    LIT_RULES = {}
+    if not os.path.isfile(path):
+        return LIT_RULES
+    d = json.load(open(path, encoding='utf-8'))
+    n_win, n_bg = d['n_winners'], d['n_background']
+    import math as _math
+    for r in d.get('rules_sig', []):
+        LIT_RULES['%d%s%s' % (r['su_pos'], r['from'], r['to'])] = (
+            _math.log((r['n_winners'] + 1) / (n_win - r['n_winners'] + 1))
+            - _math.log((r['n_background'] + 1) / (n_bg - r['n_background'] + 1)))
+    return LIT_RULES
 
 
 def load_cons3_window_prior(dr_dna):
@@ -563,11 +586,14 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     cons3_n = sum(1 for p in mut_pos if p > len(dr) - args.cons3_window)
     cons3_frac = cons3_n / max(args.cons3_window, 1)
     stab_dd = ddg_dr if args.stab_dr_only else ddg
+    lit_s = sum(LIT_RULES.get('%d%s%s' % (p, dr[p - 1], seq[p - 1]), 0.0)
+                for p in mut_pos) if getattr(args, 'w_lit', 0.0) else 0.0
     score = (-args.w_bp * bp_dist - args.w_ddg * max(ddg, 0.0)
              - args.w_contact * csum - args.w_ens * max(d_ens, 0.0)
              + args.w_hbond * hnet - args.w_cons3 * cons3_frac
              + args.w_fold * dp_fold + args.w_seed * d_seed
-             + args.w_stab * max(-stab_dd, 0.0))
+             + args.w_stab * max(-stab_dd, 0.0)
+             + getattr(args, 'w_lit', 0.0) * lit_s)
     return {'desc': desc, 'mut_positions': mut_pos, 'n_mut': len(mut_pos),
             'dr_seq': to_dna(seq), 'construct_dna': to_dna(full),
             'mfe_struct': ss, 'mfe_kcal': round(mfe, 2), 'ddG': round(ddg, 2),
@@ -896,8 +922,13 @@ def main():
     ap.add_argument('--no-contacts', action='store_true', help='关闭蛋白接触项(不推荐)')
     ap.add_argument('--stab-dr-only', action='store_true',
                     help='w_stab 改用 DR 单独折叠 ddG_dr(茎稳定化语义更干净; 默认否, 保持 v1.4 全长口径)')
+    ap.add_argument('--w-lit', type=float, default=0.0,
+                    help='文献赢家先验权重(§H, DeWeirdt 64 赢家富集规则 log-odds 加成, '
+                         '规则文件 data/winner_rule_engineering.json; 默认 0 行为不变)')
     ap.add_argument('--out-prefix', default='crrna_scaffold_run')
     args = ap.parse_args()
+    if getattr(args, 'w_lit', 0.0):
+        load_lit_rules()
 
     entry = get_entry(args.effector, args.registry)
     dr = to_rna(entry['scaffold'])

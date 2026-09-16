@@ -1,0 +1,373 @@
+{
+ "generated_by": "scripts/crrna_winner_rule.py",
+ "n_winners": 64,
+ "n_background": 35682,
+ "rules_sig": [
+  {
+   "su_pos": 8,
+   "from": "A",
+   "to": "C",
+   "n_winners": 22,
+   "n_background": 1982,
+   "win_frac": 0.344,
+   "bg_frac": 0.0555,
+   "odds_ratio": 8.9,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 15,
+   "from": "U",
+   "to": "G",
+   "n_winners": 22,
+   "n_background": 1982,
+   "win_frac": 0.344,
+   "bg_frac": 0.0555,
+   "odds_ratio": 8.9,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 13,
+   "from": "U",
+   "to": "C",
+   "n_winners": 18,
+   "n_background": 4447,
+   "win_frac": 0.281,
+   "bg_frac": 0.1246,
+   "odds_ratio": 2.7,
+   "fisher_p": 0.0008
+  },
+  {
+   "su_pos": 11,
+   "from": "C",
+   "to": "A",
+   "n_winners": 17,
+   "n_background": 4447,
+   "win_frac": 0.266,
+   "bg_frac": 0.1246,
+   "odds_ratio": 2.5,
+   "fisher_p": 0.002
+  },
+  {
+   "su_pos": 5,
+   "from": "U",
+   "to": "C",
+   "n_winners": 16,
+   "n_background": 1490,
+   "win_frac": 0.25,
+   "bg_frac": 0.0418,
+   "odds_ratio": 7.6,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 18,
+   "from": "A",
+   "to": "G",
+   "n_winners": 16,
+   "n_background": 1490,
+   "win_frac": 0.25,
+   "bg_frac": 0.0418,
+   "odds_ratio": 7.6,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 13,
+   "from": "U",
+   "to": "A",
+   "n_winners": 14,
+   "n_background": 4447,
+   "win_frac": 0.219,
+   "bg_frac": 0.1246,
+   "odds_ratio": 2.0,
+   "fisher_p": 0.0345
+  }
+ ],
+ "rules_all_freq10plus": [
+  {
+   "su_pos": 8,
+   "from": "A",
+   "to": "C",
+   "n_winners": 22,
+   "n_background": 1982,
+   "win_frac": 0.344,
+   "bg_frac": 0.0555,
+   "odds_ratio": 8.9,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 15,
+   "from": "U",
+   "to": "G",
+   "n_winners": 22,
+   "n_background": 1982,
+   "win_frac": 0.344,
+   "bg_frac": 0.0555,
+   "odds_ratio": 8.9,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 13,
+   "from": "U",
+   "to": "C",
+   "n_winners": 18,
+   "n_background": 4447,
+   "win_frac": 0.281,
+   "bg_frac": 0.1246,
+   "odds_ratio": 2.7,
+   "fisher_p": 0.0008
+  },
+  {
+   "su_pos": 11,
+   "from": "C",
+   "to": "A",
+   "n_winners": 17,
+   "n_background": 4447,
+   "win_frac": 0.266,
+   "bg_frac": 0.1246,
+   "odds_ratio": 2.5,
+   "fisher_p": 0.002
+  },
+  {
+   "su_pos": 5,
+   "from": "U",
+   "to": "C",
+   "n_winners": 16,
+   "n_background": 1490,
+   "win_frac": 0.25,
+   "bg_frac": 0.0418,
+   "odds_ratio": 7.6,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 18,
+   "from": "A",
+   "to": "G",
+   "n_winners": 16,
+   "n_background": 1490,
+   "win_frac": 0.25,
+   "bg_frac": 0.0418,
+   "odds_ratio": 7.6,
+   "fisher_p": 0.0
+  },
+  {
+   "su_pos": 13,
+   "from": "U",
+   "to": "A",
+   "n_winners": 14,
+   "n_background": 4447,
+   "win_frac": 0.219,
+   "bg_frac": 0.1246,
+   "odds_ratio": 2.0,
+   "fisher_p": 0.0345
+  },
+  {
+   "su_pos": 13,
+   "from": "U",
+   "to": "G",
+   "n_winners": 10,
+   "n_background": 4447,
+   "win_frac": 0.156,
+   "bg_frac": 0.1246,
+   "odds_ratio": 1.3,
+   "fisher_p": 0.4467
+  }
+ ],
+ "core_A8CU15G_validation": {
+  "A8C_rule": {
+   "su_pos": 8,
+   "from": "A",
+   "to": "C",
+   "n_winners": 22,
+   "n_background": 1982,
+   "win_frac": 0.344,
+   "bg_frac": 0.0555,
+   "odds_ratio": 8.9,
+   "fisher_p": 0.0
+  },
+  "U15G_rule": {
+   "su_pos": 15,
+   "from": "U",
+   "to": "G",
+   "n_winners": 22,
+   "n_background": 1982,
+   "win_frac": 0.344,
+   "bg_frac": 0.0555,
+   "odds_ratio": 8.9,
+   "fisher_p": 0.0
+  },
+  "reading": "DeWeirdt 赢家最高频突变对(As9 A->C / As16 U->G)映射到 Su 注册表即 A8C+U15G, 与本项目已选变体重合——文献大库对现有选择的独立支持(统计强度见上各行 fisher_p)"
+ },
+ "new_variants": {
+  "A8C+U15G(core)": "AAUUUCUCCUGUUGGAGAU",
+  "A8C+U15G+U13C": "AAUUUCUCCUGUCGGAGAU",
+  "A8C+U15G+U5C": "AAUUCCUCCUGUUGGAGAU",
+  "A8C+U15G+A18G": "AAUUUCUCCUGUUGGAGGU",
+  "A8C+U15G+U13A": "AAUUUCUCCUGUAGGAGAU"
+ },
+ "context_evals": {
+  "JD12-sp1": {
+   "wt_cross": 0,
+   "variants": {
+    "A8C+U15G(core)": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.862,
+     "ddG_dr": -2.2,
+     "mut_contact_sum": 9
+    },
+    "A8C+U15G+U13C": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.851,
+     "ddG_dr": -1.5,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U5C": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.0,
+     "ddG_dr": -1.0,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+A18G": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.056,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U13A": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.283,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    }
+   }
+  },
+  "JD12-sp2": {
+   "wt_cross": 10,
+   "variants": {
+    "A8C+U15G(core)": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.437,
+     "ddG_dr": -2.2,
+     "mut_contact_sum": 9
+    },
+    "A8C+U15G+U13C": {
+     "cross_nt": 12,
+     "cross_pass": false,
+     "p_fold": 0.0,
+     "ddG_dr": -1.5,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U5C": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.0,
+     "ddG_dr": -1.0,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+A18G": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.219,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U13A": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.315,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    }
+   }
+  },
+  "canon-R248Q": {
+   "wt_cross": 0,
+   "variants": {
+    "A8C+U15G(core)": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.277,
+     "ddG_dr": -2.2,
+     "mut_contact_sum": 9
+    },
+    "A8C+U15G+U13C": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.664,
+     "ddG_dr": -1.5,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U5C": {
+     "cross_nt": 20,
+     "cross_pass": false,
+     "p_fold": 0.0,
+     "ddG_dr": -1.0,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+A18G": {
+     "cross_nt": 24,
+     "cross_pass": false,
+     "p_fold": 0.0,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U13A": {
+     "cross_nt": 20,
+     "cross_pass": false,
+     "p_fold": 0.002,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    }
+   }
+  },
+  "canon-R273H": {
+   "wt_cross": 0,
+   "variants": {
+    "A8C+U15G(core)": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.821,
+     "ddG_dr": -2.2,
+     "mut_contact_sum": 9
+    },
+    "A8C+U15G+U13C": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.325,
+     "ddG_dr": -1.5,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U5C": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.0,
+     "ddG_dr": -1.0,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+A18G": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.157,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    },
+    "A8C+U15G+U13A": {
+     "cross_nt": 0,
+     "cross_pass": true,
+     "p_fold": 0.734,
+     "ddG_dr": -1.1,
+     "mut_contact_sum": 16
+    }
+   }
+  }
+ },
+ "rule_predictive_power": {
+  "spearman_rho_vs_lfc127": 0.077,
+  "p_value": 7.328586395716747e-48,
+  "reading": "规则分(log-odds 和)与全库实测 lfc 的秩相关; 负 rho = 规则分高(赢家模式多)对应更深敲低"
+ }
+}
