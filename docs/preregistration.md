@@ -489,3 +489,7 @@ L1 文献锚点（Dmytrenko 2023 ED Fig.2c DR 互换）/ L2 结构层（Protenix
   低功效声明, 不构成替换/否决依据)与 §L BayesOpt 二轮提议协议预登记
   (GP/EI 参数与提前停止条款固化, 登记先于任何湿实验数据回填; 载体
   scripts/crrna_j_external_validation.py L_PROTOCOL 与 data/j_rule_external_validation.json)。
+- 2026-09-16: 新增 §M 铁律硬过滤(--iron-rules, 默认关): DeWeirdt 64 赢家 0 违例的
+  三条约束入管线(R1 不单边破茎对 / R2 不碰(7,16)协变 / R3 不做双远端对);
+  证据载体 data/winner_recipe_spacerlinked.json(v1-v4 四层拆解); 边界: As 体系
+  语境绑定, U15G 共折叠塌陷为其在本体系的一个实证; 默认关保持既有产物回归。

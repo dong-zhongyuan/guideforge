@@ -90,7 +90,8 @@ CONSERVATION_JSON = os.path.join(ROOT, 'data', 'dr_conservation.json')
 CONS3_WINDOW_FALLBACK = 5
 WINNER_RULES_JSON = os.path.join(ROOT, 'data', 'winner_rule_engineering.json')
 
-# 文献赢家先验(§J, 2026-09-16 登记, docs/preregistration.md): DeWeirdt 2020 大库 64 条活性增强 DR 的
+# 文献赢家先验(§J, 2026-09-16 登记; v4 拆解后定位: 边际排序先验而非增强配方,
+# 载体赢率~0.4%, 详见 data/winner_recipe_spacerlinked.json 留痕): DeWeirdt 2020 大库 64 条活性增强 DR 的
 # 突变方向富集规则(Fisher, 载体 data/winner_rule_engineering.json rules_sig),
 # 以 log-odds 和作为打分加成项; 预测力检验 rho=0.077(弱, 仅富集标记非活性
 # 预测器), 故只作先验叠加在既有过滤/打分之上, 默认权重 0 行为不变。
@@ -576,13 +577,30 @@ def score_variant(dr, seq, wt, spacer, args, contact, stem_pos):
     mut_pc = partner_classes(full, len(dr), mut_pos)
     wt_pc = partner_classes(wt['mfe_struct'], len(dr), mut_pos)
     partner_switch = any(mut_pc[q] != wt_pc[q] for q in mut_pc)
+    # 铁律过滤(§M, 2026-09-16 登记; DeWeirdt 64 赢家 0 违例, 数据
+    # data/winner_recipe_spacerlinked.json; 语境绑定为 As 体系, 默认关):
+    #   R1 永不单边破茎对(茎位突变而其配对位未动) —— U15G 塌陷实例
+    #   R2 不做 (7,16) 协变(0/64, 反偏好)
+    #   R3 不做双远端对 ((8,15)+(5,18) 同变, 全库 0 例)
+    iron_ok = True
+    if getattr(args, 'iron_rules', False) and mut_pos:
+        STEM = {(5, 18), (6, 17), (7, 16), (8, 15), (9, 14)}
+        ms = set(mut_pos)
+        for pa, pb in STEM:
+            if (pa in ms) != (pb in ms):            # R1 单边
+                iron_ok = False
+            if pa in ms and pb in ms and (pa, pb) == (7, 16):  # R2
+                iron_ok = False
+        if {8, 15} <= ms and {5, 18} <= ms:          # R3
+            iron_ok = False
     ok = (bp_dist <= args.max_bp_dist
           and spacer_up >= wt['spacer_mean_unpaired'] - args.spacer_unpaired_margin
           and 'TTTT' not in to_dna(seq) and 'GGGG' not in to_dna(seq)
           and (args.allow_cross_pairing or
                (cross_nt <= wt['cross_nt'] and inv_run_v <= wt['inv_max_run']))
           and (args.no_protect_processing
-               or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window)))
+               or proc_window_ok(wt['mfe_struct'], ss, len(dr), args.proc_window))
+          and iron_ok)
     cons3_n = sum(1 for p in mut_pos if p > len(dr) - args.cons3_window)
     cons3_frac = cons3_n / max(args.cons3_window, 1)
     stab_dd = ddg_dr if args.stab_dr_only else ddg
@@ -922,6 +940,9 @@ def main():
     ap.add_argument('--no-contacts', action='store_true', help='关闭蛋白接触项(不推荐)')
     ap.add_argument('--stab-dr-only', action='store_true',
                     help='w_stab 改用 DR 单独折叠 ddG_dr(茎稳定化语义更干净; 默认否, 保持 v1.4 全长口径)')
+    ap.add_argument('--iron-rules', action='store_true',
+                    help='启用铁律硬过滤(§M, DeWeirdt 64 赢家 0 违例: 不单边破茎对/'
+                         '不碰(7,16)协变/不做双远端对; As 体系证据, 默认关)')
     ap.add_argument('--w-lit', type=float, default=0.0,
                     help='文献赢家先验权重(§J, DeWeirdt 64 赢家富集规则 log-odds 加成, '
                          '规则文件 data/winner_rule_engineering.json; 默认 0 行为不变)')

@@ -75,6 +75,29 @@ class TestLitPrior(unittest.TestCase):
             if os.path.exists(f):
                 os.remove(f)
 
+    def test_iron_rules_filter_u15g(self):
+        """§M 铁律: --iron-rules 时单边破茎对变体(如 U15G)须被过滤。"""
+        import csv
+        import subprocess
+        import sys
+        out = os.path.join(ROOT, 'data', 'tmp_test_iron')
+        r = subprocess.run(
+            [sys.executable, os.path.join(ROOT, 'scripts',
+                                          'crrna_scaffold_design.py'),
+             '--effector', 'cas12a2_zeng2026',
+             '--spacer', 'AGGACAGGCACAAACATGCACCT', '--topk', '8',
+             '--use-covariation', '--iron-rules', '--out-prefix', out],
+            capture_output=True, text=True, timeout=600)
+        self.assertEqual(r.returncode, 0, r.stderr[-300:])
+        rows = list(csv.DictReader(open(out + '.variants.csv',
+                                        encoding='utf-8')))
+        u = next(x for x in rows if x['desc'] == 'U15G')
+        self.assertNotEqual(u['passed'], 'True',
+                            'U15G(单边破茎对)须被铁律过滤')
+        for f in (out + '.top.json', out + '.variants.csv', out + '.top.fasta'):
+            if os.path.exists(f):
+                os.remove(f)
+
     def test_predictive_power_boundary_recorded(self):
         d = json.load(open(RULES_JSON, encoding='utf-8'))
         pp = d['rule_predictive_power']
