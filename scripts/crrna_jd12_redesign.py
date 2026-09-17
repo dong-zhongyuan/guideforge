@@ -189,16 +189,17 @@ def main():
     # 撤回三层合成选型, 恢复管线自身榜单第 2 的 A1U(共折叠 pc 0.500±0.004 健康)。
     # U15G 保留为"上下文依赖塌陷"文档案例(同突变在 crRNA-1 语境健康)。
     JD12_PICK = {
-        "crRNA1": ["WT", "A1C", "A8C+U15G"],
+        "crRNA1": ["WT", "A1C", "A8C+U15G", "A8C+U15G+U13C"],
         "crRNA2": ["WT", "A1C", "A1U"],
     }
     DR_ALL = dict(DRS)
     DR_ALL["A1U"] = "UAUUUCUACUGUUGUAGAU"
+    DR_ALL["A8C+U15G+U13C"] = DRS["A8C+U15G"][:12] + "C" + DRS["A8C+U15G"][13:]  # +13U->C 程序化派生
     DR_ALL["U15G"] = DRS["WT"][:14] + "G" + DRS["WT"][15:]  # 15U->G 程序化派生
     jd_order = []
     for tag, sp in (("crRNA1", user["JD12_sp1"]), ("crRNA2", user["JD12_sp2"])):
         pfs = report["spacers"]["JD12_sp" + tag[-1]]["pfs_scholz"]
-        note = ("crRNA-1: PFS CCUGG 弱(dep 0.628, 如实标注继续做); 骨架=自身榜单 0/1/4 名"
+        note = ("crRNA-1: PFS 弱如实标注; 骨架=WT/A1C/A8C+U15G/A8C+U15G+U13C(8,13,15)赢家模式, 共折叠 pc 0.561>WT 0.498, 与 A8C+U15G 成对检验环伴随效应"
                 if tag == "crRNA1" else
                 "crRNA-2: PFS GGGAG 良好(dep 3.90); 骨架=管线榜 0/1/2 名(U15G 三层合成选型经共折叠验证塌陷已撤回)")
         for dr_name in JD12_PICK[tag]:

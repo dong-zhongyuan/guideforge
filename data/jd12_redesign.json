@@ -112,13 +112,14 @@
   },
   "JD12_full_order": {
    "for": "用户 2026-09-16 拍板: JD12 两条 spacer 都进实验; 骨架按各自管线 TOP 榜",
-   "rows": 6,
+   "rows": 7,
    "csv": "data/wetlab_jd12_order.csv",
    "picks": {
     "crRNA1": [
      "WT",
      "A1C",
-     "A8C+U15G"
+     "A8C+U15G",
+     "A8C+U15G+U13C"
     ],
     "crRNA2": [
      "WT",

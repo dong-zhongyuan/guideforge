@@ -1,0 +1,76 @@
+{
+ "generated_by": "scripts/crrna_winner_recipe.py",
+ "correction_history": [
+  "v1 §J 边际规律(已削弱: 承载者赢率~0.3%, 逆概率陷阱, 用户纠错)",
+  "v2 语境拆分: 个体迁移率 42%, 规则处方性不成立",
+  "v3 上位效应层配方(本版): 远端对协变 + 13/11 位环伴随"
+ ],
+ "context_split": {
+  "winners_127": 64,
+  "winners_128": 36,
+  "both": 27,
+  "transfer_rate_127_to_128": 0.422
+ },
+ "carriers": {
+  "n": 9104,
+  "win_rate_127": 0.0042
+ },
+ "companion_positions": {
+  "winners": {
+   "13": 63.2,
+   "11": 31.6
+  },
+  "losers": {
+   "11": 50.7,
+   "2": 43.1,
+   "12": 38.5,
+   "3": 32.0,
+   "13": 29.3,
+   "10": 25.2
+  }
+ },
+ "pattern_dual_context": {
+  "(8,13,15)": {
+   "n": 1917,
+   "win127_pct": 0.8,
+   "win128_pct": 0.3,
+   "median_d127": 2.86,
+   "median_d128": 3.49
+  },
+  "(5,13,18)": {
+   "n": 1150,
+   "win127_pct": 0.7,
+   "win128_pct": 0.4,
+   "median_d127": 3.0,
+   "median_d128": 3.47
+  },
+  "(8,15)": {
+   "n": 3052,
+   "win127_pct": 0.2,
+   "win128_pct": 0.1,
+   "median_d127": 2.74,
+   "median_d128": 3.47
+  },
+  "(5,18)": {
+   "n": 2823,
+   "win127_pct": 0.3,
+   "win128_pct": 0.1,
+   "median_d127": 2.94,
+   "median_d128": 3.44
+  }
+ },
+ "recipe": {
+  "iron_rules": [
+   "永不单边破对(0/64 赢家含错配)",
+   "只动一条远端对 (8,15) 或 (5,18)",
+   "不碰 (7,16)(0/64, 反偏好)",
+   "不做双对(全库 0 例)"
+  ],
+  "companion": "13 位环伴随最优(63% 赢家载体), 11 位次之(32%)",
+  "mapped_candidates": {
+   "(8,13,15)": "A8C+U15G+U13C = AAUUUCUCCUGUCGGAGAU",
+   "(5,13,18)": "U5C+A18G+U13C = AAUUCCUACUGUCGUAGGU"
+  },
+  "boundary": "As 体系实测(敲低读数, 激活上游共用论证迁移到旁切); 迁移通路 Dmytrenko DR 互换(保持非增强); 个体优势语境绑定 -> 候选需逐语境装配验证"
+ }
+}
